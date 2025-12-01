@@ -1,0 +1,28 @@
+baseURL = 'https://blackwell-systems.github.io/blog/'
+languageCode = 'en-us'
+title = 'Blackwell Systems Blog'
+theme = 'nightfall'
+
+[params]
+  description = 'Technical writing on developer tools, AI workflows, and dotfiles'
+  author = 'Blackwell Systems'
+  github = 'blackwell-systems'
+
+[menu]
+  [[menu.main]]
+    name = 'Home'
+    url = '/'
+    weight = 1
+  [[menu.main]]
+    name = 'Posts'
+    url = '/posts/'
+    weight = 2
+  [[menu.main]]
+    name = 'About'
+    url = '/about/'
+    weight = 3
+
+[markup]
+  [markup.highlight]
+    style = 'monokai'
+    lineNos = true

@@ -1,7 +1,7 @@
 ---
-layout: page
-title: About
-permalink: /about/
+title: "About"
+date: 2025-12-01
+draft: false
 ---
 
 This blog documents the development of Blackwell Systems tools for AI-assisted development.
