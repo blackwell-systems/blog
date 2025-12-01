@@ -34,6 +34,12 @@ jobs:
           hugo-version: 'latest'
           extended: true
 
+      - name: Install Dart Sass
+        run: |
+          curl -LJO https://github.com/sass/dart-sass/releases/download/1.69.5/dart-sass-1.69.5-linux-x64.tar.gz
+          tar -xf dart-sass-1.69.5-linux-x64.tar.gz
+          echo "$GITHUB_WORKSPACE/dart-sass" >> $GITHUB_PATH
+
       - name: Setup Pages
         id: pages
         uses: actions/configure-pages@v4
