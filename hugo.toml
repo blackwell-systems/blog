@@ -5,8 +5,10 @@ theme = 'nightfall'
 
 [params]
   description = 'Technical writing on developer tools, AI workflows, and dotfiles'
-  author = 'Blackwell Systems'
   github = 'blackwell-systems'
+
+[params.author]
+  name = 'Blackwell Systems'
 
 [menu]
   [[menu.main]]
