@@ -12,7 +12,9 @@ This blog documents the development of Blackwell Systems tools for AI-assisted d
 
 **[dotclaude](https://github.com/blackwell-systems/dotclaude)** - Profile manager for Claude Code. Switch between work/personal, multi-backend routing.
 
+**[pipeboard](https://github.com/blackwell-systems/pipeboard)** - Secure clipboard sharing over SSH tunnels. Share text between machines without exposing ports or using third-party services.
+
 ## Contact
 
 - GitHub: [@blackwell-systems](https://github.com/blackwell-systems)
-- Issues: [dotfiles](https://github.com/blackwell-systems/dotfiles/issues) | [dotclaude](https://github.com/blackwell-systems/dotclaude/issues)
+- Issues: [dotfiles](https://github.com/blackwell-systems/dotfiles/issues) | [dotclaude](https://github.com/blackwell-systems/dotclaude/issues) | [pipeboard](https://github.com/blackwell-systems/pipeboard/issues)
