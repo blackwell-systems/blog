@@ -11,18 +11,14 @@ theme = 'nightfall'
   name = 'Blackwell Systems'
 
 [menu]
-  [[menu.main]]
-    name = 'Home'
-    url = '/'
+  [[menu.header]]
+    name = "posts"
+    weight = 0
+    url = "/posts"
+  [[menu.header]]
+    name = "about"
     weight = 1
-  [[menu.main]]
-    name = 'Posts'
-    url = '/posts/'
-    weight = 2
-  [[menu.main]]
-    name = 'About'
-    url = '/about/'
-    weight = 3
+    url = "/about"
 
 [markup]
   [markup.highlight]
