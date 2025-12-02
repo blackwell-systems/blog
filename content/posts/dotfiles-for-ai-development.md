@@ -52,13 +52,17 @@ Your SSH keys already live in your password manager. Why copy them manually betw
 
 Most dotfiles either ignore secrets or encrypt them in the repository. Ignoring secrets means manually copying SSH keys. Encrypting secrets means your private keys are in version control, even if encrypted.
 
-The vault system uses where you already store secrets. Bitwarden, 1Password, or pass - pick whichever you already use. Run `dotfiles vault restore` on a new machine and it pulls your SSH keys, AWS credentials, and git config from your existing vault.
+The vault system uses where you already store secrets. Bitwarden, 1Password, or pass - pick whichever you already use.
 
-Changed your SSH config locally? `dotfiles vault sync` pushes it back. Unlike chezmoi's one-way templates or traditional dotfiles with secrets in git, this is bidirectional with drift detection. The system warns before overwriting changes you haven't synced.
+New machine? `dotfiles vault restore`. Changed your SSH config? `dotfiles vault sync`. That's it.
+
+Unlike chezmoi's one-way templates or traditional dotfiles with secrets in git, this is bidirectional with drift detection. The system warns before overwriting changes you haven't synced.
 
 No keys in git. No manual copying. Just pull from where you already store secrets.
 
 ## What Makes This Different
+
+Unlike chezmoi (one-way templates) or traditional dotfiles (secrets in git), this provides bidirectional vault sync with drift detection.
 
 Most dotfiles are configuration files with an install script. This is configuration files plus:
 
@@ -118,11 +122,12 @@ curl -fsSL \
 dotfiles setup
 ```
 
-**Minimal?** Skip vault features, just get the shell config:
+**Minimal?** Shell config only (Zsh, CLI tools, aliases). Add vault and Claude integration later:
 
 ```bash
 curl -fsSL \
   https://raw.githubusercontent.com/blackwell-systems/dotfiles/main/install.sh | bash -s -- --minimal
+# Run 'dotfiles setup' later to enable vault and Claude integration
 ```
 
 The wizard detects your platform, finds available vault CLIs, and prompts for choices. Takes about 5 minutes on a fresh machine.
@@ -133,4 +138,6 @@ Full documentation at [blackwell-systems.github.io/dotfiles](https://blackwell-s
 
 I needed this for my own workflow. Maybe you need it too.
 
-The code is MIT licensed. Fork it, modify it, use what works for you. If you find issues or have suggestions, open an issue on GitHub.
+The code is MIT licensed. Fork it, modify it, use what works for you.
+
+**Ready?** Install takes 5 minutes. **Skeptical?** Try the Docker test first. **Questions?** [Open an issue on GitHub](https://github.com/blackwell-systems/dotfiles/issues).
