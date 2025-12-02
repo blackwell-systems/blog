@@ -2,13 +2,19 @@ baseURL = 'https://blackwell-systems.github.io/blog/'
 languageCode = 'en-us'
 title = 'Blackwell Systems Blog'
 theme = 'nightfall'
+enableRobotsTXT = true
 
 [params]
   description = 'Technical writing on developer tools, AI workflows, and dotfiles'
   github = 'blackwell-systems'
+  keywords = ['dotfiles', 'claude code', 'AI development', 'developer tools', 'secret management', 'macOS', 'Linux', 'WSL2']
 
 [params.author]
   name = 'Blackwell Systems'
+
+[sitemap]
+  changefreq = 'weekly'
+  priority = 0.5
 
 [menu]
   [[menu.header]]

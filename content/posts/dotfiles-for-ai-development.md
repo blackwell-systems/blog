@@ -3,6 +3,8 @@ title: "Why I Built Another Dotfiles System"
 date: 2025-12-02
 draft: false
 tags: ["dotfiles", "claude-code", "development-environment"]
+description: "Building a dotfiles system with portable Claude Code sessions across machines, multi-vault secret management, and health checks for macOS, Linux, and WSL2."
+summary: "There are hundreds of dotfiles repositories on GitHub. I built another one anyway. Here's why: portable Claude Code sessions, multi-vault secrets management, and self-healing configuration across macOS, Linux, and WSL2."
 ---
 
 There are hundreds of dotfiles repositories on GitHub. I built another one anyway.
