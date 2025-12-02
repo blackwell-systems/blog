@@ -1,13 +1,15 @@
 ---
-title: "Why I Built Another Dotfiles System"
+title: "Stop Losing Your Claude Conversations When Switching Computers"
 date: 2025-12-02
 draft: false
 tags: ["dotfiles", "claude-code", "development-environment"]
-description: "Building a dotfiles system with portable Claude Code sessions across machines, multi-vault secret management, and health checks for macOS, Linux, and WSL2."
-summary: "There are hundreds of dotfiles repositories on GitHub. I built another one anyway. Here's why: portable Claude Code sessions, multi-vault secrets management, and self-healing configuration across macOS, Linux, and WSL2."
+description: "The first dotfiles system built for AI-assisted development. Portable Claude Code sessions across machines, multi-vault secret management, and self-healing configuration."
+summary: "Start on Mac, continue on Linux, keep your conversation. The first dotfiles system designed for AI-assisted development with portable Claude Code sessions across machines."
 ---
 
-There are hundreds of dotfiles repositories on GitHub. I built another one anyway.
+Start on Mac, continue on Linux, same conversation.
+
+That's the promise. Here's how it works.
 
 ## The Problem
 
@@ -29,19 +31,32 @@ Create a symlink at the root level that's identical across all platforms:
 
 Now `/workspace/projects/api` resolves correctly on every machine, but Claude sees the same absolute path. Same path means same session folder means your conversation continues.
 
+Here's what this looks like in practice:
+
+```bash
+# On Mac, working in a project
+cd /workspace/my-api && claude
+# ... work for an hour, Claude learns your codebase ...
+# exit
+
+# Later, on Linux VM - SAME conversation continues
+cd /workspace/my-api && claude
+# Full history intact. No sync. No export. Just works.
+```
+
 This required bootstrap scripts that work across macOS, several Linux distros, and WSL2. I also needed them to handle secrets (SSH keys, AWS credentials) without storing them in git.
 
 ## The Vault Problem
 
-Most dotfiles either ignore secrets or have you encrypt them in the repository. Both options are bad.
+Your SSH keys already live in your password manager. Why copy them manually between machines?
 
-Ignoring secrets means manually copying SSH keys between machines. Encrypting secrets in git means your private keys are in version control, even if encrypted.
+Most dotfiles either ignore secrets or encrypt them in the repository. Ignoring secrets means manually copying SSH keys. Encrypting secrets means your private keys are in version control, even if encrypted.
 
-I already use Bitwarden for passwords. Why not store SSH keys there too?
+The vault system uses where you already store secrets. Bitwarden, 1Password, or pass - pick whichever you already use. Run `dotfiles vault restore` on a new machine and it pulls your SSH keys, AWS credentials, and git config from your existing vault.
 
-The vault system in this repo supports three backends: Bitwarden, 1Password, and pass. Your SSH keys, AWS credentials, and git config go in whichever vault you already use. The `dotfiles vault restore` command pulls them down on new machines.
+Changed your SSH config locally? `dotfiles vault sync` pushes it back. Unlike chezmoi's one-way templates or traditional dotfiles with secrets in git, this is bidirectional with drift detection. The system warns before overwriting changes you haven't synced.
 
-No keys in git. No manual copying. It just works.
+No keys in git. No manual copying. Just pull from where you already store secrets.
 
 ## What Makes This Different
 
@@ -76,24 +91,43 @@ This repo works best if you:
 
 If you don't use Claude Code, most of this still works. The vault system, health checks, and modular shell config are useful regardless. The `/workspace` portability is mainly for Claude sessions.
 
+## Try Before You Trust
+
+Don't trust random install scripts? Test everything in a disposable container first:
+
+```bash
+docker run -it --rm ghcr.io/blackwell-systems/dotfiles-lite
+dotfiles status    # Poke around safely
+dotfiles doctor    # See what it checks
+exit               # Container vanishes
+```
+
+30-second verification before running anything on your real machine. The container includes the full CLI so you can explore what the system does.
+
 ## Get Started
 
-The installer clones the repository and sets up your environment:
+Pick your path based on trust level:
+
+**Skeptical?** Test in Docker first (above), then install for real.
+
+**Ready?** One-line install + 5 minute wizard:
 
 ```bash
 curl -fsSL \
   https://raw.githubusercontent.com/blackwell-systems/dotfiles/main/install.sh | bash
-```
-
-Then run the interactive setup wizard:
-
-```bash
 dotfiles setup
 ```
 
-It detects your platform, finds available vault CLIs, and prompts for choices. Takes about 5 minutes on a fresh machine.
+**Minimal?** Skip vault features, just get the shell config:
 
-If you want to inspect before running, the repository is at [github.com/blackwell-systems/dotfiles](https://github.com/blackwell-systems/dotfiles) with full documentation at [blackwell-systems.github.io/dotfiles](https://blackwell-systems.github.io/dotfiles).
+```bash
+curl -fsSL \
+  https://raw.githubusercontent.com/blackwell-systems/dotfiles/main/install.sh | bash -s -- --minimal
+```
+
+The wizard detects your platform, finds available vault CLIs, and prompts for choices. Takes about 5 minutes on a fresh machine.
+
+Full documentation at [blackwell-systems.github.io/dotfiles](https://blackwell-systems.github.io/dotfiles).
 
 ## Why I'm Sharing This
 
