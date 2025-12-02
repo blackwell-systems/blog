@@ -78,11 +78,16 @@ If you don't use Claude Code, most of this still works. The vault system, health
 
 ## Get Started
 
-The installer is interactive by default:
+The installer clones the repository and sets up your environment:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/blackwell-systems/dotfiles/main/install.sh \
-  -o install.sh && bash install.sh --interactive
+curl -fsSL https://raw.githubusercontent.com/blackwell-systems/dotfiles/main/install.sh | bash
+```
+
+Then run the interactive setup wizard:
+
+```bash
+dotfiles setup
 ```
 
 It detects your platform, finds available vault CLIs, and prompts for choices. Takes about 5 minutes on a fresh machine.
