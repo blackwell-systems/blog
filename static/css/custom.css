@@ -6,34 +6,3 @@ body {
   background-repeat: no-repeat;
   background-attachment: fixed;
 }
-
-/* Make the content sit on a readable panel */
-.content {
-  max-width: 900px;
-  margin: 0 auto;
-  padding: 2rem 1.5rem;
-  background: rgba(0, 0, 0, 0.75);
-  border-radius: 12px;
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
-}
-
-/* Optional: tighten article width */
-article {
-  max-width: 70ch;
-  margin: 0 auto;
-}
-
-/* Keep header readable */
-.headerWrapper {
-  background: rgba(0, 0, 0, 0.6);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-}
-
-/* Footer on dark background */
-.footer {
-  background: rgba(0, 0, 0, 0.6);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-}
