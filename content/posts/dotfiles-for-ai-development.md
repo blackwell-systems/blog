@@ -52,7 +52,6 @@ Most dotfiles are configuration files with an install script. This is configurat
 - Drift detection that warns before overwriting unsync'd changes
 - Schema validation for SSH keys (correct permissions, key formats)
 - Machine-specific templates (one config file becomes many with variables)
-- 80+ unit tests
 - Claude Code session portability via `/workspace` symlink
 
 The shell configuration is also more maintainable than most. Instead of one 1000-line `.zshrc`, there are 10 modules in `zsh.d/`. Each module handles one thing: environment variables, aliases, AWS helpers, git shortcuts, etc. You can disable modules per-machine by symlinking to `.skip` files.
