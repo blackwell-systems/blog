@@ -15,6 +15,8 @@ Claude stores sessions based on your working directory path. If you're in `/User
 
 Most solutions suggest syncing `~/.claude` between machines. That works until you realize your home directory path is different on each platform. The session folder names encode the full path, so syncing the directory doesn't help.
 
+After reading [this article about migrating Claude Code sessions](https://www.vincentschmalbach.com/migrate-claude-code-sessions-to-a-new-computer/), I realized there was a better way.
+
 ## The Solution
 
 Create a symlink at the root level that's identical across all platforms:
