@@ -81,7 +81,8 @@ If you don't use Claude Code, most of this still works. The vault system, health
 The installer clones the repository and sets up your environment:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/blackwell-systems/dotfiles/main/install.sh | bash
+curl -fsSL \
+  https://raw.githubusercontent.com/blackwell-systems/dotfiles/main/install.sh | bash
 ```
 
 Then run the interactive setup wizard:
