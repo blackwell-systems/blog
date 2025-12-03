@@ -149,7 +149,10 @@ curl -fsSL \
 Then create your first profile:
 
 ```bash
-cp -r examples/sample-profile profiles/my-project
+dotclaude create my-project
+# → Creates profile with comprehensive 250+ line template
+# → Includes tech stack, coding standards, best practices
+
 dotclaude edit my-project
 dotclaude activate my-project
 ```
