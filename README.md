@@ -107,17 +107,6 @@ summary: "Preview text shown in post listings"
 Your content here...
 ```
 
-### Available Tags
-
-Common tags used across posts:
-- `dotclaude`, `claude-code`, `dotfiles`
-- `developer-tools`, `productivity`, `automation`
-- `secret-management`, `security`
-- `macos`, `linux`, `wsl2`
-- `ai-development`, `ai-workflows`
-
----
-
 ## Theme
 
 This blog uses the **[Nightfall](https://github.com/LordMathis/hugo-theme-nightfall)** theme by LordMathis, included as a Git submodule.
