@@ -27,13 +27,6 @@ This is the official technical blog for **Blackwell Systems™**, covering:
 
 ---
 
-## Current Posts
-
-- **[Managing Multiple Claude Code Contexts Without Going Insane](https://blackwell-systems.github.io/blog/posts/managing-claude-code-contexts/)** – Profile management for Claude Code with dotclaude
-- **[Dotfiles for AI-Assisted Development](https://blackwell-systems.github.io/blog/posts/dotfiles-for-ai-development/)** – Building development environments optimized for working with AI
-
----
-
 ## Local Development
 
 ### Prerequisites
