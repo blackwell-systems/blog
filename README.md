@@ -6,7 +6,6 @@
 [![Theme](https://img.shields.io/badge/Theme-Nightfall-purple)](https://github.com/LordMathis/hugo-theme-nightfall)
 
 [![Deploy Status](https://github.com/blackwell-systems/blog/workflows/Deploy%20Hugo%20site%20to%20Pages/badge.svg)](https://github.com/blackwell-systems/blog/actions)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Sponsor](https://img.shields.io/badge/Sponsor-Buy%20Me%20a%20Coffee-yellow?logo=buy-me-a-coffee&logoColor=white)](https://buymeacoffee.com/blackwellsystems)
 
 > **Technical writing on developer tools, AI workflows, and dotfiles.** Deep dives into Claude Code integration, secret management, and building better development environments.
@@ -160,26 +159,16 @@ The blog is automatically deployed to **GitHub Pages** via GitHub Actions on eve
 
 ---
 
-## Contributing
-
-Contributions welcome! Please:
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/new-post`)
-3. Write your post following the template above
-4. Test locally with `hugo server -D`
-5. Submit a pull request
-
-For blog post ideas, [open an issue](https://github.com/blackwell-systems/blog/issues).
-
----
-
 ## License
 
-Content and code are licensed under the MIT License. See [LICENSE](LICENSE) for details.
+**© 2025 Blackwell Systems™. All Rights Reserved.**
 
-**Blackwell Systems™** is a trademark of Blackwell Systems. See [BRAND.md](https://github.com/blackwell-systems/dotclaude/blob/main/BRAND.md) for usage guidelines.
+This blog and its content are proprietary and confidential. No part of this repository may be reproduced, distributed, or transmitted in any form without prior written permission from Blackwell Systems.
+
+**Blackwell Systems™** is a trademark of Blackwell Systems. See [BRAND.md](BRAND.md) for usage guidelines.
+
+**Public but Proprietary:** This repository is publicly visible for transparency and reference, but is not open source and does not accept outside contributions.
 
 ---
 
-**Questions?** [Open an issue](https://github.com/blackwell-systems/blog/issues) or visit the [main organization page](https://github.com/blackwell-systems).
+**Questions?** Contact via [GitHub Issues](https://github.com/blackwell-systems/blog/issues) or visit the [main organization page](https://github.com/blackwell-systems).
