@@ -2,9 +2,10 @@
 
 [![Blackwell Systems™](https://raw.githubusercontent.com/blackwell-systems/blackwell-docs-theme/main/badge-trademark.svg)](https://github.com/blackwell-systems)
 [![Proprietary](https://raw.githubusercontent.com/blackwell-systems/blackwell-docs-theme/main/badge-proprietary.svg)](https://github.com/blackwell-systems/blog)
+[![Deploy Status](https://github.com/blackwell-systems/blog/workflows/Deploy%20Hugo%20site%20to%20Pages/badge.svg)](https://github.com/blackwell-systems/blog/actions)
+
 [![Hugo](https://img.shields.io/badge/Hugo-0.139.4-ff4088?logo=hugo&logoColor=white)](https://gohugo.io)
 [![Theme](https://img.shields.io/badge/Theme-Nightfall-purple)](https://github.com/LordMathis/hugo-theme-nightfall)
-[![Deploy Status](https://github.com/blackwell-systems/blog/workflows/Deploy%20Hugo%20site%20to%20Pages/badge.svg)](https://github.com/blackwell-systems/blog/actions)
 [![Sponsor](https://img.shields.io/badge/Sponsor-Buy%20Me%20a%20Coffee-yellow?logo=buy-me-a-coffee&logoColor=white)](https://buymeacoffee.com/blackwellsystems)
 
 > **Technical writing on developer tools, AI workflows, and dotfiles.** Deep dives into Claude Code integration, secret management, and building better development environments.
