@@ -44,6 +44,66 @@ cd /workspace/my-api && claude
 # Full history intact. No sync. No export. Just works.
 ```
 
+## What This Looks Like In Practice
+
+Here's the actual setup flow when you run it on a machine with existing credentials:
+
+```console
+$ curl -fsSL ... | bash && dotfiles setup
+
+Installing Homebrew...
+Installing packages...
+Linking shell config (.zshrc, .p10k.zsh)...
+Created /workspace symlink for portable Claude sessions
+
+═══════════════════════════════════════════════════════════════
+                        Setup Wizard
+═══════════════════════════════════════════════════════════════
+
+STEP 3: Vault Configuration
+────────────────────────────────────────────────────────────────
+Available vault backends:
+  1) bitwarden  ← detected
+  2) 1password  ← detected
+  3) pass
+  4) Skip (configure manually)
+
+Select vault backend [1]: 1
+
+Vault configured (bitwarden)
+Vault unlocked
+
+STEP 4: Secrets Management
+────────────────────────────────────────────────────────────────
+Scanning secrets...
+
+  Local only (not in vault):
+    • SSH-GitHub-Enterprise → ~/.ssh/id_ed25519_enterprise_ghub
+    • SSH-GitHub-Personal → ~/.ssh/id_ed25519_personal
+    • AWS-Config → ~/.aws/config
+    • Git-Config → ~/.gitconfig
+
+Push local secrets to vault? [y/N]: y
+
+Created vault items:
+  ✓ SSH-GitHub-Enterprise
+  ✓ SSH-GitHub-Personal
+  ✓ AWS-Config
+  ✓ Git-Config
+
+STEP 5: Claude Code
+────────────────────────────────────────────────────────────────
+Install Claude Code CLI? [Y/n]: y
+
+  ✓ Downloaded claude CLI
+  ✓ Installed to /usr/local/bin/claude
+  ✓ Verified: claude --version
+
+Setup complete!
+```
+
+The wizard detects what you already have (vault CLIs, local secrets) and only asks for decisions. It took about 3 minutes on my Mac.
+
 This required bootstrap scripts that work across macOS, several Linux distros, and WSL2. I also needed them to handle secrets (SSH keys, AWS credentials) without storing them in git.
 
 ## The Vault Problem
