@@ -7,8 +7,6 @@ description: "I needed multi-vault support without duplicating scripts or breaki
 summary: "Started with Bitwarden-only shell scripts. Needed to support 1Password and pass without breaking anything. Built a shell abstraction layer, then ported it to Go. Same interface, three backends, zero breaking changes."
 ---
 
-I needed multi-vault support without duplicating scripts or breaking existing users—so I designed a vault interface in shell, then ported it 1:1 into Go.
-
 ## What I Built
 
 I started with Bitwarden-only shell scripts to restore secrets for my dotfiles. That worked until real-world environments demanded different vaults: 1Password for teammates, pass for CI, and pass again for air-gapped servers. Maintaining parallel scripts wasn't scalable—so I built a vault abstraction in shell and then ported that interface 1:1 into Go.
@@ -17,7 +15,7 @@ The result is [vaultmux](https://github.com/blackwell-systems/vaultmux): a libra
 
 This pattern lets teams change vault policy without rewriting every script that touches secrets.
 
-## The Pain: Hardcoded Backend Calls
+## The Lock-In: Hardcoded Backend Calls
 
 My dotfiles began with hardcoded Bitwarden calls. They were simple, fast to write, and totally locked to one backend:
 
@@ -31,8 +29,8 @@ chmod 600 ~/.ssh/id_ed25519
 
 This worked perfectly—until:
 
-- **Teammate joined** using 1Password (`op`) for corporate policy reasons
-- **CI/CD pipeline** needed `pass` for file-based secrets without cloud dependencies
+- **A teammate joined** using 1Password (`op`) for corporate policy reasons
+- **The CI/CD pipeline** needed `pass` for file-based secrets without cloud dependencies
 - **Air-gapped servers** required `pass` with git-sync (no Bitwarden access)
 
 Maintaining parallel scripts wasn't scalable, and standardizing on one vault wasn't realistic—so I built an abstraction.
@@ -47,7 +45,7 @@ If I define a common interface for those operations, consumer code never needs t
 
 ## The Shell Interface
 
-I defined the operations every backend must support. Here's the core:
+I defined the operations every backend must support. I kept the interface intentionally small and stable—easier to implement, easier to trust. Here's the core:
 
 ```bash
 # Authentication
