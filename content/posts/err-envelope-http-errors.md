@@ -7,15 +7,11 @@ description: "Standardize HTTP error responses in Go with err-envelope. Works wi
 summary: "Stop returning errors as plain text. Learn how to implement consistent, structured HTTP error responses in Go with support for Chi router, Gin framework, and Echo framework. Includes field-level validation and trace IDs."
 ---
 
-Your Go API returns errors in three different formats. Plain text here, JSON there, and a custom structure in another endpoint.
-
-Your mobile app needs three parsing strategies to handle them all.
+Your Go API returns errors in three different formats. Your mobile app needs three parsing strategies to handle them all.
 
 Here's how to standardize HTTP error handling across your entire Go API—whether you're using net/http, Chi router, Gin framework, or Echo framework.
 
 ## The Problem
-
-I was reviewing error handling in a mobile backend and found this pattern repeated across every endpoint:
 
 ```go
 // Endpoint A
@@ -36,9 +32,7 @@ json.NewEncoder(w).Encode(struct {
 })
 ```
 
-Three different formats. The mobile app had three different parsing strategies. When debugging a user-reported issue, there was no trace ID to find the request in logs.
-
-This is what happens when you build an API endpoint by endpoint without thinking about error responses as a system.
+Three different formats. Three parsing strategies. No trace IDs to find requests in logs.
 
 ## What Good Looks Like
 
@@ -255,22 +249,6 @@ e.GET("/user/:id", func(c echo.Context) error {
 ```
 
 All three frameworks get the same structured error responses with trace IDs, field validation, and retry signals.
-
-## What I'd Change If I Built This Again
-
-Nothing architectural. But I'd add one thing: an optional `incident_id` field for linking errors to incident tracking systems.
-
-```json
-{
-  "code": "INTERNAL",
-  "message": "Database connection failed",
-  "incident_id": "INC-2024-1234",
-  "trace_id": "a1b2c3d4",
-  "retryable": true
-}
-```
-
-That's it. The current design is intentionally minimal—five fields, 17 error code constructors, trace middleware. Small enough to understand completely, complete enough to use in production.
 
 ## When Not to Use This
 
