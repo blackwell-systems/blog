@@ -7,12 +7,7 @@ body {
   background-attachment: fixed;
 }
 
-/* Left-align post titles on listing pages */
-.content .postTitle {
-  text-align: left;
-}
-
-.content {
+/* Left-align post titles within their centered containers */
+.postTitle {
   text-align: left !important;
-  justify-content: flex-start !important;
 }
