@@ -9,7 +9,13 @@ summary: "Start on Mac, continue on Linux—same Claude conversation. Plus integ
 
 Start on Mac, continue on Linux, same Claude conversation.
 
-That's the hook. But the framework goes further.
+That's how this started.
+
+I solved it with a simple `/workspace → ~/workspace` symlink so Claude sees the same absolute path everywhere.
+
+But the real outcome wasn't just portability. It was a new way to treat dotfiles as a **framework**: a feature registry, multi-vault secrets, layered configuration, and an extensible hook system—all fully opt-in, with no need to fork the core.
+
+**This works great on a single Linux machine too.** The framework's modularity, vault system, hooks, and dev tool integrations stand on their own.
 
 ## The Problem That Started It
 
@@ -35,16 +41,20 @@ cd /workspace/api && claude
 # Full history intact. No sync. No export.
 ```
 
+## From a Portability Hack to a Framework
+
+The `/workspace` trick solved a real problem. The bigger discovery was that dotfiles can be a **control plane**: features, hooks, layered config, and vault-backed state—without forks.
+
 That solved Claude portability. But while building this, I needed:
-- Secrets synced across machines (SSH keys, AWS credentials)
-- Shell config that didn't break when switching platforms
+- Secrets synced without storing in git (SSH keys, AWS credentials)
+- Shell config that didn't break when switching contexts
 - Developer tools (AWS, Rust, Go, Python) with consistent aliases
 - Health checks to catch broken configs
 - Extensibility without editing core code
 
 That became a framework.
 
-## Architecture: Feature Registry
+## The Control Plane: Features + Hooks + Layers
 
 Everything optional is a feature. Enable what you need, skip what you don't.
 
@@ -62,7 +72,7 @@ dotfiles features preset developer   # Full dev stack
 dotfiles features preset minimal     # Shell only
 ```
 
-**Feature categories:**
+### Feature Categories
 
 **Core** (always enabled):
 - Shell configuration (ZSH, prompt, core aliases)
@@ -72,7 +82,7 @@ dotfiles features preset minimal     # Shell only
 - `claude_integration` - Claude Code hooks and settings
 - `vault` - Multi-vault secrets (Bitwarden/1Password/pass)
 - `templates` - Machine-specific configs with filters
-- `hooks` - Lifecycle event system (8 trigger points)
+- `hooks` - Lifecycle event system (multiple trigger points)
 - `config_layers` - Hierarchical config (env > project > machine > user)
 - `drift_check` - Detect unsync'd changes before overwriting
 - `backup_auto` - Automatic backups before destructive ops
@@ -89,9 +99,64 @@ dotfiles features preset minimal     # Shell only
 
 Dependencies auto-resolve. Enable `claude_integration` and it enables `workspace_symlink` automatically.
 
-## Developer Tools Integration
+### Hook System: Opt-In Automation
 
-The framework includes 100+ aliases and helpers for common development workflows.
+**Hooks are opt-in automation, not hidden magic.** You can list, validate, and run each hook manually.
+
+The hook system triggers custom scripts at multiple lifecycle points:
+
+```bash
+# Available hooks
+shell_init             # Shell starts
+directory_change       # cd into directory
+pre_vault_pull         # Before pulling secrets
+post_vault_pull        # After pulling secrets
+pre_vault_push         # Before pushing secrets
+post_vault_push        # After pushing secrets
+doctor_check           # Health validation runs
+pre_uninstall          # Before uninstalling
+```
+
+**Example: Auto-activate Python venv on cd**
+
+```bash
+# hooks/10-python-venv.sh
+if [[ -f .venv/bin/activate ]]; then
+    source .venv/bin/activate
+fi
+```
+
+Hooks auto-discover from `~/hooks/` and `.dotfiles-hooks/` in project directories. Priority-based execution (00-99, lower runs first).
+
+```bash
+dotfiles hook list                    # Show all hooks
+dotfiles hook run directory_change    # Test hook manually
+dotfiles hook validate                # Validate all hook scripts
+```
+
+No core file edits needed. Drop scripts in `hooks/`, they run automatically.
+
+### Configuration Layers
+
+Hierarchical config resolution with 5 layers:
+
+```bash
+# Precedence: env > project > machine > user > defaults
+export DOTFILES_VAULT_BACKEND=bitwarden   # env layer
+echo '{"vault":{"backend":"pass"}}' > .dotfiles.json  # project layer
+
+dotfiles config get vault.backend
+# → bitwarden (env wins)
+
+dotfiles config show vault.backend
+# Shows all layers and which one is active
+```
+
+Project configs (`.dotfiles.json`) travel with repos. Machine configs (`~/.config/dotfiles/machine.json`) stay local.
+
+## Optional Integrations: AWS/Rust/Go/Python
+
+The framework includes dozens of curated aliases and helpers for common development workflows. All tools are **optional integrations**—enable only what you use.
 
 ### AWS & CDK
 
@@ -153,43 +218,6 @@ cd my-project          # Prompts: "Activate .venv? [Y/n]"
 # Configurable: notify/auto/off
 ```
 
-All tools are **optional integrations**. Enable only what you use.
-
-## Hook System: Extensibility Without Core Edits
-
-The hook system triggers custom scripts at 8 lifecycle points:
-
-```bash
-# Available hooks
-shell_init             # Shell starts
-directory_change       # cd into directory
-pre_vault_pull         # Before pulling secrets
-post_vault_pull        # After pulling secrets
-pre_vault_push         # Before pushing secrets
-post_vault_push        # After pushing secrets
-doctor_check           # Health validation runs
-pre_uninstall          # Before uninstalling
-```
-
-**Example: Auto-activate Python venv on cd**
-
-```bash
-# hooks/10-python-venv.sh
-if [[ -f .venv/bin/activate ]]; then
-    source .venv/bin/activate
-fi
-```
-
-Hooks auto-discover from `~/hooks/` and `.dotfiles-hooks/` in project directories. Priority-based execution (00-99, lower runs first).
-
-```bash
-dotfiles hook list                    # Show all hooks
-dotfiles hook run directory_change    # Test hook manually
-dotfiles hook validate                # Validate all hook scripts
-```
-
-No core file edits needed. Drop scripts in `hooks/`, they run automatically.
-
 ## Vault System: Multi-Backend Secrets
 
 Your SSH keys already live in your password manager. Use them directly.
@@ -217,27 +245,9 @@ Overwrite local with vault? [y/N]:
 
 Secrets never touch git. The vault system uses your existing password manager.
 
-## Configuration Layers
+## Setup Wizard
 
-Hierarchical config resolution with 5 layers:
-
-```bash
-# Precedence: env > project > machine > user > defaults
-export DOTFILES_VAULT_BACKEND=bitwarden   # env layer
-echo '{"vault":{"backend":"pass"}}' > .dotfiles.json  # project layer
-
-dotfiles config get vault.backend
-# → bitwarden (env wins)
-
-dotfiles config show vault.backend
-# Shows all layers and which one is active
-```
-
-Project configs (`.dotfiles.json`) travel with repos. Machine configs (`~/.config/dotfiles/machine.json`) stay local.
-
-## Setup Wizard (v3.0)
-
-The wizard walks through 7 steps:
+The current wizard flow walks through 7 steps:
 
 ```console
 $ curl -fsSL https://raw.githubusercontent.com/blackwell-systems/dotfiles/main/install.sh | bash
@@ -289,7 +299,7 @@ The wizard presents this interactively. Your choice persists in config.
 
 ## Modular Shell Config
 
-Instead of one 1000-line `.zshrc`, there are 20+ modules in `zsh.d/`:
+Instead of one 1000-line `.zshrc`, there are modular files in `zsh.d/`:
 
 ```
 zsh/zsh.d/
@@ -317,20 +327,20 @@ Modules load in order (00-99). Feature guards prevent loading disabled integrati
 
 **This framework:**
 - **Feature Registry** - Modular control plane for all optional components
-- **Hook System** - Extensible automation at 8 lifecycle points
+- **Hook System** - Extensible automation at multiple lifecycle points
 - **Multi-Vault** - Unified API for Bitwarden/1Password/pass
-- **Developer Tools** - Integrated AWS/Rust/Go/Python with 100+ aliases
+- **Developer Tools** - Integrated AWS/Rust/Go/Python with curated aliases
 - **Configuration Layers** - Hierarchical resolution (env > project > machine)
 - **Drift Detection** - Warns before overwriting unsync'd changes
 - **Template Filters** - `{{ var | upper }}` pipeline transformations
 - **Health Checks** - Validates everything, auto-fixes common issues
 - **Claude Portability** - `/workspace` symlink for session sync
 
-Designed for developers who work across machines and need consistency without lock-in.
+Designed for developers who want consistency and control.
 
 ## Integration with dotclaude
 
-If you use [dotclaude](https://github.com/blackwell-systems/dotclaude) for Claude profile management, both systems coordinate automatically.
+**dotclaude and dotfiles are independent.** They integrate cleanly through shared assumptions like `/workspace` and feature gating, but neither requires the other.
 
 - **dotclaude** - Manages Claude configuration (CLAUDE.md, agents, settings)
 - **dotfiles** - Manages secrets, shell, and development environment
@@ -341,18 +351,19 @@ Both respect `/workspace` for portable sessions. Switch Claude contexts with dot
 
 This framework works best if you:
 
-- Work across multiple machines (Mac/Linux/WSL2)
-- Use Claude Code regularly (session portability is the original hook)
-- Need consistent development tools (AWS, Rust, Go, Python)
-- Want secrets synced automatically (Bitwarden/1Password/pass)
-- Value modularity (enable only what you need)
-- Work on both personal and employer projects
+- Want a modular dotfiles system you can grow over time
+- Prefer opt-in features instead of monolithic installs
+- Need vault-backed secrets without committing anything to git
+- Like automation you can understand and control (hooks + doctor)
+- Use AWS/Rust/Go/Python and want consistent helpers
 
-If you don't use Claude Code, most features still apply. The `/workspace` portability is Claude-specific, but vault, hooks, developer tools, and config layers work regardless.
+**If you also use Claude Code or work across machines, the `/workspace` portability becomes a genuinely great bonus.**
+
+If you don't use Claude or don't switch machines, you still get a clean feature registry, hooks, vault-backed secrets, and layered config.
 
 ## Try Before You Trust
 
-Test in a disposable container first:
+Test in a disposable container first (if you publish the lite image):
 
 ```bash
 docker run -it --rm ghcr.io/blackwell-systems/dotfiles-lite
@@ -377,7 +388,7 @@ curl -fsSL https://raw.githubusercontent.com/blackwell-systems/dotfiles/main/ins
 WORKSPACE_TARGET=~/code curl -fsSL https://raw.githubusercontent.com/blackwell-systems/dotfiles/main/install.sh | bash
 ```
 
-The wizard detects your platform, finds available vault CLIs, and prompts for choices. Takes ~5 minutes on a fresh machine.
+The wizard detects your platform, finds available vault CLIs, and prompts for choices. Takes ~2–10 minutes depending on tier selection.
 
 **Started minimal? Add features later:**
 
