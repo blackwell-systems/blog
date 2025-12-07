@@ -1,203 +1,398 @@
 ---
-title: "Stop Losing Your Claude Conversations When Switching Computers"
-date: 2025-12-02
+title: "A Dotfiles Framework Built for Claude Code and Modern Development"
+date: 2025-12-06
 draft: false
-tags: ["dotfiles", "claude-code", "development-environment"]
-description: "The first dotfiles system built for AI-assisted development. Portable Claude Code sessions across machines, multi-vault secret management, and self-healing configuration."
-summary: "Start on Mac, continue on Linux, keep your conversation. The first dotfiles system designed for AI-assisted development with portable Claude Code sessions across machines."
+tags: ["dotfiles", "claude-code", "development-environment", "framework", "automation", "zsh", "rust", "go", "python", "aws"]
+description: "Modular dotfiles framework with Claude Code session portability, multi-vault secrets, developer tool integration (AWS/Rust/Go/Python), extensible hooks, and feature-based control. Built for developers who work across machines."
+summary: "Start on Mac, continue on Linux—same Claude conversation. Plus integrated AWS/Rust/Go/Python tools, extensible hooks, multi-vault secrets, and modular architecture. A framework, not just dotfiles."
 ---
 
-Start on Mac, continue on Linux, same conversation.
+Start on Mac, continue on Linux, same Claude conversation.
 
-That's the promise. Here's how it works.
+That's the hook. But the framework goes further.
 
-## The Problem
+## The Problem That Started It
 
-I use Claude Code across three machines: a Mac laptop, a Lima VM for testing, and occasionally WSL2. Every dotfiles solution I tried had the same issue - Claude Code sessions wouldn't follow me between machines.
+I use Claude Code across three machines: Mac laptop, Lima VM, and WSL2. Claude stores sessions by working directory path. `/Users/me/api` on Mac and `/home/me/api` on Linux are different sessions—different paths mean lost conversation history.
 
-Claude stores sessions based on your working directory path. If you're in `/Users/me/projects/api` on Mac and `/home/me/projects/api` on Linux, those are different sessions. Different paths means lost conversation history when you switch machines.
+I found [this article about migrating Claude sessions](https://www.vincentschmalbach.com/migrate-claude-code-sessions-to-a-new-computer/) and started writing path rewriting scripts. After a few hours, I realized there was a simpler way.
 
-Most solutions suggest syncing `~/.claude` between machines. That works until you realize your home directory path is different on each platform. The session folder names encode the full path, so syncing the directory doesn't help.
-
-I found [this article about migrating Claude Code sessions](https://www.vincentschmalbach.com/migrate-claude-code-sessions-to-a-new-computer/) and started writing scripts to rewrite all my paths according to the approach outlined there. After a few hours of path manipulation logic, I realized there was a better way.
-
-## The Solution
-
-Create a symlink at the root level that's identical across all platforms:
+## The Solution: Root-Level Symlink
 
 ```bash
 /workspace -> ~/workspace
 ```
 
-Now `/workspace/projects/api` resolves correctly on every machine, but Claude sees the same absolute path. Same path means same session folder means your conversation continues.
-
-Here's what this looks like in practice:
+Now `/workspace/api` resolves correctly on every machine, but Claude sees the same absolute path. Same path = same session folder = conversation continues.
 
 ```bash
-# On Mac, working in a project
-cd /workspace/my-api && claude
+# Mac
+cd /workspace/api && claude
 # ... work for an hour, Claude learns your codebase ...
-# exit
 
-# Later, on Linux VM - SAME conversation continues
-cd /workspace/my-api && claude
-# Full history intact. No sync. No export. Just works.
+# Later, Linux VM - SAME conversation
+cd /workspace/api && claude
+# Full history intact. No sync. No export.
 ```
 
-## What This Looks Like In Practice
+That solved Claude portability. But while building this, I needed:
+- Secrets synced across machines (SSH keys, AWS credentials)
+- Shell config that didn't break when switching platforms
+- Developer tools (AWS, Rust, Go, Python) with consistent aliases
+- Health checks to catch broken configs
+- Extensibility without editing core code
 
-Here's the actual setup flow when you run it on a machine with existing credentials:
+That became a framework.
+
+## Architecture: Feature Registry
+
+Everything optional is a feature. Enable what you need, skip what you don't.
+
+```bash
+# See what's available
+dotfiles features
+
+# Enable specific features
+dotfiles features enable vault --persist
+dotfiles features enable aws_helpers
+
+# Apply presets for common setups
+dotfiles features preset claude      # Claude-optimized
+dotfiles features preset developer   # Full dev stack
+dotfiles features preset minimal     # Shell only
+```
+
+**Feature categories:**
+
+**Core** (always enabled):
+- Shell configuration (ZSH, prompt, core aliases)
+
+**Optional** (framework capabilities):
+- `workspace_symlink` - `/workspace` for portable Claude sessions
+- `claude_integration` - Claude Code hooks and settings
+- `vault` - Multi-vault secrets (Bitwarden/1Password/pass)
+- `templates` - Machine-specific configs with filters
+- `hooks` - Lifecycle event system (8 trigger points)
+- `config_layers` - Hierarchical config (env > project > machine > user)
+- `drift_check` - Detect unsync'd changes before overwriting
+- `backup_auto` - Automatic backups before destructive ops
+
+**Integrations** (developer tools):
+- `aws_helpers` - AWS SSO profiles, helpers, tab completion
+- `cdk_tools` - AWS CDK aliases and environment management
+- `rust_tools` - Cargo aliases, clippy, watch, coverage
+- `go_tools` - Go build/test/lint helpers
+- `python_tools` - uv integration, pytest aliases, auto-venv
+- `nvm_integration` - Lazy-loaded Node.js version management
+- `sdkman_integration` - Java/Gradle/Kotlin version management
+- `modern_cli` - eza, bat, ripgrep, fzf, zoxide
+
+Dependencies auto-resolve. Enable `claude_integration` and it enables `workspace_symlink` automatically.
+
+## Developer Tools Integration
+
+The framework includes 100+ aliases and helpers for common development workflows.
+
+### AWS & CDK
+
+```bash
+# AWS SSO with tab completion
+awslogin <TAB>         # Shows available profiles
+awsset production
+
+# CDK shortcuts
+cdkd                   # cdk deploy
+cdks                   # cdk synth
+cdkdf                  # cdk diff
+cdkhotswap api-stack   # Deploy with hotswap
+```
+
+### Rust Development
+
+```bash
+# Cargo shortcuts
+cb                     # cargo build
+cr                     # cargo run
+ct                     # cargo test
+cc                     # cargo check
+cw                     # cargo watch -x check
+
+# Helpers
+rust-new my-project    # Scaffold new project
+rust-lint              # Run clippy with strict settings
+```
+
+### Go Development
+
+```bash
+# Go shortcuts
+gob                    # go build ./...
+got                    # go test ./...
+gof                    # go fmt ./...
+gocover                # Run tests with coverage report
+
+# Helpers
+go-new my-api          # Scaffold new project
+go-lint                # Run golangci-lint
+```
+
+### Python with uv
+
+Built on [uv](https://github.com/astral-sh/uv) for fast Python package management.
+
+```bash
+# uv shortcuts
+uvs                    # uv sync
+uvr script.py          # uv run
+uva package            # uv add
+pt                     # pytest
+ptc                    # pytest with coverage
+
+# Auto-venv activation
+cd my-project          # Prompts: "Activate .venv? [Y/n]"
+# Configurable: notify/auto/off
+```
+
+All tools are **optional integrations**. Enable only what you use.
+
+## Hook System: Extensibility Without Core Edits
+
+The hook system triggers custom scripts at 8 lifecycle points:
+
+```bash
+# Available hooks
+shell_init             # Shell starts
+directory_change       # cd into directory
+pre_vault_pull         # Before pulling secrets
+post_vault_pull        # After pulling secrets
+pre_vault_push         # Before pushing secrets
+post_vault_push        # After pushing secrets
+doctor_check           # Health validation runs
+pre_uninstall          # Before uninstalling
+```
+
+**Example: Auto-activate Python venv on cd**
+
+```bash
+# hooks/10-python-venv.sh
+if [[ -f .venv/bin/activate ]]; then
+    source .venv/bin/activate
+fi
+```
+
+Hooks auto-discover from `~/hooks/` and `.dotfiles-hooks/` in project directories. Priority-based execution (00-99, lower runs first).
+
+```bash
+dotfiles hook list                    # Show all hooks
+dotfiles hook run directory_change    # Test hook manually
+dotfiles hook validate                # Validate all hook scripts
+```
+
+No core file edits needed. Drop scripts in `hooks/`, they run automatically.
+
+## Vault System: Multi-Backend Secrets
+
+Your SSH keys already live in your password manager. Use them directly.
+
+```bash
+# Choose your backend
+dotfiles setup          # Wizard detects Bitwarden/1Password/pass
+
+# Sync secrets
+dotfiles vault pull     # Pull from vault to filesystem
+dotfiles vault push     # Push local changes to vault
+dotfiles vault sync     # Bidirectional sync with drift detection
+```
+
+**Drift detection** warns before overwriting:
+
+```
+⚠ Drift detected:
+  • SSH-GitHub-Personal
+    Vault:  SHA256:abc...
+    Local:  SHA256:def...
+
+Overwrite local with vault? [y/N]:
+```
+
+Secrets never touch git. The vault system uses your existing password manager.
+
+## Configuration Layers
+
+Hierarchical config resolution with 5 layers:
+
+```bash
+# Precedence: env > project > machine > user > defaults
+export DOTFILES_VAULT_BACKEND=bitwarden   # env layer
+echo '{"vault":{"backend":"pass"}}' > .dotfiles.json  # project layer
+
+dotfiles config get vault.backend
+# → bitwarden (env wins)
+
+dotfiles config show vault.backend
+# Shows all layers and which one is active
+```
+
+Project configs (`.dotfiles.json`) travel with repos. Machine configs (`~/.config/dotfiles/machine.json`) stay local.
+
+## Setup Wizard (v3.0)
+
+The wizard walks through 7 steps:
 
 ```console
-$ curl -fsSL ... | bash && dotfiles setup
+$ curl -fsSL https://raw.githubusercontent.com/blackwell-systems/dotfiles/main/install.sh | bash
+$ dotfiles setup
 
-Installing Homebrew...
-Installing packages...
-Linking shell config (.zshrc, .p10k.zsh)...
-Created /workspace symlink for portable Claude sessions
+    ____        __  _____ __
+   / __ \____  / /_/ __(_) /__  _____
+  / / / / __ \/ __/ /_/ / / _ \/ ___/
+ / /_/ / /_/ / /_/ __/ / /  __(__  )
+/_____/\____/\__/_/ /_/_/\___/____/
 
-═══════════════════════════════════════════════════════════════
-                        Setup Wizard
-═══════════════════════════════════════════════════════════════
+Setup Wizard
 
-STEP 3: Vault Configuration
-────────────────────────────────────────────────────────────────
-Available vault backends:
-  1) bitwarden  ← detected
-  2) 1password  ← detected
-  3) pass
-  4) Skip (configure manually)
+Current Status:
+───────────────
+  [ ] Workspace  (Workspace directory)
+  [ ] Symlinks   (Shell config linked)
+  [ ] Packages   (Homebrew packages)
+  [ ] Vault      (Vault backend)
+  [ ] Secrets    (SSH keys, AWS, Git)
+  [ ] Claude     (Claude Code integration)
+  [ ] Templates  (Machine-specific configs)
 
-Select vault backend [1]: 1
+╔═══════════════════════════════════════════════════════════════╗
+║ Step 1 of 7: Workspace
+╠═══════════════════════════════════════════════════════════════╣
+║ ███░░░░░░░░░░░░░░░░ 14%
+╚═══════════════════════════════════════════════════════════════╝
 
-Vault configured (bitwarden)
-Vault unlocked
+Configure workspace directory for portable Claude sessions.
+Default: ~/workspace (symlinked from /workspace)
 
-STEP 4: Secrets Management
-────────────────────────────────────────────────────────────────
-Scanning secrets...
-
-  Local only (not in vault):
-    • SSH-GitHub-Enterprise → ~/.ssh/id_ed25519_enterprise_ghub
-    • SSH-GitHub-Personal → ~/.ssh/id_ed25519_personal
-    • AWS-Config → ~/.aws/config
-    • Git-Config → ~/.gitconfig
-
-Push local secrets to vault? [y/N]: y
-
-Created vault items:
-  ✓ SSH-GitHub-Enterprise
-  ✓ SSH-GitHub-Personal
-  ✓ AWS-Config
-  ✓ Git-Config
-
-STEP 5: Claude Code
-────────────────────────────────────────────────────────────────
-Install Claude Code CLI? [Y/n]: y
-
-  ✓ Downloaded claude CLI
-  ✓ Installed to /usr/local/bin/claude
-  ✓ Verified: claude --version
-
-Setup complete!
+Use default? [Y/n]:
 ```
 
-The wizard detects what you already have (vault CLIs, local secrets) and only asks for decisions. It took about 3 minutes on my Mac.
+Each step is optional. Exit anytime, resume later with `dotfiles setup`.
 
-This required bootstrap scripts that work across macOS, several Linux distros, and WSL2. I also needed them to handle secrets (SSH keys, AWS credentials) without storing them in git.
+### Package Tiers
 
-## The Vault Problem
+Choose your installation size:
 
-Your SSH keys already live in your password manager. Why copy them manually between machines?
+| Tier | Packages | Time | What's Included |
+|------|----------|------|-----------------|
+| **Minimal** | 18 | ~2 min | Essentials (git, zsh, jq) |
+| **Enhanced** | 43 | ~5 min | Modern CLI tools (recommended) |
+| **Full** | 61 | ~10 min | Everything including Docker, Node |
 
-Most dotfiles either ignore secrets or encrypt them in the repository. Ignoring secrets means manually copying SSH keys. Encrypting secrets means your private keys are in version control, even if encrypted.
+The wizard presents this interactively. Your choice persists in config.
 
-The vault system uses where you already store secrets. Bitwarden, 1Password, or pass - pick whichever you already use.
+## Modular Shell Config
 
-New machine? `dotfiles vault restore`. Changed your SSH config? `dotfiles vault sync`. That's it.
+Instead of one 1000-line `.zshrc`, there are 20+ modules in `zsh.d/`:
 
-Unlike chezmoi's one-way templates or traditional dotfiles with secrets in git, this is bidirectional with drift detection. The system warns before overwriting changes you haven't synced.
+```
+zsh/zsh.d/
+├── 00-init.zsh           # Core initialization
+├── 10-environment.zsh    # ENV vars
+├── 20-history.zsh        # History config
+├── 30-completion.zsh     # Tab completion
+├── 40-aliases.zsh        # Aliases
+├── 50-aws.zsh           # AWS helpers (if aws_helpers enabled)
+├── 51-rust.zsh          # Rust tools (if rust_tools enabled)
+└── 90-hooks.zsh          # Hook system integration
+```
 
-No keys in git. No manual copying. Just pull from where you already store secrets.
+Each module handles one thing. Disable per-machine by symlinking to `.skip`:
+
+```bash
+ln -s 50-aws.zsh 50-aws.zsh.skip    # Skip AWS module
+```
+
+Modules load in order (00-99). Feature guards prevent loading disabled integrations.
 
 ## What Makes This Different
 
-Unlike chezmoi (one-way templates) or traditional dotfiles (secrets in git), this provides bidirectional vault sync with drift detection.
+**Most dotfiles:** Configuration files + install script.
 
-Most dotfiles are configuration files with an install script. This is configuration files plus:
+**This framework:**
+- **Feature Registry** - Modular control plane for all optional components
+- **Hook System** - Extensible automation at 8 lifecycle points
+- **Multi-Vault** - Unified API for Bitwarden/1Password/pass
+- **Developer Tools** - Integrated AWS/Rust/Go/Python with 100+ aliases
+- **Configuration Layers** - Hierarchical resolution (env > project > machine)
+- **Drift Detection** - Warns before overwriting unsync'd changes
+- **Template Filters** - `{{ var | upper }}` pipeline transformations
+- **Health Checks** - Validates everything, auto-fixes common issues
+- **Claude Portability** - `/workspace` symlink for session sync
 
-- Multi-vault backend for secrets (unified API across Bitwarden/1Password/pass)
-- Health checker that validates everything and can auto-fix issues
-- Drift detection that warns before overwriting unsync'd changes
-- Schema validation for SSH keys (correct permissions, key formats)
-- Machine-specific templates (one config file becomes many with variables)
-- Claude Code session portability via `/workspace` symlink
-
-The shell configuration is also more maintainable than most. Instead of one 1000-line `.zshrc`, there are 10 modules in `zsh.d/`. Each module handles one thing: environment variables, aliases, AWS helpers, git shortcuts, etc. You can disable modules per-machine by symlinking to `.skip` files.
+Designed for developers who work across machines and need consistency without lock-in.
 
 ## Integration with dotclaude
 
-If you use [dotclaude](https://github.com/blackwell-systems/dotclaude) for profile management, both systems coordinate automatically.
+If you use [dotclaude](https://github.com/blackwell-systems/dotclaude) for Claude profile management, both systems coordinate automatically.
 
-dotclaude manages your Claude configuration (CLAUDE.md files, agents, settings). dotfiles manages secrets and shell environment. They both respect the `/workspace` symlink for portable sessions.
+- **dotclaude** - Manages Claude configuration (CLAUDE.md, agents, settings)
+- **dotfiles** - Manages secrets, shell, and development environment
 
-You can switch between work contexts (OSS, client, employer) with dotclaude while secrets stay synced via dotfiles vault. No manual coordination needed.
+Both respect `/workspace` for portable sessions. Switch Claude contexts with dotclaude while secrets stay synced via dotfiles vault.
 
 ## Who This Is For
 
-This repo works best if you:
+This framework works best if you:
 
-- Use Claude Code regularly across multiple machines
-- Already use a password manager (Bitwarden, 1Password, or pass)
-- Want secrets synced automatically but not in git
-- Need health validation and drift detection
-- Work on macOS, Linux, or WSL2 (or multiple)
+- Work across multiple machines (Mac/Linux/WSL2)
+- Use Claude Code regularly (session portability is the original hook)
+- Need consistent development tools (AWS, Rust, Go, Python)
+- Want secrets synced automatically (Bitwarden/1Password/pass)
+- Value modularity (enable only what you need)
+- Work on both personal and employer projects
 
-If you don't use Claude Code, most of this still works. The vault system, health checks, and modular shell config are useful regardless. The `/workspace` portability is mainly for Claude sessions.
+If you don't use Claude Code, most features still apply. The `/workspace` portability is Claude-specific, but vault, hooks, developer tools, and config layers work regardless.
 
 ## Try Before You Trust
 
-Don't trust random install scripts? Test everything in a disposable container first:
+Test in a disposable container first:
 
 ```bash
 docker run -it --rm ghcr.io/blackwell-systems/dotfiles-lite
 dotfiles status    # Poke around safely
-dotfiles doctor    # See what it checks
+dotfiles doctor    # See health checks
 exit               # Container vanishes
 ```
 
-30-second verification before running anything on your real machine. The container includes the full CLI so you can explore what the system does.
+30-second verification before running on your real machine.
 
 ## Get Started
 
-Pick your path based on trust level:
-
-**Skeptical?** Test in Docker first (above), then install for real.
-
-**Ready?** One-line install + 5 minute wizard:
-
 ```bash
-curl -fsSL \
-  https://raw.githubusercontent.com/blackwell-systems/dotfiles/main/install.sh | bash
+# Full install (recommended for Claude Code users)
+curl -fsSL https://raw.githubusercontent.com/blackwell-systems/dotfiles/main/install.sh | bash
 dotfiles setup
+
+# Minimal install (shell config only, add features later)
+curl -fsSL https://raw.githubusercontent.com/blackwell-systems/dotfiles/main/install.sh | bash -s -- --minimal
+
+# Custom workspace location
+WORKSPACE_TARGET=~/code curl -fsSL https://raw.githubusercontent.com/blackwell-systems/dotfiles/main/install.sh | bash
 ```
 
-**Minimal?** Shell config only (Zsh, CLI tools, aliases). Add vault and Claude integration later:
+The wizard detects your platform, finds available vault CLIs, and prompts for choices. Takes ~5 minutes on a fresh machine.
+
+**Started minimal? Add features later:**
 
 ```bash
-curl -fsSL \
-  https://raw.githubusercontent.com/blackwell-systems/dotfiles/main/install.sh | bash -s -- --minimal
-# Run 'dotfiles setup' later to enable vault and Claude integration
+dotfiles features enable vault --persist        # Enable vault
+dotfiles features enable rust_tools --persist   # Enable Rust tools
+dotfiles features preset developer              # Enable full dev stack
+dotfiles setup                                  # Re-run wizard for vault setup
 ```
-
-The wizard detects your platform, finds available vault CLIs, and prompts for choices. Takes about 5 minutes on a fresh machine.
 
 Full documentation at [blackwell-systems.github.io/dotfiles](https://blackwell-systems.github.io/dotfiles).
 
-## Why I'm Sharing This
+---
 
-I needed this for my own workflow. Maybe you need it too.
-
-The code is MIT licensed. Fork it, modify it, use what works for you.
-
-**Ready?** Install takes 5 minutes. **Skeptical?** Try the Docker test first. **Questions?** [Open an issue on GitHub](https://github.com/blackwell-systems/dotfiles/issues).
+**Code:** [github.com/blackwell-systems/dotfiles](https://github.com/blackwell-systems/dotfiles)
+**Docs:** [blackwell-systems.github.io/dotfiles](https://blackwell-systems.github.io/dotfiles)
+**Changelog:** [CHANGELOG.md](https://github.com/blackwell-systems/dotfiles/blob/main/CHANGELOG.md)
+**License:** MIT

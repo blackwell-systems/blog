@@ -1,5 +1,5 @@
 ---
-title: "Consistent HTTP Error Handling in Go: A Complete Guide with Chi, Gin, and Echo"
+title: "HTTP Error Handling in Go: Chi, Gin, and Echo"
 date: 2025-12-06
 draft: false
 tags: ["go", "golang", "api-design", "error-handling", "http", "rest-api", "chi", "gin", "echo", "middleware"]
