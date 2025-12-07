@@ -3,21 +3,23 @@ title: "From Shell Scripts to Go: Building a Multi-Vault Secret Management Libra
 date: 2025-12-07
 draft: false
 tags: ["go", "golang", "shell-scripting", "zsh", "secret-management", "bitwarden", "1password", "pass", "vault-abstraction", "dotfiles", "cli-tools"]
-description: "We needed multi-vault support without duplicating scripts or breaking existing users—so we designed a vault interface in shell, then ported it 1:1 into Go. Learn about interface-first design, compatibility-preserving rewrites, and when to evolve from shell to Go."
+description: "I needed multi-vault support without duplicating scripts or breaking existing users—so I designed a vault interface in shell, then ported it 1:1 into Go. Learn about interface-first design, compatibility-preserving rewrites, and when to evolve from shell to Go."
 summary: "Started with Bitwarden-only shell scripts. Needed to support 1Password and pass without breaking anything. Built a shell abstraction layer, then ported it to Go. Same interface, three backends, zero breaking changes."
 ---
 
-We needed multi-vault support without duplicating scripts or breaking existing users—so we designed a vault interface in shell, then ported it 1:1 into Go.
+I needed multi-vault support without duplicating scripts or breaking existing users—so I designed a vault interface in shell, then ported it 1:1 into Go.
 
-## What We Built
+## What I Built
 
-We started with Bitwarden-only shell scripts that restored secrets for our dotfiles. It worked until different environments required different vaults: 1Password for teammates, pass for CI and air-gapped servers. Maintaining parallel scripts for every backend wasn't scalable.
+I started with Bitwarden-only shell scripts to restore secrets for my dotfiles. That worked until real-world environments demanded different vaults: 1Password for teammates, pass for CI, and pass again for air-gapped servers. Maintaining parallel scripts wasn't scalable—so I built a vault abstraction in shell and then ported that interface 1:1 into Go.
 
-So we built a vault abstraction in shell with a small, consistent interface—then ported that interface 1:1 into Go. The result is [vaultmux](https://github.com/blackwell-systems/vaultmux): a library that keeps vault choice invisible to consumers, improves performance and testability, and lets the shell and Go implementations coexist without breaking existing workflows.
+The result is [vaultmux](https://github.com/blackwell-systems/vaultmux): a library that keeps vault choice invisible to consumers, improves performance and testability, and lets the shell and Go implementations coexist without breaking existing workflows.
 
-## The Pain: Three Vaults, Zero Portability
+This pattern lets teams change vault policy without rewriting every script that touches secrets.
 
-Our dotfiles started with hardcoded Bitwarden calls:
+## The Pain: Hardcoded Backend Calls
+
+My dotfiles began with hardcoded Bitwarden calls. They were simple, fast to write, and totally locked to one backend:
 
 ```bash
 # vault/restore-ssh.sh (the old way)
@@ -33,10 +35,7 @@ This worked perfectly—until:
 - **CI/CD pipeline** needed `pass` for file-based secrets without cloud dependencies
 - **Air-gapped servers** required `pass` with git-sync (no Bitwarden access)
 
-We had three choices:
-1. Maintain separate scripts for every vault (restore-ssh-bitwarden.sh, restore-ssh-1password.sh, etc.)
-2. Force everyone onto Bitwarden (not happening)
-3. Build an abstraction that makes vault choice transparent
+Maintaining parallel scripts wasn't scalable, and standardizing on one vault wasn't realistic—so I built an abstraction.
 
 ## The Insight: Shared Operations
 
@@ -44,11 +43,11 @@ We had three choices:
 
 That's the click.
 
-If we define a common interface for those operations, consumer code never needs to know which vault it's using. The backend becomes a configuration choice, not a fork in the code.
+If I define a common interface for those operations, consumer code never needs to know which vault it's using. The backend becomes a configuration choice, not a fork in the code.
 
 ## The Shell Interface
 
-We defined the operations every backend must support. Here's the core:
+I defined the operations every backend must support. Here's the core:
 
 ```bash
 # Authentication
@@ -63,7 +62,7 @@ vault_backend_create_item(name, content, session)
 vault_backend_update_item(name, content, session)
 ```
 
-(Full interface: 14 operations covering authentication, CRUD, sync, and location management—see [_interface.md](https://github.com/blackwell-systems/dotfiles/blob/main/vault/backends/_interface.md))
+(Full interface: 14 ops—see [_interface.md](https://github.com/blackwell-systems/dotfiles/blob/main/vault/backends/_interface.md))
 
 The abstraction layer (~600 lines in `lib/_vault.sh`) loads backends dynamically:
 
@@ -97,9 +96,11 @@ echo "$notes" > ~/.ssh/id_ed25519
 chmod 600 ~/.ssh/id_ed25519
 ```
 
-## What We Gained: Zero-Cost Switching
+## What I Gained: Zero-Cost Switching
 
-Here's the real magic—switching vaults requires **zero code changes**:
+This is the point where the abstraction pays for itself.
+
+Switching vaults requires **zero code changes**:
 
 ```bash
 # Before: using Bitwarden
@@ -135,7 +136,7 @@ Bitwarden needs sessions; pass uses gpg-agent. Consumer code never knows the dif
 
 ## Why Shell Hit Its Ceiling
 
-The shell abstraction worked in production for months. But we hit limits:
+The shell abstraction worked in production for months. But I hit limits:
 
 ### Performance: Process Overhead
 
@@ -151,11 +152,11 @@ done
 
 Restoring 15 secrets took ~30 seconds. Users complained.
 
-The win wasn't "Go is magically faster"—it's that **we reduced process churn**. Go spawns the vault CLI once per item (no jq subprocess), uses native JSON parsing, and caches session validation. That dropped restore time to ~1 second (an order-of-magnitude improvement).
+The win wasn't "Go is magically faster"—it's that **I reduced process churn**. Go spawns the vault CLI once per item (no jq subprocess), uses native JSON parsing, and caches session validation. That dropped restore time to ~1-2 seconds (an order-of-magnitude improvement).
 
 ### Testability: No Mocking Framework
 
-Shell tests with `bats` exist, but coverage tools are limited. We had ~60% coverage and couldn't easily improve it. No structured mocking, no type safety.
+Shell tests with `bats` exist, but coverage tools are limited. I had ~60% coverage and couldn't easily improve it. No structured mocking, no type safety.
 
 Go's mock backend made testing trivial:
 
@@ -167,7 +168,7 @@ func TestRestoreSSH(t *testing.T) {
 }
 ```
 
-We hit >90% coverage in the Go version with comprehensive error scenario tests.
+I hit >90% coverage in the Go version with comprehensive error scenario tests.
 
 ### Error Handling: String Parsing
 
@@ -198,22 +199,18 @@ if err := backend.GetItem(ctx, name, session); err != nil {
 
 ## The Go Rewrite: Same Interface, Better Runtime
 
-We ported the shell interface to Go as [vaultmux](https://github.com/blackwell-systems/vaultmux), a standalone library.
+I ported the shell interface to Go as [vaultmux](https://github.com/blackwell-systems/vaultmux), a standalone library.
 
-### Same 14 Operations, Stronger Types
+### Same Operations, Stronger Types
 
-Shell had 14 functions; Go has one interface:
+The full interface mirrors the shell design, with typed sessions and structured errors:
 
 ```go
 type Backend interface {
     Name() string
     Init(ctx context.Context) error
-    Close() error
-
-    IsAuthenticated(ctx context.Context) bool
     Authenticate(ctx context.Context) (Session, error)
 
-    GetItem(ctx context.Context, name string, session Session) (*Item, error)
     GetNotes(ctx context.Context, name string, session Session) (string, error)
     ListItems(ctx context.Context, session Session) ([]*Item, error)
 
@@ -283,7 +280,7 @@ backend, err := vaultmux.New(vaultmux.Config{
 
 ### What "Production-Ready" Means
 
-We shipped vaultmux v0.1.0 with:
+I shipped vaultmux v0.1.0 with:
 
 - **Stable interface** (no breaking changes planned)
 - **Mock backend** included for unit testing
@@ -291,17 +288,17 @@ We shipped vaultmux v0.1.0 with:
 - **Context timeouts** on all operations
 - **>90% test coverage** on core library
 
-This isn't just "it works on my machine"—it's designed for third parties to depend on.
+This isn't just "it works on my machine"—it's designed for third parties to depend on. It's intentionally small, stable, and designed to be embedded.
 
 ## The Migration Strategy: Coexistence
 
 Shipping the Go rewrite as a **separate library** instead of replacing shell scripts in-place meant:
 
 - Existing shell users saw zero breakage
-- We could iterate on Go independently
+- I could iterate on Go independently
 - Shell and Go coexist during transition (strangler fig pattern)
 
-Our dotfiles now use both:
+My dotfiles now use both:
 
 - **Shell scripts** for interactive operations (setup wizard, drift detection)
 - **Go binary** for performance-critical paths (bulk restore, CI/CD)
@@ -326,23 +323,23 @@ In practice, both coexist. Shell scripts aren't going anywhere—the Go version 
 
 ### 1. Interface-First Design Transfers
 
-Defining the 14-operation interface before implementing backends saved months. When we ported to Go, the interface translated 1:1. No architectural surprises.
+Defining the 14-operation interface before implementing backends saved months. When I ported to Go, the interface translated 1:1. No architectural surprises.
 
-### 2. Shell Scripts Scale Further Than You Think
+### 2. Make Rewrites Additive
 
-Shell abstraction worked in production for months before we needed Go. Don't jump to Go prematurely—shell scripts with good design can handle more than you expect.
+Shipping as a separate library (vaultmux) instead of replacing shell scripts meant zero breakage. This is how you ship architectural changes in production—make them additive, not destructive.
+
+### 3. Shell Scripts Scale Further Than You Think
+
+Shell abstraction worked in production for months before I needed Go. Don't jump to Go prematurely—shell scripts with good design can handle more than you expect.
 
 But when performance or testability become blockers, Go is the right evolution target.
 
-### 3. Shell Out to CLIs, Don't Reimplement
+### 4. Shell Out to CLIs, Don't Reimplement
 
-We could have reimplemented Bitwarden's API in Go (talking to their server directly). We chose to shell out to `bw` instead.
+I could have reimplemented Bitwarden's API in Go (talking to their server directly). I chose to shell out to `bw` instead.
 
-Why? **The CLI is battle-tested.** Bitwarden handles auth, encryption, edge cases, API changes. We just coordinate the CLI. Our library is ~300 lines per backend instead of thousands.
-
-### 4. Make Architectural Rewrites Additive
-
-Shipping as a separate library (vaultmux) instead of replacing shell scripts meant zero breakage. This is how you ship architectural changes in production—make them additive, not destructive.
+Why? **The CLI is battle-tested.** Bitwarden handles auth, encryption, edge cases, API changes. I just coordinate the CLI. My library is ~300 lines per backend instead of thousands.
 
 ## Get Started
 
@@ -367,15 +364,28 @@ import (
 func main() {
     ctx := context.Background()
 
-    backend, _ := vaultmux.New(vaultmux.Config{
+    backend, err := vaultmux.New(vaultmux.Config{
         Backend: vaultmux.BackendPass,
     })
+    if err != nil {
+        panic(err)
+    }
     defer backend.Close()
 
-    backend.Init(ctx)
-    session, _ := backend.Authenticate(ctx)
+    if err := backend.Init(ctx); err != nil {
+        panic(err)
+    }
 
-    secret, _ := backend.GetNotes(ctx, "API-Key", session)
+    session, err := backend.Authenticate(ctx)
+    if err != nil {
+        panic(err)
+    }
+
+    secret, err := backend.GetNotes(ctx, "API-Key", session)
+    if err != nil {
+        panic(err)
+    }
+
     fmt.Println("Secret:", secret)
 }
 ```
