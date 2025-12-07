@@ -9,11 +9,11 @@ summary: "Started with Bitwarden-only shell scripts. Needed to support 1Password
 
 ## What I Built
 
-I started with Bitwarden-only shell scripts to restore secrets for my dotfiles. That worked until real-world environments demanded different vaults: 1Password for teammates, pass for CI, and pass again for air-gapped servers. Maintaining parallel scripts wasn't scalable—so I built a vault abstraction in shell and then ported that interface 1:1 into Go.
+I started with Bitwarden-only shell scripts to restore secrets for my dotfiles. That worked fine, but I wanted flexibility to switch backends without rewriting every script—different environments might require different vaults. So I built a vault abstraction in shell and then ported that interface 1:1 into Go.
 
 The result is [vaultmux](https://github.com/blackwell-systems/vaultmux): a library that keeps vault choice invisible to consumers, improves performance and testability, and lets the shell and Go implementations coexist without breaking existing workflows.
 
-This pattern lets teams change vault policy without rewriting every script that touches secrets.
+This pattern means you can change vault backends without rewriting every script that touches secrets.
 
 ## The Lock-In: Hardcoded Backend Calls
 
@@ -27,13 +27,9 @@ echo "$notes" > ~/.ssh/id_ed25519
 chmod 600 ~/.ssh/id_ed25519
 ```
 
-This worked perfectly—until:
+This worked fine for solo use. But I wanted the flexibility to switch backends without rewriting every script. Different environments have different constraints—some can't use cloud vaults, some require specific tools, some need offline-first workflows.
 
-- **A teammate joined** using 1Password (`op`) for corporate policy reasons
-- **The CI/CD pipeline** needed `pass` for file-based secrets without cloud dependencies
-- **Air-gapped servers** required `pass` with git-sync (no Bitwarden access)
-
-Maintaining parallel scripts wasn't scalable, and standardizing on one vault wasn't realistic—so I built an abstraction.
+Rather than wait until I hit a hard constraint, I built the abstraction upfront.
 
 ## The Insight: Shared Operations
 
@@ -148,7 +144,7 @@ for key in "SSH-GitHub" "SSH-GitLab" "SSH-Work"; do
 done
 ```
 
-Restoring 15 secrets took ~30 seconds. Users complained.
+Restoring a dozen secrets took 20-30 seconds on my setup. Not terrible, but slow enough to be annoying during development when I'd reset my environment frequently.
 
 The win wasn't "Go is magically faster"—it's that **I reduced process churn**. Go spawns the vault CLI once per item (no jq subprocess), uses native JSON parsing, and caches session validation. That dropped restore time to ~1-2 seconds (an order-of-magnitude improvement).
 
@@ -292,7 +288,7 @@ This isn't just "it works on my machine"—it's designed for third parties to de
 
 Shipping the Go rewrite as a **separate library** instead of replacing shell scripts in-place meant:
 
-- Existing shell users saw zero breakage
+- My existing shell scripts saw zero breakage
 - I could iterate on Go independently
 - Shell and Go coexist during transition (strangler fig pattern)
 
