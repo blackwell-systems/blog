@@ -6,3 +6,13 @@ body {
   background-repeat: no-repeat;
   background-attachment: fixed;
 }
+
+/* Left-align post titles on listing pages */
+.content .postTitle {
+  text-align: left;
+}
+
+.content {
+  text-align: left !important;
+  justify-content: flex-start !important;
+}
