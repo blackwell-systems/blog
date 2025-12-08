@@ -3,6 +3,7 @@ title: "HTTP Error Handling in Go: Chi, Gin, and Echo"
 date: 2025-12-06
 draft: false
 tags: ["go", "golang", "api-design", "error-handling", "http", "rest-api", "chi", "gin", "echo", "middleware"]
+categories: ["go-libraries", "tutorials"]
 description: "Standardize HTTP error responses in Go with err-envelope. Works with net/http, Chi, Gin, and Echo. Get machine-readable error codes, field validation, trace IDs, and retry signals for better API error handling."
 summary: "Stop returning errors as plain text. Learn how to implement consistent, structured HTTP error responses in Go with support for Chi router, Gin framework, and Echo framework. Includes field-level validation and trace IDs."
 ---

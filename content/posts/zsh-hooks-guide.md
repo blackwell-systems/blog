@@ -3,6 +3,7 @@ title: "ZSH Hooks: Automate Your Shell Without Breaking Your Workflow"
 date: 2025-12-07
 draft: false
 tags: ["zsh", "shell-scripting", "automation", "command-line", "productivity", "terminal", "unix", "linux", "macos", "dotfiles", "precmd", "preexec", "chpwd"]
+categories: ["tutorials", "shell-scripting"]
 description: "Learn how to use ZSH hooks (precmd, preexec, chpwd) to automate your shell. Includes command timing, auto-activate virtualenv, and performance tips."
 summary: "Complete guide to ZSH hooks: automate prompts, time commands, activate virtualenvs on cd, and filter secrets from history—without slowing down your terminal."
 ---

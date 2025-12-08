@@ -3,6 +3,7 @@ title: "A Dotfiles Framework Built for Claude Code and Modern Development"
 date: 2025-12-06
 draft: false
 tags: ["dotfiles", "claude-code", "development-environment", "framework", "automation", "zsh", "rust", "go", "python", "aws"]
+categories: ["developer-tools"]
 description: "Modular dotfiles framework with Claude Code session portability, multi-vault secrets, developer tool integration (AWS/Rust/Go/Python), extensible hooks, and feature-based control. Built for developers who work across machines."
 summary: "Start on Mac, continue on Linux—same Claude conversation. Plus integrated AWS/Rust/Go/Python tools, extensible hooks, multi-vault secrets, and modular architecture. A framework, not just dotfiles."
 ---

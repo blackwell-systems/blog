@@ -3,6 +3,7 @@ title: "From Shell Scripts to Go: Building a Multi-Vault Secret Management Libra
 date: 2025-12-07
 draft: false
 tags: ["go", "golang", "shell-scripting", "zsh", "secret-management", "bitwarden", "1password", "pass", "vault-abstraction", "dotfiles", "cli-tools"]
+categories: ["go-libraries", "tutorials"]
 description: "I needed multi-vault support without duplicating scripts or breaking existing users—so I designed a vault interface in shell, then ported it 1:1 into Go. Learn about interface-first design, compatibility-preserving rewrites, and when to evolve from shell to Go."
 summary: "Started with Bitwarden-only shell scripts. Needed to support 1Password and pass without breaking anything. Built a shell abstraction layer, then ported it to Go. Same interface, three backends, zero breaking changes."
 ---

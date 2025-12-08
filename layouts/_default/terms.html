@@ -1,0 +1,76 @@
+{{ define "main" }}
+<article class="taxonomy-list">
+  <h1>{{ .Title }}</h1>
+
+  <div class="taxonomy-cloud">
+    {{ range $name, $taxonomy := .Site.Taxonomies.tags }}
+      {{ $count := .Count }}
+      {{ $size := add 100 (mul $count 10) }}
+      {{ $size := cond (gt $size 200) 200 $size }}
+      <a href="{{ "/tags/" | relLangURL }}{{ $name | urlize }}"
+         style="font-size: {{ $size }}%;"
+         title="{{ $count }} post{{ if ne $count 1 }}s{{ end }}">
+        {{ $name }}
+        <span class="count">({{ $count }})</span>
+      </a>
+    {{ end }}
+  </div>
+
+  <h2>All Tags</h2>
+  <ul class="taxonomy-terms">
+    {{ range $name, $taxonomy := .Site.Taxonomies.tags }}
+      <li>
+        <a href="{{ "/tags/" | relLangURL }}{{ $name | urlize }}">
+          {{ $name }}
+        </a>
+        <span class="count">{{ .Count }} post{{ if ne .Count 1 }}s{{ end }}</span>
+      </li>
+    {{ end }}
+  </ul>
+</article>
+
+<style>
+.taxonomy-cloud {
+  margin: 2rem 0;
+  padding: 2rem;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 8px;
+  line-height: 2.5;
+}
+
+.taxonomy-cloud a {
+  display: inline-block;
+  margin: 0.5rem;
+  padding: 0.25rem 0.75rem;
+  text-decoration: none;
+  opacity: 0.8;
+  transition: opacity 0.2s;
+}
+
+.taxonomy-cloud a:hover {
+  opacity: 1;
+}
+
+.taxonomy-cloud .count {
+  font-size: 70%;
+  opacity: 0.6;
+  margin-left: 0.25rem;
+}
+
+.taxonomy-terms {
+  list-style: none;
+  padding: 0;
+}
+
+.taxonomy-terms li {
+  padding: 0.5rem 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.taxonomy-terms .count {
+  float: right;
+  opacity: 0.6;
+  font-size: 90%;
+}
+</style>
+{{ end }}

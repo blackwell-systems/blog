@@ -3,6 +3,7 @@ title: "Managing Multiple Claude Code Contexts Without Going Insane"
 date: 2025-12-02
 draft: false
 tags: ["dotclaude", "claude-code", "developer-tools", "productivity"]
+categories: ["developer-tools", "tutorials"]
 description: "Stop manually editing CLAUDE.md when switching between projects. dotclaude manages Claude Code configuration as version-controlled profiles that merge base practices with project-specific context."
 summary: "I work on OSS projects, client work, and employer projects. Each needs different Claude Code configuration. Here's how I stopped manually editing CLAUDE.md every time I switched contexts."
 ---

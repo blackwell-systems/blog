@@ -4,10 +4,16 @@ title = 'Blackwell Systems Blog'
 theme = 'nightfall'
 enableRobotsTXT = true
 
+[taxonomies]
+  tag = "tags"
+  category = "categories"
+
 [params]
-  description = 'Technical writing on developer tools, AI workflows, and dotfiles'
+  description = 'Technical writing on developer tools, automation, and systems programming'
   github = 'blackwell-systems'
-  keywords = ['dotfiles', 'claude code', 'AI development', 'developer tools', 'secret management', 'macOS', 'Linux', 'WSL2']
+  keywords = ['dotfiles', 'claude code', 'developer tools', 'secret management', 'go', 'shell scripting', 'automation']
+  showTags = true
+  showRelated = true
 
 [params.author]
   name = 'Blackwell Systems'

@@ -1,0 +1,43 @@
+{{ if .Params.tags }}
+<div class="post-tags">
+  <span class="tags-label">Tags:</span>
+  {{ range .Params.tags }}
+    <a href="{{ "/tags/" | relLangURL }}{{ . | urlize }}" class="tag">{{ . }}</a>
+  {{ end }}
+</div>
+{{ end }}
+
+{{ if .Params.categories }}
+<div class="post-categories">
+  <span class="categories-label">Categories:</span>
+  {{ range .Params.categories }}
+    <a href="{{ "/categories/" | relLangURL }}{{ . | urlize }}" class="category">{{ . }}</a>
+  {{ end }}
+</div>
+{{ end }}
+
+<style>
+.post-tags, .post-categories {
+  margin: 1rem 0;
+  font-size: 90%;
+}
+
+.tags-label, .categories-label {
+  opacity: 0.6;
+  margin-right: 0.5rem;
+}
+
+.tag, .category {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  margin: 0.25rem;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 4px;
+  text-decoration: none;
+  transition: background 0.2s;
+}
+
+.tag:hover, .category:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+</style>

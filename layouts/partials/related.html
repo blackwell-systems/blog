@@ -1,0 +1,42 @@
+{{ $related := .Site.RegularPages.Related . | first 3 }}
+{{ if $related }}
+<aside class="related-posts">
+  <h3>Related Posts</h3>
+  <ul>
+    {{ range $related }}
+      <li>
+        <a href="{{ .RelPermalink }}">{{ .Title }}</a>
+        <span class="related-meta">{{ .Date.Format "Jan 2, 2006" }}</span>
+      </li>
+    {{ end }}
+  </ul>
+</aside>
+
+<style>
+.related-posts {
+  margin-top: 3rem;
+  padding-top: 2rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.related-posts h3 {
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+}
+
+.related-posts ul {
+  list-style: none;
+  padding: 0;
+}
+
+.related-posts li {
+  margin-bottom: 0.75rem;
+}
+
+.related-meta {
+  opacity: 0.6;
+  font-size: 85%;
+  margin-left: 0.5rem;
+}
+</style>
+{{ end }}
