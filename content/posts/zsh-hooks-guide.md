@@ -2,14 +2,14 @@
 title: "ZSH Hooks: Automate Your Shell Without Breaking Your Workflow"
 date: 2025-12-07
 draft: false
-tags: ["zsh", "shell-scripting", "automation", "command-line", "productivity", "terminal", "unix", "linux", "macos", "dotfiles"]
-description: "Master ZSH hooks to automate repetitive tasks, customize your shell behavior, and build powerful command-line workflows. Learn precmd, preexec, chpwd, and more with practical examples that work in real projects."
-summary: "ZSH hooks let you run code at specific points in your shell lifecycle—before commands execute, after directory changes, on prompt display. Here's how to use them without slowing down your terminal."
+tags: ["zsh", "shell-scripting", "automation", "command-line", "productivity", "terminal", "unix", "linux", "macos", "dotfiles", "precmd", "preexec", "chpwd"]
+description: "Learn how to use ZSH hooks (precmd, preexec, chpwd) to automate your shell. Includes command timing, auto-activate virtualenv, and performance tips."
+summary: "Complete guide to ZSH hooks: automate prompts, time commands, activate virtualenvs on cd, and filter secrets from history—without slowing down your terminal."
 ---
 
-Your terminal shows a git branch in the prompt. Your Python virtualenv activates automatically when you `cd` into a project. Long-running commands show their execution time.
+ZSH hooks are built-in functions that run automatically at specific points in your shell lifecycle. Use them to automate command timing, prompt updates, virtualenv activation, and more—without plugins or performance penalties.
 
-These aren't plugins—they're ZSH hooks. Here's how they work and how to use them without breaking your shell.
+This guide covers all six native ZSH hook types with working examples you can paste into your `.zshrc`.
 
 ## What ZSH Hooks Actually Do
 
@@ -512,6 +512,86 @@ ZSH hooks let you inject clean automation at six key points:
 Use `add-zsh-hook` for clean registration. Keep hooks fast. Cache or background anything that might block.
 
 For structured hook management with ordering, validation, and feature gating, see the [dotfiles hook system documentation](https://github.com/blackwell-systems/dotfiles/blob/main/docs/hooks.md).
+
+## Frequently Asked Questions
+
+### What are ZSH hooks?
+
+ZSH hooks are function arrays built into the shell that execute automatically at specific lifecycle points—before prompts display, before commands run, after directory changes, etc. You add functions to these arrays and ZSH calls them at the right time.
+
+### How do I add a hook to ZSH?
+
+Use `add-zsh-hook` for the cleanest approach:
+
+```zsh
+autoload -Uz add-zsh-hook
+add-zsh-hook precmd my_function_name
+```
+
+Or append directly to the hook array:
+
+```zsh
+precmd_functions+=( my_function_name )
+```
+
+### Why is my ZSH prompt slow after adding hooks?
+
+Hooks run synchronously. If you're making network calls, doing expensive computations, or running slow external commands in `precmd`, every prompt waits for them to complete. Solution: background slow operations with `(command &)` or move them to `periodic` hooks.
+
+### How do I auto-activate Python virtualenv when I cd into a project?
+
+Add this to your `.zshrc`:
+
+```zsh
+autoload -Uz add-zsh-hook
+
+_auto_venv() {
+    [[ -f .venv/bin/activate ]] && source .venv/bin/activate
+}
+
+add-zsh-hook chpwd _auto_venv
+```
+
+### How do I time long-running commands in ZSH?
+
+Use `preexec` to save start time and `precmd` to calculate elapsed time:
+
+```zsh
+autoload -Uz add-zsh-hook
+zmodload zsh/datetime
+
+_timer_preexec() { CMD_START=$EPOCHREALTIME }
+
+_timer_precmd() {
+    [[ -z "$CMD_START" ]] && return
+    local elapsed=$(( EPOCHREALTIME - CMD_START ))
+    (( elapsed > 5 )) && echo "⏱  ${elapsed}s"
+    unset CMD_START
+}
+
+add-zsh-hook preexec _timer_preexec
+add-zsh-hook precmd _timer_precmd
+```
+
+### How do I prevent sensitive commands from being saved to history?
+
+Use `zshaddhistory` to filter commands before they're saved:
+
+```zsh
+_filter_secrets() {
+    [[ "$1" == *"password"* ]] && return 1
+    [[ "$1" == *"secret"* ]] && return 1
+    return 0
+}
+
+zshaddhistory_functions+=( _filter_secrets )
+```
+
+Return 1 to skip saving, 0 to save.
+
+### Can I use ZSH hooks in Bash?
+
+No, ZSH hooks are ZSH-specific. Bash has `PROMPT_COMMAND` for prompt-time hooks but doesn't have equivalents for `preexec`, `chpwd`, or the other ZSH hook types. Consider switching to ZSH for full hook support.
 
 ---
 
