@@ -15,22 +15,27 @@ These aren't plugins—they're ZSH hooks. Here's how they work and how to use th
 
 ZSH hooks are function arrays that execute at specific lifecycle points:
 
-- **Before each prompt displays** (update git status, check background jobs)
+- **Before each prompt displays** (update git status, refresh context)
 - **Before each command runs** (start timing, log commands)
-- **After directory changes** (activate virtualenvs, load project config)
-- **Before adding commands to history** (filter secrets, skip duplicates)
+- **After directory changes** (activate envs, load project config)
+- **Before adding commands to history** (filter secrets)
 - **When the shell exits** (cleanup, save state)
-- **Every N seconds** (periodic checks, refresh data)
+- **Every N seconds** (periodic checks, refresh cached data)
 
 You register functions in these arrays. ZSH calls them automatically at the right time.
 
 ## The Six Core Hook Types
 
-ZSH provides six built-in hook arrays:
+ZSH provides six commonly used built-in hook arrays.
+
+> **Tip:** If you're using `$EPOCHREALTIME`, load the datetime module once:
+> ```zsh
+> zmodload zsh/datetime
+> ```
 
 ### 1. `precmd_functions` — Before Each Prompt
 
-Runs after a command completes but before the prompt displays. Perfect for updating prompt information.
+Runs after a command completes but before the next prompt displays. Perfect for status updates.
 
 ```zsh
 my_precmd() {
@@ -41,30 +46,21 @@ my_precmd() {
 precmd_functions+=( my_precmd )
 ```
 
-**Use cases:**
-- Update git branch in prompt
-- Show current AWS profile
-- Display last command exit status
-- Refresh background job count
+**Use cases:** Update git branch, show AWS profile, display exit status, refresh job count
 
 ### 2. `preexec_functions` — Before Each Command
 
-Runs after you press Enter but before the command executes. Gets the command string as `$1`.
+Runs after you press Enter but before the command executes. Receives the command string as `$1`.
 
 ```zsh
 my_preexec() {
-    # Save command start time
     export CMD_START_TIME=$EPOCHREALTIME
 }
 
 preexec_functions+=( my_preexec )
 ```
 
-**Use cases:**
-- Command timing
-- Log executed commands
-- Send notifications for long-running commands
-- Track command frequency for analytics
+**Use cases:** Command timing, lightweight logging, notifications for long commands, frequency tracking
 
 ### 3. `chpwd_functions` — After Directory Changes
 
@@ -72,7 +68,6 @@ Runs whenever the working directory changes via `cd`, `pushd`, `popd`, etc.
 
 ```zsh
 my_chpwd() {
-    # Auto-activate Python virtualenv
     if [[ -f .venv/bin/activate ]]; then
         source .venv/bin/activate
     fi
@@ -81,138 +76,122 @@ my_chpwd() {
 chpwd_functions+=( my_chpwd )
 ```
 
-**Use cases:**
-- Auto-activate virtualenvs (Python, Node, Ruby)
-- Load project-specific environment variables
-- Update prompt with project context
-- Auto-run project setup scripts
+**Use cases:** Auto-activate envs (Python, Node, Ruby), load project variables, update prompt context, run lightweight setup checks
 
 ### 4. `zshexit_functions` — When Shell Exits
 
-Runs when the shell terminates (closing terminal, `exit` command, logout).
+Runs when the shell terminates.
 
 ```zsh
 my_zshexit() {
-    # Save session history to cloud
-    rsync ~/.zsh_history backup@server:/backups/
+    # Example: archive history locally
+    cp ~/.zsh_history ~/.zsh_history.bak 2>/dev/null
 }
 
 zshexit_functions+=( my_zshexit )
 ```
 
-**Use cases:**
-- Save persistent state
-- Cleanup temporary files
-- Sync history to remote storage
-- Log session duration
+**Use cases:** Save persistent state, cleanup temporary files, log session duration
 
 ### 5. `periodic_functions` — Every N Seconds
 
-Runs every `$PERIOD` seconds (set `PERIOD=300` for 5 minutes).
+Runs every `$PERIOD` seconds.
 
 ```zsh
 PERIOD=300  # 5 minutes
 
 my_periodic() {
-    # Fetch git updates in background
-    (git fetch origin 2>/dev/null &)
+    # Lightweight background refresh
+    (git fetch --quiet 2>/dev/null &)
 }
 
 periodic_functions+=( my_periodic )
 ```
 
-**Use cases:**
-- Background git fetch
-- Check for system updates
-- Refresh cached data
-- Monitor background processes
+**Use cases:** Background git fetch, refresh cached data, check update indicators, monitor background processes
 
 ### 6. `zshaddhistory_functions` — Before Adding to History
 
-Runs before a command is added to history. Return 1 to skip adding, 0 to add.
+Runs before a command is added to history. Return 1 to skip, 0 to add.
 
 ```zsh
 my_zshaddhistory() {
     local cmd="$1"
 
-    # Don't save commands with secrets
     [[ "$cmd" == *"password"* ]] && return 1
-    [[ "$cmd" == *"export AWS_SECRET"* ]] && return 1
+    [[ "$cmd" == *"AWS_SECRET"* ]] && return 1
 
-    return 0  # Add to history
+    return 0
 }
 
 zshaddhistory_functions+=( my_zshaddhistory )
 ```
 
-**Use cases:**
-- Filter sensitive commands (passwords, tokens)
-- Skip trivial commands (`ls`, `pwd`)
-- Deduplicate consecutive identical commands
-- Implement custom history rules
+**Use cases:** Filter sensitive commands, skip trivial commands, deduplicate spammy entries
 
 ## Using `add-zsh-hook` (Recommended)
 
-The `add-zsh-hook` utility provides a cleaner API:
+`add-zsh-hook` offers a cleaner API and avoids some edge cases.
 
 ```zsh
-# Load the utility
 autoload -Uz add-zsh-hook
 
-# Add hooks
-add-zsh-hook precmd my_precmd_function
-add-zsh-hook chpwd my_chpwd_function
+add-zsh-hook precmd my_precmd
+add-zsh-hook chpwd  my_chpwd
 
-# Remove hooks
-add-zsh-hook -d precmd my_precmd_function
+# Remove a hook
+add-zsh-hook -d precmd my_precmd
 ```
-
-This handles edge cases (duplicates, errors) better than raw array manipulation.
 
 ## Real-World Examples
 
 ### Command Timing Display
 
-Show execution time for commands that take longer than 5 seconds:
+Show timing only for commands over 5 seconds:
 
 ```zsh
 autoload -Uz add-zsh-hook
+zmodload zsh/datetime
 
 _timer_preexec() {
-    export CMD_START=$EPOCHREALTIME
+    CMD_START=$EPOCHREALTIME
 }
 
 _timer_precmd() {
-    if [[ -n "$CMD_START" ]]; then
-        local elapsed=$(( EPOCHREALTIME - CMD_START ))
-        if (( elapsed > 5 )); then
-            echo "⏱  ${elapsed}s"
-        fi
-        unset CMD_START
+    [[ -z "$CMD_START" ]] && return
+
+    local elapsed=$(( EPOCHREALTIME - CMD_START ))
+    if (( elapsed > 5 )); then
+        echo "⏱  ${elapsed}s"
     fi
+
+    unset CMD_START
 }
 
 add-zsh-hook preexec _timer_preexec
-add-zsh-hook precmd _timer_precmd
+add-zsh-hook precmd  _timer_precmd
 ```
 
 ### Auto-Activate Python Virtualenv
-
-Automatically source virtualenv when entering a project:
 
 ```zsh
 autoload -Uz add-zsh-hook
 
 _auto_venv() {
-    # Look for virtualenv
     if [[ -f .venv/bin/activate ]]; then
         source .venv/bin/activate
-    elif [[ -f venv/bin/activate ]]; then
+        return
+    fi
+
+    if [[ -f venv/bin/activate ]]; then
         source venv/bin/activate
-    elif [[ -n "$VIRTUAL_ENV" ]]; then
-        # Deactivate if we left a venv directory
-        local venv_dir="${VIRTUAL_ENV%/bin/*}"
-        if [[ "$PWD" != "$venv_dir"* ]]; then
+        return
+    fi
+
+    # Optional: deactivate when leaving a project venv directory
+    if [[ -n "$VIRTUAL_ENV" ]]; then
+        local venv_root="${VIRTUAL_ENV:h}"
+        if [[ "$PWD" != "$venv_root"* ]]; then
             deactivate 2>/dev/null
         fi
     fi
@@ -224,46 +203,36 @@ _auto_venv  # Run once on shell start
 
 ### Smart Git Branch in Prompt
 
-Update prompt with git branch only when in a git repository:
-
 ```zsh
 autoload -Uz add-zsh-hook vcs_info
+setopt prompt_subst
 
 zstyle ':vcs_info:*' enable git
 zstyle ':vcs_info:*' formats ' %b'
 zstyle ':vcs_info:*' actionformats ' %b|%a'
 
 _update_git_prompt() {
+    git rev-parse --git-dir &>/dev/null || return
     vcs_info
 }
 
 add-zsh-hook precmd _update_git_prompt
 
-# In your prompt
-PROMPT='%~ ${vcs_info_msg_0_} %# '
+PROMPT='%~${vcs_info_msg_0_} %# '
 ```
 
 ### Auto-Load Project Environment
 
-Load project-specific environment variables from `.env`:
+This is simple and works—but for complex env management, `direnv` is safer.
 
 ```zsh
 autoload -Uz add-zsh-hook
 
 _load_project_env() {
-    # Unload previous project env
-    if [[ -n "$_LOADED_ENV_FILE" && "$_LOADED_ENV_FILE" != "$PWD/.env" ]]; then
-        # Clear previously set variables (track them yourself or use direnv)
-        unset _LOADED_ENV_FILE
-    fi
-
-    # Load new project env
-    if [[ -f .env ]]; then
-        set -a  # Export all variables
-        source .env
-        set +a
-        export _LOADED_ENV_FILE="$PWD/.env"
-    fi
+    [[ -f .env ]] || return
+    set -a
+    source .env
+    set +a
 }
 
 add-zsh-hook chpwd _load_project_env
@@ -272,29 +241,25 @@ _load_project_env  # Run once on shell start
 
 ### Filter Secrets from History
 
-Prevent commands containing secrets from being saved:
+Conservative, simple filtering. Patterns are intentionally broad to avoid false negatives:
 
 ```zsh
 _filter_secrets() {
     local cmd="$1"
-
-    # Patterns that indicate secrets
     local patterns=(
         'password'
         'secret'
         'token'
         'api_key'
         'AWS_SECRET'
-        'export.*KEY'
+        'export[[:space:]]+.*KEY='
     )
 
     for pattern in "${patterns[@]}"; do
-        if [[ "$cmd" =~ "$pattern" ]]; then
-            return 1  # Don't save to history
-        fi
+        [[ "$cmd" =~ "$pattern" ]] && return 1
     done
 
-    return 0  # Save to history
+    return 0
 }
 
 zshaddhistory_functions+=( _filter_secrets )
@@ -302,26 +267,28 @@ zshaddhistory_functions+=( _filter_secrets )
 
 ## Performance Considerations
 
-Hooks run synchronously and can slow down your shell if not careful.
+Hooks run synchronously and can slow down your shell if you're not careful. **Hooks are the wrong place for network calls unless you cache the results.**
 
-### Bad: Blocks Every Prompt
+### Bad: Block Every Prompt
 
 ```zsh
+autoload -Uz add-zsh-hook
+
 _slow_precmd() {
-    # Network call on every prompt!
     curl -s https://api.example.com/status
 }
 
 add-zsh-hook precmd _slow_precmd
 ```
 
-Every prompt waits for the network call. Your shell feels laggy.
+Network calls on every prompt will make your shell feel broken.
 
 ### Better: Background the Operation
 
 ```zsh
+autoload -Uz add-zsh-hook
+
 _fast_precmd() {
-    # Run in background, don't block prompt
     (curl -s https://api.example.com/status > /tmp/status &)
 }
 
@@ -333,26 +300,27 @@ The prompt displays immediately. The background job completes later.
 ### Best: Use Periodic Hooks
 
 ```zsh
-PERIOD=300  # Every 5 minutes
+PERIOD=300  # 5 minutes
 
 _periodic_check() {
     curl -s https://api.example.com/status > /tmp/status
 }
 
-add-zsh-hook periodic _periodic_check
+periodic_functions+=( _periodic_check )
 ```
 
 Only runs every 5 minutes, not on every prompt.
 
 ### Measure Hook Performance
 
-Find slow hooks:
-
 ```zsh
-# Add timing wrapper
+zmodload zsh/datetime
+
 _time_precmd() {
     local start=$EPOCHREALTIME
-    # Your precmd code here
+
+    # Your real precmd work here
+
     local elapsed=$(( EPOCHREALTIME - start ))
     if (( elapsed > 0.1 )); then
         echo "Warning: precmd took ${elapsed}s" >&2
@@ -360,20 +328,18 @@ _time_precmd() {
 }
 ```
 
-If a hook takes >100ms, it's noticeable. Optimize or background it.
+Anything consistently above ~100ms will be noticeable.
 
 ## Advanced Patterns
 
 ### Conditional Hook Execution
 
-Only run hooks when needed:
-
 ```zsh
+autoload -Uz add-zsh-hook vcs_info
+
 _smart_precmd() {
-    # Only update git info if in a git repo
-    if git rev-parse --git-dir &>/dev/null; then
-        vcs_info
-    fi
+    git rev-parse --git-dir &>/dev/null || return
+    vcs_info
 }
 
 add-zsh-hook precmd _smart_precmd
@@ -381,93 +347,75 @@ add-zsh-hook precmd _smart_precmd
 
 ### Stateful Hooks
 
-Track state between hook calls:
-
 ```zsh
-typeset -g _last_pwd=""
+autoload -Uz add-zsh-hook
+
+typeset -g _last_project=""
 
 _detect_project_change() {
-    # Only act on project root changes
-    local project_root=$(git rev-parse --show-toplevel 2>/dev/null)
+    local project_root
+    project_root=$(git rev-parse --show-toplevel 2>/dev/null) || return
 
-    if [[ "$project_root" != "$_last_pwd" ]]; then
-        _last_pwd="$project_root"
-        echo "Entered project: $(basename "$project_root")"
-        # Load project-specific config
+    if [[ "$project_root" != "$_last_project" ]]; then
+        _last_project="$project_root"
+        echo "Entered project: ${project_root:t}"
     fi
 }
 
 add-zsh-hook chpwd _detect_project_change
 ```
 
-### Async Hooks
+### Async Hooks (Experimental)
 
-Use `zsh/zpty` module for truly async hooks:
+ZSH can do async patterns, but most users should reach for [zsh-async](https://github.com/mafredri/zsh-async) for production use.
 
 ```zsh
 autoload -Uz add-zsh-hook
-
-# Start async worker
 zmodload zsh/zpty
 
 _async_precmd() {
-    # Spawn background process with zpty
-    zpty -b async_worker git fetch origin 2>&1
+    # Example only: be careful not to spam processes
+    zpty -b async_worker git fetch --quiet 2>&1
 }
 
 add-zsh-hook precmd _async_precmd
 ```
 
-(For production use, consider [zsh-async](https://github.com/mafredri/zsh-async) plugin)
+This is experimental—use `zsh-async` if you need reliable async behavior.
 
 ## Debugging Hooks
 
-### List All Registered Hooks
+### List Registered Hooks
 
 ```zsh
-# Show all precmd hooks
 echo $precmd_functions
-
-# Show all chpwd hooks
+echo $preexec_functions
 echo $chpwd_functions
 ```
 
 ### Temporarily Disable Hooks
 
 ```zsh
-# Save hooks
 local saved_precmd=("${precmd_functions[@]}")
-
-# Clear hooks
 precmd_functions=()
 
-# Run command without hooks
+# Run something "clean"
 some_command
 
-# Restore hooks
 precmd_functions=("${saved_precmd[@]}")
 ```
 
-### Debug Hook Execution
+### Trace Hook Execution
 
 ```zsh
-# Trace hook calls
 setopt XTRACE
-
-# Run a command (shows all hook execution)
-ls
-
-# Disable tracing
+ls  # Shows all hook execution
 unsetopt XTRACE
 ```
 
 ## Hook Management at Scale
 
-For complex setups with many hooks, consider a structured approach.
-
-### File-Based Hook Organization
-
-Instead of cramming everything in `.zshrc`:
+### File-Based Organization
 
 ```
 ~/.config/zsh/hooks/
@@ -485,7 +433,6 @@ Instead of cramming everything in `.zshrc`:
 Load them in `.zshrc`:
 
 ```zsh
-# Load all hooks
 for hook_dir in ~/.config/zsh/hooks/*/; do
     for hook_file in "$hook_dir"*.zsh(N); do
         source "$hook_file"
@@ -493,19 +440,19 @@ for hook_dir in ~/.config/zsh/hooks/*/; do
 done
 ```
 
-### Hook System with Feature Gating
+### A Production-Grade Hook System
 
-For a production implementation with enable/disable, ordering, and validation, see the [dotfiles hook system](https://github.com/blackwell-systems/dotfiles/blob/main/docs/hooks.md). It provides:
+If you want ordering, enable/disable control, validation, and visibility at scale, see the [dotfiles hook system](https://github.com/blackwell-systems/dotfiles/blob/main/docs/hooks.md), which provides:
 
 - **Priority-based execution** (00-99 prefixes)
 - **Feature gating** (enable/disable hooks via config)
 - **Validation** (`dotfiles hook validate`)
-- **Testing** (`dotfiles hook test <event>`)
+- **Testing** (`dotfiles hook run <event>`)
 - **Visibility** (`dotfiles hook list`)
 
-Example from that system:
+Example:
 
-```zsh
+```sh
 # ~/.config/dotfiles/hooks/directory_change/10-python-venv.sh
 #!/bin/bash
 
@@ -518,29 +465,21 @@ The numeric prefix (10-) controls execution order. The system handles registrati
 
 ## Common Pitfalls
 
-### 1. Modifying Global State
+### 1. Triggering Infinite Loops
 
 ```zsh
-# BAD: Changes directory in hook
 _bad_chpwd() {
-    cd /tmp  # Infinite loop!
+    cd /tmp  # chpwd triggers another chpwd...
 }
 ```
 
 `chpwd` hooks trigger on `cd`, which causes another `chpwd`, which causes another `cd`...
 
-### 2. Assuming Hooks Run
+### 2. Assuming Hooks Run in Scripts
 
-Hooks don't run in non-interactive shells (scripts, cron jobs):
+Hooks are for *interactive* ZSH sessions. They won't run in non-interactive shells (scripts, cron jobs).
 
-```bash
-#!/bin/bash
-# precmd hooks WON'T run here
-```
-
-Only in interactive ZSH sessions.
-
-### 3. Forgetting to Unset State
+### 3. Leaking State
 
 ```zsh
 _leaky_preexec() {
@@ -549,28 +488,28 @@ _leaky_preexec() {
 }
 ```
 
-Clean up temporary variables in corresponding `precmd`.
+If `preexec` sets globals, make sure `precmd` clears them.
 
 ## When Not to Use Hooks
 
-Hooks aren't always the answer:
+Hooks aren't always the right tool:
 
-- **Expensive operations**: Use cron jobs or systemd timers instead
-- **Critical path operations**: Don't rely on hooks for deployment steps
-- **Cross-shell compatibility**: Hooks are ZSH-specific (Bash uses `PROMPT_COMMAND`)
+- **Expensive operations** → use cron/systemd timers
+- **Critical deployment steps** → don't hide them in shell lifecycle magic
+- **Cross-shell setups** → remember Bash uses `PROMPT_COMMAND`
 
 ## Summary
 
-ZSH hooks let you inject custom behavior at six key points:
+ZSH hooks let you inject clean automation at six key points:
 
-1. **precmd** - Before prompt (update status)
-2. **preexec** - Before command (timing, logging)
-3. **chpwd** - After `cd` (auto-activate envs)
-4. **zshexit** - On shell exit (cleanup)
-5. **periodic** - Every N seconds (background tasks)
-6. **zshaddhistory** - Before history save (filter secrets)
+- `precmd` — before prompt (update status)
+- `preexec` — before command (timing, logging)
+- `chpwd` — after `cd` (env activation)
+- `zshexit` — on exit (cleanup)
+- `periodic` — every N seconds (background refresh)
+- `zshaddhistory` — before history save (filter secrets)
 
-Use `add-zsh-hook` for cleaner management. Background slow operations. Measure performance.
+Use `add-zsh-hook` for clean registration. Keep hooks fast. Cache or background anything that might block.
 
 For structured hook management with ordering, validation, and feature gating, see the [dotfiles hook system documentation](https://github.com/blackwell-systems/dotfiles/blob/main/docs/hooks.md).
 
