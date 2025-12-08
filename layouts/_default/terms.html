@@ -1,6 +1,6 @@
 {{ define "main" }}
 <article class="taxonomy-list">
-  <h1>{{ .Title }}</h1>
+  <h1 style="text-align: left;">{{ .Title }}</h1>
 
   <div class="taxonomy-cloud">
     {{ range $name, $taxonomy := .Site.Taxonomies.tags }}
@@ -30,12 +30,17 @@
 </article>
 
 <style>
+.taxonomy-list {
+  text-align: left;
+}
+
 .taxonomy-cloud {
   margin: 2rem 0;
   padding: 2rem;
   background: rgba(255, 255, 255, 0.03);
   border-radius: 8px;
   line-height: 2.5;
+  text-align: left;
 }
 
 .taxonomy-cloud a {
