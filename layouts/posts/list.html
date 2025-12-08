@@ -1,0 +1,236 @@
+{{ define "main" }}
+<div class="posts-page">
+  <h1>{{ .Title }}</h1>
+
+  <!-- Tag Filter -->
+  <div class="tag-filter">
+    <span class="filter-label">Filter by tag:</span>
+    <button class="tag-filter-btn active" data-tag="all">All Posts</button>
+    {{ $tags := slice }}
+    {{ range .Site.RegularPages }}
+      {{ range .Params.tags }}
+        {{ $tags = $tags | append . }}
+      {{ end }}
+    {{ end }}
+    {{ range ( $tags | uniq | sort ) }}
+      <button class="tag-filter-btn" data-tag="{{ . | urlize }}">{{ . }}</button>
+    {{ end }}
+  </div>
+
+  <!-- Posts List -->
+  <div class="posts-list">
+    {{ range .Pages }}
+      <article class="post-item" data-tags="{{ delimit .Params.tags "," }}">
+        <h2>
+          <a href="{{ .RelPermalink }}">{{ .Title }}</a>
+        </h2>
+        <div class="post-meta">
+          <time datetime="{{ .Date.Format "2006-01-02" }}">
+            {{ .Date.Format "January 2, 2006" }}
+          </time>
+          {{ if .Params.categories }}
+            <span class="categories">
+              {{ range $index, $cat := .Params.categories }}
+                {{ if $index }} · {{ end }}
+                <a href="{{ "/categories/" | relLangURL }}{{ $cat | urlize }}">{{ $cat }}</a>
+              {{ end }}
+            </span>
+          {{ end }}
+        </div>
+        <div class="post-tags">
+          {{ range .Params.tags }}
+            <span class="tag" data-tag="{{ . | urlize }}">{{ . }}</span>
+          {{ end }}
+        </div>
+        <p class="post-summary">{{ .Summary }}</p>
+      </article>
+    {{ end }}
+  </div>
+
+  <div class="no-posts-message" style="display: none;">
+    <p>No posts match the selected tag. <a href="#" onclick="filterPosts('all'); return false;">Show all posts</a></p>
+  </div>
+</div>
+
+<style>
+.posts-page {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+.tag-filter {
+  margin: 2rem 0;
+  padding: 1.5rem;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 8px;
+  border-left: 3px solid rgba(100, 200, 255, 0.5);
+}
+
+.filter-label {
+  display: block;
+  margin-bottom: 0.75rem;
+  opacity: 0.8;
+  font-weight: 600;
+}
+
+.tag-filter-btn {
+  margin: 0.25rem;
+  padding: 0.4rem 0.9rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  color: inherit;
+  cursor: pointer;
+  font-size: 90%;
+  transition: all 0.2s;
+}
+
+.tag-filter-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(100, 200, 255, 0.5);
+}
+
+.tag-filter-btn.active {
+  background: rgba(100, 200, 255, 0.2);
+  border-color: rgba(100, 200, 255, 0.8);
+  font-weight: 600;
+}
+
+.post-item {
+  margin: 2rem 0;
+  padding: 1.5rem;
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 8px;
+  border-left: 3px solid transparent;
+  transition: all 0.3s;
+}
+
+.post-item:hover {
+  background: rgba(255, 255, 255, 0.04);
+  border-left-color: rgba(100, 200, 255, 0.5);
+}
+
+.post-item h2 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.5rem;
+}
+
+.post-item h2 a {
+  text-decoration: none;
+  color: inherit;
+}
+
+.post-meta {
+  opacity: 0.7;
+  font-size: 90%;
+  margin-bottom: 0.75rem;
+}
+
+.post-meta time {
+  margin-right: 1rem;
+}
+
+.post-tags {
+  margin: 0.75rem 0;
+}
+
+.post-tags .tag {
+  display: inline-block;
+  padding: 0.2rem 0.6rem;
+  margin: 0.2rem;
+  background: rgba(100, 200, 255, 0.1);
+  border-radius: 3px;
+  font-size: 85%;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.post-tags .tag:hover {
+  background: rgba(100, 200, 255, 0.2);
+}
+
+.post-summary {
+  opacity: 0.85;
+  line-height: 1.6;
+}
+
+.no-posts-message {
+  text-align: center;
+  padding: 3rem;
+  opacity: 0.6;
+}
+
+.post-item.filtered-out {
+  display: none;
+}
+</style>
+
+<script>
+function filterPosts(selectedTag) {
+  const posts = document.querySelectorAll('.post-item');
+  const buttons = document.querySelectorAll('.tag-filter-btn');
+  const noPostsMsg = document.querySelector('.no-posts-message');
+  let visibleCount = 0;
+
+  // Update button states
+  buttons.forEach(btn => {
+    if (btn.dataset.tag === selectedTag) {
+      btn.classList.add('active');
+    } else {
+      btn.classList.remove('active');
+    }
+  });
+
+  // Filter posts
+  posts.forEach(post => {
+    const postTags = post.dataset.tags.toLowerCase().split(',');
+
+    if (selectedTag === 'all' || postTags.includes(selectedTag.toLowerCase())) {
+      post.classList.remove('filtered-out');
+      visibleCount++;
+    } else {
+      post.classList.add('filtered-out');
+    }
+  });
+
+  // Show/hide no posts message
+  if (visibleCount === 0) {
+    noPostsMsg.style.display = 'block';
+  } else {
+    noPostsMsg.style.display = 'none';
+  }
+
+  // Update URL hash
+  if (selectedTag === 'all') {
+    history.pushState(null, null, window.location.pathname);
+  } else {
+    history.pushState(null, null, '#tag-' + selectedTag);
+  }
+}
+
+// Add click handlers to filter buttons
+document.addEventListener('DOMContentLoaded', function() {
+  document.querySelectorAll('.tag-filter-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+      filterPosts(this.dataset.tag);
+    });
+  });
+
+  // Add click handlers to post tags
+  document.querySelectorAll('.post-tags .tag').forEach(tag => {
+    tag.addEventListener('click', function() {
+      filterPosts(this.dataset.tag);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  });
+
+  // Check URL hash on load
+  const hash = window.location.hash;
+  if (hash.startsWith('#tag-')) {
+    const tag = hash.substring(5);
+    filterPosts(tag);
+  }
+});
+</script>
+{{ end }}
