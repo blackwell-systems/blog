@@ -2,25 +2,43 @@
 <div class="posts-page">
   <h1>{{ .Title }}</h1>
 
-  <!-- Tag Filter -->
+  <!-- Tag Filter with Search -->
   <div class="tag-filter">
-    <span class="filter-label">Filter by tag:</span>
-    <button class="tag-filter-btn active" data-tag="all">All Posts</button>
-    {{ $tags := slice }}
-    {{ range .Site.RegularPages }}
-      {{ range .Params.tags }}
-        {{ $tags = $tags | append . }}
+    <label class="filter-label">
+      <span>Filter by tag:</span>
+      <input type="text"
+             id="tag-search"
+             placeholder="Search tags (e.g., 'go', 'shell'...)"
+             autocomplete="off">
+    </label>
+
+    <div class="tag-buttons-wrapper">
+      <button class="tag-filter-btn active" data-tag="all">
+        All Posts <span class="count">({{ len .Pages }})</span>
+      </button>
+      {{ $tagCounts := dict }}
+      {{ range .Site.RegularPages }}
+        {{ range .Params.tags }}
+          {{ $count := index $tagCounts . | default 0 }}
+          {{ $tagCounts = merge $tagCounts (dict . (add $count 1)) }}
+        {{ end }}
       {{ end }}
-    {{ end }}
-    {{ range ( $tags | uniq | sort ) }}
-      <button class="tag-filter-btn" data-tag="{{ . | urlize }}">{{ . }}</button>
-    {{ end }}
+      {{ range $tag, $count := $tagCounts }}
+        <button class="tag-filter-btn" data-tag="{{ $tag | urlize }}" data-count="{{ $count }}">
+          {{ $tag }} <span class="count">({{ $count }})</span>
+        </button>
+      {{ end }}
+    </div>
+
+    <div class="filter-stats">
+      <span id="visible-count">{{ len .Pages }}</span> of {{ len .Pages }} posts
+    </div>
   </div>
 
   <!-- Posts List -->
   <div class="posts-list">
     {{ range .Pages }}
-      <article class="post-item" data-tags="{{ delimit .Params.tags "," }}">
+      <article class="post-item" data-tags="{{ delimit .Params.tags "," }}" data-title="{{ .Title | lower }}">
         <h2>
           <a href="{{ .RelPermalink }}">{{ .Title }}</a>
         </h2>
@@ -79,9 +97,41 @@
 
 .filter-label {
   display: block;
-  margin-bottom: 0.75rem;
-  opacity: 0.8;
+  margin-bottom: 1rem;
   font-weight: 600;
+}
+
+.filter-label span {
+  display: block;
+  margin-bottom: 0.5rem;
+  opacity: 0.8;
+}
+
+#tag-search {
+  width: 100%;
+  max-width: 400px;
+  padding: 0.6rem 1rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  color: inherit;
+  font-size: 100%;
+  transition: all 0.2s;
+}
+
+#tag-search:focus {
+  outline: none;
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(100, 200, 255, 0.5);
+}
+
+.tag-buttons-wrapper {
+  margin: 1rem 0;
+  max-height: 200px;
+  overflow-y: auto;
+  padding: 0.5rem;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
 }
 
 .tag-filter-btn {
@@ -94,6 +144,7 @@
   cursor: pointer;
   font-size: 90%;
   transition: all 0.2s;
+  display: inline-block;
 }
 
 .tag-filter-btn:hover {
@@ -105,6 +156,29 @@
   background: rgba(100, 200, 255, 0.2);
   border-color: rgba(100, 200, 255, 0.8);
   font-weight: 600;
+}
+
+.tag-filter-btn.hidden {
+  display: none;
+}
+
+.tag-filter-btn .count {
+  opacity: 0.6;
+  font-size: 90%;
+  margin-left: 0.25rem;
+}
+
+.filter-stats {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  opacity: 0.7;
+  font-size: 90%;
+}
+
+#visible-count {
+  font-weight: 600;
+  color: rgba(100, 200, 255, 1);
 }
 
 .post-item {
@@ -181,6 +255,7 @@ function filterPosts(selectedTag) {
   const posts = document.querySelectorAll('.post-item');
   const buttons = document.querySelectorAll('.tag-filter-btn');
   const noPostsMsg = document.querySelector('.no-posts-message');
+  const visibleCountEl = document.getElementById('visible-count');
   let visibleCount = 0;
 
   // Update button states
@@ -204,6 +279,9 @@ function filterPosts(selectedTag) {
     }
   });
 
+  // Update visible count
+  visibleCountEl.textContent = visibleCount;
+
   // Show/hide no posts message
   if (visibleCount === 0) {
     noPostsMsg.style.display = 'block';
@@ -219,19 +297,45 @@ function filterPosts(selectedTag) {
   }
 }
 
-// Add click handlers to filter buttons
+function searchTags(query) {
+  const buttons = document.querySelectorAll('.tag-filter-btn:not([data-tag="all"])');
+  const lowerQuery = query.toLowerCase();
+
+  buttons.forEach(btn => {
+    const tagName = btn.textContent.toLowerCase();
+    if (lowerQuery === '' || tagName.includes(lowerQuery)) {
+      btn.classList.remove('hidden');
+    } else {
+      btn.classList.add('hidden');
+    }
+  });
+}
+
+// Initialize
 document.addEventListener('DOMContentLoaded', function() {
+  const tagSearch = document.getElementById('tag-search');
+
+  // Tag search input
+  tagSearch.addEventListener('input', function() {
+    searchTags(this.value);
+  });
+
+  // Click handlers for filter buttons
   document.querySelectorAll('.tag-filter-btn').forEach(btn => {
     btn.addEventListener('click', function() {
       filterPosts(this.dataset.tag);
+      tagSearch.value = '';  // Clear search
+      searchTags('');        // Show all tags
     });
   });
 
-  // Add click handlers to post tags
+  // Click handlers for post tags
   document.querySelectorAll('.post-tags .tag').forEach(tag => {
     tag.addEventListener('click', function() {
       filterPosts(this.dataset.tag);
       window.scrollTo({ top: 0, behavior: 'smooth' });
+      tagSearch.value = '';  // Clear search
+      searchTags('');        // Show all tags
     });
   });
 
@@ -241,6 +345,21 @@ document.addEventListener('DOMContentLoaded', function() {
     const tag = hash.substring(5);
     filterPosts(tag);
   }
+
+  // Sort tag buttons by count (descending)
+  const wrapper = document.querySelector('.tag-buttons-wrapper');
+  const allBtn = document.querySelector('[data-tag="all"]');
+  const tagButtons = Array.from(document.querySelectorAll('.tag-filter-btn:not([data-tag="all"])'));
+
+  tagButtons.sort((a, b) => {
+    const countA = parseInt(a.dataset.count) || 0;
+    const countB = parseInt(b.dataset.count) || 0;
+    return countB - countA;
+  });
+
+  wrapper.innerHTML = '';
+  wrapper.appendChild(allBtn);
+  tagButtons.forEach(btn => wrapper.appendChild(btn));
 });
 </script>
 {{ end }}
