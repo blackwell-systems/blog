@@ -21,7 +21,7 @@ This is the official technical blog for **Blackwell Systems™**, covering:
 - **Developer Tools** – CLI utilities, shell configuration, productivity workflows
 - **AI-Assisted Development** – Claude Code integration, context management, AI workflows
 - **Dotfiles & Configuration** – Cross-platform setup, secret management, machine templates
-- **Open Source Projects** – Deep dives into dotclaude, dotfiles, and other tools
+- **Open Source Projects** – Deep dives into dotclaude, blackdot, and other tools
 
 **Published at:** https://blackwell-systems.github.io/blog/
 

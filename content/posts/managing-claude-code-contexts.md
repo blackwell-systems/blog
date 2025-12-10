@@ -105,11 +105,11 @@ Now when you run Claude Code from that directory, dotclaude automatically activa
 
 ## Integration with dotfiles
 
-If you use [dotfiles](https://github.com/blackwell-systems/dotfiles), both systems coordinate automatically.
+If you use [blackdot](https://github.com/blackwell-systems/blackdot), both systems coordinate automatically.
 
-dotclaude manages Claude configuration (CLAUDE.md, agents, settings). dotfiles manages secrets (SSH keys, AWS credentials) and shell environment. Both respect the `/workspace` symlink for portable sessions across machines.
+dotclaude manages Claude configuration (CLAUDE.md, agents, settings). blackdot manages secrets (SSH keys, AWS credentials) and shell environment. Both respect the `/workspace` symlink for portable sessions across machines.
 
-Switch contexts with dotclaude while secrets stay synced via dotfiles vault. Your OSS SSH key, client AWS credentials, and employer Git config all follow the active profile.
+Switch contexts with dotclaude while secrets stay synced via blackdot vault. Your OSS SSH key, client AWS credentials, and employer Git config all follow the active profile.
 
 ## Multi-Backend Support
 

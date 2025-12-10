@@ -10,7 +10,7 @@ Technical writing on developer tools, automation, and systems programming.
 
 ### Developer Tools
 
-**[dotfiles](https://blackwell-systems.github.io/dotfiles/#/)** - Modular dotfiles framework with multi-vault secrets, Claude Code integration, extensible hooks, and health checks.
+**[blackdot](https://blackwell-systems.github.io/blackdot/#/)** - Modular development framework with multi-vault secrets, Claude Code integration, extensible hooks, and health checks.
 
 **[dotclaude](https://blackwell-systems.github.io/dotclaude/#/)** - Profile manager for Claude Code. Switch between work/personal contexts, multi-backend routing.
 
@@ -27,4 +27,4 @@ Technical writing on developer tools, automation, and systems programming.
 ## Contact
 
 - GitHub: [@blackwell-systems](https://github.com/blackwell-systems)
-- Issues: [dotfiles](https://github.com/blackwell-systems/dotfiles/issues) | [dotclaude](https://github.com/blackwell-systems/dotclaude/issues) | [vaultmux](https://github.com/blackwell-systems/vaultmux/issues) | [err-envelope](https://github.com/blackwell-systems/err-envelope/issues) | [pipeboard](https://github.com/blackwell-systems/pipeboard/issues)
+- Issues: [blackdot](https://github.com/blackwell-systems/blackdot/issues) | [dotclaude](https://github.com/blackwell-systems/dotclaude/issues) | [vaultmux](https://github.com/blackwell-systems/vaultmux/issues) | [err-envelope](https://github.com/blackwell-systems/err-envelope/issues) | [pipeboard](https://github.com/blackwell-systems/pipeboard/issues)

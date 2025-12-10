@@ -1,10 +1,10 @@
 ---
-title: "A Dotfiles Framework Built for Claude Code and Modern Development"
+title: "Blackdot: A Development Framework Built for Claude Code and Modern Development"
 date: 2025-12-06
 draft: false
-tags: ["dotfiles", "claude-code", "development-environment", "framework", "automation", "zsh", "rust", "go", "python", "aws"]
+tags: ["blackdot", "dotfiles", "claude-code", "development-environment", "framework", "automation", "zsh", "rust", "go", "python", "aws"]
 categories: ["developer-tools"]
-description: "Modular dotfiles framework with Claude Code session portability, multi-vault secrets, developer tool integration (AWS/Rust/Go/Python), extensible hooks, and feature-based control. Built for developers who work across machines."
+description: "Blackdot: Modular development framework with Claude Code session portability, multi-vault secrets, developer tool integration (AWS/Rust/Go/Python), extensible hooks, and feature-based control. Built for developers who work across machines."
 summary: "Start on Mac, continue on Linux—same Claude conversation. Plus integrated AWS/Rust/Go/Python tools, extensible hooks, multi-vault secrets, and modular architecture. A framework, not just dotfiles."
 ---
 
@@ -14,7 +14,7 @@ That's how this started.
 
 I solved it with a simple `/workspace → ~/workspace` symlink so Claude sees the same absolute path everywhere.
 
-But the real outcome wasn't just portability. It was a new way to treat dotfiles as a **framework**: a feature registry, multi-vault secrets, layered configuration, and an extensible hook system—all fully opt-in, with no need to fork the core.
+But the real outcome wasn't just portability. It was a new way to treat configuration as a **framework**—Blackdot: a feature registry, multi-vault secrets, layered configuration, and an extensible hook system—all fully opt-in, with no need to fork the core.
 
 **This works great on a single Linux machine too.** The framework's modularity, vault system, hooks, and dev tool integrations stand on their own.
 
@@ -44,7 +44,7 @@ cd /workspace/api && claude
 
 ## From a Portability Hack to a Framework
 
-The `/workspace` trick solved a real problem. The bigger discovery was that dotfiles can be a **control plane**: features, hooks, layered config, and vault-backed state—without forks.
+The `/workspace` trick solved a real problem. The bigger discovery was that configuration can be a **control plane**: features, hooks, layered config, and vault-backed state—without forks.
 
 That solved Claude portability. But while building this, I needed:
 - Secrets synced without storing in git (SSH keys, AWS credentials)
@@ -61,16 +61,16 @@ Everything optional is a feature. Enable what you need, skip what you don't.
 
 ```bash
 # See what's available
-dotfiles features
+blackdot features
 
 # Enable specific features
-dotfiles features enable vault --persist
-dotfiles features enable aws_helpers
+blackdot features enable vault --persist
+blackdot features enable aws_helpers
 
 # Apply presets for common setups
-dotfiles features preset claude      # Claude-optimized
-dotfiles features preset developer   # Full dev stack
-dotfiles features preset minimal     # Shell only
+blackdot features preset claude      # Claude-optimized
+blackdot features preset developer   # Full dev stack
+blackdot features preset minimal     # Shell only
 ```
 
 ### Feature Categories
@@ -127,12 +127,12 @@ if [[ -f .venv/bin/activate ]]; then
 fi
 ```
 
-Hooks auto-discover from `~/hooks/` and `.dotfiles-hooks/` in project directories. Priority-based execution (00-99, lower runs first).
+Hooks auto-discover from `~/hooks/` and `.blackdot-hooks/` in project directories. Priority-based execution (00-99, lower runs first).
 
 ```bash
-dotfiles hook list                    # Show all hooks
-dotfiles hook run directory_change    # Test hook manually
-dotfiles hook validate                # Validate all hook scripts
+blackdot hook list                    # Show all hooks
+blackdot hook run directory_change    # Test hook manually
+blackdot hook validate                # Validate all hook scripts
 ```
 
 No core file edits needed. Drop scripts in `hooks/`, they run automatically.
@@ -143,17 +143,17 @@ Hierarchical config resolution with 5 layers:
 
 ```bash
 # Precedence: env > project > machine > user > defaults
-export DOTFILES_VAULT_BACKEND=bitwarden   # env layer
-echo '{"vault":{"backend":"pass"}}' > .dotfiles.json  # project layer
+export BLACKDOT_VAULT_BACKEND=bitwarden   # env layer
+echo '{"vault":{"backend":"pass"}}' > .blackdot.json  # project layer
 
-dotfiles config get vault.backend
+blackdot config get vault.backend
 # → bitwarden (env wins)
 
-dotfiles config show vault.backend
+blackdot config show vault.backend
 # Shows all layers and which one is active
 ```
 
-Project configs (`.dotfiles.json`) travel with repos. Machine configs (`~/.config/dotfiles/machine.json`) stay local.
+Project configs (`.blackdot.json`) travel with repos. Machine configs (`~/.config/blackdot/machine.json`) stay local.
 
 ## Optional Integrations: AWS/Rust/Go/Python
 
@@ -225,12 +225,12 @@ Your SSH keys already live in your password manager. Use them directly.
 
 ```bash
 # Choose your backend
-dotfiles setup          # Wizard detects Bitwarden/1Password/pass
+blackdot setup          # Wizard detects Bitwarden/1Password/pass
 
 # Sync secrets
-dotfiles vault pull     # Pull from vault to filesystem
-dotfiles vault push     # Push local changes to vault
-dotfiles vault sync     # Bidirectional sync with drift detection
+blackdot vault pull     # Pull from vault to filesystem
+blackdot vault push     # Push local changes to vault
+blackdot vault sync     # Bidirectional sync with drift detection
 ```
 
 **Drift detection** warns before overwriting:
@@ -251,16 +251,16 @@ Secrets never touch git. The vault system uses your existing password manager.
 The current wizard flow walks through 7 steps:
 
 ```console
-$ curl -fsSL https://raw.githubusercontent.com/blackwell-systems/dotfiles/main/install.sh | bash
-$ dotfiles setup
+$ curl -fsSL https://raw.githubusercontent.com/blackwell-systems/blackdot/main/install.sh | bash
+$ blackdot setup
 
-    ____        __  _____ __
-   / __ \____  / /_/ __(_) /__  _____
-  / / / / __ \/ __/ /_/ / / _ \/ ___/
- / /_/ / /_/ / /_/ __/ / /  __(__  )
-/_____/\____/\__/_/ /_/_/\___/____/
+    ____  __           __       __      __
+   / __ )/ /___ ______/ /______/ /___  / /_
+  / __  / / __ `/ ___/ //_/ __  / __ \/ __/
+ / /_/ / / /_/ / /__/ ,< / /_/ / /_/ / /_
+/_____/_/\__,_/\___/_/|_|\__,_/\____/\__/
 
-Setup Wizard
+              Setup Wizard
 
 Current Status:
 ───────────────
@@ -284,7 +284,7 @@ Default: ~/workspace (symlinked from /workspace)
 Use default? [Y/n]:
 ```
 
-Each step is optional. Exit anytime, resume later with `dotfiles setup`.
+Each step is optional. Exit anytime, resume later with `blackdot setup`.
 
 ### Package Tiers
 
@@ -326,7 +326,7 @@ Modules load in order (00-99). Feature guards prevent loading disabled integrati
 
 **Most dotfiles:** Configuration files + install script.
 
-**This framework:**
+**Blackdot:**
 - **Feature Registry** - Modular control plane for all optional components
 - **Hook System** - Extensible automation at multiple lifecycle points
 - **Multi-Vault** - Unified API for Bitwarden/1Password/pass
@@ -341,12 +341,12 @@ Designed for developers who want consistency and control.
 
 ## Integration with dotclaude
 
-**dotclaude and dotfiles are independent.** They integrate cleanly through shared assumptions like `/workspace` and feature gating, but neither requires the other.
+**dotclaude and blackdot are independent.** They integrate cleanly through shared assumptions like `/workspace` and feature gating, but neither requires the other.
 
 - **dotclaude** - Manages Claude configuration (CLAUDE.md, agents, settings)
-- **dotfiles** - Manages secrets, shell, and development environment
+- **blackdot** - Manages secrets, shell, and development environment
 
-Both respect `/workspace` for portable sessions. Switch Claude contexts with dotclaude while secrets stay synced via dotfiles vault.
+Both respect `/workspace` for portable sessions. Switch Claude contexts with dotclaude while secrets stay synced via blackdot vault.
 
 ## Who This Is For
 
@@ -367,9 +367,9 @@ If you don't use Claude or don't switch machines, you still get a clean feature 
 Test in a disposable container first (if you publish the lite image):
 
 ```bash
-docker run -it --rm ghcr.io/blackwell-systems/dotfiles-lite
-dotfiles status    # Poke around safely
-dotfiles doctor    # See health checks
+docker run -it --rm ghcr.io/blackwell-systems/blackdot-lite
+blackdot status    # Poke around safely
+blackdot doctor    # See health checks
 exit               # Container vanishes
 ```
 
@@ -379,14 +379,14 @@ exit               # Container vanishes
 
 ```bash
 # Full install (recommended for Claude Code users)
-curl -fsSL https://raw.githubusercontent.com/blackwell-systems/dotfiles/main/install.sh | bash
-dotfiles setup
+curl -fsSL https://raw.githubusercontent.com/blackwell-systems/blackdot/main/install.sh | bash
+blackdot setup
 
 # Minimal install (shell config only, add features later)
-curl -fsSL https://raw.githubusercontent.com/blackwell-systems/dotfiles/main/install.sh | bash -s -- --minimal
+curl -fsSL https://raw.githubusercontent.com/blackwell-systems/blackdot/main/install.sh | bash -s -- --minimal
 
 # Custom workspace location
-WORKSPACE_TARGET=~/code curl -fsSL https://raw.githubusercontent.com/blackwell-systems/dotfiles/main/install.sh | bash
+WORKSPACE_TARGET=~/code curl -fsSL https://raw.githubusercontent.com/blackwell-systems/blackdot/main/install.sh | bash
 ```
 
 The wizard detects your platform, finds available vault CLIs, and prompts for choices. Takes ~2–10 minutes depending on tier selection.
@@ -394,17 +394,17 @@ The wizard detects your platform, finds available vault CLIs, and prompts for ch
 **Started minimal? Add features later:**
 
 ```bash
-dotfiles features enable vault --persist        # Enable vault
-dotfiles features enable rust_tools --persist   # Enable Rust tools
-dotfiles features preset developer              # Enable full dev stack
-dotfiles setup                                  # Re-run wizard for vault setup
+blackdot features enable vault --persist        # Enable vault
+blackdot features enable rust_tools --persist   # Enable Rust tools
+blackdot features preset developer              # Enable full dev stack
+blackdot setup                                  # Re-run wizard for vault setup
 ```
 
-Full documentation at [blackwell-systems.github.io/dotfiles](https://blackwell-systems.github.io/dotfiles).
+Full documentation at [blackwell-systems.github.io/blackdot](https://blackwell-systems.github.io/blackdot).
 
 ---
 
-**Code:** [github.com/blackwell-systems/dotfiles](https://github.com/blackwell-systems/dotfiles)
-**Docs:** [blackwell-systems.github.io/dotfiles](https://blackwell-systems.github.io/dotfiles)
-**Changelog:** [CHANGELOG.md](https://github.com/blackwell-systems/dotfiles/blob/main/CHANGELOG.md)
+**Code:** [github.com/blackwell-systems/blackdot](https://github.com/blackwell-systems/blackdot)
+**Docs:** [blackwell-systems.github.io/blackdot](https://blackwell-systems.github.io/blackdot)
+**Changelog:** [CHANGELOG.md](https://github.com/blackwell-systems/blackdot/blob/main/CHANGELOG.md)
 **License:** MIT

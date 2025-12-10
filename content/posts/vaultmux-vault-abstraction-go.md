@@ -57,17 +57,17 @@ vault_backend_create_item(name, content, session)
 vault_backend_update_item(name, content, session)
 ```
 
-(Full interface: 14 ops—see [_interface.md](https://github.com/blackwell-systems/dotfiles/blob/main/vault/backends/_interface.md))
+(Full interface: 14 ops—see [_interface.md](https://github.com/blackwell-systems/blackdot/blob/main/vault/backends/_interface.md))
 
 The abstraction layer (~600 lines in `lib/_vault.sh`) loads backends dynamically:
 
 ```bash
 # Get backend from: config file > env var > default
-DOTFILES_VAULT_BACKEND="$(_get_configured_backend)"
+BLACKDOT_VAULT_BACKEND="$(_get_configured_backend)"
 
 # Load backend implementation
 vault_load_backend() {
-    local backend="${1:-$DOTFILES_VAULT_BACKEND}"
+    local backend="${1:-$BLACKDOT_VAULT_BACKEND}"
     source "$VAULT_BACKENDS_DIR/${backend}.sh"
 }
 
@@ -83,7 +83,7 @@ Now the restore script becomes backend-agnostic:
 
 ```bash
 # vault/restore-ssh.sh (the new way)
-source "$DOTFILES_DIR/lib/_vault.sh"
+source "$BLACKDOT_DIR/lib/_vault.sh"
 
 session=$(vault_get_session)              # Works with any backend
 notes=$(vault_get_notes "SSH-GitHub" "$session")
@@ -99,12 +99,12 @@ Switching vaults requires **zero code changes**:
 
 ```bash
 # Before: using Bitwarden
-export DOTFILES_VAULT_BACKEND=bitwarden
-dotfiles vault restore
+export BLACKDOT_VAULT_BACKEND=bitwarden
+blackdot vault restore
 
 # Later: corp policy requires 1Password
-export DOTFILES_VAULT_BACKEND=1password
-dotfiles vault restore  # Same command, different vault
+export BLACKDOT_VAULT_BACKEND=1password
+blackdot vault restore  # Same command, different vault
 ```
 
 Consumer code (`restore-ssh.sh`, `restore-aws.sh`, etc.) never changes. The backend is a runtime choice.
@@ -122,7 +122,7 @@ vault_backend_get_notes() {
 # vault/backends/pass.sh
 vault_backend_get_notes() {
     local name="$1"
-    local prefix="${DOTFILES_VAULT_PREFIX:-dotfiles}"
+    local prefix="${BLACKDOT_VAULT_PREFIX:-blackdot}"
     pass show "$prefix/$name"
 }
 ```
@@ -293,7 +293,7 @@ Shipping the Go rewrite as a **separate library** instead of replacing shell scr
 - I could iterate on Go independently
 - Shell and Go coexist during transition (strangler fig pattern)
 
-My dotfiles now use both:
+Blackdot now uses both:
 
 - **Shell scripts** for interactive operations (setup wizard, drift detection)
 - **Go binary** for performance-critical paths (bulk restore, CI/CD)
@@ -391,7 +391,7 @@ Want to add a new backend? See the [extension guide](https://github.com/blackwel
 
 **Code:** [github.com/blackwell-systems/vaultmux](https://github.com/blackwell-systems/vaultmux)
 
-**Shell version:** [github.com/blackwell-systems/dotfiles](https://github.com/blackwell-systems/dotfiles) (lib/_vault.sh)
+**Shell version:** [github.com/blackwell-systems/blackdot](https://github.com/blackwell-systems/blackdot) (lib/_vault.sh)
 
 **Docs:** [Extension guide](https://github.com/blackwell-systems/vaultmux/blob/main/EXTENDING.md)
 

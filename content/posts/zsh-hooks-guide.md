@@ -2,7 +2,7 @@
 title: "ZSH Hooks: Automate Your Shell Without Breaking Your Workflow"
 date: 2025-12-07
 draft: false
-tags: ["zsh", "shell-scripting", "automation", "command-line", "productivity", "terminal", "unix", "linux", "macos", "dotfiles", "precmd", "preexec", "chpwd"]
+tags: ["zsh", "shell-scripting", "automation", "command-line", "productivity", "terminal", "unix", "linux", "macos", "blackdot", "dotfiles", "precmd", "preexec", "chpwd"]
 categories: ["tutorials", "shell-scripting"]
 description: "Learn how to use ZSH hooks (precmd, preexec, chpwd) to automate your shell. Includes command timing, auto-activate virtualenv, and performance tips."
 summary: "Complete guide to ZSH hooks: automate prompts, time commands, activate virtualenvs on cd, and filter secrets from history—without slowing down your terminal."
@@ -443,18 +443,18 @@ done
 
 ### A Production-Grade Hook System
 
-If you want ordering, enable/disable control, validation, and visibility at scale, see the [dotfiles hook system](https://github.com/blackwell-systems/dotfiles/blob/main/docs/hooks.md), which provides:
+If you want ordering, enable/disable control, validation, and visibility at scale, see the [blackdot hook system](https://github.com/blackwell-systems/blackdot/blob/main/docs/hooks.md), which provides:
 
 - **Priority-based execution** (00-99 prefixes)
 - **Feature gating** (enable/disable hooks via config)
-- **Validation** (`dotfiles hook validate`)
-- **Testing** (`dotfiles hook run <event>`)
-- **Visibility** (`dotfiles hook list`)
+- **Validation** (`blackdot hook validate`)
+- **Testing** (`blackdot hook run <event>`)
+- **Visibility** (`blackdot hook list`)
 
 Example:
 
 ```sh
-# ~/.config/dotfiles/hooks/directory_change/10-python-venv.sh
+# ~/.config/blackdot/hooks/directory_change/10-python-venv.sh
 #!/bin/bash
 
 if [[ -f .venv/bin/activate ]]; then
@@ -512,7 +512,7 @@ ZSH hooks let you inject clean automation at six key points:
 
 Use `add-zsh-hook` for clean registration. Keep hooks fast. Cache or background anything that might block.
 
-For structured hook management with ordering, validation, and feature gating, see the [dotfiles hook system documentation](https://github.com/blackwell-systems/dotfiles/blob/main/docs/hooks.md).
+For structured hook management with ordering, validation, and feature gating, see the [blackdot hook system documentation](https://github.com/blackwell-systems/blackdot/blob/main/docs/hooks.md).
 
 ## Frequently Asked Questions
 
@@ -598,7 +598,7 @@ No, ZSH hooks are ZSH-specific. Bash has `PROMPT_COMMAND` for prompt-time hooks 
 
 **Further Reading:**
 - [ZSH Manual: Hook Functions](http://zsh.sourceforge.net/Doc/Release/Functions.html#Hook-Functions)
-- [dotfiles hook system](https://github.com/blackwell-systems/dotfiles/blob/main/docs/hooks.md)
+- [blackdot hook system](https://github.com/blackwell-systems/blackdot/blob/main/docs/hooks.md)
 - [zsh-async](https://github.com/mafredri/zsh-async) - Production async hooks
 
 **Shell:** ZSH 5.0+
