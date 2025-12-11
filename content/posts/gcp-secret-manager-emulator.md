@@ -4,8 +4,8 @@ date: 2025-12-11
 draft: false
 tags: ["go", "golang", "gcp", "google-cloud", "secret-manager", "grpc", "testing", "ci-cd", "integration-testing", "emulator", "localstack", "mock-server", "offline-development"]
 categories: ["go-libraries", "tutorials", "cloud-development"]
-description: "Couldn't find a LocalStack-equivalent for GCP Secret Manager offline testing. Built a lightweight gRPC emulator in Go that implements the official API—no credentials, no network, works with the real SDK. Learn how to build cloud service emulators."
-summary: "Needed offline GCP Secret Manager testing for CI/CD pipelines. Existing solutions were either too heavy or incomplete. Built a standalone gRPC emulator that works with the official Go SDK—zero credentials, zero network calls, 100% local."
+description: "Couldn't find a LocalStack-equivalent for GCP Secret Manager offline testing. Built a lightweight gRPC emulator in Go that implements the official API--no credentials, no network, works with the real SDK. Learn how to build cloud service emulators."
+summary: "Needed offline GCP Secret Manager testing for CI/CD pipelines. Existing solutions were either too heavy or incomplete. Built a standalone gRPC emulator that works with the official Go SDK--zero credentials, zero network calls, 100% local."
 ---
 
 ## The Problem: Testing Cloud Secrets Locally
@@ -25,11 +25,11 @@ I was building [vaultmux](https://github.com/blackwell-systems/vaultmux), a vaul
 - Mock libraries required changing production code to inject fakes
 - Existing third-party solutions were abandoned or incomplete
 
-I needed something like LocalStack but specifically for GCP Secret Manager—a drop-in replacement that speaks the real gRPC protocol.
+I needed something like LocalStack but specifically for GCP Secret Manager--a drop-in replacement that speaks the real gRPC protocol.
 
 ## The Solution: A Lightweight gRPC Emulator
 
-I built a standalone gRPC server that implements the Google Cloud Secret Manager v1 API. It's not a mock or a fake—it's a real gRPC server using the official protobuf definitions from Google's API.
+I built a standalone gRPC server that implements the Google Cloud Secret Manager v1 API. It's not a mock or a fake--it's a real gRPC server using the official protobuf definitions from Google's API.
 
 The result: [gcp-secret-manager-emulator](https://github.com/blackwell-systems/gcp-secret-manager-emulator)
 
@@ -38,7 +38,7 @@ The result: [gcp-secret-manager-emulator](https://github.com/blackwell-systems/g
 - Runs as a standalone binary or Docker container
 - Works with official GCP SDKs (Go, Python, Node.js, etc.)
 - In-memory storage (thread-safe with sync.RWMutex)
-- Zero configuration—just start the server and point your SDK at localhost:9090
+- Zero configuration--just start the server and point your SDK at localhost:9090
 
 **What it doesn't do:**
 - Authentication/authorization (all requests succeed)
@@ -46,7 +46,7 @@ The result: [gcp-secret-manager-emulator](https://github.com/blackwell-systems/g
 - Encryption at rest
 - Advanced operations (UpdateSecret, IAM policies, version state management)
 
-Those limitations are intentional—for local testing and CI/CD, you don't need them.
+Those limitations are intentional--for local testing and CI/CD, you don't need them.
 
 ## Architecture: How It Works
 
@@ -202,7 +202,7 @@ Real GCP has complex IAM and authentication. For local testing, skip it:
 // Focus on core functionality
 ```
 
-This isn't a security emulator—it's a development tool. Simplify aggressively.
+This isn't a security emulator--it's a development tool. Simplify aggressively.
 
 ## Real-World Usage
 

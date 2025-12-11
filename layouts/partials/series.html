@@ -1,7 +1,7 @@
 {{ if .Params.series }}
 {{ $seriesName := index .Params.series 0 }}
 {{ $posts := where .Site.RegularPages ".Params.series" "intersect" .Params.series }}
-{{ $posts = $posts | sort ".Params.seriesOrder" "asc" }}
+{{ $posts = sort $posts ".Params.seriesOrder" }}
 
 {{ if gt (len $posts) 1 }}
 <div class="series-box">

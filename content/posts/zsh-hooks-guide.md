@@ -7,10 +7,10 @@ seriesOrder: 1
 tags: ["zsh", "shell-scripting", "automation", "command-line", "productivity", "terminal", "unix", "linux", "macos", "blackdot", "dotfiles", "precmd", "preexec", "chpwd"]
 categories: ["tutorials", "shell-scripting"]
 description: "Learn how to use ZSH hooks (precmd, preexec, chpwd) to automate your shell. Includes command timing, auto-activate virtualenv, and performance tips."
-summary: "Complete guide to ZSH hooks: automate prompts, time commands, activate virtualenvs on cd, and filter secrets from history—without slowing down your terminal."
+summary: "Complete guide to ZSH hooks: automate prompts, time commands, activate virtualenvs on cd, and filter secrets from history--without slowing down your terminal."
 ---
 
-ZSH hooks are built-in functions that run automatically at specific points in your shell lifecycle. Use them to automate command timing, prompt updates, virtualenv activation, and more—without plugins or performance penalties.
+ZSH hooks are built-in functions that run automatically at specific points in your shell lifecycle. Use them to automate command timing, prompt updates, virtualenv activation, and more--without plugins or performance penalties.
 
 This guide covers all six native ZSH hook types with working examples you can paste into your `.zshrc`.
 
@@ -36,7 +36,7 @@ ZSH provides six commonly used built-in hook arrays.
 > zmodload zsh/datetime
 > ```
 
-### 1. `precmd_functions` — Before Each Prompt
+### 1. `precmd_functions` -- Before Each Prompt
 
 Runs after a command completes but before the next prompt displays. Perfect for status updates.
 
@@ -51,7 +51,7 @@ precmd_functions+=( my_precmd )
 
 **Use cases:** Update git branch, show AWS profile, display exit status, refresh job count
 
-### 2. `preexec_functions` — Before Each Command
+### 2. `preexec_functions` -- Before Each Command
 
 Runs after you press Enter but before the command executes. Receives the command string as `$1`.
 
@@ -65,7 +65,7 @@ preexec_functions+=( my_preexec )
 
 **Use cases:** Command timing, lightweight logging, notifications for long commands, frequency tracking
 
-### 3. `chpwd_functions` — After Directory Changes
+### 3. `chpwd_functions` -- After Directory Changes
 
 Runs whenever the working directory changes via `cd`, `pushd`, `popd`, etc.
 
@@ -81,7 +81,7 @@ chpwd_functions+=( my_chpwd )
 
 **Use cases:** Auto-activate envs (Python, Node, Ruby), load project variables, update prompt context, run lightweight setup checks
 
-### 4. `zshexit_functions` — When Shell Exits
+### 4. `zshexit_functions` -- When Shell Exits
 
 Runs when the shell terminates.
 
@@ -96,7 +96,7 @@ zshexit_functions+=( my_zshexit )
 
 **Use cases:** Save persistent state, cleanup temporary files, log session duration
 
-### 5. `periodic_functions` — Every N Seconds
+### 5. `periodic_functions` -- Every N Seconds
 
 Runs every `$PERIOD` seconds.
 
@@ -113,7 +113,7 @@ periodic_functions+=( my_periodic )
 
 **Use cases:** Background git fetch, refresh cached data, check update indicators, monitor background processes
 
-### 6. `zshaddhistory_functions` — Before Adding to History
+### 6. `zshaddhistory_functions` -- Before Adding to History
 
 Runs before a command is added to history. Return 1 to skip, 0 to add.
 
@@ -226,7 +226,7 @@ PROMPT='%~${vcs_info_msg_0_} %# '
 
 ### Auto-Load Project Environment
 
-This is simple and works—but for complex env management, `direnv` is safer.
+This is simple and works--but for complex env management, `direnv` is safer.
 
 ```zsh
 autoload -Uz add-zsh-hook
@@ -384,7 +384,7 @@ _async_precmd() {
 add-zsh-hook precmd _async_precmd
 ```
 
-This is experimental—use `zsh-async` if you need reliable async behavior.
+This is experimental--use `zsh-async` if you need reliable async behavior.
 
 ## Debugging Hooks
 
@@ -505,12 +505,12 @@ Hooks aren't always the right tool:
 
 ZSH hooks let you inject clean automation at six key points:
 
-- `precmd` — before prompt (update status)
-- `preexec` — before command (timing, logging)
-- `chpwd` — after `cd` (env activation)
-- `zshexit` — on exit (cleanup)
-- `periodic` — every N seconds (background refresh)
-- `zshaddhistory` — before history save (filter secrets)
+- `precmd` -- before prompt (update status)
+- `preexec` -- before command (timing, logging)
+- `chpwd` -- after `cd` (env activation)
+- `zshexit` -- on exit (cleanup)
+- `periodic` -- every N seconds (background refresh)
+- `zshaddhistory` -- before history save (filter secrets)
 
 Use `add-zsh-hook` for clean registration. Keep hooks fast. Cache or background anything that might block.
 
@@ -520,7 +520,7 @@ For structured hook management with ordering, validation, and feature gating, se
 
 ### What are ZSH hooks?
 
-ZSH hooks are function arrays built into the shell that execute automatically at specific lifecycle points—before prompts display, before commands run, after directory changes, etc. You add functions to these arrays and ZSH calls them at the right time.
+ZSH hooks are function arrays built into the shell that execute automatically at specific lifecycle points--before prompts display, before commands run, after directory changes, etc. You add functions to these arrays and ZSH calls them at the right time.
 
 ### How do I add a hook to ZSH?
 

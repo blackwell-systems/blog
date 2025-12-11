@@ -5,7 +5,7 @@ draft: false
 tags: ["software-engineering", "release-management", "versioning", "devops", "software-development", "best-practices", "semantic-versioning", "ci-cd", "deployment"]
 categories: ["software-engineering", "best-practices"]
 description: "A complete guide to software release stages from alpha to stable. Learn when to use each stage, which combinations are most popular, and how modern projects structure their release cycles."
-summary: "Alpha, beta, release candidate, stable, LTS—what do they all mean? When are they required? This guide breaks down every stage of the software release cycle with real-world examples and popular strategies."
+summary: "Alpha, beta, release candidate, stable, LTS--what do they all mean? When are they required? This guide breaks down every stage of the software release cycle with real-world examples and popular strategies."
 ---
 
 ## What is a Release Cycle?

@@ -18,14 +18,14 @@ Here's how ZLE (Zsh Line Editor) works and how to create custom keybindings that
 
 ## What is ZLE?
 
-ZLE is ZSH's built-in line editor—the system that handles everything between pressing a key and executing a command. It manages:
+ZLE is ZSH's built-in line editor--the system that handles everything between pressing a key and executing a command. It manages:
 
 - **The command buffer** (what you've typed)
 - **Cursor position** (where you are in the line)
 - **Keybindings** (what each keystroke does)
 - **Editing operations** (insert, delete, move cursor, etc.)
 
-Every keystroke triggers a **widget**—a function that manipulates the buffer. You can create your own widgets and bind them to any key.
+Every keystroke triggers a **widget**--a function that manipulates the buffer. You can create your own widgets and bind them to any key.
 
 ## The Three Core Variables
 
@@ -218,7 +218,7 @@ zle -N fzf-file-widget
 bindkey '^T' fzf-file-widget
 ```
 
-**The magic:** fzf runs in a subprocess, returns the result, and ZLE updates the buffer. No plugin complexity—just pipes and variable manipulation.
+**The magic:** fzf runs in a subprocess, returns the result, and ZLE updates the buffer. No plugin complexity--just pipes and variable manipulation.
 
 ## Building a Simple Fuzzy Finder (No fzf)
 

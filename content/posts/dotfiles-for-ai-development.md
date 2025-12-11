@@ -5,7 +5,7 @@ draft: false
 tags: ["blackdot", "dotfiles", "claude-code", "development-environment", "framework", "automation", "zsh", "rust", "go", "python", "aws"]
 categories: ["developer-tools"]
 description: "Blackdot: Modular development framework with Claude Code session portability, multi-vault secrets, developer tool integration (AWS/Rust/Go/Python), extensible hooks, and feature-based control. Built for developers who work across machines."
-summary: "Start on Mac, continue on Linux—same Claude conversation. Plus integrated AWS/Rust/Go/Python tools, extensible hooks, multi-vault secrets, and modular architecture. A framework, not just dotfiles."
+summary: "Start on Mac, continue on Linux--same Claude conversation. Plus integrated AWS/Rust/Go/Python tools, extensible hooks, multi-vault secrets, and modular architecture. A framework, not just dotfiles."
 ---
 
 Start on Mac, continue on Linux, same Claude conversation.
@@ -14,13 +14,13 @@ That's how this started.
 
 I solved it with a simple `/workspace → ~/workspace` symlink so Claude sees the same absolute path everywhere.
 
-But the real outcome wasn't just portability. It was a new way to treat configuration as a **framework**—Blackdot: a feature registry, multi-vault secrets, layered configuration, and an extensible hook system—all fully opt-in, with no need to fork the core.
+But the real outcome wasn't just portability. It was a new way to treat configuration as a **framework**--Blackdot: a feature registry, multi-vault secrets, layered configuration, and an extensible hook system--all fully opt-in, with no need to fork the core.
 
 **This works great on a single Linux machine too.** The framework's modularity, vault system, hooks, and dev tool integrations stand on their own.
 
 ## The Problem That Started It
 
-I use Claude Code across three machines: Mac laptop, Lima VM, and WSL2. Claude stores sessions by working directory path. `/Users/me/api` on Mac and `/home/me/api` on Linux are different sessions—different paths mean lost conversation history.
+I use Claude Code across three machines: Mac laptop, Lima VM, and WSL2. Claude stores sessions by working directory path. `/Users/me/api` on Mac and `/home/me/api` on Linux are different sessions--different paths mean lost conversation history.
 
 I found [this article about migrating Claude sessions](https://www.vincentschmalbach.com/migrate-claude-code-sessions-to-a-new-computer/) and started writing path rewriting scripts. After a few hours, I realized there was a simpler way.
 
@@ -44,7 +44,7 @@ cd /workspace/api && claude
 
 ## From a Portability Hack to a Framework
 
-The `/workspace` trick solved a real problem. The bigger discovery was that configuration can be a **control plane**: features, hooks, layered config, and vault-backed state—without forks.
+The `/workspace` trick solved a real problem. The bigger discovery was that configuration can be a **control plane**: features, hooks, layered config, and vault-backed state--without forks.
 
 That solved Claude portability. But while building this, I needed:
 - Secrets synced without storing in git (SSH keys, AWS credentials)
@@ -157,7 +157,7 @@ Project configs (`.blackdot.json`) travel with repos. Machine configs (`~/.confi
 
 ## Optional Integrations: AWS/Rust/Go/Python
 
-The framework includes dozens of curated aliases and helpers for common development workflows. All tools are **optional integrations**—enable only what you use.
+The framework includes dozens of curated aliases and helpers for common development workflows. All tools are **optional integrations**--enable only what you use.
 
 ### AWS & CDK
 

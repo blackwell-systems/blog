@@ -4,13 +4,13 @@ date: 2025-12-07
 draft: false
 tags: ["go", "golang", "shell-scripting", "zsh", "secret-management", "bitwarden", "1password", "pass", "vault-abstraction", "dotfiles", "cli-tools"]
 categories: ["go-libraries", "tutorials"]
-description: "I needed multi-vault support without duplicating scripts or breaking existing users—so I designed a vault interface in shell, then ported it 1:1 into Go. Learn about interface-first design, compatibility-preserving rewrites, and when to evolve from shell to Go."
+description: "I needed multi-vault support without duplicating scripts or breaking existing users--so I designed a vault interface in shell, then ported it 1:1 into Go. Learn about interface-first design, compatibility-preserving rewrites, and when to evolve from shell to Go."
 summary: "Started with Bitwarden-only shell scripts. Needed to support 1Password and pass without breaking anything. Built a shell abstraction layer, then ported it to Go. Same interface, three backends, zero breaking changes."
 ---
 
 ## What I Built
 
-I started with Bitwarden-only shell scripts to restore secrets for my dotfiles. That worked fine, but I wanted flexibility to switch backends without rewriting every script—different environments might require different vaults. So I built a vault abstraction in shell and then ported that interface 1:1 into Go.
+I started with Bitwarden-only shell scripts to restore secrets for my dotfiles. That worked fine, but I wanted flexibility to switch backends without rewriting every script--different environments might require different vaults. So I built a vault abstraction in shell and then ported that interface 1:1 into Go.
 
 The result is [vaultmux](https://github.com/blackwell-systems/vaultmux): a library that keeps vault choice invisible to consumers, improves performance and testability, and lets the shell and Go implementations coexist without breaking existing workflows.
 
@@ -28,13 +28,13 @@ echo "$notes" > ~/.ssh/id_ed25519
 chmod 600 ~/.ssh/id_ed25519
 ```
 
-This worked fine for solo use. But I wanted the flexibility to switch backends without rewriting every script. Different environments have different constraints—some can't use cloud vaults, some require specific tools, some need offline-first workflows.
+This worked fine for solo use. But I wanted the flexibility to switch backends without rewriting every script. Different environments have different constraints--some can't use cloud vaults, some require specific tools, some need offline-first workflows.
 
 Rather than wait until I hit a hard constraint, I built the abstraction upfront.
 
 ## The Insight: Shared Operations
 
-**All three vaults do the same things**—store, retrieve, list, sync. They just have different CLIs.
+**All three vaults do the same things**--store, retrieve, list, sync. They just have different CLIs.
 
 That's the click.
 
@@ -42,7 +42,7 @@ If I define a common interface for those operations, consumer code never needs t
 
 ## The Shell Interface
 
-I defined the operations every backend must support. I kept the interface intentionally small and stable—easier to implement, easier to trust. Here's the core:
+I defined the operations every backend must support. I kept the interface intentionally small and stable--easier to implement, easier to trust. Here's the core:
 
 ```bash
 # Authentication
@@ -57,7 +57,7 @@ vault_backend_create_item(name, content, session)
 vault_backend_update_item(name, content, session)
 ```
 
-(Full interface: 14 ops—see [_interface.md](https://github.com/blackwell-systems/blackdot/blob/main/vault/backends/_interface.md))
+(Full interface: 14 ops--see [_interface.md](https://github.com/blackwell-systems/blackdot/blob/main/vault/backends/_interface.md))
 
 The abstraction layer (~600 lines in `lib/_vault.sh`) loads backends dynamically:
 
@@ -147,7 +147,7 @@ done
 
 Restoring a dozen secrets took 20-30 seconds on my setup. Not terrible, but slow enough to be annoying during development when I'd reset my environment frequently.
 
-The win wasn't "Go is magically faster"—it's that **I reduced process churn**. Go spawns the vault CLI once per item (no jq subprocess), uses native JSON parsing, and caches session validation. That dropped restore time to ~1-2 seconds (an order-of-magnitude improvement).
+The win wasn't "Go is magically faster"--it's that **I reduced process churn**. Go spawns the vault CLI once per item (no jq subprocess), uses native JSON parsing, and caches session validation. That dropped restore time to ~1-2 seconds (an order-of-magnitude improvement).
 
 ### Testability: No Mocking Framework
 
@@ -283,7 +283,7 @@ I shipped vaultmux v0.1.0 with:
 - **Context timeouts** on all operations
 - **>90% test coverage** on core library
 
-This isn't just "it works on my machine"—it's designed for third parties to depend on. It's intentionally small, stable, and designed to be embedded.
+This isn't just "it works on my machine"--it's designed for third parties to depend on. It's intentionally small, stable, and designed to be embedded.
 
 ## The Migration Strategy: Coexistence
 
@@ -312,7 +312,7 @@ The shell script calling `vault_get_notes` and the Go program calling `backend.G
 - Type safety helps (complex logic, error scenarios)
 - Comprehensive tests are needed (>90% coverage)
 
-In practice, both coexist. Shell scripts aren't going anywhere—the Go version is additive, not disruptive.
+In practice, both coexist. Shell scripts aren't going anywhere--the Go version is additive, not disruptive.
 
 ## Lessons Learned
 
@@ -322,11 +322,11 @@ Defining the 14-operation interface before implementing backends saved months. W
 
 ### 2. Make Rewrites Additive
 
-Shipping as a separate library (vaultmux) instead of replacing shell scripts meant zero breakage. This is how you ship architectural changes in production—make them additive, not destructive.
+Shipping as a separate library (vaultmux) instead of replacing shell scripts meant zero breakage. This is how you ship architectural changes in production--make them additive, not destructive.
 
 ### 3. Shell Scripts Scale Further Than You Think
 
-Shell abstraction worked in production for months before I needed Go. Don't jump to Go prematurely—shell scripts with good design can handle more than you expect.
+Shell abstraction worked in production for months before I needed Go. Don't jump to Go prematurely--shell scripts with good design can handle more than you expect.
 
 But when performance or testability become blockers, Go is the right evolution target.
 

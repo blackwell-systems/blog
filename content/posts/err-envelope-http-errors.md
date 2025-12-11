@@ -10,7 +10,7 @@ summary: "Stop returning errors as plain text. Learn how to implement consistent
 
 Your Go API returns errors in three different formats. Your mobile app needs three parsing strategies to handle them all.
 
-Here's how to standardize HTTP error handling across your entire Go API—whether you're using net/http, Chi router, Gin framework, or Echo framework.
+Here's how to standardize HTTP error handling across your entire Go API--whether you're using net/http, Chi router, Gin framework, or Echo framework.
 
 ## The Problem
 
@@ -263,7 +263,7 @@ I integrated err-envelope into Pipeboard's mobile backend. Replaced 21 `http.Err
 
 Total time: two hours. The mobile app can now highlight which form fields are invalid and include trace IDs in bug reports.
 
-For a library that's ~300 lines, the impact is disproportionate. That's the sign of a good abstraction—small enough to trust, boring enough to adopt, useful enough to keep.
+For a library that's ~300 lines, the impact is disproportionate. That's the sign of a good abstraction--small enough to trust, boring enough to adopt, useful enough to keep.
 
 ---
 
