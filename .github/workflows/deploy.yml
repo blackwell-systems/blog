@@ -34,10 +34,11 @@ jobs:
           hugo-version: 'latest'
           extended: true
 
-      - name: Install Dart Sass
+      - name: Install Dart Sass Embedded
         run: |
-          curl -LJO https://github.com/sass/dart-sass/releases/download/1.69.5/dart-sass-1.69.5-linux-x64.tar.gz
-          tar -xf dart-sass-1.69.5-linux-x64.tar.gz
+          SASS_VERSION="1.80.7"
+          curl -LJO https://github.com/sass/dart-sass/releases/download/${SASS_VERSION}/dart-sass-${SASS_VERSION}-linux-x64.tar.gz
+          tar -xf dart-sass-${SASS_VERSION}-linux-x64.tar.gz
           echo "$GITHUB_WORKSPACE/dart-sass" >> $GITHUB_PATH
 
       - name: Setup Pages
