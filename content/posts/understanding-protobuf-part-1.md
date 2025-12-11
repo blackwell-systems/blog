@@ -343,9 +343,24 @@ user, err := client.GetUser(ctx, &pb.GetUserRequest{
 
 ## Protobuf Without gRPC: REST APIs
 
-**Common misconception:** Protobuf requires gRPC.
+> **COMMON MISUNDERSTANDING**
+>
+> Many developers think protobuf and gRPC are inseparable - that you can't use one without the other.
+>
+> **This is false.**
+>
+> Protobuf is a serialization format (like JSON). gRPC is an RPC framework that happens to use protobuf. They're separate technologies that work well together but don't require each other.
+>
+> You can use:
+> - Protobuf with REST APIs (HTTP/1.1)
+> - Protobuf with WebSockets
+> - Protobuf with message queues (Kafka, RabbitMQ)
+> - Protobuf for file storage
+> - gRPC with other serialization formats (though protobuf is the standard)
+>
+> Don't skip protobuf just because you don't want gRPC. They're decoupled.
 
-**Reality:** Protobuf is just a serialization format. You can use it with REST APIs, message queues, websockets, or any transport layer.
+Protobuf is just a serialization format. You can use it with REST APIs, message queues, websockets, or any transport layer.
 
 ### REST + Protobuf Example
 
