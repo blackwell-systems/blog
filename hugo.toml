@@ -7,6 +7,7 @@ enableRobotsTXT = true
 [taxonomies]
   tag = "tags"
   category = "categories"
+  series = "series"
 
 [params]
   description = 'Technical writing on developer tools, automation, and systems programming'

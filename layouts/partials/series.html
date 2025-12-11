@@ -1,0 +1,56 @@
+{{ if .Params.series }}
+{{ $seriesName := index .Params.series 0 }}
+{{ $posts := where .Site.RegularPages ".Params.series" "intersect" .Params.series }}
+{{ $posts = $posts | sort ".Params.seriesOrder" "asc" }}
+
+{{ if gt (len $posts) 1 }}
+<div class="series-box">
+  <h3>📚 Series: {{ $seriesName | humanize | title }}</h3>
+  <ol>
+    {{ range $posts }}
+    <li>
+      {{ if eq .Permalink $.Permalink }}
+        <strong>{{ .Title }}</strong> (current)
+      {{ else }}
+        <a href="{{ .Permalink }}">{{ .Title }}</a>
+      {{ end }}
+    </li>
+    {{ end }}
+  </ol>
+</div>
+
+<style>
+.series-box {
+  background: #f5f5f5;
+  border-left: 4px solid #3498db;
+  padding: 1rem 1.5rem;
+  margin: 2rem 0;
+  border-radius: 4px;
+}
+
+.series-box h3 {
+  margin-top: 0;
+  color: #2c3e50;
+}
+
+.series-box ol {
+  margin-bottom: 0;
+}
+
+.series-box li {
+  margin: 0.5rem 0;
+}
+
+@media (prefers-color-scheme: dark) {
+  .series-box {
+    background: #2d3748;
+    border-left-color: #4299e1;
+  }
+
+  .series-box h3 {
+    color: #e2e8f0;
+  }
+}
+</style>
+{{ end }}
+{{ end }}
