@@ -1,7 +1,9 @@
 ---
-title: "ZSH Line Editor (ZLE): Build Custom Keybindings and Understand How fzf Actually Works"
+title: "Mastering ZSH: Part 2 - Line Editor and Custom Widgets"
 date: 2025-12-07
 draft: false
+series: ["mastering-zsh"]
+seriesOrder: 2
 tags: ["zsh", "zle", "fzf", "keybindings", "shell-scripting", "command-line", "productivity", "terminal", "widgets", "automation"]
 categories: ["tutorials", "shell-scripting"]
 description: "Learn ZSH Line Editor (ZLE) to create custom keybindings and widgets. Understand BUFFER, LBUFFER, RBUFFER, and how fzf's Ctrl+R and Ctrl+T actually work under the hood. Includes practical examples you can use immediately."
