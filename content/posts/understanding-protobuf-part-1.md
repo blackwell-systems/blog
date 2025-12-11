@@ -341,7 +341,103 @@ user, err := client.GetUser(ctx, &pb.GetUserRequest{
 // Looks like a local function call, but it's network RPC
 ```
 
-This is what the GCP Secret Manager emulator does - it implements Google's protobuf-defined service interface.
+## Protobuf Without gRPC: REST APIs
+
+**Common misconception:** Protobuf requires gRPC.
+
+**Reality:** Protobuf is just a serialization format. You can use it with REST APIs, message queues, websockets, or any transport layer.
+
+### REST + Protobuf Example
+
+You can build traditional REST APIs using protobuf instead of JSON:
+
+```go
+// Standard REST endpoint with protobuf
+func CreateUser(w http.ResponseWriter, r *http.Request) {
+    // Read protobuf from request body
+    body, _ := io.ReadAll(r.Body)
+
+    var req pb.CreateUserRequest
+    proto.Unmarshal(body, &req)
+
+    // Process request
+    user := &pb.User{
+        Id:    generateID(),
+        Name:  req.Name,
+        Email: req.Email,
+    }
+
+    // Return protobuf response
+    data, _ := proto.Marshal(user)
+    w.Header().Set("Content-Type", "application/x-protobuf")
+    w.Write(data)
+}
+```
+
+**Standard REST structure:**
+```
+POST /api/v1/users          → Create user (protobuf body)
+GET /api/v1/users/123       → Get user (protobuf response)
+PUT /api/v1/users/123       → Update user
+DELETE /api/v1/users/123    → Delete user
+```
+
+Same RESTful URLs and HTTP methods, just binary protobuf bodies instead of JSON text.
+
+### Three Ways to Use Protobuf
+
+**1. REST + Protobuf (HTTP/1.1)**
+- Traditional REST endpoints
+- Protobuf binary bodies
+- Standard HTTP status codes
+- Works with existing proxies and load balancers
+
+**Use when:** You want protobuf performance but need REST semantics or HTTP/1.1 compatibility
+
+**2. gRPC + Protobuf (HTTP/2)**
+- Service definitions in protobuf
+- Generated client/server code
+- Streaming support
+- Maximum performance
+
+**Use when:** Building microservices or need streaming/bidirectional communication
+
+**3. Message Passing + Protobuf**
+- Serialize to bytes, send via Kafka/RabbitMQ/Pub/Sub
+- No HTTP at all
+- Async processing
+
+**Use when:** Event-driven architectures or async workflows
+
+### Why People Think They're Coupled
+
+Most tutorials show protobuf with gRPC because:
+- gRPC is protobuf's most popular use case
+- They were released together
+- Google promotes them as a pair
+
+But they're separate concerns:
+- **Protobuf** = serialization format (like JSON)
+- **gRPC** = RPC framework that happens to use protobuf (like REST frameworks use JSON)
+
+**Analogy:** JSON doesn't require REST. You can send JSON over websockets, message queues, or any transport. Same with protobuf.
+
+### Real Companies Using REST + Protobuf
+
+**Google Cloud APIs:**
+- Offer BOTH gRPC and REST
+- REST endpoints can accept protobuf OR JSON
+- Same protobuf definitions power both
+
+**Twitch:**
+- Uses protobuf for message payloads
+- Sends over WebSocket (not gRPC)
+- Custom protocol, not RPC
+
+**Square:**
+- Internal: gRPC + protobuf
+- Public merchant APIs: REST + JSON
+- Some internal REST APIs: REST + protobuf
 
 ## Real-World Example: Google Cloud
 
@@ -363,9 +459,7 @@ googleapis/
 - Every GCP SDK (Go, Python, Java, etc.) generates from the same `.proto` files
 - Guaranteed API compatibility across languages
 - When Google updates the API, everyone gets the same changes
-- You can build emulators using the official definitions
-
-This is why the GCP Secret Manager emulator is so accurate - it uses Google's official protobuf definitions, not a hand-written mock.
+- Consistent behavior across all languages and platforms
 
 ## The Trade-Off: Schema Management
 
@@ -492,14 +586,28 @@ func main() {
 
 That's it. You're using protobuf.
 
+## Choosing Your Approach: Quick Decision Guide
+
+| Use Case | Best Choice | Why |
+|----------|-------------|-----|
+| **Internal microservices** | gRPC + protobuf | Maximum performance, streaming |
+| **Public web API** | REST + JSON | Browser compatibility, easy debugging |
+| **Mobile backend** | REST + protobuf or gRPC | Reduce bandwidth costs |
+| **Real-time features** | gRPC + protobuf | Bidirectional streaming |
+| **Event processing** | Message queue + protobuf | Async, decoupled |
+| **Legacy integration** | REST + JSON | Widest compatibility |
+| **High throughput** | gRPC + protobuf | Lowest latency |
+
+The key insight: **protobuf is transport-agnostic**. Choose your transport (REST, gRPC, message queue) based on requirements, then decide if protobuf's benefits justify the schema overhead.
+
 ## What's Next
 
 In the next parts of this series, we'll explore:
 
-- **Part 2: gRPC Services** - Building APIs with protobuf
-- **Part 3: Advanced Features** - Oneofs, any types, well-known types
-- **Part 4: Best Practices** - Schema evolution, naming conventions, performance tips
-- **Part 5: Production Use** - Monitoring, debugging, versioning strategies
+- **Part 2: Protobuf in Practice** - Decision matrix, transport combinations, real-world patterns
+- **Part 3: gRPC Deep Dive** - Building services, streaming, client-server code
+- **Part 4: Advanced Features** - Oneofs, any types, well-known types, optimizations
+- **Part 5: Production Patterns** - Schema evolution, versioning, monitoring, debugging
 
 ## When NOT to Use Protobuf
 
