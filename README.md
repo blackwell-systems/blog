@@ -100,12 +100,55 @@ title: "Your Post Title"
 date: 2025-12-02
 draft: false
 tags: ["tag1", "tag2", "tag3"]
+categories: ["tutorials"]
 description: "SEO description (150-160 chars)"
 summary: "Preview text shown in post listings"
 ---
 
 Your content here...
 ```
+
+### Writing a Post Series
+
+To group related posts into a series (like "Part 1", "Part 2", etc.):
+
+```yaml
+---
+title: "Building Go Libraries: Part 1 - Project Structure"
+date: 2025-12-15
+draft: false
+series: ["go-library-development"]
+seriesOrder: 1
+tags: ["go", "golang", "libraries"]
+---
+```
+
+**How it works:**
+- All posts with the same `series` value are grouped together
+- `seriesOrder` controls the display order (1, 2, 3, etc.)
+- A navigation box appears at the top/bottom of each post showing all parts
+- Automatic series page created at `/series/go-library-development/`
+
+**Example series structure:**
+
+```yaml
+# Part 1
+series: ["go-library-development"]
+seriesOrder: 1
+
+# Part 2
+series: ["go-library-development"]
+seriesOrder: 2
+
+# Part 3
+series: ["go-library-development"]
+seriesOrder: 3
+```
+
+**Series naming:**
+- Use kebab-case: `go-library-development`, `production-practices`
+- Keep names short and descriptive
+- Series names are auto-humanized in display ("go-library-development" → "Go Library Development")
 
 ## Theme
 
