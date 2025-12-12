@@ -18,4 +18,56 @@
       tertiaryColor: '#1a365d'
     }
   });
+
+  // Add click-to-expand functionality after mermaid renders
+  document.addEventListener('DOMContentLoaded', function() {
+    setTimeout(() => {
+      const mermaidDivs = document.querySelectorAll('.mermaid');
+
+      mermaidDivs.forEach(div => {
+        div.addEventListener('click', function() {
+          // Create modal
+          const modal = document.createElement('div');
+          modal.className = 'mermaid-modal active';
+
+          // Create close button
+          const closeBtn = document.createElement('span');
+          closeBtn.className = 'mermaid-modal-close';
+          closeBtn.innerHTML = '&times;';
+
+          // Clone the SVG
+          const svg = this.querySelector('svg');
+          if (!svg) return;
+
+          const modalContent = document.createElement('div');
+          modalContent.className = 'mermaid-modal-content';
+          modalContent.appendChild(svg.cloneNode(true));
+
+          modal.appendChild(closeBtn);
+          modal.appendChild(modalContent);
+          document.body.appendChild(modal);
+
+          // Close on click
+          const closeModal = () => {
+            modal.remove();
+          };
+
+          closeBtn.addEventListener('click', closeModal);
+          modal.addEventListener('click', function(e) {
+            if (e.target === modal) {
+              closeModal();
+            }
+          });
+
+          // Close on Escape key
+          document.addEventListener('keydown', function escapeHandler(e) {
+            if (e.key === 'Escape') {
+              closeModal();
+              document.removeEventListener('keydown', escapeHandler);
+            }
+          });
+        });
+      });
+    }, 1000); // Wait for mermaid to finish rendering
+  });
 </script>
