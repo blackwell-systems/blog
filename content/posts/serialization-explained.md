@@ -70,9 +70,9 @@ profile = {
 
 **The key insight:** These objects only exist while your program is running. They live in RAM. When your program exits, they vanish.
 
-<div class="callout info">
-<strong>Key Concept:</strong> Runtime objects are ephemeral. They exist only in memory while your program runs. Once the program exits or the object goes out of scope, it's gone forever. <u>This is why we need serialization to preserve data.</u>
-</div>
+{{< callout type="info" >}}
+**Key Concept:** Runtime objects are ephemeral. They exist only in memory while your program runs. Once the program exits or the object goes out of scope, it's gone forever. <u>This is why we need serialization to preserve data.</u>
+{{< /callout >}}
 
 ---
 
@@ -664,9 +664,9 @@ for i := 0; i < 1000000; i++ {
 
 ### 4. Security Vulnerabilities
 
-<div class="callout danger">
-<strong>Security Warning:</strong> Deserializing untrusted data is dangerous and can lead to remote code execution vulnerabilities. Never deserialize data from untrusted sources without proper validation.
-</div>
+{{< callout type="danger" >}}
+**Security Warning:** Deserializing untrusted data is dangerous and can lead to remote code execution vulnerabilities. Never deserialize data from untrusted sources without proper validation.
+{{< /callout >}}
 
 **Example of dangerous code:**
 

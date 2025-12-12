@@ -189,22 +189,22 @@ Callout blocks highlight important information with colored accents. Four varian
 
 **Usage:**
 
-```html
-<div class="callout info">
-<strong>Title:</strong> Your message here.
-</div>
+```markdown
+{{< callout type="info" >}}
+**Title:** Your message here.
+{{< /callout >}}
 
-<div class="callout warning">
-<strong>Warning:</strong> Something to be careful about.
-</div>
+{{< callout type="warning" >}}
+**Warning:** Something to be careful about.
+{{< /callout >}}
 
-<div class="callout success">
-<strong>Success:</strong> Positive outcome or best practice.
-</div>
+{{< callout type="success" >}}
+**Success:** Positive outcome or best practice.
+{{< /callout >}}
 
-<div class="callout danger">
-<strong>Critical:</strong> Important security or breaking change.
-</div>
+{{< callout type="danger" >}}
+**Critical:** Important security or breaking change.
+{{< /callout >}}
 ```
 
 **Variants:**
@@ -225,9 +225,9 @@ Callout blocks highlight important information with colored accents. Four varian
 **Example in markdown:**
 
 ```markdown
-<div class="callout info">
-<strong>Key Concept:</strong> Runtime objects are ephemeral. <u>This is why we need serialization.</u>
-</div>
+{{< callout type="info" >}}
+**Key Concept:** Runtime objects are ephemeral. <u>This is why we need serialization.</u>
+{{< /callout >}}
 ```
 
 ---
