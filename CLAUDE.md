@@ -175,29 +175,58 @@ Already configured in CSS - just use the shortcode:
 
 **Important:** Always test locally before committing blog posts.
 
-### Setup
+### Quick Start
 
-The blog uses Docker to ensure consistent Hugo versions:
+The blog uses a Dockerfile and Makefile for easy local testing:
 
 ```bash
-# Start Hugo server (from blog root)
-docker-compose up
+# Start Hugo server
+make serve
 
 # Start in background
-docker-compose up -d
+make serve-bg
 
-# View logs
-docker-compose logs -f hugo
+# View logs (if running in background)
+docker logs blog-hugo
 
 # Stop server
-docker-compose down
+make stop
 ```
 
 **Access:** http://localhost:1313/blog/
 
+### Available Make Commands
+
+- `make build` - Build the Docker image
+- `make serve` - Start Hugo server (foreground, interactive)
+- `make serve-bg` - Start Hugo server (background, detached)
+- `make stop` - Stop the Hugo server
+- `make clean` - Remove the Docker image
+
+### Manual Docker Commands
+
+If you prefer not to use Make:
+
+```bash
+# Build image
+docker build -t blog-hugo .
+
+# Run server (foreground)
+docker run --rm -v $(pwd):/src -p 1313:1313 blog-hugo
+
+# Run server (background)
+docker run -d --rm -v $(pwd):/src -p 1313:1313 --name blog-hugo blog-hugo
+
+# View logs
+docker logs blog-hugo
+
+# Stop server
+docker stop blog-hugo
+```
+
 ### Hugo Container Details
 
-- **Image:** `hugomods/hugo:exts`
+- **Base Image:** `hugomods/hugo:exts`
 - **Hugo Version:** v0.152.2+
 - **Port:** 1313
 - **Volume:** Current directory mounted to `/src`
@@ -207,31 +236,26 @@ docker-compose down
 
 The Nightfall theme requires Hugo v0.146.0+, but local installations may be outdated. Docker ensures we always use the correct version without version conflicts.
 
-**Docker configuration is in `docker-compose.yml`:**
+**Dockerfile:**
 
-```yaml
-services:
-  hugo:
-    image: hugomods/hugo:exts
-    command: server --bind 0.0.0.0 --baseURL http://localhost:1313 -D
-    volumes:
-      - .:/src
-    ports:
-      - "1313:1313"
-    environment:
-      - HUGO_ENV=development
-    working_dir: /src
+```dockerfile
+FROM hugomods/hugo:exts
+WORKDIR /src
+EXPOSE 1313
+CMD ["server", "--bind", "0.0.0.0", "--baseURL", "http://localhost:1313", "-D"]
 ```
 
 ### Testing Workflow
 
-1. Make changes to markdown files
-2. Hugo automatically rebuilds (watch logs for "Change detected")
-3. Refresh browser to see changes
-4. Verify mermaid diagrams render correctly
-5. Check colors match preferences
-6. Test click-to-expand on mermaid diagrams
-7. Verify callout blocks display correctly
+1. Start Hugo server: `make serve-bg`
+2. Make changes to markdown files
+3. Hugo automatically rebuilds (check logs: `docker logs blog-hugo`)
+4. Refresh browser to see changes
+5. Verify mermaid diagrams render correctly
+6. Check colors match preferences
+7. Test click-to-expand on mermaid diagrams
+8. Verify callout blocks display correctly
+9. Stop server: `make stop`
 
 ---
 
@@ -451,16 +475,17 @@ Based on previous conversations, the blog owner prefers:
 
 ## Key Reminders
 
-- ✅ Always test locally with `docker-compose up`
-- ✅ Use mermaid diagrams extensively (with dark theme)
-- ✅ Apply correct color palette (dark fills, bright text)
-- ✅ No emoji - use text symbols
-- ✅ Add 20+ relevant tags for SEO
-- ✅ Include code examples
-- ✅ Use callout blocks for important info
-- ✅ Write comprehensive, educational content
-- ✅ Test click-to-expand on mermaid diagrams
-- ✅ Verify colors before committing
+- Always test locally with `make serve-bg`
+- Use mermaid diagrams extensively (with dark theme)
+- Apply correct color palette (dark fills, bright text)
+- No emoji - use text symbols (+ and -)
+- Add 20+ relevant tags for SEO
+- Include code examples in multiple languages
+- Use callout blocks for important info
+- Write comprehensive, educational content
+- Test click-to-expand on mermaid diagrams
+- Verify colors match preferences before committing
+- Stop Hugo server with `make stop` when done
 
 ---
 
