@@ -236,6 +236,16 @@ Callout blocks highlight important information with colored accents. Four varian
 
 This blog uses the **[Nightfall](https://github.com/LordMathis/hugo-theme-nightfall)** theme by LordMathis, included as a Git submodule.
 
+### Color Palette
+
+<!-- Palette swatches -->
+![Accent](https://img.shields.io/badge/-f41c80?style=flat)
+![Slate](https://img.shields.io/badge/-6b7280?style=flat)
+![UI](https://img.shields.io/badge/-292a2d?style=flat)
+![UI](https://img.shields.io/badge/-292c34?style=flat)
+![UI](https://img.shields.io/badge/-282f3c?style=flat)
+![UI](https://img.shields.io/badge/-263143?style=flat)
+
 ### Update Theme
 
 ```bash
