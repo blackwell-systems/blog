@@ -104,7 +104,7 @@ profile = {
 
 ## The Transformation
 
-```mermaid
+{{< mermaid >}}
 flowchart TB
     subgraph memory["Runtime Memory (Ephemeral)"]
         obj["Go Struct<br/>───────────<br/>type Profile struct {<br/>  Name string<br/>  IsActive bool<br/>}<br/><br/>profile := Profile{<br/>  Name: 'my-project',<br/>  IsActive: true<br/>}"]
@@ -133,7 +133,7 @@ flowchart TB
     style storage fill:#22543d,stroke:#2f855a,color:#e2e8f0
     style obj fill:#1a365d,stroke:#2c5282,color:#e2e8f0
     style data fill:#2c5282,stroke:#63b3ed,color:#e2e8f0
-```
+{{< /mermaid >}}
 
 ---
 
@@ -203,7 +203,7 @@ if profile.IsActive {           // Use in logic
 
 ## The Lifecycle
 
-```mermaid
+{{< mermaid >}}
 flowchart LR
     subgraph prog1["Program 1 (Go)"]
         create["Create Object<br/>profile := Profile{...}"]
@@ -241,7 +241,7 @@ flowchart LR
     style persist fill:#2c5282,stroke:#4299e1,color:#e2e8f0
     style deserial fill:#22543d,stroke:#2f855a,color:#e2e8f0
     style prog2 fill:#1e3a5f,stroke:#4a9eff,color:#e2e8f0
-```
+{{< /mermaid >}}
 
 Notice: **The bytes don't "know" they came from Go.** JavaScript can read the same bytes and build a JavaScript object. This is the power of serialization.
 
@@ -424,7 +424,7 @@ tags = ["work", "golang"]
 
 ## Format Comparison
 
-```mermaid
+{{< mermaid >}}
 flowchart TB
     question{"What's your priority?"}
 
@@ -462,7 +462,7 @@ flowchart TB
     style toml fill:#2c5282,stroke:#4299e1,color:#e2e8f0
     style protobuf fill:#22543d,stroke:#2f855a,color:#e2e8f0
     style msgpack fill:#22543d,stroke:#2f855a,color:#e2e8f0
-```
+{{< /mermaid >}}
 
 ---
 
