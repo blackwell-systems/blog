@@ -72,9 +72,9 @@ flowchart TB
         mqtt[MQTT]
     end
 
-    style sync fill:#80AADD,stroke:#4a5568,color:#f8f8ff
-    style realtime fill:#33D17A,stroke:#4a5568,color:#f8f8ff
-    style async fill:#FFB300,stroke:#4a5568,color:#f8f8ff
+    style sync fill:#3A4A5C,stroke:#4a5568,color:#f0f0f0
+    style realtime fill:#3A4C43,stroke:#4a5568,color:#f0f0f0
+    style async fill:#4C4538,stroke:#4a5568,color:#f0f0f0
 {{< /mermaid >}}
 
 {{< callout type="warning" >}}
@@ -158,12 +158,12 @@ Response: 204 No Content
 
 **When to use:**
 
-- ✅ Public APIs for web/mobile apps
-- ✅ Standard CRUD operations
-- ✅ When you want HTTP caching
-- ✅ Simple, predictable API design
-- ❌ Complex query requirements (consider GraphQL)
-- ❌ High-performance microservices (consider gRPC)
+- + Public APIs for web/mobile apps
+- + Standard CRUD operations
+- + When you want HTTP caching
+- + Simple, predictable API design
+- - Complex query requirements (consider GraphQL)
+- - High-performance microservices (consider gRPC)
 
 ---
 
@@ -253,12 +253,12 @@ query {
 
 **When to use:**
 
-- ✅ Mobile apps needing minimal data transfer
-- ✅ Complex, nested data requirements
-- ✅ Multiple clients needing different data shapes
-- ✅ Rapid frontend development
-- ❌ Simple CRUD (REST is simpler)
-- ❌ Need HTTP caching out of the box
+- + Mobile apps needing minimal data transfer
+- + Complex, nested data requirements
+- + Multiple clients needing different data shapes
+- + Rapid frontend development
+- - Simple CRUD (REST is simpler)
+- - Need HTTP caching out of the box
 
 ---
 
@@ -302,11 +302,11 @@ user = server.createUser(name='Alice', email='alice@example.com')
 
 **When to use:**
 
-- ✅ Internal microservices communication
-- ✅ When you want function-call semantics
-- ✅ Backend-to-backend communication
-- ❌ Public APIs (REST is more standard)
-- ❌ Need resource-based modeling
+- + Internal microservices communication
+- + When you want function-call semantics
+- + Backend-to-backend communication
+- - Public APIs (REST is more standard)
+- - Need resource-based modeling
 
 ---
 
@@ -341,9 +341,9 @@ flowchart LR
     http2 --> protobuf
     protobuf -->|result| stub
 
-    style client fill:#80AADD,stroke:#4a5568,color:#f8f8ff
-    style network fill:#33D17A,stroke:#4a5568,color:#f8f8ff
-    style server fill:#FFB300,stroke:#4a5568,color:#f8f8ff
+    style client fill:#3A4A5C,stroke:#4a5568,color:#f0f0f0
+    style network fill:#3A4C43,stroke:#4a5568,color:#f0f0f0
+    style server fill:#4C4538,stroke:#4a5568,color:#f0f0f0
 {{< /mermaid >}}
 
 **Contract Definition (`.proto` file):**
@@ -408,18 +408,18 @@ graph LR
     rest -->|Latency| slower["Higher latency<br/>More bandwidth"]
     grpc -->|Latency| faster["7-10x faster<br/>Lower bandwidth"]
 
-    style rest fill:#F26E74,stroke:#4a5568,color:#f8f8ff
-    style grpc fill:#33D17A,stroke:#4a5568,color:#f8f8ff
+    style rest fill:#4C3A3C,stroke:#4a5568,color:#f0f0f0
+    style grpc fill:#3A4C43,stroke:#4a5568,color:#f0f0f0
 {{< /mermaid >}}
 
 **When to use:**
 
-- ✅ Microservices communication
-- ✅ High-performance requirements
-- ✅ Streaming data (logs, metrics, real-time updates)
-- ✅ Polyglot environments (Go, Python, Java, etc.)
-- ❌ Browser clients (limited support, use gRPC-Web)
-- ❌ Simple public APIs (REST is more accessible)
+- + Microservices communication
+- + High-performance requirements
+- + Streaming data (logs, metrics, real-time updates)
+- + Polyglot environments (Go, Python, Java, etc.)
+- - Browser clients (limited support, use gRPC-Web)
+- - Simple public APIs (REST is more accessible)
 
 ---
 
@@ -452,11 +452,11 @@ graph LR
 
 **When to use:**
 
-- ✅ Legacy enterprise systems
-- ✅ Banking/financial systems (compliance requirements)
-- ✅ When WS-* standards are required
-- ❌ New projects (use REST or gRPC instead)
-- ❌ Mobile/web apps (too heavyweight)
+- + Legacy enterprise systems
+- + Banking/financial systems (compliance requirements)
+- + When WS-* standards are required
+- - New projects (use REST or gRPC instead)
+- - Mobile/web apps (too heavyweight)
 
 {{< callout type="info" >}}
 **Modern Alternative:** If you're maintaining SOAP services, consider a gradual migration to gRPC for internal services or REST for public APIs. Most new systems avoid SOAP due to complexity and verbosity.
@@ -511,21 +511,21 @@ function pollStatus(jobId) {
 ```
 
 **Pros:**
-- ✅ Simple to implement
-- ✅ Works everywhere (just HTTP)
-- ✅ No special server support needed
+- + Simple to implement
+- + Works everywhere (just HTTP)
+- + No special server support needed
 
 **Cons:**
-- ❌ Wastes bandwidth (constant requests)
-- ❌ High latency (up to poll interval)
-- ❌ Server load (many unnecessary requests)
+- - Wastes bandwidth (constant requests)
+- - High latency (up to poll interval)
+- - Server load (many unnecessary requests)
 
 **When to use:**
 
-- ✅ Simple updates that aren't time-critical
-- ✅ Fallback when other methods unavailable
-- ❌ Real-time needs (use WebSocket/SSE)
-- ❌ High-frequency updates (too wasteful)
+- + Simple updates that aren't time-critical
+- + Fallback when other methods unavailable
+- - Real-time needs (use WebSocket/SSE)
+- - High-frequency updates (too wasteful)
 
 ---
 
@@ -584,11 +584,11 @@ async function longPoll() {
 
 **When to use:**
 
-- ✅ Near real-time updates needed
-- ✅ WebSocket not supported
-- ✅ Firewall/proxy restrictions
-- ❌ True real-time (use WebSocket)
-- ❌ Many concurrent clients (server holds many connections)
+- + Near real-time updates needed
+- + WebSocket not supported
+- + Firewall/proxy restrictions
+- - True real-time (use WebSocket)
+- - Many concurrent clients (server holds many connections)
 
 ---
 
@@ -688,12 +688,12 @@ async def stream():
 
 **When to use:**
 
-- ✅ Live dashboards (stock prices, metrics)
-- ✅ Progress updates (file uploads, long tasks)
-- ✅ Notifications
-- ✅ News/activity feeds
-- ❌ Need client-to-server messages (use WebSocket)
-- ❌ Binary data (use WebSocket)
+- + Live dashboards (stock prices, metrics)
+- + Progress updates (file uploads, long tasks)
+- + Notifications
+- + News/activity feeds
+- - Need client-to-server messages (use WebSocket)
+- - Binary data (use WebSocket)
 
 ---
 
@@ -817,13 +817,13 @@ async def websocket_endpoint(websocket: WebSocket):
 
 **When to use:**
 
-- ✅ Chat applications
-- ✅ Live collaboration (Google Docs style)
-- ✅ Multiplayer games
-- ✅ Live dashboards with user interaction
-- ✅ Real-time trading platforms
-- ❌ Simple one-way updates (use SSE)
-- ❌ Occasional API calls (use REST)
+- + Chat applications
+- + Live collaboration (Google Docs style)
+- + Multiplayer games
+- + Live dashboards with user interaction
+- + Real-time trading platforms
+- - Simple one-way updates (use SSE)
+- - Occasional API calls (use REST)
 
 ---
 
@@ -860,8 +860,8 @@ flowchart TB
     rtc1 <-.->|Direct P2P| p2p
     p2p <-.->|Direct P2P| rtc2
 
-    style signaling fill:#80AADD,stroke:#4a5568,color:#f8f8ff
-    style p2p fill:#33D17A,stroke:#4a5568,color:#f8f8ff
+    style signaling fill:#3A4A5C,stroke:#4a5568,color:#f0f0f0
+    style p2p fill:#3A4C43,stroke:#4a5568,color:#f0f0f0
 {{< /mermaid >}}
 
 **Key Characteristics:**
@@ -881,11 +881,11 @@ flowchart TB
 
 **When to use:**
 
-- ✅ Video/audio calling
-- ✅ Need lowest possible latency
-- ✅ Want to minimize server bandwidth
-- ❌ Need server-side processing of media
-- ❌ Simple messaging (use WebSocket)
+- + Video/audio calling
+- + Need lowest possible latency
+- + Want to minimize server bandwidth
+- - Need server-side processing of media
+- - Simple messaging (use WebSocket)
 
 {{< callout type="info" >}}
 **WebRTC Complexity:** WebRTC is powerful but complex. You still need a signaling server (often WebSocket) to establish the peer-to-peer connection initially. Consider using libraries like **PeerJS** or services like **Twilio** to simplify implementation.
@@ -984,8 +984,8 @@ flowchart LR
 
     endpoint --> logic
 
-    style providers fill:#80AADD,stroke:#4a5568,color:#f8f8ff
-    style your fill:#33D17A,stroke:#4a5568,color:#f8f8ff
+    style providers fill:#3A4A5C,stroke:#4a5568,color:#f0f0f0
+    style your fill:#3A4C43,stroke:#4a5568,color:#f0f0f0
 {{< /mermaid >}}
 
 **Security Best Practices:**
@@ -1024,13 +1024,13 @@ app.post('/webhook', (req, res) => {
 
 **When to use:**
 
-- ✅ Payment notifications (Stripe, PayPal)
-- ✅ CI/CD triggers (GitHub, GitLab)
-- ✅ Form submissions (Typeform, Google Forms)
-- ✅ Email events (SendGrid, Mailgun)
-- ✅ Any "notify me when X happens" scenario
-- ❌ Need immediate response (webhooks are async)
-- ❌ High-frequency events (consider message queues)
+- + Payment notifications (Stripe, PayPal)
+- + CI/CD triggers (GitHub, GitLab)
+- + Form submissions (Typeform, Google Forms)
+- + Email events (SendGrid, Mailgun)
+- + Any "notify me when X happens" scenario
+- - Need immediate response (webhooks are async)
+- - High-frequency events (consider message queues)
 
 {{< callout type="warning" >}}
 **Webhook Reliability:** Webhooks can fail (network issues, your server down). Always implement retry logic on the sender side and idempotency on the receiver side. Store webhook deliveries in a database and process them asynchronously.
@@ -1073,9 +1073,9 @@ flowchart TB
     q2 -->|Pull messages| email
     q3 -->|Pull messages| analytics
 
-    style producers fill:#80AADD,stroke:#4a5568,color:#f8f8ff
-    style queue fill:#FFB300,stroke:#4a5568,color:#f8f8ff
-    style consumers fill:#33D17A,stroke:#4a5568,color:#f8f8ff
+    style producers fill:#3A4A5C,stroke:#4a5568,color:#f0f0f0
+    style queue fill:#4C4538,stroke:#4a5568,color:#f0f0f0
+    style consumers fill:#3A4C43,stroke:#4a5568,color:#f0f0f0
 {{< /mermaid >}}
 
 **Core Patterns:**
@@ -1241,13 +1241,13 @@ while True:
 
 **When to use:**
 
-- ✅ Background jobs (email, image processing)
-- ✅ Microservices communication
-- ✅ Event-driven architectures
-- ✅ Handle traffic spikes
-- ✅ Retry failed operations
-- ❌ Need immediate response (use synchronous APIs)
-- ❌ Simple request-response (use REST)
+- + Background jobs (email, image processing)
+- + Microservices communication
+- + Event-driven architectures
+- + Handle traffic spikes
+- + Retry failed operations
+- - Need immediate response (use synchronous APIs)
+- - Simple request-response (use REST)
 
 ---
 
@@ -1286,9 +1286,9 @@ flowchart TB
 
     automation -->|publish| light
 
-    style devices fill:#80AADD,stroke:#4a5568,color:#f8f8ff
-    style broker fill:#FFB300,stroke:#4a5568,color:#f8f8ff
-    style subscribers fill:#33D17A,stroke:#4a5568,color:#f8f8ff
+    style devices fill:#3A4A5C,stroke:#4a5568,color:#f0f0f0
+    style broker fill:#4C4538,stroke:#4a5568,color:#f0f0f0
+    style subscribers fill:#3A4C43,stroke:#4a5568,color:#f0f0f0
 {{< /mermaid >}}
 
 **Characteristics:**
@@ -1340,12 +1340,12 @@ client.loop_forever()
 
 **When to use:**
 
-- ✅ IoT devices (sensors, smart home)
-- ✅ Battery-powered devices
-- ✅ Unreliable/low bandwidth networks
-- ✅ Real-time telemetry
-- ❌ Web APIs (use REST/WebSocket)
-- ❌ Large payloads (use HTTP)
+- + IoT devices (sensors, smart home)
+- + Battery-powered devices
+- + Unreliable/low bandwidth networks
+- + Real-time telemetry
+- - Web APIs (use REST/WebSocket)
+- - Large payloads (use HTTP)
 
 ---
 
@@ -1385,12 +1385,12 @@ flowchart TD
 
     realtime -->|No, occasional| polling["Polling/REST"]
 
-    style rest fill:#80AADD,stroke:#4a5568,color:#f8f8ff
-    style graphql fill:#80AADD,stroke:#4a5568,color:#f8f8ff
-    style grpc fill:#33D17A,stroke:#4a5568,color:#f8f8ff
-    style ws fill:#33D17A,stroke:#4a5568,color:#f8f8ff
-    style webhook fill:#FFB300,stroke:#4a5568,color:#f8f8ff
-    style mq fill:#FFB300,stroke:#4a5568,color:#f8f8ff
+    style rest fill:#3A4A5C,stroke:#4a5568,color:#f0f0f0
+    style graphql fill:#3A4A5C,stroke:#4a5568,color:#f0f0f0
+    style grpc fill:#3A4C43,stroke:#4a5568,color:#f0f0f0
+    style ws fill:#3A4C43,stroke:#4a5568,color:#f0f0f0
+    style webhook fill:#4C4538,stroke:#4a5568,color:#f0f0f0
+    style mq fill:#4C4538,stroke:#4a5568,color:#f0f0f0
 {{< /mermaid >}}
 
 ### Performance Comparison
@@ -1417,14 +1417,14 @@ graph LR
         t6["SOAP<br/>1k msg/s"]
     end
 
-    style l1 fill:#33D17A,stroke:#4a5568,color:#f8f8ff
-    style l2 fill:#33D17A,stroke:#4a5568,color:#f8f8ff
-    style l7 fill:#F26E74,stroke:#4a5568,color:#f8f8ff
-    style l8 fill:#F26E74,stroke:#4a5568,color:#f8f8ff
+    style l1 fill:#3A4C43,stroke:#4a5568,color:#f0f0f0
+    style l2 fill:#3A4C43,stroke:#4a5568,color:#f0f0f0
+    style l7 fill:#4C3A3C,stroke:#4a5568,color:#f0f0f0
+    style l8 fill:#4C3A3C,stroke:#4a5568,color:#f0f0f0
 
-    style t1 fill:#33D17A,stroke:#4a5568,color:#f8f8ff
-    style t2 fill:#33D17A,stroke:#4a5568,color:#f8f8ff
-    style t6 fill:#F26E74,stroke:#4a5568,color:#f8f8ff
+    style t1 fill:#3A4C43,stroke:#4a5568,color:#f0f0f0
+    style t2 fill:#3A4C43,stroke:#4a5568,color:#f0f0f0
+    style t6 fill:#4C3A3C,stroke:#4a5568,color:#f0f0f0
 {{< /mermaid >}}
 
 ### Complexity vs Capability
@@ -1521,11 +1521,11 @@ flowchart TB
     notification -->|push| ws
     ws -->|real-time updates| admin
 
-    style clients fill:#80AADD,stroke:#4a5568,color:#f8f8ff
-    style api fill:#33D17A,stroke:#4a5568,color:#f8f8ff
-    style services fill:#FFB300,stroke:#4a5568,color:#f8f8ff
-    style async fill:#F26E74,stroke:#4a5568,color:#252627
-    style external fill:#2c5282,stroke:#4a5568,color:#f8f8ff
+    style clients fill:#3A4A5C,stroke:#4a5568,color:#f0f0f0
+    style api fill:#3A4C43,stroke:#4a5568,color:#f0f0f0
+    style services fill:#4C4538,stroke:#4a5568,color:#f0f0f0
+    style async fill:#4C3A3C,stroke:#4a5568,color:#252627
+    style external fill:#2c5282,stroke:#4a5568,color:#f0f0f0
 {{< /mermaid >}}
 
 **Breaking down this architecture:**
@@ -1610,11 +1610,11 @@ flowchart TB
     feed --> redis
     post --> s3
 
-    style frontend fill:#80AADD,stroke:#4a5568,color:#f8f8ff
-    style gateway fill:#33D17A,stroke:#4a5568,color:#f8f8ff
-    style backend fill:#FFB300,stroke:#4a5568,color:#f8f8ff
-    style storage fill:#2c5282,stroke:#4a5568,color:#f8f8ff
-    style realtime fill:#F26E74,stroke:#4a5568,color:#252627
+    style frontend fill:#3A4A5C,stroke:#4a5568,color:#f0f0f0
+    style gateway fill:#3A4C43,stroke:#4a5568,color:#f0f0f0
+    style backend fill:#4C4538,stroke:#4a5568,color:#f0f0f0
+    style storage fill:#2c5282,stroke:#4a5568,color:#f0f0f0
+    style realtime fill:#4C3A3C,stroke:#4a5568,color:#252627
 {{< /mermaid >}}
 
 **Why this combination?**
@@ -1672,11 +1672,11 @@ flowchart LR
     processor -->|SSE| dashboard
     processor -->|Webhook| alerts
 
-    style sources fill:#80AADD,stroke:#4a5568,color:#f8f8ff
-    style ingestion fill:#33D17A,stroke:#4a5568,color:#f8f8ff
-    style processing fill:#FFB300,stroke:#4a5568,color:#f8f8ff
-    style storage fill:#2c5282,stroke:#4a5568,color:#f8f8ff
-    style ui fill:#F26E74,stroke:#4a5568,color:#252627
+    style sources fill:#3A4A5C,stroke:#4a5568,color:#f0f0f0
+    style ingestion fill:#3A4C43,stroke:#4a5568,color:#f0f0f0
+    style processing fill:#4C4538,stroke:#4a5568,color:#f0f0f0
+    style storage fill:#2c5282,stroke:#4a5568,color:#f0f0f0
+    style ui fill:#4C3A3C,stroke:#4a5568,color:#252627
 {{< /mermaid >}}
 
 **Pattern choices:**

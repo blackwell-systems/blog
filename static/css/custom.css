@@ -105,8 +105,8 @@ body {
 .callout {
   margin: 2rem 0;
   padding: 1.5rem;
-  border-left: 4px solid #80AADD;
-  background: rgba(128, 170, 221, 0.1);
+  border-left: 4px solid #6b7280;
+  background: rgba(107, 114, 128, 0.1);
   border-radius: 0 4px 4px 0;
 }
 
@@ -120,21 +120,21 @@ body {
 
 /* Callout variants */
 .callout.info {
-  border-left-color: #80AADD;
-  background: rgba(128, 170, 221, 0.1);
+  border-left-color: #6b7280;
+  background: rgba(107, 114, 128, 0.1);
 }
 
 .callout.warning {
-  border-left-color: #FFB300;
-  background: rgba(255, 179, 0, 0.1);
+  border-left-color: #92703a;
+  background: rgba(146, 112, 58, 0.1);
 }
 
 .callout.success {
-  border-left-color: #33D17A;
-  background: rgba(51, 209, 122, 0.1);
+  border-left-color: #4a7058;
+  background: rgba(74, 112, 88, 0.1);
 }
 
 .callout.danger {
-  border-left-color: #F26E74;
-  background: rgba(242, 110, 116, 0.1);
+  border-left-color: #8a5a5c;
+  background: rgba(138, 90, 92, 0.1);
 }
