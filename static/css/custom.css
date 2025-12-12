@@ -11,3 +11,41 @@ body {
 .postTitle {
   text-align: left !important;
 }
+
+/* Callout blocks for important information */
+.callout {
+  margin: 2rem 0;
+  padding: 1.5rem;
+  border-left: 4px solid #80AADD;
+  background: rgba(128, 170, 221, 0.1);
+  border-radius: 0 4px 4px 0;
+}
+
+.callout p:first-child {
+  margin-top: 0;
+}
+
+.callout p:last-child {
+  margin-bottom: 0;
+}
+
+/* Callout variants */
+.callout.info {
+  border-left-color: #80AADD;
+  background: rgba(128, 170, 221, 0.1);
+}
+
+.callout.warning {
+  border-left-color: #FFB300;
+  background: rgba(255, 179, 0, 0.1);
+}
+
+.callout.success {
+  border-left-color: #33D17A;
+  background: rgba(51, 209, 122, 0.1);
+}
+
+.callout.danger {
+  border-left-color: #F26E74;
+  background: rgba(242, 110, 116, 0.1);
+}

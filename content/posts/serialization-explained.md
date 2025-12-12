@@ -70,6 +70,10 @@ profile = {
 
 **The key insight:** These objects only exist while your program is running. They live in RAM. When your program exits, they vanish.
 
+<div class="callout info">
+<strong>Key Concept:</strong> Runtime objects are ephemeral. They exist only in memory while your program runs. Once the program exits or the object goes out of scope, it's gone forever. This is why we need serialization to preserve data.
+</div>
+
 ---
 
 ## Why Bytes?
@@ -111,10 +115,10 @@ flowchart TB
     end
 
     subgraph storage["Storage / Transmission"]
-        disk["💾 Disk File"]
-        net["🌐 Network Packet"]
-        db["🗄️ Database Record"]
-        cache["⚡ Cache Entry"]
+        disk["Disk File"]
+        net["Network Packet"]
+        db["Database Record"]
+        cache["Cache Entry"]
     end
 
     obj -->|"Serialize<br/>(Marshal/Encode)"| data
@@ -660,7 +664,11 @@ for i := 0; i < 1000000; i++ {
 
 ### 4. Security Vulnerabilities
 
-**Deserializing untrusted data is dangerous:**
+<div class="callout danger">
+<strong>Security Warning:</strong> Deserializing untrusted data is dangerous and can lead to remote code execution vulnerabilities. Never deserialize data from untrusted sources without proper validation.
+</div>
+
+**Example of dangerous code:**
 
 ```python
 # NEVER do this with untrusted input
@@ -728,20 +736,22 @@ message User {
 
 ### 4. Consider Size and Speed
 
-**Size comparison (1000 user records):**
+**Performance comparison (serializing/deserializing 1000 user records):**
 
-| Format | Size | Parse Time |
-|--------|------|------------|
-| JSON | 245 KB | 100ms |
-| MessagePack | 89 KB | 35ms |
-| Protobuf | 61 KB | 12ms |
-| XML | 412 KB | 187ms |
+| Format | Size | Speed | Best For |
+|--------|------|-------|----------|
+| **Protobuf** | 61 KB | 12ms | Internal services, gRPC |
+| **MessagePack** | 89 KB | 35ms | Caching, binary APIs |
+| **JSON** | 245 KB | 100ms | REST APIs, config files |
+| **XML** | 412 KB | 187ms | Legacy systems (avoid for new projects) |
+
+**Key takeaway:** Binary formats (protobuf, MessagePack) are 2-4x smaller and 3-8x faster than text formats (JSON, XML).
 
 **Rule of thumb:**
-- JSON for APIs and config
-- Protobuf for internal services
-- MessagePack for caching
-- Avoid XML for new projects
+- **JSON** - REST APIs, config files, anything human-readable
+- **Protobuf** - High-performance internal services, gRPC
+- **MessagePack** - Fast caching, log shipping
+- **XML** - Only for legacy integration
 
 ---
 
