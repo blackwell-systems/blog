@@ -1,5 +1,5 @@
 <!-- Custom CSS -->
-<link rel="stylesheet" href="{{ "/css/custom.css" | relURL }}">
+<link rel="stylesheet" href="{{ "css/custom.css" | absURL }}">
 
 <!-- Mermaid diagram support -->
 <script type="module">
@@ -23,9 +23,13 @@
   document.addEventListener('DOMContentLoaded', function() {
     setTimeout(() => {
       const mermaidDivs = document.querySelectorAll('.mermaid');
+      console.log('Found mermaid divs:', mermaidDivs.length);
 
       mermaidDivs.forEach(div => {
-        div.addEventListener('click', function() {
+        div.addEventListener('click', function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+          console.log('Mermaid clicked');
           // Create modal
           const modal = document.createElement('div');
           modal.className = 'mermaid-modal active';
@@ -40,7 +44,11 @@
 
           // Clone the SVG
           const svg = this.querySelector('svg');
-          if (!svg) return;
+          if (!svg) {
+            console.error('No SVG found in mermaid div');
+            return;
+          }
+          console.log('SVG found, creating modal');
 
           const modalContent = document.createElement('div');
           modalContent.className = 'mermaid-modal-content';
@@ -49,6 +57,7 @@
           modal.appendChild(closeBtn);
           modal.appendChild(modalContent);
           document.body.appendChild(modal);
+          console.log('Modal appended to body');
 
           // Close on click
           const closeModal = () => {
