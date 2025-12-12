@@ -150,6 +150,59 @@ seriesOrder: 3
 - Keep names short and descriptive
 - Series names are auto-humanized in display ("go-library-development" → "Go Library Development")
 
+---
+
+## Custom Components
+
+### Callout Blocks
+
+Callout blocks highlight important information with colored accents. Four variants are available:
+
+**Usage:**
+
+```html
+<div class="callout info">
+<strong>Title:</strong> Your message here.
+</div>
+
+<div class="callout warning">
+<strong>Warning:</strong> Something to be careful about.
+</div>
+
+<div class="callout success">
+<strong>Success:</strong> Positive outcome or best practice.
+</div>
+
+<div class="callout danger">
+<strong>Critical:</strong> Important security or breaking change.
+</div>
+```
+
+**Variants:**
+
+| Class | Color | Use Case |
+|-------|-------|----------|
+| `.callout.info` | Blue (#80AADD) | General information, tips, concepts |
+| `.callout.warning` | Orange (#FFB300) | Warnings, gotchas, deprecated features |
+| `.callout.success` | Green (#33D17A) | Best practices, success patterns, wins |
+| `.callout.danger` | Red (#F26E74) | Critical warnings, security issues, breaking changes |
+
+**Styling:**
+- Subtle 10% opacity background (monochrome-friendly)
+- 4px colored left border accent
+- 1.5rem padding for comfortable reading
+- Auto-margin for proper spacing
+
+**Example in markdown:**
+
+```markdown
+<div class="callout info">
+<strong>Key Concept:</strong> Runtime objects are ephemeral. <u>This is why we need serialization.</u>
+</div>
+```
+
+---
+
 ## Theme
 
 This blog uses the **[Nightfall](https://github.com/LordMathis/hugo-theme-nightfall)** theme by LordMathis, included as a Git submodule.

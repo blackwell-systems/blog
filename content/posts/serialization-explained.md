@@ -71,7 +71,7 @@ profile = {
 **The key insight:** These objects only exist while your program is running. They live in RAM. When your program exits, they vanish.
 
 <div class="callout info">
-<strong>Key Concept:</strong> Runtime objects are ephemeral. They exist only in memory while your program runs. Once the program exits or the object goes out of scope, it's gone forever. This is why we need serialization to preserve data.
+<strong>Key Concept:</strong> Runtime objects are ephemeral. They exist only in memory while your program runs. Once the program exits or the object goes out of scope, it's gone forever. <u>This is why we need serialization to preserve data.</u>
 </div>
 
 ---
@@ -260,12 +260,12 @@ Different formats offer different tradeoffs:
 - Self-describing (field names included)
 
 **Tradeoffs:**
-- ✅ Easy to debug
-- ✅ Universal support
-- ✅ Works with any language
-- ❌ Verbose (large size)
-- ❌ Slow to parse
-- ❌ No schema enforcement
+- **+** Easy to debug
+- **+** Universal support
+- **+** Works with any language
+- **-** Verbose (large size)
+- **-** Slow to parse
+- **-** No schema enforcement
 
 **Use cases:** Config files, REST APIs, human-readable data
 
@@ -289,13 +289,13 @@ Different formats offer different tradeoffs:
 - Very compact
 
 **Tradeoffs:**
-- ✅ Extremely fast
-- ✅ Very small size
-- ✅ Strong typing
-- ✅ Forward/backward compatibility
-- ❌ Not human-readable
-- ❌ Requires schema
-- ❌ Requires code generation
+- **+** Extremely fast
+- **+** Very small size
+- **+** Strong typing
+- **+** Forward/backward compatibility
+- **-** Not human-readable
+- **-** Requires schema
+- **-** Requires code generation
 
 **Use cases:** gRPC, high-performance APIs, microservices
 
@@ -324,12 +324,12 @@ message Profile {
 - More compact than JSON
 
 **Tradeoffs:**
-- ✅ Smaller than JSON
-- ✅ Faster than JSON
-- ✅ No schema needed
-- ✅ Multiple language support
-- ❌ Not human-readable
-- ❌ Less universal than JSON
+- **+** Smaller than JSON
+- **+** Faster than JSON
+- **+** No schema needed
+- **+** Multiple language support
+- **-** Not human-readable
+- **-** Less universal than JSON
 
 **Use cases:** Redis caching, log shipping, binary APIs
 
@@ -344,12 +344,12 @@ message Profile {
 - Verbose
 
 **Tradeoffs:**
-- ✅ Self-describing
-- ✅ Schema validation available
-- ✅ Mature tooling
-- ❌ Very verbose
-- ❌ Slow to parse
-- ❌ Falling out of favor
+- **+** Self-describing
+- **+** Schema validation available
+- **+** Mature tooling
+- **-** Very verbose
+- **-** Slow to parse
+- **-** Falling out of favor
 
 **Use cases:** Legacy systems, SOAP APIs, enterprise integration
 
@@ -376,12 +376,12 @@ message Profile {
 - Comments supported
 
 **Tradeoffs:**
-- ✅ Very readable
-- ✅ Supports comments
-- ✅ Less verbose than JSON
-- ❌ Indentation-sensitive
-- ❌ Ambiguous syntax
-- ❌ Slower to parse
+- **+** Very readable
+- **+** Supports comments
+- **+** Less verbose than JSON
+- **-** Indentation-sensitive
+- **-** Ambiguous syntax
+- **-** Slower to parse
 
 **Use cases:** Config files, CI/CD (GitHub Actions, Kubernetes), Ansible
 
@@ -405,11 +405,11 @@ tags:
 - Table-based structure
 
 **Tradeoffs:**
-- ✅ Very readable
-- ✅ Unambiguous syntax
-- ✅ Good for config
-- ❌ Limited adoption
-- ❌ Verbose for nested data
+- **+** Very readable
+- **+** Unambiguous syntax
+- **+** Good for config
+- **-** Limited adoption
+- **-** Verbose for nested data
 
 **Use cases:** Config files (Cargo.toml, pyproject.toml)
 
