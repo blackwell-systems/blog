@@ -154,6 +154,35 @@ seriesOrder: 3
 
 ## Custom Components
 
+### Mermaid Diagrams
+
+Interactive diagrams with click-to-expand lightbox.
+
+**Usage:**
+
+```markdown
+{{< mermaid >}}
+flowchart TB
+    A[Start] --> B[Process]
+    B --> C[End]
+{{< /mermaid >}}
+```
+
+**Features:**
+- Rendered with dark theme matching site aesthetic
+- Larger size with subtle background container
+- Hover effect indicates clickability
+- Click any diagram to expand to full screen lightbox
+- Close lightbox via X button, background click, or Escape key
+- Responsive scaling up to 95% of viewport
+
+**Theme colors:**
+- Primary: #80AADD (blue)
+- Background: #252627
+- Custom palette matching nightfall theme
+
+---
+
 ### Callout Blocks
 
 Callout blocks highlight important information with colored accents. Four variants are available:
