@@ -30,6 +30,9 @@
           const modal = document.createElement('div');
           modal.className = 'mermaid-modal active';
 
+          // Prevent body scroll when modal is open
+          document.body.style.overflow = 'hidden';
+
           // Create close button
           const closeBtn = document.createElement('span');
           closeBtn.className = 'mermaid-modal-close';
@@ -49,6 +52,7 @@
 
           // Close on click
           const closeModal = () => {
+            document.body.style.overflow = '';
             modal.remove();
           };
 
