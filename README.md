@@ -246,6 +246,14 @@ This blog uses the **[Nightfall](https://github.com/LordMathis/hugo-theme-nightf
 ![UI](https://img.shields.io/badge/-282f3c?style=flat)
 ![UI](https://img.shields.io/badge/-263143?style=flat)
 
+<!-- Palette swatches -->
+![Accent](https://img.shields.io/badge/-%20-f41c80?style=flat-square)
+![Slate](https://img.shields.io/badge/-%20-6b7280?style=flat-square)
+![UI](https://img.shields.io/badge/-%20-292a2d?style=flat-square)
+![UI](https://img.shields.io/badge/-%20-292c34?style=flat-square)
+![UI](https://img.shields.io/badge/-%20-282f3c?style=flat-square)
+![UI](https://img.shields.io/badge/-%20-263143?style=flat-square)
+
 ### Update Theme
 
 ```bash
