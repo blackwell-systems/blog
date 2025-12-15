@@ -138,3 +138,32 @@ body {
   border-left-color: #8a5a5c;
   background: rgba(138, 90, 92, 0.1);
 }
+
+/* Table styling for better readability */
+article table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 2rem 0;
+  font-size: 0.9rem;
+}
+
+article table th,
+article table td {
+  padding: 0.75rem 1.5rem;
+  text-align: left;
+  border-bottom: 1px solid rgba(107, 114, 128, 0.3);
+}
+
+article table th {
+  font-weight: 600;
+  background: rgba(58, 74, 92, 0.3);
+  border-bottom: 2px solid rgba(107, 114, 128, 0.5);
+}
+
+article table tr:hover {
+  background: rgba(58, 74, 92, 0.2);
+}
+
+article table td:first-child {
+  font-weight: 500;
+}
