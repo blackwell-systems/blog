@@ -674,8 +674,8 @@ When JSON-like flexibility meets binary efficiency:
 
 JSON's limitations didn't kill it. Instead, an entire ecosystem evolved to address the weaknesses while preserving the core simplicity:
 
-{{< callout type="info" >}}
-**The Architectural Choice:** XML's completeness was a weakness - validation, namespaces, transformation, and querying were built into one monolithic specification. Every XML parser needed to support everything, making the system rigid and complex. JSON chose the opposite path: radical incompleteness. The core format has no validation, no binary support, no streaming, no protocol conventions. Each gap would be filled by modular, composable solutions that could evolve independently.
+{{< callout type="warning" >}}
+**The Architectural Choice:** XML's completeness was a weakness - validation, namespaces, transformation, and querying were built into one monolithic specification. **Every XML parser needed to support everything, making the system rigid and complex.** JSON chose the opposite path: radical incompleteness. The core format has no validation, no binary support, no streaming, no protocol conventions. Each gap would be filled by modular, composable solutions that could evolve independently.
 {{< /callout >}}
 
 ### 1. Validation Layer: JSON Schema
