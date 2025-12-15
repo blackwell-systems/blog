@@ -2,7 +2,7 @@
 
 **Status:** Planning Phase  
 **Target Completion:** Q2 2026  
-**Current Series:** Complete (6 parts, ~127,000 words)
+**Current Series:** Complete (6 parts, 32,649 words)
 
 ---
 
@@ -350,26 +350,51 @@ Understanding **why** JSON succeeded requires understanding what it replaced and
 
 ## Length Estimate
 
-### Current Series
-- Parts 1-6: ~127,000 words
+### Current Series (Actual Word Counts)
+- Part 1 (Origins): 3,918 words
+- Part 2 (JSON Schema): 4,034 words
+- Part 3 (Binary Formats): 7,335 words
+- Part 4 (JSON-RPC): 6,775 words
+- Part 5 (JSON Lines): 5,429 words
+- Part 6 (Security): 5,158 words
+- **Total:** 32,649 words (~73 pages at 450 words/page)
 
-### Book Additions
-- New Chapter 2 (Architecture): ~8,000 words
-- Expanded Chapter 8 (Human-Friendly): ~12,000 words
-- New Chapter 9 (API Design): ~15,000 words
-- New Chapter 10 (Data Pipelines): ~15,000 words
-- New Chapter 11 (Testing): ~12,000 words
-- New Chapter 12 (Future): ~10,000 words
-- Introduction: ~3,000 words
-- Conclusion: ~3,000 words
-- Appendices: ~5,000 words
+### Expansion Plan for Existing Chapters
+- Chapter 1 expansion (XML contrast, history): +4,000 words → 8,000 words total
+- Chapter 2 expansion (code generation): +5,000 words → 9,000 words total
+- Chapter 3 expansion (benchmarks, deployment): +2,700 words → 10,000 words total
+- Chapter 4 expansion (real-world examples): +2,200 words → 9,000 words total
+- Chapter 5 expansion (data engineering): +2,600 words → 8,000 words total
+- Chapter 6 expansion (attack scenarios): +2,800 words → 8,000 words total
+- **Expansion subtotal:** +19,300 words
 
-### Total
-**210,000 words** (approximately 750-800 pages)
+### New Content
+- New Chapter 2 (Architecture framework): 7,000 words
+- New Chapter 8 (JSON5, HJSON, YAML, TOML): 7,000 words
+- New Chapter 9 (API Design patterns): 8,000 words
+- New Chapter 10 (Data Pipelines): 8,000 words
+- New Chapter 11 (Testing strategies): 7,000 words
+- New Chapter 12 (Future/alternatives): 6,000 words
+- Introduction: 2,500 words
+- Conclusion: 2,500 words
+- Appendices: 4,000 words
+- **New content subtotal:** 52,000 words
 
-**Note:** This is on the long side for technical books. May need to trim or split into two volumes:
-- Volume 1: Foundation + Core Ecosystem (Chapters 1-7) ~170,000 words
-- Volume 2: Advanced Patterns + Production (Chapters 8-12) ~70,000 words
+### Total Projected Book Length
+**Current:** 32,649 words  
+**Expansion:** +19,300 words  
+**New chapters:** +52,000 words  
+**Total:** **103,949 words** (~230 pages at 450 words/page)
+
+### Technical Book Context
+- **Typical technical book:** 50,000-80,000 words (200-350 pages)
+- **Our target:** 104,000 words (230 pages) - comfortable length
+- **Comparison:** 
+  - "Effective Java" (3rd Ed): ~90,000 words
+  - "The Pragmatic Programmer": ~85,000 words
+  - "Clean Code": ~115,000 words
+
+**Assessment:** Perfect length for a comprehensive technical book. Not too short (lacks depth), not too long (reader fatigue).
 
 ---
 
