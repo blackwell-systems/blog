@@ -232,6 +232,46 @@ Callout blocks highlight important information with colored accents. Four varian
 
 ---
 
+## Analytics
+
+This blog uses **[GoatCounter](https://goatcounter.com)** for privacy-friendly traffic analytics.
+
+### Features
+
+- **Privacy-focused:** No cookies, no personal data tracking
+- **GDPR-compliant:** Respects user privacy by default
+- **Lightweight:** Single script tag, minimal overhead
+- **Transparent:** Analytics dashboard is public
+
+### Analytics Dashboard
+
+View live traffic statistics at: **https://blackwell-systems.goatcounter.com**
+
+GoatCounter tracks:
+- Page views and unique visitors
+- Referrer sources
+- Browser and device statistics
+- Geographic location (country-level only)
+
+**No tracking of:**
+- Personal identifiable information
+- User behavior across sites
+- Session data or cookies
+- Individual user identities
+
+### Implementation
+
+The GoatCounter script is integrated in `/layouts/_partials/custom-head.html`:
+
+```html
+<script data-goatcounter="https://blackwell-systems.goatcounter.com/count"
+        async src="//gc.zgo.at/count.js"></script>
+```
+
+The script loads asynchronously and does not block page rendering.
+
+---
+
 ## Theme
 
 This blog uses the **[Nightfall](https://github.com/LordMathis/hugo-theme-nightfall)** theme by LordMathis, included as a Git submodule.
