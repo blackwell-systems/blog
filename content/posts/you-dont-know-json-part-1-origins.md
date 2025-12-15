@@ -515,39 +515,6 @@ JSON.stringify(person);
 
 You must manually break cycles or use a serialization library that detects and handles them.
 
-### 8. Strict Syntax Requirements
-
-JSON is unforgiving:
-
-```json
-{
-  "name": "Alice",
-  "age": 30,
-}
-```
-
-**Error:** Trailing comma is invalid JSON.
-
-```json
-{
-  name: "Alice"
-}
-```
-
-**Error:** Unquoted keys are invalid.
-
-**Comparison to JavaScript:**
-```javascript
-// Valid JavaScript, invalid JSON
-{
-  name: 'Alice',        // Single quotes
-  age: 30,             // Trailing comma
-  // Comment
-}
-```
-
-This disconnect between JSON and JavaScript object literals confuses developers constantly.
-
 {{< callout type="warning" >}}
 **Critical Insight:** JSON's weaknesses aren't bugs - they're consequences of extreme simplification. Every missing feature (schemas, comments, binary support) was left out intentionally to keep the format minimal.
 {{< /callout >}}
