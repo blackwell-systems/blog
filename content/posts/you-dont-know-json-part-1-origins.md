@@ -525,19 +525,19 @@ You must manually break cycles or use a serialization library that detects and h
 
 Let's compare JSON to its alternatives across key dimensions:
 
-| Feature | JSON | XML | YAML | TOML | Protocol Buffers |
-|---------|------|-----|------|------|------------------|
-| **Human-readable** | Yes | Yes | Yes | Yes | No |
-| **Schema validation** | No* | Yes | No | No | Yes |
-| **Comments** | No | Yes | Yes | Yes | No |
-| **Binary support** | No | No | No | No | Yes |
-| **Date types** | No | No | No | Yes | Yes |
-| **Size efficiency** | Medium | Large | Medium | Medium | Small |
-| **Parse speed** | Fast | Slow | Medium | Medium | Very Fast |
-| **Language support** | Universal | Universal | Wide | Growing | Wide |
-| **Nested structures** | Yes | Yes | Yes | Limited | Yes |
-| **Trailing commas** | No | N/A | Yes | Yes | N/A |
-| **Type safety** | No | Yes | No | Partial | Yes |
+| Feature                  | JSON       | XML        | YAML       | TOML       | Protocol Buffers |
+|--------------------------|------------|------------|------------|------------|------------------|
+| **Human-readable**       | Yes        | Yes        | Yes        | Yes        | No               |
+| **Schema validation**    | No*        | Yes        | No         | No         | Yes              |
+| **Comments**             | No         | Yes        | Yes        | Yes        | No               |
+| **Binary support**       | No         | No         | No         | No         | Yes              |
+| **Date types**           | No         | No         | No         | Yes        | Yes              |
+| **Size efficiency**      | Medium     | Large      | Medium     | Medium     | Small            |
+| **Parse speed**          | Fast       | Slow       | Medium     | Medium     | Very Fast        |
+| **Language support**     | Universal  | Universal  | Wide       | Growing    | Wide             |
+| **Nested structures**    | Yes        | Yes        | Yes        | Limited    | Yes              |
+| **Trailing commas**      | No         | N/A        | Yes        | Yes        | N/A              |
+| **Type safety**          | No         | Yes        | No         | Partial    | Yes              |
 
 *JSON Schema provides validation but isn't part of JSON itself.
 
