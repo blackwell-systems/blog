@@ -4,6 +4,8 @@ date: 2025-12-01
 draft: false
 ---
 
+Written by Dayna Blackwell.
+
 Technical writing on developer tools, automation, and systems programming.
 
 ## Open Source Projects
