@@ -584,7 +584,7 @@ Despite JSON's dominance, there are clear cases where alternatives are better:
 
 ### 1. High-Performance Systems → Protocol Buffers, FlatBuffers
 
-When you're handling millions of requests per second:
+When you're handling millions of requests per second, [Protocol Buffers](/posts/understanding-protobuf-part-1/) offer compelling advantages:
 
 ```protobuf
 message Person {
@@ -601,6 +601,8 @@ message Person {
 - Backward/forward compatibility built-in
 
 **Trade-off:** Not human-readable, requires schema compilation.
+
+Read more: [Understanding Protocol Buffers: Part 1](/posts/understanding-protobuf-part-1/)
 
 ### 2. Human-Edited Configuration → YAML, TOML, JSON5
 
