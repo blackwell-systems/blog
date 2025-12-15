@@ -45,6 +45,49 @@ Read one line, parse one object, process it, discard it. Memory usage: constant.
 
 This article covers streaming JSON processing, log aggregation, Unix pipeline integration, fault tolerance, and real-world data engineering patterns.
 
+## Running Example: Exporting 10 Million Users
+
+In [Part 1]({{< relref "you-dont-know-json-part-1-origins.md" >}}), we started with basic JSON. In [Part 2]({{< relref "you-dont-know-json-part-2-json-schema.md" >}}), we added validation. In [Part 3]({{< relref "you-dont-know-json-part-3-binary-formats.md" >}}), we stored efficiently in JSONB. In [Part 4]({{< relref "you-dont-know-json-part-4-json-rpc.md" >}}), we added protocol structure.
+
+Now we face the **scalability problem**: our User API has grown to 10 million users. How do we export them for analytics?
+
+**JSON array approach (broken):**
+```json
+[
+  {"id": "user-5f9d88c", "username": "alice", "email": "alice@example.com"},
+  {"id": "user-abc123", "username": "bob", "email": "bob@example.com"},
+  ... 9,999,998 more users
+]
+```
+
+**Problems:**
+- Must load all 10M users into memory (30+ GB RAM)
+- Cannot start processing until complete file is parsed
+- Single corrupt user breaks entire export
+- Cannot resume if process crashes at user 8 million
+
+**JSON Lines approach (scales):**
+```jsonl
+{"id": "user-5f9d88c", "username": "alice", "email": "alice@example.com"}
+{"id": "user-abc123", "username": "bob", "email": "bob@example.com"}
+{"id": "user-def456", "username": "carol", "email": "carol@example.com"}
+```
+
+**Export pipeline (constant memory):**
+```javascript
+// Stream from database to file
+const writeStream = fs.createWriteStream('users-export.jsonl');
+const cursor = db.collection('users').find().stream();
+
+cursor.on('data', (user) => {
+  writeStream.write(JSON.stringify(user) + '\n');
+});
+```
+
+**Memory usage:** 10KB per user batch, regardless of total users. Process 100GB+ files with <1MB RAM.
+
+This completes the **streaming layer** for our User API.
+
 ---
 
 ## The Streaming Problem

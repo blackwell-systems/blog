@@ -42,34 +42,42 @@ This article covers:
 
 ---
 
-## The Core Problem: Trust Nothing
+## Running Example: Validating Our User API
 
-Every system boundary is a vulnerability:
+In [Part 1]({{< relref "you-dont-know-json-part-1-origins.md" >}}#running-example-building-a-user-api), we introduced a User API for a social platform. We have basic JSON, but no validation:
 
-```javascript
-// API endpoint receives this
-POST /api/users
+```json
 {
+  "id": "user-5f9d88c",
   "username": "alice",
-  "email": "not-an-email",
-  "age": -5,
-  "role": "admin"
+  "email": "alice@example.com",
+  "created": "2023-01-15T10:30:00Z",
+  "bio": "Software engineer",
+  "followers": 1234,
+  "verified": true
 }
 ```
 
-**Without validation:**
-- Database stores invalid email
-- Business logic crashes on negative age
-- User grants themselves admin access
+**The problems:**
+- Clients could send `"email": "not-an-email"`
+- Nothing prevents `"followers": -1000`
+- Users could set `"verified": true` themselves
+- No validation on username length or format
 
-**With validation:**
-- Request rejected before reaching business logic
-- Clear error messages to client
-- Security boundary enforced
+**What we need:**
+- Email format validation
+- Numeric ranges (followers ≥ 0)
+- Required fields (username, email)
+- String constraints (username 3-20 chars)
+- Read-only fields (id, verified, created)
 
-{{< callout type="warning" >}}
-**Security Principle:** Validate at system boundaries. Never trust input from external sources - users, other services, configuration files, or databases.
-{{< /callout >}}
+JSON Schema will solve all of these.
+
+---
+
+## The Core Problem: Trust Nothing
+
+Every system boundary is a vulnerability. Never trust input from external sources - users, other services, configuration files, or databases. Validate at the boundary before data enters your system.
 
 ---
 
@@ -77,23 +85,37 @@ POST /api/users
 
 ### What is JSON Schema?
 
-JSON Schema is itself a JSON document that describes other JSON documents:
+JSON Schema is itself a JSON document that describes other JSON documents.
 
-**Data (what you're validating):**
+**Let's validate our User API from Part 1:**
+
+**User data:**
 ```json
 {
+  "id": "user-5f9d88c",
   "username": "alice",
   "email": "alice@example.com",
-  "age": 30
+  "created": "2023-01-15T10:30:00Z",
+  "bio": "Software engineer",
+  "followers": 1234,
+  "verified": true
 }
 ```
 
-**Schema (the rules):**
+**User schema:**
 ```json
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://api.example.com/schemas/user.json",
+  "title": "User",
+  "description": "Social platform user profile",
   "type": "object",
   "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^user-[a-z0-9]+$",
+      "readOnly": true
+    },
     "username": {
       "type": "string",
       "minLength": 3,
@@ -104,16 +126,36 @@ JSON Schema is itself a JSON document that describes other JSON documents:
       "type": "string",
       "format": "email"
     },
-    "age": {
+    "created": {
+      "type": "string",
+      "format": "date-time",
+      "readOnly": true
+    },
+    "bio": {
+      "type": "string",
+      "maxLength": 500
+    },
+    "followers": {
       "type": "integer",
-      "minimum": 0,
-      "maximum": 150
+      "minimum": 0
+    },
+    "verified": {
+      "type": "boolean",
+      "readOnly": true
     }
   },
   "required": ["username", "email"],
   "additionalProperties": false
 }
 ```
+
+**This schema enforces:**
+- Required fields (username, email)
+- Username format (3-20 chars, lowercase alphanumeric + underscore)
+- Valid email format
+- Non-negative followers count
+- Read-only fields (id, created, verified) - clients can't set these
+- No additional fields allowed
 
 **Key concepts:**
 - `$schema` - Declares which JSON Schema version you're using
@@ -1291,7 +1333,7 @@ app.post('/api/users', (req, res) => {
 });
 ```
 
-Reject invalid data early. Don't let it reach business logic or database.
+As discussed earlier - validate at boundaries, reject early.
 
 ### 7. Compile Schemas Once
 
@@ -1595,7 +1637,6 @@ JSON Schema transforms JSON from "any structure passes" to "only valid structure
 - References ($ref, $defs) enable schema reuse
 - Code generation creates types from schemas
 - OpenAPI uses JSON Schema for API contracts
-- Validation should happen at system boundaries
 - Schema evolution requires careful planning
 
 **Key insight:** JSON Schema adds the contract layer JSON was missing. It enables:

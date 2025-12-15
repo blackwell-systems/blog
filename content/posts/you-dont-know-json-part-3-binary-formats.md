@@ -24,22 +24,54 @@ Binary JSON formats solve this. They maintain JSON's structure and flexibility w
 
 ---
 
+## Running Example: Storing 10 Million Users
+
+Our User API from [Part 1]({{< relref "you-dont-know-json-part-1-origins.md" >}}#running-example-building-a-user-api) now has validation from [Part 2]({{< relref "you-dont-know-json-part-2-json-schema.md" >}}). Next challenge: **storing 10 million users efficiently**.
+
+**Current user object (text JSON):**
+```json
+{
+  "id": "user-5f9d88c",
+  "username": "alice",
+  "email": "alice@example.com",
+  "created": "2023-01-15T10:30:00Z",
+  "bio": "Software engineer",
+  "followers": 1234,
+  "verified": true
+}
+```
+
+**Size:** 156 bytes per user
+**10M users:** 1.56 GB as text JSON
+
+**Problems at scale:**
+- Field names repeated 10 million times
+- Text parsing on every query
+- No indexing into JSON structure
+- Inefficient storage and retrieval
+
+Binary JSON formats solve this. Let's see the impact.
+
+---
+
 ## The Text Format Tax
 
 ### What You Pay for Human-Readability
 
-**Simple user object in JSON:**
+**Our user object in JSON:**
 ```json
 {
-  "id": 123456789,
+  "id": "user-5f9d88c",
   "username": "alice",
   "email": "alice@example.com",
   "created": "2023-01-15T10:30:00Z",
-  "active": true
+  "bio": "Software engineer",
+  "followers": 1234,
+  "verified": true
 }
 ```
 
-**Size:** 129 bytes
+**Size:** 156 bytes
 
 **What happens during parsing:**
 1. Read entire string character by character

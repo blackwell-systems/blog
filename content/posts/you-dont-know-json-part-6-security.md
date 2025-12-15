@@ -30,6 +30,54 @@ This article covers:
 - Common attacks and vulnerabilities
 - Production security best practices
 
+## Running Example: Securing the User API
+
+In [Part 1]({{< relref "you-dont-know-json-part-1-origins.md" >}}), we created basic JSON users. In [Part 2]({{< relref "you-dont-know-json-part-2-json-schema.md" >}}), we added validation. In [Part 3]({{< relref "you-dont-know-json-part-3-binary-formats.md" >}}), we stored them in JSONB. In [Part 4]({{< relref "you-dont-know-json-part-4-json-rpc.md" >}}), we added protocol structure. In [Part 5]({{< relref "you-dont-know-json-part-5-json-lines.md" >}}), we enabled streaming exports.
+
+Now we complete the journey with the **security layer** - protecting our User API with JWT authentication.
+
+**Login flow (JWT authentication):**
+```javascript
+// 1. User logs in
+POST /auth/login
+{
+  "username": "alice", 
+  "password": "secret123"
+}
+
+// 2. Server returns JWT
+{
+  "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "expires_in": 900
+}
+
+// 3. Client includes JWT in API calls
+GET /api/users/user-5f9d88c
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+```
+
+**JWT payload (our user data):**
+```json
+{
+  "sub": "user-5f9d88c",
+  "username": "alice", 
+  "email": "alice@example.com",
+  "roles": ["user", "verified"],
+  "iat": 1735686000,
+  "exp": 1735686900
+}
+```
+
+**Critical security considerations:**
+- Algorithm confusion attacks (RS256 → HS256)
+- Token substitution (using valid token for wrong user)
+- Weak secrets (brute-forceable HMAC keys)
+- Missing expiration checks
+- JWT injection in user profile updates
+
+This completes the **security layer** for our User API - from basic JSON to production-ready authenticated system.
+
 ---
 
 ## The Security Problem

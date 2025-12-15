@@ -24,6 +24,36 @@ REST dominates web APIs, but its resource-oriented model doesn't fit every probl
 
 This article covers the JSON-RPC 2.0 specification, implementation patterns, real-world usage (Ethereum, Language Server Protocol, Bitcoin), and when to choose RPC over REST.
 
+## Running Example: User API with JSON-RPC
+
+In [Part 1]({{< relref "you-dont-know-json-part-1-origins.md" >}}), we started with basic JSON users. In [Part 2]({{< relref "you-dont-know-json-part-2-json-schema.md" >}}), we added validation. In [Part 3]({{< relref "you-dont-know-json-part-3-binary-formats.md" >}}), we stored them efficiently in JSONB.
+
+Now JSON-RPC adds the **protocol layer** - structured remote function calls for our User API.
+
+**REST approach (resource-oriented):**
+```http
+GET    /users/user-5f9d88c          # Get user
+PUT    /users/user-5f9d88c          # Update user
+POST   /users/user-5f9d88c/follow   # Follow action (forced into REST)
+GET    /users/search?q=alice        # Search (not really RESTful)
+```
+
+**JSON-RPC approach (action-oriented):**
+```json
+{"jsonrpc": "2.0", "method": "getUserById", "params": {"id": "user-5f9d88c"}, "id": 1}
+{"jsonrpc": "2.0", "method": "updateUser", "params": {"id": "user-5f9d88c", "name": "Alice Smith"}, "id": 2}
+{"jsonrpc": "2.0", "method": "followUser", "params": {"followerId": "user-abc123", "followeeId": "user-5f9d88c"}, "id": 3}
+{"jsonrpc": "2.0", "method": "searchUsers", "params": {"query": "alice", "filters": {"verified": true}}, "id": 4}
+```
+
+**Why JSON-RPC fits user management:**
+- `followUser()` is an action, not a resource
+- `searchUsers()` with complex filtering is a function call
+- Batch requests: get user + followers + following in one call
+- WebSocket support for real-time user status updates
+
+This completes the **protocol layer** for our User API.
+
 ---
 
 ## The RPC Problem

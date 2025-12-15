@@ -71,19 +71,98 @@ XML wasn't chosen arbitrarily. It had real advantages:
 **+ Attributes and elements** (flexible modeling)  
 **+ Mature tooling** (parsers in every language)
 
-### XML's Fatal Flaws
+### XML's Fatal Flaws: The Monolithic Architecture
 
-But XML's complexity became its downfall:
+But XML's complexity became its downfall. The problem wasn't any single feature - it was the **architectural decision to build everything into one specification**.
 
-**- Extreme verbosity** (closing tags double the size)  
-**- Parsing complexity** (DOM vs SAX, namespace handling)  
-**- Schema complexity** (XSD is harder than the data itself)  
-**- Mixed content confusion** (text + elements in same node)  
-**- Attribute vs element debates** (no clear guidance)  
-**- Namespace hell** (xmlns everywhere)  
-**- SOAP overhead** (10KB of envelope for 100 bytes of data)
+**XML wasn't just a data format. It was an entire technology stack:**
 
-**The real killer:** Developer experience. Writing XML by hand was tedious. Reading XML logs was painful. Debugging SOAP requests required specialized tools.
+**Core XML (parsing and structure):**
+- DOM (Document Object Model) - load entire document into memory
+- SAX (Simple API for XML) - event-driven streaming parser
+- StAX (Streaming API for XML) - pull parser
+- Namespace handling (xmlns declarations)
+- Entity resolution (external references)
+- CDATA sections (unparsed character data)
+
+**Validation layer (built-in):**
+- DTD (Document Type Definition) - original schema language
+- XSD (XML Schema Definition) - complex type system
+- RelaxNG - alternative schema language
+- Schematron - rule-based validation
+
+**Query layer (built-in):**
+- XPath - query language for selecting nodes
+- XQuery - SQL-like language for XML
+- XSLT - transformation and templating
+
+**Protocol layer (built-in):**
+- SOAP (Simple Object Access Protocol)
+- WSDL (Web Services Description Language)
+- WS-Security, WS-ReliableMessaging, WS-AtomicTransaction
+- 50+ WS-* specifications
+
+**The architectural problem:** Every XML parser had to support this entire stack. You couldn't use XML without dealing with namespaces. You couldn't validate without learning XSD. You couldn't query without XPath.
+
+**The result:**
+- XML parsers: 50,000+ lines of code
+- XSD validators: Complex type systems rivaling programming languages
+- SOAP toolkits: Megabytes of libraries just to call a remote function
+- Learning curve: Months to master the ecosystem
+
+**Specific pain points:**
+
+**Verbosity:**
+```xml
+<user>
+  <name>Alice</name>
+  <email>alice@example.com</email>
+</user>
+```
+vs
+```json
+{"name":"Alice","email":"alice@example.com"}
+```
+
+**Namespace confusion:**
+```xml
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"
+               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+               xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <soap:Body>
+    <GetUser xmlns="http://example.com/users">
+      <UserId>123</UserId>
+    </GetUser>
+  </soap:Body>
+</soap:Envelope>
+```
+
+**Schema complexity (XSD):**
+```xml
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:element name="user">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="name" type="xs:string"/>
+        <xs:element name="email" type="xs:string"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>
+```
+
+vs JSON Schema:
+```json
+{
+  "type": "object",
+  "properties": {
+    "name": {"type": "string"},
+    "email": {"type": "string"}
+  }
+}
+```
+
+**The real killer:** Developer experience. Writing XML by hand was tedious. Reading XML logs was painful. Debugging SOAP requests required specialized tools. The monolithic architecture meant you couldn't use just the parts you needed - it was all or nothing.
 
 {{< mermaid >}}
 flowchart TB
@@ -857,6 +936,47 @@ flowchart TB
     style core fill:#3A4C43,stroke:#6b7280,color:#f0f0f0
     style extensions fill:#3A4A5C,stroke:#6b7280,color:#f0f0f0
 {{< /mermaid >}}
+
+---
+
+## Running Example: Building a User API
+
+Throughout this series, we'll follow a single use case: **a User API for a social platform**. Each part will show how that layer of the ecosystem improves this real-world scenario.
+
+**The scenario:**
+- REST API for user management
+- 10 million users in PostgreSQL
+- Mobile and web clients
+- Need authentication, validation, performance, and security
+
+**Part 1 (this article):** The basic JSON structure
+```json
+{
+  "id": "user-5f9d88c",
+  "username": "alice",
+  "email": "alice@example.com",
+  "created": "2023-01-15T10:30:00Z",
+  "bio": "Software engineer",
+  "followers": 1234,
+  "verified": true
+}
+```
+
+**What's missing:**
+- No validation (what if email is invalid?)
+- Inefficient storage (text format repeated 10M times)
+- Can't stream user exports (arrays don't stream)
+- No authentication (how do we secure this?)
+- No protocol (how do clients call getUserById?)
+
+**The journey ahead:**
+- **Part 2:** Add JSON Schema validation for type safety
+- **Part 3:** Store users in PostgreSQL JSONB for performance
+- **Part 4:** Add JSON-RPC protocol for structured API calls
+- **Part 5:** Export users with JSON Lines for streaming
+- **Part 6:** Secure API with JWT authentication
+
+This single API will demonstrate how each ecosystem layer solves a real problem.
 
 ---
 
