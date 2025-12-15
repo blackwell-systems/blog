@@ -515,7 +515,7 @@ JSON.stringify(person);
 // TypeError: Converting circular structure to JSON
 ```
 
-You must manually break cycles or use a serialization library that detects and handles them.
+You must manually break cycles or use a [serialization library]({{< relref "serialization-explained.md" >}}) that detects and handles them.
 
 {{< callout type="warning" >}}
 **Critical Insight:** JSON's weaknesses aren't bugs - they're consequences of extreme simplification. Every missing feature (schemas, comments, binary support) was left out intentionally to keep the format minimal.
@@ -699,6 +699,8 @@ This single innovation transformed JSON from "hope the data is correct" to "vali
 
 **Problem:** Text format is inefficient  
 **Solution:** Binary encoding with JSON-like structure
+
+These formats maintain JSON's structure while using efficient binary [serialization]({{< relref "serialization-explained.md" >}}):
 
 - **PostgreSQL JSONB:** Decomposed binary format, indexable, faster queries
 - **MongoDB BSON:** Binary JSON with extended types
