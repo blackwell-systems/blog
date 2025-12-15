@@ -10,7 +10,7 @@ description: "Master JSON Schema: the validation layer that transforms JSON from
 summary: "JSON lacks types and validation - any structure parses successfully. JSON Schema solves this by adding a validation layer without changing JSON itself. Learn how to define schemas, validate at runtime, generate code, and build type-safe APIs."
 ---
 
-In [Part 1](/posts/you-dont-know-json-part-1-origins/), we explored JSON's triumph over XML and its fundamental weakness: **no built-in validation**. JSON parsers accept any syntactically valid structure, but they can't tell you if the data makes sense for your application.
+In [Part 1]({{< relref "you-dont-know-json-part-1-origins.md" >}}), we explored JSON's triumph over XML and its fundamental weakness: **no built-in validation**. JSON parsers accept any syntactically valid structure, but they can't tell you if the data makes sense for your application.
 
 ```json
 {"age": "thirty"}
