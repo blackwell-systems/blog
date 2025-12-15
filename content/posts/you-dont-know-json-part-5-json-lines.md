@@ -14,7 +14,9 @@ In [Part 1]({{< relref "you-dont-know-json-part-1-origins.md" >}}), we explored 
 
 Now we tackle JSON's streaming problem: **you can't process JSON incrementally**.
 
-Standard JSON arrays require parsing the entire document:
+{{< callout type="warning" >}}
+**The Fundamental Problem:** Standard JSON arrays require parsing the entire document. You cannot read the first element until you've read the last closing bracket. This all-or-nothing parsing makes JSON unsuitable for large datasets.
+{{< /callout >}}
 
 ```json
 [
@@ -1744,7 +1746,7 @@ JSONL files have multiple root objects. You validate each line individually, not
 
 JSON Lines is the pragmatic solution to JSON's streaming problem. It's not a new format - just a convention of using newlines to separate JSON objects.
 
-### What We Learned
+### Core Benefits
 
 **JSON Lines provides:**
 - Streaming processing (constant memory)
