@@ -814,7 +814,7 @@ In Part 2, we'll solve JSON's most critical weakness: the lack of validation. JS
 
 **The core problem JSON Schema solves:** How do you maintain the simplicity of JSON while gaining the safety of typed, validated data?
 
-**Next:** [You Don't Know JSON: Part 2 - JSON Schema and Validation](/posts/you-dont-know-json-part-2-json-schema/)
+**Next:** [You Don't Know JSON: Part 2 - JSON Schema and the Art of Validation]({{< relref "you-dont-know-json-part-2-json-schema.md" >}})
 
 ---
 
