@@ -140,30 +140,31 @@ body {
 }
 
 /* Table styling for better readability */
-article table {
-  width: 100%;
-  border-collapse: collapse;
-  margin: 2rem 0;
-  font-size: 0.9rem;
+.postWrapper table {
+  width: 100% !important;
+  border-collapse: collapse !important;
+  margin: 2rem 0 !important;
+  font-size: 0.9rem !important;
 }
 
-article table th,
-article table td {
-  padding: 0.75rem 1.5rem;
-  text-align: left;
-  border-bottom: 1px solid rgba(107, 114, 128, 0.3);
+.postWrapper table th,
+.postWrapper table td {
+  padding: 1rem 2rem !important;
+  text-align: left !important;
+  border: 1px solid rgba(107, 114, 128, 0.3) !important;
 }
 
-article table th {
-  font-weight: 600;
-  background: rgba(58, 74, 92, 0.3);
-  border-bottom: 2px solid rgba(107, 114, 128, 0.5);
+.postWrapper table th {
+  font-weight: 600 !important;
+  background: rgba(58, 74, 92, 0.4) !important;
+  border-bottom: 2px solid rgba(107, 114, 128, 0.5) !important;
 }
 
-article table tr:hover {
-  background: rgba(58, 74, 92, 0.2);
+.postWrapper table tr:hover {
+  background: rgba(58, 74, 92, 0.2) !important;
 }
 
-article table td:first-child {
-  font-weight: 500;
+.postWrapper table td:first-child,
+.postWrapper table th:first-child {
+  font-weight: 600 !important;
 }
