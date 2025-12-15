@@ -140,31 +140,67 @@ body {
 }
 
 /* Table styling for better readability */
-.postWrapper table {
+/* Only target tables NOT inside pre/code blocks */
+.postWrapper > table,
+.postWrapper p + table,
+.postWrapper h2 + table,
+.postWrapper h3 + table {
   width: 100% !important;
   border-collapse: collapse !important;
   margin: 2rem 0 !important;
   font-size: 0.9rem !important;
 }
 
-.postWrapper table th,
-.postWrapper table td {
+.postWrapper > table th,
+.postWrapper > table td,
+.postWrapper p + table th,
+.postWrapper p + table td,
+.postWrapper h2 + table th,
+.postWrapper h2 + table td,
+.postWrapper h3 + table th,
+.postWrapper h3 + table td {
   padding: 1rem 2rem !important;
   text-align: left !important;
   border: 1px solid rgba(107, 114, 128, 0.3) !important;
 }
 
-.postWrapper table th {
+.postWrapper > table th,
+.postWrapper p + table th,
+.postWrapper h2 + table th,
+.postWrapper h3 + table th {
   font-weight: 600 !important;
   background: rgba(58, 74, 92, 0.4) !important;
   border-bottom: 2px solid rgba(107, 114, 128, 0.5) !important;
 }
 
-.postWrapper table tr:hover {
+.postWrapper > table tr:hover,
+.postWrapper p + table tr:hover,
+.postWrapper h2 + table tr:hover,
+.postWrapper h3 + table tr:hover {
   background: rgba(58, 74, 92, 0.2) !important;
 }
 
-.postWrapper table td:first-child,
-.postWrapper table th:first-child {
+.postWrapper > table td:first-child,
+.postWrapper > table th:first-child,
+.postWrapper p + table td:first-child,
+.postWrapper p + table th:first-child,
+.postWrapper h2 + table td:first-child,
+.postWrapper h2 + table th:first-child,
+.postWrapper h3 + table td:first-child,
+.postWrapper h3 + table th:first-child {
   font-weight: 600 !important;
+}
+
+/* Ensure code blocks are not affected */
+pre table,
+code table,
+pre code table {
+  all: revert !important;
+}
+
+pre table td,
+code table td,
+pre code table td {
+  padding: 0 !important;
+  border: none !important;
 }
