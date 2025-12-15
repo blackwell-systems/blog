@@ -691,7 +691,9 @@ JSON's limitations didn't kill it. Instead, an entire ecosystem evolved to addre
 }
 ```
 
-This single innovation transformed JSON from "hope the data is correct" to "validate at runtime with strict schemas."
+{{< callout type="success" >}}
+**Transformation:** This single innovation transformed JSON from "hope the data is correct" to "validate at runtime with strict schemas." JSON Schema adds the type safety layer that JSON itself deliberately omitted.
+{{< /callout >}}
 
 **Next article:** We'll dive deep into JSON Schema - how it works, why it matters, and how it solves JSON's validation problem.
 
