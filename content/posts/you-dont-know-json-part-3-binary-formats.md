@@ -16,6 +16,10 @@ JSON's human-readability is both its greatest strength and its Achilles heel. Ev
 
 For configuration files and API responses under 100KB, this is fine. But at scale - millions of messages per second, gigabytes of log data, mobile apps on slow networks - the text format becomes expensive.
 
+{{< callout type="info" >}}
+**The Modular Response:** Rather than rebuild JSON with binary support built-in (the XML approach), the ecosystem created separate binary formats. Each maintains JSON's structure while optimizing for specific use cases - database storage (JSONB), document databases (BSON), or universal serialization (MessagePack, CBOR). This modularity lets you choose the efficiency level per use case without changing your data model.
+{{< /callout >}}
+
 Binary JSON formats solve this. They maintain JSON's structure and flexibility while dramatically improving size and speed.
 
 ---

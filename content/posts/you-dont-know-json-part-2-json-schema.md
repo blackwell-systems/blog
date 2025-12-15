@@ -26,6 +26,10 @@ In [Part 1]({{< relref "you-dont-know-json-part-1-origins.md" >}}), we explored 
 
 All three parse successfully. But which is correct? Your application crashes at runtime when it expects a number.
 
+{{< callout type="info" >}}
+**Modularity in Action:** This incompleteness was by design. XML included validation (XSD), namespaces, and transformation (XSLT) in one monolithic specification. JSON chose the opposite - stay minimal, let the ecosystem build composable solutions. JSON Schema exemplifies this: validation as a separate, optional layer that can evolve independently of JSON parsers.
+{{< /callout >}}
+
 JSON Schema solves this. It's a vocabulary for defining the structure, types, and constraints of JSON documents. Think of it as TypeScript for JSON - adding type safety and validation without changing the underlying format.
 
 This article covers:

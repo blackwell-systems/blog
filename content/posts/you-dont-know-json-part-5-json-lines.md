@@ -18,6 +18,10 @@ Now we tackle JSON's streaming problem: **you can't process JSON incrementally**
 **The Fundamental Problem:** Standard JSON arrays require parsing the entire document. You cannot read the first element until you've read the last closing bracket. This all-or-nothing parsing makes JSON unsuitable for large datasets.
 {{< /callout >}}
 
+{{< callout type="info" >}}
+**The Modular Solution:** JSON Lines demonstrates the ecosystem's response to incompleteness. Rather than add streaming to JSON's grammar (the monolithic approach), the community created a minimal convention - just separate objects with newlines. This preserves JSON parsers unchanged while enabling new use cases. It's modularity at its simplest: solve one problem (streaming) without touching the core format.
+{{< /callout >}}
+
 ```json
 [
   {"id": 1, "name": "Alice"},

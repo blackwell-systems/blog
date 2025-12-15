@@ -14,6 +14,10 @@ In [Part 1]({{< relref "you-dont-know-json-part-1-origins.md" >}}), we explored 
 
 Now we examine JSON as a **protocol layer** - not just data format, but a communication standard for distributed systems.
 
+{{< callout type="info" >}}
+**Filling Another Gap:** JSON provides no protocol conventions - no standard way to structure requests, responses, or errors. XML had built-in protocol layers (SOAP, XML-RPC), but they were monolithic and complex. JSON-RPC exemplifies the modular ecosystem approach: a lightweight protocol layer that sits atop JSON, adding structure where needed without changing the core format or parser.
+{{< /callout >}}
+
 REST dominates web APIs, but its resource-oriented model doesn't fit every problem. How do you represent `transfer_funds(from, to, amount)` as HTTP verbs and URLs? You could force it into `POST /transfers` with a body, but you're fighting the paradigm.
 
 **JSON-RPC solves this:** It's a simple protocol for calling remote functions over any transport (HTTP, WebSockets, Unix sockets). No mental gymnastics to fit actions into resource models.
