@@ -1303,44 +1303,7 @@ setInterval(() => {
 
 ---
 
-## Performance Comparison
-
-### Benchmark: 1M Records
-
-**Standard JSON array:**
-```bash
-# Generate 1M record JSON array
-node generate-json.js > data.json
-
-# File size: 125 MB
-# Memory: 380 MB (3x file size)
-# Parse time: 2.8 seconds
-# Process time: 3.1 seconds
-```
-
-**JSON Lines:**
-```bash
-# Generate 1M records JSONL
-node generate-jsonl.js > data.jsonl
-
-# File size: 123 MB (2% smaller)
-# Memory: 2 MB (constant)
-# Parse time: 0.3 seconds per 10K chunk
-# Process time: 2.1 seconds (streaming)
-```
-
-**Results:**
-
-| Metric | JSON Array | JSON Lines | Improvement |
-|--------|------------|------------|-------------|
-| File size | 125 MB | 123 MB | 2% smaller |
-| Memory | 380 MB | 2 MB | **190x less** |
-| Time to first record | 2.8s | 0.001s | **2800x faster** |
-| Total time | 3.1s | 2.1s | 1.5x faster |
-| Partial results | No | Yes | N/A |
-| Resumable | No | Yes | N/A |
-
-### Streaming vs Batch
+## Streaming vs Batch Processing
 
 **Batch (load all):**
 ```javascript
@@ -1371,12 +1334,22 @@ for await (const line of rl) {
 // Memory: O(1), Time to start: O(1)
 ```
 
+**Key differences:**
+
+| Aspect | Batch Processing | Stream Processing |
+|--------|------------------|-------------------|
+| **Memory usage** | O(n) - entire file | O(1) - one record |
+| **Time to first record** | Must parse all | Immediate |
+| **Large file handling** | May run out of memory | Constant memory |
+| **Partial results** | No | Yes |
+| **Resumable** | No | Yes |
+
 {{< mermaid >}}
 flowchart TB
     subgraph batch["JSON Array (Batch)"]
         load[Load entire file]
         parse[Parse all records]
-        mem[Hold in memory]
+        mem[Hold all in memory]
         proc[Process all]
         
         load --> parse --> mem --> proc
@@ -1393,11 +1366,11 @@ flowchart TB
         next -.Loop.-> read
     end
     
-    file[(10 GB file)] --> batch
+    file[(Large file)] --> batch
     file --> stream
     
-    batch -.30 GB RAM.-> oom[Out of Memory]
-    stream -.10 MB RAM.-> success[Success]
+    batch -.Requires memory<br/>proportional to file size.-> risk[May run out of memory]
+    stream -.Uses constant memory<br/>regardless of file size.-> success[Handles any size]
     
     style batch fill:#4C3A3C,stroke:#6b7280,color:#f0f0f0
     style stream fill:#3A4C43,stroke:#6b7280,color:#f0f0f0
