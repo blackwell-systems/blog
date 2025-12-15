@@ -332,7 +332,9 @@ String json = mapper.writeValueAsString(person);  // encode
 Person person = mapper.readValue(json, Person.class);  // decode
 ```
 
-The ecosystem effect: Once every language had JSON support, it became the obvious choice for data interchange.
+{{< callout type="info" >}}
+**The Ecosystem Effect:** Once every language had JSON support, it became the obvious choice for data interchange. Network effects made JSON the default - not because it was technically superior, but because it was universally supported.
+{{< /callout >}}
 
 {{< mermaid >}}
 flowchart LR
