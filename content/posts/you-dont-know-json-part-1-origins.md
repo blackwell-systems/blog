@@ -746,16 +746,86 @@ Used by Ethereum, LSP (Language Server Protocol), and many other systems.
 **Problem:** No comments, strict syntax  
 **Solution:** Relaxed JSON with comments and trailing commas
 
+JSON deliberately omitted developer-friendly features to stay minimal. For machine-to-machine communication, this is fine. For configuration files humans edit daily, it's painful.
+
+**JSON5** adds convenience features while maintaining JSON compatibility:
+
 ```json5
 {
-  // Configuration for production
-  name: 'my-app',
+  // Single-line comments
+  /* Multi-line comments */
+  
+  name: 'my-app',              // Unquoted keys
   port: 8080,
   features: {
-    debug: false,  // Trailing comma OK
+    debug: false,              // Trailing commas OK
+    maxConnections: 1_000,     // Numeric separators
   },
+  
+  // Multi-line strings
+  description: 'This is a \
+    multi-line description',
 }
 ```
+
+**HJSON** goes further with extreme readability:
+
+```hjson
+{
+  # Hash comments (like YAML)
+  
+  # Quotes optional for strings
+  name: my-app
+  port: 8080
+  
+  # Commas optional
+  features: {
+    debug: false
+    maxConnections: 1000
+  }
+  
+  # Multi-line strings without escaping
+  description:
+    '''
+    This is a naturally
+    multi-line description
+    '''
+}
+```
+
+**Comparison:**
+
+| Feature | JSON | JSON5 | HJSON | YAML | TOML |
+|---------|------|-------|-------|------|------|
+| Comments | ❌ | ✓ | ✓ | ✓ | ✓ |
+| Trailing commas | ❌ | ✓ | ✓ | N/A | N/A |
+| Unquoted keys | ❌ | ✓ | ✓ | ✓ | ✓ |
+| Unquoted strings | ❌ | ❌ | ✓ | ✓ | ✓ |
+| Native browser support | ✓ | ❌ | ❌ | ❌ | ❌ |
+| Designed for configs | ❌ | Partial | ✓ | ✓ | ✓ |
+
+**When to use:**
+
+**JSON5:**
+- VSCode settings (`.vscode/settings.json5`)
+- Build tool configs where JSON is expected
+- Need comments but want JSON compatibility
+
+**HJSON:**
+- Developer-facing configs prioritizing readability
+- Local development settings
+- Documentation examples
+
+**Standard JSON:**
+- APIs and data interchange
+- Production configs (parsed by machines)
+- Anything needing browser/native support
+
+**Why they're niche:** Unlike JSON Schema (essential for validation) or JSONB (essential for performance), JSON5/HJSON solve a convenience problem that YAML and TOML also solve. Most teams choose YAML or TOML for configuration files - they were designed for this purpose from the start and have broader ecosystem support.
+
+{{< callout type="info" >}}
+**The Configuration Choice:** For human-edited configs, the ecosystem offers multiple solutions - JSON5, HJSON, YAML, TOML. Each makes different trade-offs between readability, features, and compatibility. JSON5 stays closest to JSON, YAML is most popular, TOML is clearest for nested config. The choice depends on your team's preferences and tooling.
+{{< /callout >}}
 
 ### 6. Security Layer: JWS, JWE
 
