@@ -2,7 +2,7 @@
 
 **Status:** Planning Phase  
 **Target Completion:** Q2 2026  
-**Current Series:** Complete (6 parts, 32,649 words)
+**Current Series:** Complete (7 parts, 33,991 words)
 
 ---
 
@@ -351,13 +351,14 @@ Understanding **why** JSON succeeded requires understanding what it replaced and
 ## Length Estimate
 
 ### Current Series (Actual Word Counts)
-- Part 1 (Origins): 3,918 words
-- Part 2 (JSON Schema): 4,034 words
-- Part 3 (Binary Formats): 7,335 words
-- Part 4 (JSON-RPC): 6,775 words
-- Part 5 (JSON Lines): 5,429 words
-- Part 6 (Security): 5,158 words
-- **Total:** 32,649 words (~73 pages at 450 words/page)
+- Part 1 (Origins): 3,918 words (~20 min read)
+- Part 2 (JSON Schema): 4,034 words (~20 min read)
+- Part 3 (Binary Databases): ~4,000 words (~20 min read)
+- Part 4 (Binary APIs): ~4,600 words (~23 min read)
+- Part 5 (JSON-RPC): 6,775 words (~34 min read)
+- Part 6 (JSON Lines): 5,429 words (~27 min read)
+- Part 7 (Security): 5,158 words (~26 min read)
+- **Total:** 33,914 words (~75 pages at 450 words/page)
 
 ### Expansion Plan for Existing Chapters
 - Chapter 1 expansion (XML contrast, history): +4,000 words → 8,000 words total
