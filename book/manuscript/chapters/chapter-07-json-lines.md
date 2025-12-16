@@ -1537,6 +1537,280 @@ flowchart TB
 
 ---
 
+## Advanced Streaming Patterns
+
+### Backpressure Handling
+
+When processing streams, the consumer may be slower than the producer. Without backpressure handling, memory grows unbounded until crash.
+
+**The problem:**
+
+```javascript
+// Dangerous: No backpressure
+const readStream = fs.createReadStream('huge.jsonl');
+const rl = readline.createInterface({input: readStream});
+
+rl.on('line', async (line) => {
+  const record = JSON.parse(line);
+  // Slow operation (500ms each)
+  await slowDatabaseInsert(record);
+  // Lines arrive faster than processing - memory grows!
+});
+```
+
+**If file has 1M lines and processing takes 500ms each:**
+- Lines arrive: 1M/second (reading is fast)
+- Lines processed: 2/second (processing is slow)
+- Memory fills with 999,998 pending lines → crash
+
+**Solution: Pause and resume streams**
+
+```javascript
+const readStream = fs.createReadStream('huge.jsonl');
+const rl = readline.createInterface({input: readStream});
+
+let processing = 0;
+const maxConcurrent = 10; // Limit concurrent operations
+
+rl.on('line', async (line) => {
+  processing++;
+  
+  // Pause if too many concurrent operations
+  if (processing >= maxConcurrent) {
+    readStream.pause();
+  }
+  
+  try {
+    const record = JSON.parse(line);
+    await slowDatabaseInsert(record);
+  } finally {
+    processing--;
+    
+    // Resume if under threshold
+    if (processing < maxConcurrent) {
+      readStream.resume();
+    }
+  }
+});
+```
+
+**Node.js streams v3 (automatic backpressure):**
+
+```javascript
+const { pipeline } = require('stream/promises');
+const { Transform } = require('stream');
+
+// Transform stream with automatic backpressure
+const processStream = new Transform({
+  objectMode: true,
+  async transform(line, encoding, callback) {
+    try {
+      const record = JSON.parse(line);
+      const processed = await slowDatabaseInsert(record);
+      callback(null, processed);
+    } catch (err) {
+      callback(err);
+    }
+  }
+});
+
+// pipeline handles backpressure automatically
+await pipeline(
+  fs.createReadStream('huge.jsonl'),
+  split2(), // Split by newlines
+  processStream,
+  fs.createWriteStream('results.jsonl')
+);
+```
+
+**Why this works:** Node.js streams automatically pause upstream when downstream is slow. No manual pause/resume needed.
+
+### Parallel Processing with Bounded Queues
+
+For CPU-intensive operations, process multiple lines concurrently with bounded parallelism:
+
+```javascript
+const pLimit = require('p-limit');
+const limit = pLimit(10); // Max 10 concurrent operations
+
+const readStream = fs.createReadStream('data.jsonl');
+const rl = readline.createInterface({input: readStream});
+
+const promises = [];
+
+for await (const line of rl) {
+  // Add to bounded queue
+  const promise = limit(async () => {
+    const record = JSON.parse(line);
+    return await processRecord(record);
+  });
+  
+  promises.push(promise);
+}
+
+// Wait for all to complete
+const results = await Promise.all(promises);
+```
+
+**Benefits:**
+- 10x throughput vs sequential (if operations are I/O bound)
+- Bounded memory (only 10 records in-flight)
+- Automatic error handling per record
+
+### Transform Streams for Pipelines
+
+Build composable processing pipelines with transform streams:
+
+```javascript
+const { Transform } = require('stream');
+
+// Parse JSON Lines
+class JSONLParser extends Transform {
+  constructor() {
+    super({objectMode: true});
+  }
+  
+  _transform(chunk, encoding, callback) {
+    const lines = chunk.toString().split('\n');
+    for (const line of lines) {
+      if (line.trim()) {
+        try {
+          this.push(JSON.parse(line));
+        } catch (err) {
+          this.emit('error', new Error(`Parse error: ${line}`));
+        }
+      }
+    }
+    callback();
+  }
+}
+
+// Filter records
+class Filter extends Transform {
+  constructor(predicate) {
+    super({objectMode: true});
+    this.predicate = predicate;
+  }
+  
+  _transform(record, encoding, callback) {
+    if (this.predicate(record)) {
+      this.push(record);
+    }
+    callback();
+  }
+}
+
+// Transform records
+class Mapper extends Transform {
+  constructor(mapFn) {
+    super({objectMode: true});
+    this.mapFn = mapFn;
+  }
+  
+  async _transform(record, encoding, callback) {
+    try {
+      const transformed = await this.mapFn(record);
+      this.push(transformed);
+      callback();
+    } catch (err) {
+      callback(err);
+    }
+  }
+}
+
+// Compose pipeline
+await pipeline(
+  fs.createReadStream('input.jsonl'),
+  new JSONLParser(),
+  new Filter(record => record.age >= 18),
+  new Mapper(async record => ({
+    ...record,
+    processedAt: new Date().toISOString()
+  })),
+  new JSONLSerializer(),
+  fs.createWriteStream('output.jsonl')
+);
+```
+
+**Benefits:**
+- Composable (mix and match transforms)
+- Automatic backpressure (built into pipeline)
+- Memory efficient (constant memory usage)
+- Reusable components
+
+### Production Monitoring for Streaming
+
+Track streaming pipeline health with metrics:
+
+```javascript
+const { Counter, Gauge, Histogram } = require('prom-client');
+
+const linesProcessed = new Counter({
+  name: 'jsonl_lines_processed_total',
+  help: 'Total JSON Lines processed',
+  labelNames: ['status']
+});
+
+const processingLag = new Gauge({
+  name: 'jsonl_processing_lag_seconds',
+  help: 'Processing lag behind real-time'
+});
+
+const processingDuration = new Histogram({
+  name: 'jsonl_record_processing_seconds',
+  help: 'Time to process each record',
+  buckets: [0.001, 0.01, 0.1, 1, 5]
+});
+
+class MonitoredStream extends Transform {
+  constructor() {
+    super({objectMode: true});
+    this.lastTimestamp = Date.now();
+  }
+  
+  async _transform(record, encoding, callback) {
+    const start = Date.now();
+    
+    try {
+      const result = await processRecord(record);
+      
+      // Record metrics
+      linesProcessed.inc({status: 'success'});
+      processingDuration.observe((Date.now() - start) / 1000);
+      
+      // Track lag (if records have timestamps)
+      if (record.timestamp) {
+        const lag = Date.now() - new Date(record.timestamp).getTime();
+        processingLag.set(lag / 1000);
+      }
+      
+      this.push(result);
+      callback();
+    } catch (err) {
+      linesProcessed.inc({status: 'error'});
+      callback(err);
+    }
+  }
+}
+
+// Alert if lag exceeds threshold
+setInterval(() => {
+  const lag = processingLag.get().values[0].value;
+  if (lag > 60) { // More than 1 minute behind
+    logger.error('Processing lag critical', {lag});
+  }
+}, 10000);
+```
+
+**Key metrics to monitor:**
+- **Lines processed per second** (throughput)
+- **Processing lag** (real-time vs processed timestamp)
+- **Error rate** (failed parses or processing)
+- **Memory usage** (detect backpressure issues)
+- **Queue depth** (how many records waiting)
+
+---
+
 ## Best Practices
 
 ### 1. One Object Per Line
