@@ -1832,6 +1832,241 @@ Clear documentation is essential for API consumers.
 - [ ] Health check endpoint
 {{< /callout >}}
 
+### Production Deployment Patterns
+
+Running JSON-RPC in production requires considerations beyond the basic implementation.
+
+**Load balancing with sticky sessions:**
+
+```nginx
+# nginx.conf - Load balance JSON-RPC servers
+upstream json_rpc_backend {
+    # Sticky sessions based on client IP (for stateful connections)
+    ip_hash;
+    
+    server rpc1.internal:3000 max_fails=3 fail_timeout=30s;
+    server rpc2.internal:3000 max_fails=3 fail_timeout=30s;
+    server rpc3.internal:3000 max_fails=3 fail_timeout=30s;
+}
+
+server {
+    listen 443 ssl http2;
+    server_name api.example.com;
+    
+    location /rpc {
+        # Rate limiting per client
+        limit_req zone=rpc_limit burst=20 nodelay;
+        
+        proxy_pass http://json_rpc_backend;
+        proxy_http_version 1.1;
+        
+        # Connection reuse
+        proxy_set_header Connection "";
+        
+        # Timeouts for long-running methods
+        proxy_read_timeout 60s;
+        proxy_send_timeout 60s;
+        
+        # Add request ID for tracing
+        proxy_set_header X-Request-ID $request_id;
+    }
+}
+```
+
+**Health check endpoint:**
+
+```javascript
+// Separate health check (not JSON-RPC method)
+app.get('/health', async (req, res) => {
+  const checks = {
+    database: await checkDatabase(),
+    redis: await checkRedis(),
+    externalAPI: await checkExternalAPI()
+  };
+  
+  const healthy = Object.values(checks).every(c => c.ok);
+  
+  res.status(healthy ? 200 : 503).json({
+    status: healthy ? 'healthy' : 'degraded',
+    checks,
+    timestamp: new Date().toISOString()
+  });
+});
+
+async function checkDatabase() {
+  try {
+    await db.query('SELECT 1');
+    return {ok: true};
+  } catch (err) {
+    return {ok: false, error: err.message};
+  }
+}
+```
+
+**Monitoring and observability:**
+
+```javascript
+const { Counter, Histogram } = require('prom-client');
+
+const rpcCallsTotal = new Counter({
+  name: 'json_rpc_calls_total',
+  help: 'Total JSON-RPC calls',
+  labelNames: ['method', 'status']
+});
+
+const rpcDuration = new Histogram({
+  name: 'json_rpc_duration_seconds',
+  help: 'JSON-RPC call duration',
+  labelNames: ['method'],
+  buckets: [0.01, 0.05, 0.1, 0.5, 1, 2, 5]
+});
+
+async function handleRPCWithMetrics(req, res) {
+  const start = Date.now();
+  const {method} = req.body;
+  
+  try {
+    const result = await handleRPC(req);
+    
+    // Record success
+    rpcCallsTotal.inc({method, status: 'success'});
+    rpcDuration.observe({method}, (Date.now() - start) / 1000);
+    
+    res.json(result);
+  } catch (err) {
+    // Record failure
+    rpcCallsTotal.inc({method, status: 'error'});
+    rpcDuration.observe({method}, (Date.now() - start) / 1000);
+    
+    res.status(500).json({
+      jsonrpc: '2.0',
+      error: {code: -32603, message: 'Internal error'},
+      id: req.body.id
+    });
+  }
+}
+
+// Expose metrics for Prometheus
+app.get('/metrics', async (req, res) => {
+  res.set('Content-Type', register.contentType);
+  res.end(await register.metrics());
+});
+```
+
+### Performance Optimization
+
+**1. Connection pooling for database calls:**
+
+```javascript
+// Bad: Create connection per RPC call
+methods.getUser = async ({id}) => {
+  const conn = await mysql.createConnection(config);
+  const user = await conn.query('SELECT * FROM users WHERE id = ?', [id]);
+  await conn.end();
+  return user;
+};
+
+// Good: Reuse connection pool
+const pool = mysql.createPool({
+  host: 'db.internal',
+  user: 'api',
+  password: process.env.DB_PASSWORD,
+  database: 'users',
+  connectionLimit: 20,        // Max concurrent connections
+  queueLimit: 100,            // Max queued requests
+  acquireTimeout: 10000       // 10s timeout
+});
+
+methods.getUser = async ({id}) => {
+  const [user] = await pool.query('SELECT * FROM users WHERE id = ?', [id]);
+  return user;
+};
+```
+
+**2. Method result caching:**
+
+```javascript
+const NodeCache = require('node-cache');
+const cache = new NodeCache({stdTTL: 60}); // 60s default TTL
+
+methods.getUser = async ({id}) => {
+  // Check cache first
+  const cacheKey = `user:${id}`;
+  let user = cache.get(cacheKey);
+  
+  if (user) {
+    return user; // Cache hit
+  }
+  
+  // Cache miss, fetch from database
+  user = await db.users.findById(id);
+  cache.set(cacheKey, user, 300); // Cache for 5 minutes
+  
+  return user;
+};
+
+// Invalidate cache on updates
+methods.updateUser = async ({id, data}) => {
+  await db.users.update(id, data);
+  cache.del(`user:${id}`); // Clear cache
+  return {success: true};
+};
+```
+
+**3. Batch request optimization:**
+
+```javascript
+// Efficiently handle batch requests with parallel execution
+async function handleBatch(requests) {
+  // Execute all requests in parallel (not sequential!)
+  const results = await Promise.allSettled(
+    requests.map(req => handleSingleRequest(req))
+  );
+  
+  // Map results back to responses
+  return results.map((result, i) => {
+    if (result.status === 'fulfilled') {
+      return {
+        jsonrpc: '2.0',
+        result: result.value,
+        id: requests[i].id
+      };
+    } else {
+      return {
+        jsonrpc: '2.0',
+        error: {code: -32603, message: result.reason.message},
+        id: requests[i].id
+      };
+    }
+  });
+}
+```
+
+**4. Long-running method timeout:**
+
+```javascript
+async function executeWithTimeout(method, params, timeoutMs = 30000) {
+  return Promise.race([
+    method(params),
+    new Promise((_, reject) =>
+      setTimeout(() => reject(new Error('Method timeout')), timeoutMs)
+    )
+  ]);
+}
+
+methods.expensiveOperation = async (params) => {
+  return executeWithTimeout(
+    async () => {
+      // Long-running operation
+      const result = await complexCalculation(params);
+      return result;
+    },
+    params,
+    60000  // 60s timeout
+  );
+};
+```
+
 ---
 
 ## Security Considerations
