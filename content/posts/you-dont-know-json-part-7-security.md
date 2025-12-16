@@ -1643,45 +1643,22 @@ We've completed our journey through the JSON ecosystem. From JSON's origins thro
 **The Architectural Lesson:** Incompleteness isn't weakness when you design for modularity. JSON's success came from staying minimal and letting the ecosystem build composable solutions. Each layer can evolve independently - JWT updates don't break JSON parsers, new binary formats don't require schema changes, streaming conventions don't impact existing APIs.
 {{< /callout >}}
 
-### The Full Circle: JSON Reinvented XML's Ecosystem
+### JSON Security: The Modular Approach Complete
 
-**Here's the remarkable pattern:** JSON ended up solving the exact same problems XML did, just with different architecture:
+With JWT, JWS, and JWE, we've seen how JSON's security layer follows the same pattern as every other part of this series:
 
-| Problem | XML (1998) | JSON (2001+) | Architecture |
-|---------|-----------|--------------|--------------|
-| **Validation** | XSD (built-in) | JSON Schema (separate) | Monolithic → Modular |
-| **Binary** | N/A | JSONB, MessagePack (separate) | N/A → Modular |
-| **Protocol** | SOAP (built-in) | JSON-RPC (separate) | Monolithic → Modular |
-| **Security** | XML Signature (built-in) | JWT, JWS (separate) | Monolithic → Modular |
-| **Query** | XPath (built-in) | jq, JSONPath (separate) | Monolithic → Modular |
+**The gap:** JSON has no authentication, encryption, or signing primitives.
 
-**JSON didn't avoid XML's problems - it organized the solutions differently.**
+**The solution:** Separate, composable standards (JWT, JWS, JWE) that work with any transport.
 
-**Why the architecture differs: SOFTWARE EVOLUTION**
+**The benefit:** Each evolves independently. JWT improvements don't break JSON parsers. New signing algorithms don't require format changes. Security practices advance without coordinated ecosystem updates.
 
-**XML era (1990s):**
-- Monolithic was the norm (CORBA, J2EE, Microsoft)
-- "Complete specification" was a feature
-- One vendor, one integrated solution
-- Tight coupling was acceptable
-- Enterprise architecture meant comprehensive upfront design
+**The trade-off:** Flexibility requires knowledge. Developers must understand algorithm confusion attacks, token substitution, timing vulnerabilities. XML's bundled security was harder to get started but forced awareness. JSON's modular security is easier to adopt but easier to get wrong.
 
-**JSON era (2000s-present):**
-- Microservices philosophy emerging
-- Loose coupling as best practice
-- Dependency injection patterns standard
-- Open source ecosystem mindset
-- Unix philosophy: small composable tools
-- Agile: evolve incrementally, not big design upfront
+This completes our technical journey through the JSON ecosystem. But there's a deeper story here about **why** JSON succeeded, what it teaches us about technology evolution, and the hidden costs of modularity.
 
-**The insight:** Technologies don't just compete on features. They reflect the **architectural thinking of their era**. XML was architecturally correct for 1990s software practices. JSON is architecturally correct for 2000s+ software practices.
-
-**The future:** Whatever replaces JSON will likely reflect the architectural patterns of its time - perhaps edge computing, distributed consensus, or paradigms we haven't imagined yet. The problems remain constant; the organizational principles evolve.
-
-{{< callout type="warning" >}}
-**Historical Perspective:** JSON didn't win because it was "better" than XML in absolute terms. It won because its modular architecture aligned with how developers were learning to build systems. The same problems existed (validation, performance, security), but the solutions were organized according to contemporary software architecture principles: loose coupling, composability, independent evolution.
-
-This is the real lesson: technical decisions are inseparable from the architectural zeitgeist of their era.
+{{< callout type="info" >}}
+**Continue to Part 8:** [Lessons from the JSON Revolution]({{< relref "you-dont-know-json-part-8-lessons.md" >}}) - Explore the architectural zeitgeist, the JSX vindication, and what JSON teaches us about technology evolution beyond data formats.
 {{< /callout >}}
 
 ### Security Best Practices Summary
@@ -1708,22 +1685,25 @@ This is the real lesson: technical decisions are inseparable from the architectu
 - SQL injection via claims
 - Token substitution attacks
 
-### The Series Complete
+### The Technical Series Complete
 
 **What we've learned:**
 - **Part 1:** JSON's triumph through simplicity
-- **Part 2:** Validation with JSON Schema
-- **Part 3:** Performance with binary formats
+- **Part 2:** Validation with JSON Schema  
+- **Part 3:** Binary JSON in databases (JSONB, BSON)
+- **Part 4:** Binary JSON for APIs (MessagePack, CBOR)
 - **Part 5:** Protocols with JSON-RPC
-- **Part 5:** Streaming with JSON Lines
-- **Part 6:** Security with JWT/JWS/JWE
+- **Part 6:** Streaming with JSON Lines
+- **Part 7:** Security with JWT/JWS/JWE
 
 Each part showed the same pattern: identify incompleteness, build modular solution, maintain JSON's core simplicity.
 
-This is why JSON won. Not because it was complete, but because it was **incomplete in exactly the right way** - minimal enough to stay simple, modular enough to grow through ecosystem extensions.
+But there's a deeper question: **Why did this approach succeed where XML's integrated approach failed?**
 
 {{< callout type="info" >}}
-**Series Complete:** You now understand JSON not just as a data format, but as an architectural philosophy. Simplicity, incompleteness, and modularity created the foundation for modern web APIs, databases, and distributed systems. The "weaknesses" were strengths in disguise.
+**Continue to Part 8:** [Lessons from the JSON Revolution]({{< relref "you-dont-know-json-part-8-lessons.md" >}}) - The final part explores the meta-patterns: how technologies reflect their era's architectural zeitgeist, why good patterns survive regardless of packaging (JSX vindication), and the hidden costs of modularity through ecosystem fragmentation.
+
+**Not just about JSON anymore** - Part 8 examines what JSON teaches us about technology evolution, architectural thinking, and why "better" technologies don't always win.
 {{< /callout >}}
 
 ---
