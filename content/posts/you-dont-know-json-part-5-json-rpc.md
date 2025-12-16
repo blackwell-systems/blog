@@ -170,6 +170,25 @@ RPC treats all cardinalities equally as function parameters:
 - `getUsers(ids: [1,5,12])` - some (no awkwardness, no arguments)
 - `searchUsers(query, filters)` - filtered some
 
+**REST couples URLs to database entities. RPC doesn't:**
+
+REST URLs often mirror tables:
+```
+/users     → users table
+/posts     → posts table
+/comments  → comments table
+```
+Tight coupling: database refactoring forces API changes.
+
+RPC methods describe operations, not data location:
+```javascript
+getUserProfile(id)      // Might query users + posts + followers
+searchContent(query)    // Might hit Elasticsearch, not database
+processOrder(orderId)   // Might touch 5 different services
+```
+
+The implementation is hidden. You can refactor database structure, add caching layers, split services, or change storage systems without breaking the API contract.
+
 **Key Insight:** REST excels at resource manipulation (CRUD). RPC excels at action invocation (function calls). Choose based on your domain - don't force actions into resource models or vice versa. If your API is mostly verbs (calculate, process, execute, transform), RPC is the natural fit.
 {{< /callout >}}
 
