@@ -1728,7 +1728,7 @@ For more on Protocol Buffers, see: [Understanding Protocol Buffers: Part 1]({{< 
 
 **Given the cost savings and performance benefits, why doesn't everyone use Protocol Buffers for everything?**
 
-#### 1. Schema Rigidity (The Biggest Issue)
+#### 1. Schema Rigidity and Deployment Coordination
 
 **Protocol Buffers require compilation and strict schemas:**
 
@@ -1758,10 +1758,23 @@ const user = {
 };
 ```
 
-**Real scenario:**
-- Frontend needs new field for A/B test
-- With JSON: Ship in 5 minutes
-- With Protobuf: Coordinate backend update, code generation, testing, deployment (~2 hours minimum)
+**Impact depends on your setup:**
+
+**With mature tooling (automated pipeline):**
+- `make generate` → commit → CI deploys
+- Similar velocity to JSON for established teams
+- Overhead: ~2-5 minutes for regeneration + deployment
+
+**Without automation (manual process):**
+- Update proto → manually regenerate → test → coordinate → deploy
+- Cross-team coordination if shared protos
+- Overhead: 30 minutes to 2 hours depending on team size
+
+**Where this genuinely slows development:**
+- **Rapid prototyping:** Trying different data shapes daily
+- **A/B testing:** Frontend experimenting with new fields
+- **Cross-team dependencies:** Service A waits for Service B's proto update
+- **Small teams:** No dedicated DevOps to automate workflow
 
 #### 2. Dynamic Data Structures
 
@@ -1857,24 +1870,35 @@ fetch('/api/users')
 
 **You'd need JSON anyway for integrations.**
 
-#### 6. Rapid Prototyping and Startups
+#### 6. Rapid Prototyping and Exploratory Development
 
 **Early-stage development priorities:**
 - Ship fast, iterate quickly
-- Schema changes daily
+- Schema changes frequently
 - Developer velocity > optimization
 - Unknown requirements
 
-**Protobuf adds friction when requirements are uncertain.**
+**Protobuf's schema-first approach adds friction during exploration phase.**
 
-**Real scenario:**
+**Example: Evolving user model**
 - Week 1: User has `name` field
 - Week 2: Split into `first_name` and `last_name`
 - Week 3: Add optional `middle_name`
 - Week 4: Support international names (single field after all)
 
-**With JSON:** 4 quick iterations  
-**With Protobuf:** 4 regeneration cycles, coordination, migrations
+**With JSON:** Immediate changes, no regeneration  
+**With Protobuf:** Regeneration each iteration (adds 2-5 minutes per change with automation, more without)
+
+**This matters most when:**
+- Requirements are unknown or changing daily
+- Team is experimenting with different approaches
+- Product-market fit not yet established
+- Schema volatility is high
+
+**Less relevant when:**
+- API contracts are stable
+- Team has established patterns
+- Schema changes are infrequent (monthly, not daily)
 
 #### 7. Mixed Data Scenarios
 
