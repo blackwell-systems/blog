@@ -402,42 +402,79 @@ Understanding **why** JSON succeeded requires understanding what it replaced and
 
 ## Length Estimate
 
-### Current Series (Actual Word Counts)
-- Part 1 (Origins): 3,918 words (~20 min read)
-- Part 2 (JSON Schema): 4,034 words (~20 min read)
-- Part 3 (Binary Databases): ~4,000 words (~20 min read)
-- Part 4 (Binary APIs): ~4,600 words (~23 min read)
-- Part 5 (JSON-RPC): 6,775 words (~34 min read)
-- Part 6 (JSON Lines): 5,429 words (~27 min read)
-- Part 7 (Security): 5,158 words (~26 min read)
-- **Total:** 33,914 words (~75 pages at 450 words/page)
+### Current Series (Actual Word Counts - December 2025)
+- Part 1 (Origins): 4,163 words (~20 min read)
+- Part 2 (JSON Schema): 4,079 words (~20 min read)
+- Part 3 (Binary Databases): 3,283 words (~16 min read)
+- Part 4 (Binary APIs): 5,187 words (~25 min read)
+- Part 5 (JSON-RPC): 6,734 words (~33 min read)
+- Part 6 (JSON Lines): 6,004 words (~30 min read)
+- Part 7 (Security): 5,441 words (~27 min read)
+- Part 8 (Lessons/Zeitgeist): 3,643 words (~18 min read)
+- **Total:** ~39,000 words (~87 pages at 450 words/page)
+
+**Key features added during series development:**
+
+**1. Explicit XML Mappings (December 2025)**
+- Every part (1-7) has standardized "What XML Had" callout
+- Maps each JSON solution to specific XML technology
+- Shows monolithic → modular architecture shift
+- Makes zeitgeist thesis impossible to miss
+
+**2. Part 8: Philosophical Conclusion**
+- New meta-analysis chapter exploring why JSON succeeded
+- Architectural zeitgeist thesis (technologies reflect their era)
+- Modularity paradox (choice vs discoverability/fragmentation)
+- JSX vindication (good patterns survive architecture shifts)
+- Lessons applicable beyond JSON to any technology evaluation
+
+**3. Deep REST vs RPC Analysis (Part 5)**
+- Cardinality problem (all/one/some)
+- REST contortion scenarios
+- Database coupling analysis
+- Protocol vs architectural style distinction
+
+**4. Cost Analysis (Part 4)**
+- Real cloud bandwidth cost calculations
+- ROI analysis for binary formats
+- Break-even thresholds
+- "Why not always use X" honest trade-offs
+
+**Book transformation requirements:**
+- Expand XML mappings with historical context
+- Add visual timeline showing 1990s → 2025 evolution
+- Include more "forced awareness vs optional discovery" examples
+- Expand JSX section with Vue/Angular/Svelte parallels
+- Add case studies of companies choosing modular vs monolithic
 
 ### Expansion Plan for Existing Chapters
-- Chapter 1 expansion (XML contrast, history): +4,000 words → 8,000 words total
-- Chapter 2 expansion (code generation): +5,000 words → 9,000 words total
-- Chapter 3 expansion (benchmarks, deployment): +2,700 words → 10,000 words total
-- Chapter 4 expansion (real-world examples): +2,200 words → 9,000 words total
-- Chapter 5 expansion (data engineering): +2,600 words → 8,000 words total
-- Chapter 6 expansion (attack scenarios): +2,800 words → 8,000 words total
-- **Expansion subtotal:** +19,300 words
+- Chapter 1 expansion (XML contrast, history): +2,000 words → 6,000 words total
+- Chapter 2 expansion (code generation): +3,000 words → 7,000 words total
+- Chapter 3 expansion (benchmarks, deployment): +3,500 words → 6,800 words total
+- Chapter 4 expansion (real-world examples): +1,800 words → 7,000 words total
+- Chapter 5 expansion (WebSocket patterns): +1,300 words → 8,000 words total
+- Chapter 6 expansion (data engineering): +2,000 words → 8,000 words total
+- Chapter 7 expansion (attack scenarios): +2,600 words → 8,000 words total
+- Chapter 8 expansion (future predictions): +2,400 words → 6,000 words total
+- **Expansion subtotal:** +18,600 words
 
 ### New Content
 - New Chapter 2 (Architecture framework): 7,000 words
-- New Chapter 8 (JSON5, HJSON, YAML, TOML): 7,000 words
-- New Chapter 9 (API Design patterns): 8,000 words
-- New Chapter 10 (Data Pipelines): 8,000 words
-- New Chapter 11 (Testing strategies): 7,000 words
-- New Chapter 12 (Future/alternatives): 6,000 words
+- New Chapter 9 (JSON5, HJSON, YAML, TOML): 7,000 words
+- New Chapter 10 (API Design patterns): 8,000 words
+- New Chapter 11 (Data Pipelines): 8,000 words
+- New Chapter 12 (Testing strategies): 7,000 words
+- New Chapter 13 (Future/alternatives): 6,000 words
 - Introduction: 2,500 words
 - Conclusion: 2,500 words
 - Appendices: 4,000 words
 - **New content subtotal:** 52,000 words
 
 ### Total Projected Book Length
-**Current:** 32,649 words  
-**Expansion:** +19,300 words  
+**Current blog series:** 39,000 words  
+**Expansion:** +18,600 words  
 **New chapters:** +52,000 words  
-**Total:** **103,949 words** (~230 pages at 450 words/page)
+**Total:** **109,600 words** (~244 pages at 450 words/page)
 
 ### Technical Book Context
 - **Typical technical book:** 50,000-80,000 words (200-350 pages)
