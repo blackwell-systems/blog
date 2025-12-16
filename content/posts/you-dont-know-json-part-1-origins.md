@@ -502,6 +502,16 @@ console.log(9007199254740992 + 1);  // 9007199254740992
 // Lost precision!
 ```
 
+{{< callout type="danger" >}}
+**Critical Production Issue:** JSON's number type causes real-world failures:
+- **Database IDs beyond 2^53 silently corrupt** (Snowflake IDs, Twitter IDs)
+- **Financial calculations lose cents** ($1234.56 becomes $1234.5599999999)
+- **Timestamps break** (millisecond precision lost after 2^53)
+- **Different languages parse differently** (Python preserves precision, JavaScript doesn't)
+
+This isn't theoretical - major APIs (Twitter, Stripe, GitHub) return large IDs as strings to prevent JavaScript corruption. If your API has >10M records with auto-increment IDs, you WILL hit this.
+{{< /callout >}}
+
 **Problems:**
 - Large integers lose precision (database IDs, timestamps)
 - No distinction between integer and float
@@ -517,6 +527,27 @@ console.log(9007199254740992 + 1);  // 9007199254740992
 ```
 
 Represent numbers as strings to preserve precision. But now you need custom parsing logic.
+
+**Real-world examples:**
+```javascript
+// Twitter API returns IDs as strings
+{
+  "id": 1234567890123456789,       // Unsafe in JavaScript
+  "id_str": "1234567890123456789"  // Always use this
+}
+
+// Stripe amounts are integers (cents)
+{
+  "amount": 123456,  // $1234.56 as integer cents
+  "currency": "usd"
+}
+
+// Shopify order numbers as strings
+{
+  "order_number": "1001",  // String to avoid precision issues
+  "total": "29.99"         // String for exact decimal
+}
+```
 
 ### 4. No Comments
 
@@ -972,7 +1003,7 @@ Throughout this series, we'll follow a single use case: **a User API for a socia
 **The journey ahead:**
 - **Part 2:** Add JSON Schema validation for type safety
 - **Part 3:** Store users in PostgreSQL JSONB for performance
-- **Part 4:** Add JSON-RPC protocol for structured API calls
+- **Part 5:** Add JSON-RPC protocol for structured API calls
 - **Part 5:** Export users with JSON Lines for streaming
 - **Part 6:** Secure API with JWT authentication
 
@@ -1005,7 +1036,7 @@ The JSON ecosystem evolved to patch these gaps while preserving the core simplic
 - **Part 1** (this article): Origins and fundamental weaknesses
 - **Part 2**: JSON Schema - validation, types, and contracts
 - **Part 3**: Binary JSON formats - JSONB, BSON, MessagePack
-- **Part 4**: Streaming JSON - JSON Lines and large datasets
+- **Part 6**: Streaming JSON - JSON Lines and large datasets
 - **Part 5**: JSON-RPC and protocol layers
 - **Part 6**: Security - JWT, canonicalization, and attacks
 {{< /callout >}}

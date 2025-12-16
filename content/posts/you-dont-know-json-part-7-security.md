@@ -1,16 +1,16 @@
 ---
-title: "You Don't Know JSON: Part 6 - Security: Authentication, Signatures, and Attacks"
+title: "You Don't Know JSON: Part 7 - Security: Authentication, Signatures, and Attacks"
 date: 2025-12-15
 draft: false
 series: ["you-dont-know-json"]
-seriesOrder: 6
+seriesOrder: 7
 tags: ["json", "security", "jwt", "jws", "jwe", "authentication", "encryption", "cryptography", "oauth", "api-security", "web-security", "tokens", "signing", "canonicalization", "injection", "deserialization", "attacks", "vulnerabilities", "best-practices", "hmac", "rsa"]
 categories: ["fundamentals", "programming", "security"]
 description: "Master JSON security: JWT authentication, JWS signing, JWE encryption, and common attacks. Learn canonicalization, algorithm confusion, injection vulnerabilities, and production security best practices."
 summary: "JSON has no built-in security. The ecosystem response: JWT for authentication, JWS for signing, JWE for encryption. Learn how these work, common attacks (algorithm confusion, injection, timing), and how to secure JSON-based systems."
 ---
 
-In [Part 1]({{< relref "you-dont-know-json-part-1-origins.md" >}}), we explored JSON's origins. In [Part 2]({{< relref "you-dont-know-json-part-2-json-schema.md" >}}), we added validation. In [Part 3]({{< relref "you-dont-know-json-part-3-binary-formats.md" >}}), we optimized with binary formats. In [Part 4]({{< relref "you-dont-know-json-part-4-json-rpc.md" >}}), we built RPC protocols. In [Part 5]({{< relref "you-dont-know-json-part-5-json-lines.md" >}}), we enabled streaming.
+In [Part 1]({{< relref "you-dont-know-json-part-1-origins.md" >}}), we explored JSON's origins. In [Part 2]({{< relref "you-dont-know-json-part-2-json-schema.md" >}}), we added validation. In [Part 3]({{< relref "you-dont-know-json-part-3-binary-databases.md" >}}) and [Part 4]({{< relref "you-dont-know-json-part-4-binary-apis.md" >}}), we optimized with binary formats. In [Part 5]({{< relref "you-dont-know-json-part-5-json-rpc.md" >}}), we built RPC protocols. In [Part 6]({{< relref "you-dont-know-json-part-6-json-lines.md" >}}), we enabled streaming.
 
 Now we complete the series with JSON's most critical missing piece: **security**.
 
@@ -32,7 +32,7 @@ This article covers:
 
 ## Running Example: Securing the User API
 
-In [Part 1]({{< relref "you-dont-know-json-part-1-origins.md" >}}), we created basic JSON users. In [Part 2]({{< relref "you-dont-know-json-part-2-json-schema.md" >}}), we added validation. In [Part 3]({{< relref "you-dont-know-json-part-3-binary-formats.md" >}}), we stored them in JSONB. In [Part 4]({{< relref "you-dont-know-json-part-4-json-rpc.md" >}}), we added protocol structure. In [Part 5]({{< relref "you-dont-know-json-part-5-json-lines.md" >}}), we enabled streaming exports.
+In [Part 1]({{< relref "you-dont-know-json-part-1-origins.md" >}}), we created basic JSON users. In [Part 2]({{< relref "you-dont-know-json-part-2-json-schema.md" >}}), we added validation. In [Part 3]({{< relref "you-dont-know-json-part-3-binary-databases.md" >}}), we stored them in JSONB. In [Part 5]({{< relref "you-dont-know-json-part-5-json-rpc.md" >}}), we added protocol structure. In [Part 6]({{< relref "you-dont-know-json-part-6-json-lines.md" >}}), we enabled streaming exports.
 
 Now we complete the journey with the **security layer** - protecting our User API with JWT authentication.
 
@@ -1673,7 +1673,7 @@ We've completed our journey through the JSON ecosystem. From JSON's origins thro
 - **Part 1:** JSON's triumph through simplicity
 - **Part 2:** Validation with JSON Schema
 - **Part 3:** Performance with binary formats
-- **Part 4:** Protocols with JSON-RPC
+- **Part 5:** Protocols with JSON-RPC
 - **Part 5:** Streaming with JSON Lines
 - **Part 6:** Security with JWT/JWS/JWE
 
@@ -1709,6 +1709,7 @@ This is why JSON won. Not because it was complete, but because it was **incomple
 **Related Articles:**
 - [Part 1: JSON Origins]({{< relref "you-dont-know-json-part-1-origins.md" >}})
 - [Part 2: JSON Schema]({{< relref "you-dont-know-json-part-2-json-schema.md" >}})
-- [Part 3: Binary Formats]({{< relref "you-dont-know-json-part-3-binary-formats.md" >}})
-- [Part 4: JSON-RPC]({{< relref "you-dont-know-json-part-4-json-rpc.md" >}})
-- [Part 5: JSON Lines]({{< relref "you-dont-know-json-part-5-json-lines.md" >}})
+- [Part 3: Binary JSON in Databases]({{< relref "you-dont-know-json-part-3-binary-databases.md" >}})
+- [Part 4: Binary JSON for APIs]({{< relref "you-dont-know-json-part-4-binary-apis.md" >}})
+- [Part 5: JSON-RPC]({{< relref "you-dont-know-json-part-5-json-rpc.md" >}})
+- [Part 6: JSON Lines]({{< relref "you-dont-know-json-part-6-json-lines.md" >}})

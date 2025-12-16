@@ -1,16 +1,16 @@
 ---
-title: "You Don't Know JSON: Part 4 - JSON-RPC: When REST Isn't Enough"
+title: "You Don't Know JSON: Part 5 - JSON-RPC: When REST Isn't Enough"
 date: 2025-12-15
 draft: false
 series: ["you-dont-know-json"]
-seriesOrder: 4
+seriesOrder: 5
 tags: ["json", "json-rpc", "rpc", "remote-procedure-call", "api-design", "microservices", "ethereum", "websocket", "rest", "grpc", "protocol", "node-rpc", "go-rpc", "python-rpc", "api-protocols", "distributed-systems", "language-server-protocol", "batch-requests", "realtime-api", "blockchain"]
 categories: ["fundamentals", "programming", "architecture"]
 description: "Master JSON-RPC: the simple RPC protocol built on JSON. Learn when REST's resource model breaks down, how JSON-RPC enables action-oriented APIs, and why Ethereum, VS Code, and Bitcoin chose this protocol."
 summary: "REST is great for resources, but what about actions? JSON-RPC provides a simple, transport-agnostic protocol for calling remote functions. Learn the spec, implementation patterns, and why major projects like Ethereum and VS Code chose JSON-RPC over REST."
 ---
 
-In [Part 1]({{< relref "you-dont-know-json-part-1-origins.md" >}}), we explored JSON's origins. In [Part 2]({{< relref "you-dont-know-json-part-2-json-schema.md" >}}), we added validation. In [Part 3]({{< relref "you-dont-know-json-part-3-binary-formats.md" >}}), we optimized performance with binary formats.
+In [Part 1]({{< relref "you-dont-know-json-part-1-origins.md" >}}), we explored JSON's origins. In [Part 2]({{< relref "you-dont-know-json-part-2-json-schema.md" >}}), we added validation. In [Part 3]({{< relref "you-dont-know-json-part-3-binary-databases.md" >}}) and [Part 4]({{< relref "you-dont-know-json-part-4-binary-apis.md" >}}), we optimized performance with binary formats.
 
 Now we examine JSON as a **protocol layer** - not just data format, but a communication standard for distributed systems.
 
@@ -26,7 +26,7 @@ This article covers the JSON-RPC 2.0 specification, implementation patterns, rea
 
 ## Running Example: User API with JSON-RPC
 
-In [Part 1]({{< relref "you-dont-know-json-part-1-origins.md" >}}), we started with basic JSON users. In [Part 2]({{< relref "you-dont-know-json-part-2-json-schema.md" >}}), we added validation. In [Part 3]({{< relref "you-dont-know-json-part-3-binary-formats.md" >}}), we stored them efficiently in JSONB.
+In [Part 1]({{< relref "you-dont-know-json-part-1-origins.md" >}}), we started with basic JSON users. In [Part 2]({{< relref "you-dont-know-json-part-2-json-schema.md" >}}), we added validation. In [Part 3]({{< relref "you-dont-know-json-part-3-binary-databases.md" >}}), we stored them efficiently in JSONB.
 
 Now JSON-RPC adds the **protocol layer** - structured remote function calls for our User API.
 
@@ -2295,10 +2295,11 @@ JSON-RPC fills the gap between REST's resource orientation and gRPC's performanc
 **Series Progress:**
 - **Part 1**: JSON's origins and fundamental weaknesses
 - **Part 2**: JSON Schema for validation and contracts
-- **Part 3**: Binary formats (JSONB, BSON, MessagePack, CBOR)
-- **Part 4** (this article): JSON-RPC protocol and patterns
-- **Part 5**: Streaming JSON with JSON Lines
-- **Part 6**: Security (JWT, canonicalization, attacks)
+- **Part 3**: Binary JSON in databases (JSONB, BSON)
+- **Part 4**: Binary JSON for APIs (MessagePack, CBOR)
+- **Part 5** (this article): JSON-RPC protocol and patterns
+- **Part 6**: Streaming JSON with JSON Lines
+- **Part 7**: Security (JWT, canonicalization, attacks)
 {{< /callout >}}
 
 In Part 5, we'll tackle streaming JSON with JSON Lines (JSONL) - solving JSON's inability to handle large datasets that don't fit in memory. We'll explore newline-delimited JSON for log processing, data pipelines, and Unix-style streaming.

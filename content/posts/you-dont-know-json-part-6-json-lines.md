@@ -1,16 +1,16 @@
 ---
-title: "You Don't Know JSON: Part 5 - JSON Lines: Processing Gigabytes Without Running Out of Memory"
+title: "You Don't Know JSON: Part 6 - JSON Lines: Processing Gigabytes Without Running Out of Memory"
 date: 2025-12-15
 draft: false
 series: ["you-dont-know-json"]
-seriesOrder: 5
+seriesOrder: 6
 tags: ["json", "jsonl", "json-lines", "ndjson", "streaming", "log-processing", "data-pipelines", "unix", "etl", "big-data", "kafka", "elasticsearch", "log-aggregation", "grep", "awk", "sed", "stream-processing", "newline-delimited", "append-only", "fault-tolerant"]
 categories: ["fundamentals", "programming", "data-engineering"]
 description: "Master JSON Lines (JSONL): the streaming-friendly JSON format for log processing, data pipelines, and big data. Learn how newline-delimited JSON enables Unix pipelines, fault-tolerant processing, and handling datasets larger than memory."
 summary: "Standard JSON can't stream - you must parse the entire document. JSON Lines solves this with one JSON object per line, enabling streaming processing, log aggregation, Unix pipelines, and handling gigabyte-scale datasets with constant memory usage."
 ---
 
-In [Part 1]({{< relref "you-dont-know-json-part-1-origins.md" >}}), we explored JSON's origins. In [Part 2]({{< relref "you-dont-know-json-part-2-json-schema.md" >}}), we added validation. In [Part 3]({{< relref "you-dont-know-json-part-3-binary-formats.md" >}}), we optimized with binary formats. In [Part 4]({{< relref "you-dont-know-json-part-4-json-rpc.md" >}}), we built RPC protocols.
+In [Part 1]({{< relref "you-dont-know-json-part-1-origins.md" >}}), we explored JSON's origins. In [Part 2]({{< relref "you-dont-know-json-part-2-json-schema.md" >}}), we added validation. In [Part 3]({{< relref "you-dont-know-json-part-3-binary-databases.md" >}}) and [Part 4]({{< relref "you-dont-know-json-part-4-binary-apis.md" >}}), we optimized with binary formats. In [Part 5]({{< relref "you-dont-know-json-part-5-json-rpc.md" >}}), we built RPC protocols.
 
 Now we tackle JSON's streaming problem: **you can't process JSON incrementally**.
 
@@ -47,7 +47,7 @@ This article covers streaming JSON processing, log aggregation, Unix pipeline in
 
 ## Running Example: Exporting 10 Million Users
 
-In [Part 1]({{< relref "you-dont-know-json-part-1-origins.md" >}}), we started with basic JSON. In [Part 2]({{< relref "you-dont-know-json-part-2-json-schema.md" >}}), we added validation. In [Part 3]({{< relref "you-dont-know-json-part-3-binary-formats.md" >}}), we stored efficiently in JSONB. In [Part 4]({{< relref "you-dont-know-json-part-4-json-rpc.md" >}}), we added protocol structure.
+In [Part 1]({{< relref "you-dont-know-json-part-1-origins.md" >}}), we started with basic JSON. In [Part 2]({{< relref "you-dont-know-json-part-2-json-schema.md" >}}), we added validation. In [Part 3]({{< relref "you-dont-know-json-part-3-binary-databases.md" >}}), we stored efficiently in JSONB. In [Part 5]({{< relref "you-dont-know-json-part-5-json-rpc.md" >}}), we added protocol structure.
 
 Now we face the **scalability problem**: our User API has grown to 10 million users. How do we export them for analytics?
 
@@ -1829,10 +1829,11 @@ JSON Lines is the pragmatic solution to JSON's streaming problem. It's not a new
 **Series Progress:**
 - **Part 1**: JSON's origins and fundamental weaknesses
 - **Part 2**: JSON Schema for validation and contracts
-- **Part 3**: Binary formats (JSONB, BSON, MessagePack, CBOR)
-- **Part 4**: JSON-RPC protocol and patterns
-- **Part 5** (this article): JSON Lines for streaming
-- **Part 6**: Security (JWT, canonicalization, attacks)
+- **Part 3**: Binary JSON in databases (JSONB, BSON)
+- **Part 4**: Binary JSON for APIs (MessagePack, CBOR)
+- **Part 5**: JSON-RPC protocol and patterns
+- **Part 6** (this article): JSON Lines for streaming
+- **Part 7**: Security (JWT, canonicalization, attacks)
 {{< /callout >}}
 
 In Part 6, we'll complete the series with JSON security: JWT authentication, JWS/JWE encryption, canonicalization for signatures, and common JSON-based attacks (injection, deserialization, schema poisoning).
