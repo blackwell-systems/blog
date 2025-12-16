@@ -129,21 +129,105 @@ JSON syntax requires reading the entire structure:
 
 The parser can't know it's valid JSON until it sees the closing `]`. Each `,` could be followed by more elements. The structure is inherently non-streaming.
 
-**Streaming parsers exist** (SAX-style), but they're complex and still require tracking nesting depth, bracket matching, and state across the entire document.
+**Streaming parsers exist** (SAX-style event-based parsers), but they're complex and still require tracking nesting depth, bracket matching, and state across the entire document.
+
+### What XML Had: SAX and StAX
+
+**XML solved streaming with built-in parser APIs:**
+
+**SAX (Simple API for XML) - Event-based streaming (1998):**
+```java
+// SAX parser for streaming XML
+SAXParserFactory factory = SAXParserFactory.newInstance();
+SAXParser parser = factory.newSAXParser();
+
+DefaultHandler handler = new DefaultHandler() {
+    @Override
+    public void startElement(String uri, String localName, String qName, Attributes attributes) {
+        if (qName.equals("user")) {
+            String id = attributes.getValue("id");
+            String name = attributes.getValue("name");
+            processUser(id, name);  // Process immediately
+        }
+    }
+};
+
+parser.parse("users.xml", handler);  // Streams through file
+```
+
+**StAX (Streaming API for XML) - Pull-based streaming (2004):**
+```java
+XMLInputFactory factory = XMLInputFactory.newInstance();
+XMLStreamReader reader = factory.createXMLStreamReader(new FileInputStream("users.xml"));
+
+while (reader.hasNext()) {
+    int event = reader.next();
+    if (event == XMLStreamConstants.START_ELEMENT && reader.getLocalName().equals("user")) {
+        String id = reader.getAttributeValue(null, "id");
+        String name = reader.getAttributeValue(null, "name");
+        processUser(id, name);
+    }
+}
+```
+
+**Benefit:** Constant memory. Parse 10GB XML files with <10MB RAM.
+
+**Cost:** Complex API. Stateful parsing (track nesting, handle events, match tags). 200+ lines of code for simple streaming tasks.
+
+**JSON's approach:** No built-in streaming support. Standard JSON parsers are DOM-style (load entire document). Streaming JSON parsers exist but are complex and non-standard.
 
 {{< callout type="warning" >}}
 **Memory Reality:** Loading a 1GB JSON array uses 3-5GB of RAM due to parsing overhead and object allocation. A 10GB file requires 30-50GB of memory and will crash most systems.
+
+**XML comparison:** SAX/StAX could process 10GB XML files with constant memory since 1998. JSON lacked this capability for its first decade, until JSON Lines emerged as the community solution.
 {{< /callout >}}
 
 ---
 
 ## JSON Lines Format
 
+### The Simplicity Breakthrough
+
+**JSON Lines** (also called JSONL, NDJSON, newline-delimited JSON) achieves streaming with minimal complexity:
+
+**Where XML needed complex APIs (SAX/StAX with 200+ LOC), JSON Lines uses one convention: newlines.**
+
+**Comparison:**
+
+| Aspect | XML (SAX/StAX) | JSON Lines |
+|--------|----------------|------------|
+| **Streaming support** | Built-in parser APIs | Format convention |
+| **Code complexity** | 200+ lines (handlers, state) | 5 lines (read line, parse) |
+| **Parser requirements** | Special streaming parsers | Standard JSON parsers |
+| **Learning curve** | Complex (events, pull model) | Trivial (readline + parse) |
+| **Error handling** | Track state across events | Per-line isolation |
+| **Resume/skip** | Complex (replay events) | Simple (seek to line) |
+| **Unix integration** | Difficult (XML structure) | Native (text lines) |
+
+**JSON Lines approach:**
+```javascript
+// Streaming 10GB file: 5 lines of code
+const readline = require('readline');
+const stream = readline.createInterface({ input: fs.createReadStream('data.jsonl') });
+
+stream.on('line', (line) => {
+  const obj = JSON.parse(line);  // Standard parser
+  process(obj);  // Constant memory
+});
+```
+
+**Contrast with SAX (40+ lines minimum):**
+- No handler classes
+- No state tracking
+- No event matching
+- No tag nesting management
+- Just: read line, parse JSON, process
+
+**The modular brilliance:** JSON Lines didn't require new parsers or language features. It's pure convention - use existing tools (readline, JSON.parse) in a streaming pattern.
+
 ### Specification
 
-**JSON Lines** (also called JSONL, NDJSON, newline-delimited JSON) is simple:
-
-**Rules:**
+**JSON Lines rules:**
 1. Each line is a valid JSON value (typically an object)
 2. Lines are separated by `\n` (newline character)
 3. The file has no outer array brackets
