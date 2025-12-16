@@ -1,0 +1,35 @@
+# Build outputs (generated files, don't commit)
+build/pdf/*.pdf
+build/epub/*.epub
+build/mobi/*.mobi
+build/web/*.html
+
+# Temporary files
+*.tmp
+*.bak
+*~
+.DS_Store
+
+# Editor files
+*.swp
+*.swo
+.vscode/
+.idea/
+
+# LaTeX intermediate files
+*.aux
+*.log
+*.out
+*.toc
+*.lof
+*.lot
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+
+# Generated diagrams (commit source, not exports)
+diagrams/svg-exports/*.svg
+diagrams/pdf-final/*.pdf
+
+# Keep directory structure
+!**/.gitkeep
