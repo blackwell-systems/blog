@@ -739,6 +739,7 @@ flowchart LR
     style bson fill:#4C4538,stroke:#6b7280,color:#f0f0f0
     style json fill:#4C3A3C,stroke:#6b7280,color:#f0f0f0
     style perf fill:#3A4A5C,stroke:#6b7280,color:#f0f0f0
+    style formats fill:#3A4C43,stroke:#6b7280,color:#f0f0f0
 {{< /mermaid >}}
 
 ### Key Takeaways
