@@ -17,25 +17,39 @@ JSON's human-readability is both its greatest strength and its Achilles heel. Ev
 For configuration files and API responses under 100KB, this is fine. But when storing millions of user records, events, or documents - the text format becomes expensive for databases.
 
 {{< callout type="info" >}}
-**What XML Had:** No binary format (1998-2010)
+**What XML Had:** No successful binary format (1998-2010)
 
-**XML's approach:** XML was purely textual. Binary solutions like WBXML (Wireless Binary XML) were proprietary, complex, and poorly supported. Microsoft's .NET Binary XML and ITU-T's Fast Infoset existed but never achieved widespread adoption.
+**XML's approach:** XML was purely textual for databases. Binary encoding attempts existed but failed:
+- **WBXML** (1999): WAP-specific, limited adoption
+- **Fast Infoset** (2005): Complex, required special parsers
+- **EXI** (2011): Too late, minimal database support
+- **Binary XML (.NET)**: Proprietary, Microsoft-only
 
 ```xml
-<!-- XML: Always text, even for large datasets -->
+<!-- XML: Always text in databases, even for large datasets -->
 <users>
   <user><id>1</id><name>Alice</name></user>
   <user><id>2</id><name>Bob</name></user>
-  <!-- Repeated structure and field names for millions of records -->
+  <!-- Repeated tags and field names for millions of records -->
 </users>
 ```
 
+**For embedding binary data (images, files), both XML and JSON equally bad:**
+```xml
+<!-- XML: Must base64 encode binary -->
+<image>iVBORw0KGgoAAAANSUhEUgAAAAUA...</image>
+```
+```json
+// JSON: Must base64 encode binary (33% overhead)
+{"image": "iVBORw0KGgoAAAANSUhEUgAAAAUA..."}
+```
+
 **Benefit:** Human readable, universal parser support  
-**Cost:** Massive storage overhead, slow parsing at scale, no database optimization
+**Cost:** Massive storage overhead (repeated structure), slow parsing at scale, no database optimization, no native binary data type
 
-**JSON's approach:** Database-specific binary formats (JSONB, BSON) - modular solutions
+**JSON's approach:** Database-specific binary formats (JSONB, BSON) succeeded where XML's failed - modular, database-optimized solutions
 
-**Architecture shift:** Text-only → Binary storage with text compatibility, Verbose repetition → Decomposed efficiency, Parser-only → Database-integrated
+**Architecture shift:** Text-only → Binary storage with text compatibility, Failed standards → Database-integrated formats, No binary data type → Extended types (BSON)
 {{< /callout >}}
 
 Database binary JSON formats solve this at the storage layer - maintaining JSON's structure and flexibility while dramatically improving query speed and storage efficiency.

@@ -36,12 +36,23 @@ While database binary formats optimize storage and queries, API binary formats o
 </soap:Envelope>
 ```
 
+**Binary encoding attempts existed but failed:**
+- **Fast Infoset** (2005): Complex, required specialized libraries
+- **EXI** (2011): IETF standard but too late, minimal adoption
+- **Binary XML**: Various proprietary attempts, none gained traction
+
+**For transferring binary content (files, images), XML same as JSON:**
+```xml
+<!-- Must base64 encode (33% size overhead) -->
+<file>iVBORw0KGgoAAAANSUhEUgAAAAUA...</file>
+```
+
 **Benefit:** Self-describing, schema-aware, standardized protocols  
-**Cost:** Extreme bandwidth usage, slow parsing, mobile-unfriendly sizes
+**Cost:** Extreme bandwidth usage (XML text + namespace overhead), slow parsing, mobile-unfriendly sizes, no native binary type
 
-**JSON's approach:** Multiple binary formats (MessagePack, CBOR) - choose per use case
+**JSON's approach:** Multiple binary formats (MessagePack, CBOR) succeeded - modular, choose per use case
 
-**Architecture shift:** Verbose self-description → Compact binary encoding, One standard → Multiple optimized formats, Protocol-heavy → Lightweight alternatives
+**Architecture shift:** Verbose self-description → Compact binary encoding, Failed standards → Successful modular formats, One approach → Multiple optimized options
 {{< /callout >}}
 
 This article focuses on **MessagePack** (universal binary JSON) and **CBOR** (IETF-standardized format), comparing them with Protocol Buffers and analyzing real bandwidth cost savings.
