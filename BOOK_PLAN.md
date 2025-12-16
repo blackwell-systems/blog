@@ -444,7 +444,7 @@ Understanding **why** JSON succeeded requires understanding what it replaced and
 **3. Chapter Conclusions**
 - Expand current "Core Benefits" sections
 - Add: "Key Takeaways" (3-5 bullet points)
-- Add: "Try It Yourself" exercises (3-5 practical tasks)
+- Add: "In the Wild" - real production examples to examine
 - Add: "Further Reading" specific to chapter topic
 
 **4. Transitions Between Chapters**
@@ -476,10 +476,11 @@ Understanding **why** JSON succeeded requires understanding what it replaced and
 - Final thoughts on simplicity vs completeness
 - Where to go from here
 
-**3. Exercises and Projects**
-- End-of-chapter exercises (5-10 per chapter)
-- Progressive project: Build complete API using all concepts
-- Solutions in appendix or online repository
+**3. Code Repository**
+- Complete runnable examples for all chapters
+- Progressive project: Full JSON-based API showcasing all concepts
+- README with setup instructions and architecture notes
+- No "exercises" - the examples ARE the learning material
 
 **4. Appendices**
 - Complete JSON grammar (RFC 8259)
@@ -499,7 +500,7 @@ Understanding **why** JSON succeeded requires understanding what it replaced and
 - [ ] Add code listing captions
 - [ ] Expand running example section (if applicable)
 - [ ] Add cross-references to other chapters
-- [ ] Write "Try It Yourself" exercises
+- [ ] Add "In the Wild" real-world examples section
 - [ ] Create "Key Takeaways" summary
 - [ ] Add "Further Reading" section
 - [ ] Write preview of next chapter
@@ -529,6 +530,38 @@ Understanding **why** JSON succeeded requires understanding what it replaced and
 3. Use bold for title text
 4. Keep boxes under 1/3 page height
 5. Reference in main text when important
+
+### No Traditional "Exercises"
+
+**Why no exercises:**
+- Target audience is experienced developers (3-7 years), not students
+- Book focus is architectural understanding, not tutorial-style learning
+- Code examples are already production-ready and runnable
+- "Try this toy problem" approach feels inappropriate for senior devs
+
+**Instead, provide:**
+
+**"In the Wild" Sections:**
+- Point to real production systems using the pattern
+- Example: "GitHub's API uses JSON-RPC for Git operations - examine their implementation at..."
+- Example: "Examine PostgreSQL's JSONB source code to see binary format optimization"
+- Encourage exploration of actual production code
+
+**"Consider This" Discussion Points:**
+- Architectural decision scenarios for readers to think through
+- Example: "Your API serves 1M requests/day. When would you choose JSON-RPC over REST?"
+- Example: "Your team wants to add validation. JSON Schema or TypeScript interfaces?"
+- No "correct answer" required - promotes critical thinking
+
+**Comprehensive Code Repository:**
+- All examples fully runnable with setup instructions
+- Progressive "User API" project showing all concepts integrated
+- Readers can clone, run, modify naturally
+- No artificial "fill in the blanks" exercises
+
+**Target reading experience:**
+- Read chapter → Understand concept → See production examples → Form opinions
+- NOT: Read chapter → Do homework → Check answers → Move on
 
 ---
 
