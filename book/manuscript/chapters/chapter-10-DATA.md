@@ -4,6 +4,295 @@
 
 ---
 
+## Mermaid Diagrams for Chapter 10
+
+### 1. Configuration Format Evolution Timeline
+
+```mermaid
+timeline
+    title Configuration Format Evolution
+    1980s : INI Files
+          : Windows .ini
+          : Simple key=value
+    1990s : XML
+          : Complex, verbose
+          : Enterprise dominance
+    2001 : JSON
+          : Simple, minimal
+          : No comments (pain)
+    2012 : TOML
+          : INI-inspired clarity
+          : Rust adoption
+    2013 : JSON5
+          : ES5 syntax
+          : JSON + comments
+    2014 : HJSON
+          : Extreme readability
+          : Minimal syntax
+    2015+ : YAML dominance
+          : Docker, K8s, CI/CD
+          : DevOps standard
+```
+
+### 2. Format Decision Tree
+
+```mermaid
+flowchart TB
+    start[Need Config Format]
+    
+    api{API/Data<br/>Exchange?}
+    browser{Browser<br/>Native?}
+    ecosystem{Existing<br/>Standard?}
+    complexity{Complex<br/>Nesting?}
+    clarity{Priority:<br/>Clarity?}
+    
+    json[JSON<br/>Universal compatibility]
+    json5[JSON5<br/>JS/TS configs]
+    yaml[YAML<br/>DevOps standard]
+    toml[TOML<br/>Rust/Python]
+    hjson[HJSON<br/>Max readability]
+    
+    start --> api
+    api -->|Yes| json
+    api -->|No| browser
+    browser -->|Yes| json
+    browser -->|No| ecosystem
+    
+    ecosystem -->|Docker/K8s| yaml
+    ecosystem -->|Rust| toml
+    ecosystem -->|Python| toml
+    ecosystem -->|JS/TS| json5
+    ecosystem -->|No standard| complexity
+    
+    complexity -->|High| yaml
+    complexity -->|Low-Med| clarity
+    
+    clarity -->|Unambiguous| toml
+    clarity -->|Minimal syntax| hjson
+    clarity -->|JS-like| json5
+    
+    style json fill:#3A4A5C,stroke:#6b7280,color:#f0f0f0
+    style json5 fill:#3A4C43,stroke:#6b7280,color:#f0f0f0
+    style yaml fill:#4C4538,stroke:#6b7280,color:#f0f0f0
+    style toml fill:#4C3A3C,stroke:#6b7280,color:#f0f0f0
+    style hjson fill:#3A4A5C,stroke:#6b7280,color:#f0f0f0
+```
+
+### 3. Format Complexity Spectrum
+
+```mermaid
+flowchart LR
+    subgraph minimal["Minimal Syntax"]
+        hjson[HJSON<br/>Quotes optional<br/>Commas optional<br/>Minimal punctuation]
+    end
+    
+    subgraph moderate["Moderate Syntax"]
+        yaml[YAML<br/>Indentation-based<br/>Clean structure<br/>Some gotchas]
+        json5[JSON5<br/>ES5 features<br/>Comments + commas<br/>JSON-like]
+    end
+    
+    subgraph explicit["Explicit Syntax"]
+        toml[TOML<br/>Clear sections<br/>Quoted strings<br/>Unambiguous]
+        json[JSON<br/>Strict syntax<br/>All quoted<br/>No comments]
+    end
+    
+    hjson --> yaml
+    yaml --> json5
+    json5 --> toml
+    toml --> json
+    
+    style minimal fill:#3A4C43,stroke:#6b7280,color:#f0f0f0
+    style moderate fill:#3A4A5C,stroke:#6b7280,color:#f0f0f0
+    style explicit fill:#4C4538,stroke:#6b7280,color:#f0f0f0
+```
+
+### 4. Ecosystem Adoption by Domain
+
+```mermaid
+flowchart TB
+    subgraph devops["DevOps & Infrastructure"]
+        yaml1[YAML]
+        docker[Docker Compose]
+        k8s[Kubernetes]
+        ansible[Ansible]
+        github[GitHub Actions]
+        
+        yaml1 --> docker
+        yaml1 --> k8s
+        yaml1 --> ansible
+        yaml1 --> github
+    end
+    
+    subgraph rust["Rust Ecosystem"]
+        toml1[TOML]
+        cargo[Cargo.toml]
+        config[Config files]
+        
+        toml1 --> cargo
+        toml1 --> config
+    end
+    
+    subgraph js["JavaScript/TypeScript"]
+        json51[JSON5]
+        vscode[VSCode settings]
+        babel[Babel config]
+        tsconfig[tsconfig.json]
+        
+        json51 --> vscode
+        json51 --> babel
+        json51 --> tsconfig
+    end
+    
+    subgraph python["Python Ecosystem"]
+        toml2[TOML]
+        pyproject[pyproject.toml]
+        poetry[Poetry config]
+        
+        toml2 --> pyproject
+        toml2 --> poetry
+    end
+    
+    subgraph apis["APIs & Data"]
+        json1[JSON]
+        rest[REST APIs]
+        jsonapi[JSON API]
+        browser[Browser native]
+        
+        json1 --> rest
+        json1 --> jsonapi
+        json1 --> browser
+    end
+    
+    style devops fill:#3A4A5C,stroke:#6b7280,color:#f0f0f0
+    style rust fill:#4C3A3C,stroke:#6b7280,color:#f0f0f0
+    style js fill:#3A4C43,stroke:#6b7280,color:#f0f0f0
+    style python fill:#4C4538,stroke:#6b7280,color:#f0f0f0
+    style apis fill:#3A4A5C,stroke:#6b7280,color:#f0f0f0
+```
+
+### 5. JSON to JSON5 Migration Path
+
+```mermaid
+flowchart LR
+    subgraph step1["Step 1: Rename"]
+        json[config.json]
+        json5[config.json5]
+        json --> json5
+    end
+    
+    subgraph step2["Step 2: Add Comments"]
+        comments[Add inline comments<br/>Document decisions]
+    end
+    
+    subgraph step3["Step 3: Simplify"]
+        unquote[Remove quotes from keys<br/>Add trailing commas<br/>Use single quotes]
+    end
+    
+    subgraph step4["Step 4: Update Tooling"]
+        tools[Update parsers<br/>ESLint config<br/>Build tools]
+    end
+    
+    step1 --> step2 --> step3 --> step4
+    
+    style step1 fill:#3A4A5C,stroke:#6b7280,color:#f0f0f0
+    style step2 fill:#3A4C43,stroke:#6b7280,color:#f0f0f0
+    style step3 fill:#4C4538,stroke:#6b7280,color:#f0f0f0
+    style step4 fill:#4C3A3C,stroke:#6b7280,color:#f0f0f0
+```
+
+### 6. YAML Gotchas Visualization
+
+```mermaid
+flowchart TB
+    yaml[YAML Config]
+    
+    subgraph gotchas["Common Pitfalls"]
+        norway["Norway Problem<br/>no: Norway → false"]
+        version["Version Coercion<br/>1.20 → 1.2"]
+        octal["Octal Numbers<br/>0755 → 493"]
+        indent["Indentation Errors<br/>Spaces matter"]
+        bool["Boolean Coercion<br/>yes/no/on/off"]
+    end
+    
+    subgraph fixes["Solutions"]
+        quote["Quote strings<br/>'no': Norway"]
+        quote2["Quote versions<br/>'1.20'"]
+        quote3["Quote octals<br/>'0755'"]
+        consistent["Consistent spacing<br/>2 or 4 spaces"]
+        explicit["Explicit booleans<br/>true/false"]
+    end
+    
+    yaml --> gotchas
+    gotchas --> fixes
+    
+    norway --> quote
+    version --> quote2
+    octal --> quote3
+    indent --> consistent
+    bool --> explicit
+    
+    style gotchas fill:#4C3A3C,stroke:#6b7280,color:#f0f0f0
+    style fixes fill:#3A4C43,stroke:#6b7280,color:#f0f0f0
+```
+
+### 7. Format Feature Comparison (Visual)
+
+```mermaid
+flowchart TB
+    subgraph features["Key Features"]
+        comments[Comments]
+        trailing[Trailing Commas]
+        unquoted[Unquoted Keys]
+        multiline[Multiline Strings]
+        native[Browser Native]
+    end
+    
+    subgraph json["JSON"]
+        j1[❌ No comments]
+        j2[❌ No trailing commas]
+        j3[❌ Quoted keys]
+        j4[❌ Escaped only]
+        j5[✓ Native]
+    end
+    
+    subgraph json5["JSON5"]
+        js1[✓ // and /* */]
+        js2[✓ Allowed]
+        js3[✓ Optional quotes]
+        js4[✓ Backslash]
+        js5[❌ Requires parser]
+    end
+    
+    subgraph yaml["YAML"]
+        y1[✓ # comments]
+        y2[N/A]
+        y3[✓ Optional quotes]
+        y4[✓ | and >]
+        y5[❌ Requires parser]
+    end
+    
+    subgraph toml["TOML"]
+        t1[✓ # comments]
+        t2[N/A]
+        t3[❌ Quoted keys]
+        t4[✓ Triple quotes]
+        t5[❌ Requires parser]
+    end
+    
+    comments --> j1 & js1 & y1 & t1
+    trailing --> j2 & js2 & y2 & t2
+    unquoted --> j3 & js3 & y3 & t3
+    multiline --> j4 & js4 & y4 & t4
+    native --> j5 & js5 & y5 & t5
+    
+    style json fill:#4C3A3C,stroke:#6b7280,color:#f0f0f0
+    style json5 fill:#3A4C43,stroke:#6b7280,color:#f0f0f0
+    style yaml fill:#3A4A5C,stroke:#6b7280,color:#f0f0f0
+    style toml fill:#4C4538,stroke:#6b7280,color:#f0f0f0
+```
+
+---
+
 ## Same Config in All 5 Formats
 
 **Scenario:** Express.js application configuration
