@@ -105,8 +105,27 @@ GET  /users?search=query&filter=...
 
 But you're working against the model. The endpoints become verb-heavy, the resource abstraction breaks down, and you end up with a de facto RPC API pretending to be REST.
 
+{{< callout type="warning" >}}
+**The REST Contortion Problem:** Many real-world operations violate REST's resource model and require awkward workarounds:
+
+**Batch operations:** How do you "delete 100 users" RESTfully? `DELETE /users?ids=1,2,3...` breaks URI semantics.  
+**Transactions:** How do you express "transfer funds AND log transaction AND notify user" as atomic operation?  
+**Complex queries:** Search with 10 filters becomes `/users?filter1=x&filter2=y&filter3=z...` (URL length limits).  
+**Multi-resource actions:** "Archive project AND notify team AND update dashboard" spans multiple resources.  
+**Stateful operations:** "Start build → monitor progress → retrieve artifacts" doesn't map to CRUD.
+
+**In JSON-RPC, these are just function calls:**
+- `batchDeleteUsers(ids: [1,2,3,...])`
+- `transferFunds(from, to, amount, notify: true)`
+- `searchUsers(filters: {...})`
+- `archiveProject(projectId, options: {...})`
+- `startBuild(params) → pollBuildStatus(buildId) → getArtifacts(buildId)`
+
+The paradigm matches the problem naturally.
+{{< /callout >}}
+
 {{< callout type="info" >}}
-**Key Insight:** REST excels at resource manipulation (CRUD). RPC excels at action invocation (function calls). Choose based on your domain - don't force actions into resource models or vice versa.
+**Key Insight:** REST excels at resource manipulation (CRUD). RPC excels at action invocation (function calls). Choose based on your domain - don't force actions into resource models or vice versa. If your API is mostly verbs (calculate, process, execute, transform), RPC is the natural fit.
 {{< /callout >}}
 
 ### The RPC Renaissance
