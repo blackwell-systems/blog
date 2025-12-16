@@ -459,7 +459,7 @@ Understanding **why** JSON succeeded requires understanding what it replaced and
 - **Expansion subtotal:** +18,600 words
 
 ### New Content
-- New Chapter 2 (Architecture framework): 7,000 words
+- New Chapter 2 (Architecture framework): 5,037 words (DRAFT COMPLETE)
 - New Chapter 9 (JSON5, HJSON, YAML, TOML): 7,000 words
 - New Chapter 10 (API Design patterns): 8,000 words
 - New Chapter 11 (Data Pipelines): 8,000 words
