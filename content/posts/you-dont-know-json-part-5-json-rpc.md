@@ -170,24 +170,24 @@ RPC treats all cardinalities equally as function parameters:
 - `getUsers(ids: [1,5,12])` - some (no awkwardness, no arguments)
 - `searchUsers(query, filters)` - filtered some
 
-**REST couples URLs to database entities. RPC doesn't:**
+**REST couples URLs to database structure. RPC describes operations:**
 
-REST URLs often mirror tables:
+REST URLs often mirror database tables:
 ```
-/users     → users table
-/posts     → posts table
-/comments  → comments table
+/users     → SELECT * FROM users
+/posts     → SELECT * FROM posts
+/comments  → SELECT * FROM comments
 ```
-Tight coupling: database refactoring forces API changes.
+**Problem:** Database refactoring forces API changes. Split a table? Your URL structure breaks. Add a join table? Need new endpoints.
 
-RPC methods describe operations, not data location:
+RPC methods hide implementation details:
 ```javascript
-getUserProfile(id)      // Might query users + posts + followers
-searchContent(query)    // Might hit Elasticsearch, not database
-processOrder(orderId)   // Might touch 5 different services
+getUserProfile(id)      // Queries: users + posts + followers (3 tables)
+searchContent(query)    // Hits: Elasticsearch (not database at all)
+processOrder(orderId)   // Touches: 5 microservices across 3 databases
 ```
 
-The implementation is hidden. You can refactor database structure, add caching layers, split services, or change storage systems without breaking the API contract.
+**Benefit:** Refactor backend freely without breaking API contract. Add caching, change storage systems, split services - clients see the same method signature.
 
 **Key Insight:** REST excels at resource manipulation (CRUD). RPC excels at action invocation (function calls). Choose based on your domain - don't force actions into resource models or vice versa. If your API is mostly verbs (calculate, process, execute, transform), RPC is the natural fit.
 {{< /callout >}}
@@ -238,6 +238,16 @@ JSON-RPC 2.0 is a **stateless, light-weight remote procedure call protocol** tha
 **Specification:** [jsonrpc.org/spec](https://www.jsonrpc.org/specification)  
 **Length:** 8 pages  
 **Release:** 2010
+
+{{< callout type="info" >}}
+**Protocol vs Architectural Style:** JSON-RPC is a **protocol** (concrete specification with exact message format). REST is an **architectural style** (design principles without exact specification). This is why:
+- JSON-RPC compliance is objective: does your message have `jsonrpc`, `method`, `params`, `id`? Yes or no.
+- REST compliance is subjective: is this "RESTful enough"? Depends who you ask.
+- JSON-RPC has a version number (2.0). REST doesn't (it's conceptual).
+- JSON-RPC debates are rare (spec is clear). REST debates are endless (principles are interpretable).
+
+This distinction matters: protocols give clarity, architectural styles give flexibility. Choose based on whether you need strict interoperability (protocol) or design guidance (style).
+{{< /callout >}}
 
 ### Core Concepts
 
