@@ -1724,6 +1724,206 @@ For more on Protocol Buffers, see: [Understanding Protocol Buffers: Part 1]({{< 
 
 **Break-even threshold:** ~50-100M requests/month depending on response size
 
+### Why Not Always Use Protocol Buffers?
+
+**Given the cost savings and performance benefits, why doesn't everyone use Protocol Buffers for everything?**
+
+#### 1. Schema Rigidity (The Biggest Issue)
+
+**Protocol Buffers require compilation and strict schemas:**
+
+```protobuf
+message User {
+  int32 id = 1;
+  string username = 2;
+  string email = 3;
+}
+```
+
+**What happens when you need a new field:**
+1. Update .proto file
+2. Regenerate code for all languages (Go, Python, JS, etc.)
+3. Deploy updated code to all services
+4. Coordinate deployments across teams
+5. Handle backward compatibility
+
+**JSON/MessagePack:** Just add the field, it works immediately.
+
+```javascript
+// JSON: Add field instantly
+const user = {
+  id: 123,
+  username: "alice",
+  newField: "works immediately"  // No compilation needed
+};
+```
+
+**Real scenario:**
+- Frontend needs new field for A/B test
+- With JSON: Ship in 5 minutes
+- With Protobuf: Coordinate backend update, code generation, testing, deployment (~2 hours minimum)
+
+#### 2. Dynamic Data Structures
+
+**User-generated content doesn't fit schemas:**
+
+```json
+{
+  "post_id": "abc123",
+  "content": "Hello world",
+  "metadata": {
+    "custom_field_1": "user defined",
+    "custom_field_2": 42,
+    "arbitrary_key": ["dynamic", "array"]
+  }
+}
+```
+
+**With Protobuf, you'd need:**
+```protobuf
+message Post {
+  string post_id = 1;
+  string content = 2;
+  map<string, google.protobuf.Any> metadata = 3;  // Loses type safety
+}
+```
+
+You end up with `Any` types everywhere, defeating the purpose of schemas.
+
+**Use cases requiring flexibility:**
+- CMS platforms (arbitrary fields per content type)
+- Analytics events (different properties per event)
+- Plugin systems (plugins add their own fields)
+- Form builders (user-defined form schemas)
+
+#### 3. Developer Experience Friction
+
+**JSON workflow (instant feedback):**
+```bash
+curl https://api.example.com/users/123
+# See data immediately in terminal
+# Copy/paste into docs
+# Share with coworkers in Slack
+```
+
+**Protobuf workflow (requires tooling):**
+```bash
+curl https://api.example.com/users/123
+# Get binary garbage: ▒▒▒alice▒▒▒
+# Need protoc to decode
+# Need .proto files
+# Need to explain to frontend devs
+```
+
+**Onboarding cost:**
+- New developers must learn protobuf toolchain
+- Need IDE plugins for syntax highlighting
+- Need to understand wire format for debugging
+- Harder to write integration tests
+
+#### 4. Browser and Client Limitations
+
+**JavaScript ecosystem challenges:**
+
+```javascript
+// JSON: Native support
+fetch('/api/users')
+  .then(r => r.json())  // Built-in
+  .then(data => console.log(data));
+
+// Protobuf: Requires libraries and setup
+import { User } from './generated/user_pb.js';  // 50KB+ bundle size
+
+fetch('/api/users')
+  .then(r => r.arrayBuffer())
+  .then(buf => {
+    const user = User.deserializeBinary(new Uint8Array(buf));
+    // More complex API
+  });
+```
+
+**Bundle size impact:**
+- protobuf.js: ~50KB minified
+- JSON: 0KB (native)
+- For small apps, protobuf library is larger than data savings
+
+#### 5. Third-Party Integrations
+
+**Many services only accept JSON:**
+- Webhooks (Stripe, GitHub, etc.)
+- Logging services (Datadog, Splunk)
+- Monitoring tools (Prometheus, Grafana)
+- CI/CD systems (GitHub Actions, GitLab)
+
+**You'd need JSON anyway for integrations.**
+
+#### 6. Rapid Prototyping and Startups
+
+**Early-stage development priorities:**
+- Ship fast, iterate quickly
+- Schema changes daily
+- Developer velocity > optimization
+- Unknown requirements
+
+**Protobuf adds friction when requirements are uncertain.**
+
+**Real scenario:**
+- Week 1: User has `name` field
+- Week 2: Split into `first_name` and `last_name`
+- Week 3: Add optional `middle_name`
+- Week 4: Support international names (single field after all)
+
+**With JSON:** 4 quick iterations  
+**With Protobuf:** 4 regeneration cycles, coordination, migrations
+
+#### 7. Mixed Data Scenarios
+
+**Real applications use multiple formats:**
+
+```javascript
+// Config files: JSON (human-edited)
+const config = require('./config.json');
+
+// API responses: JSON (client compatibility)
+app.get('/api/users', (req, res) => {
+  res.json(users);
+});
+
+// Internal RPC: Protobuf (performance critical)
+const response = await internalService.getUsers(request);
+
+// Logs: JSON Lines (tooling compatibility)
+logger.info({userId: 123, action: 'login'});
+```
+
+**Using protobuf everywhere would mean:**
+- Config files need compilation
+- Logs need special tools
+- API clients need protobuf libraries
+- Higher complexity for marginal additional gains
+
+#### 8. When Protobuf Makes Sense
+
+**Use Protocol Buffers when:**
++ High-scale APIs (>100M requests/month) - cost savings justify complexity
++ Internal microservices - control both ends, can coordinate schemas
++ Performance-critical paths - gRPC for low-latency RPC
++ Stable APIs - schema rarely changes
++ Type safety matters - compilation catches errors
++ Mobile apps - bandwidth constrained, latency sensitive
+
+**Stick with JSON/MessagePack when:**
++ Public APIs - broad compatibility needed
++ Rapid iteration - schema changes frequently
++ Simple projects - not worth the tooling overhead
++ Browser clients - avoid bundle size bloat
++ Third-party integrations - JSON required anyway
++ Development/staging - easier debugging
+
+{{< callout type="info" >}}
+**The Real Answer:** Most successful systems use **both**. JSON for public APIs and configuration, Protobuf for internal high-traffic RPC. The "always use X" approach ignores the trade-offs between developer velocity, operational complexity, and performance gains.
+{{< /callout >}}
+
 ---
 
 ## Trade-offs and Best Practices
