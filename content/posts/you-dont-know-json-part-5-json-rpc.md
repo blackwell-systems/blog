@@ -132,6 +132,38 @@ The paradigm matches the problem naturally.
 
 Try that last one in a code review and your local architect will have opinions.
 
+**Common "RESTful" workarounds teams are forced into:**
+
+**Option 1:** POST with body (violates HTTP semantics)
+```http
+POST /users/batch-get
+{"ids": [1, 5, 12]}
+```
+Now reads use POST. Not cacheable, not idempotent.
+
+**Option 2:** Create temporary "selection" resources
+```http
+POST /user-selections → {"selection_id": "abc"}
+GET /user-selections/abc/users
+```
+Two requests to get some users. Absurdly complex.
+
+**Option 3:** Multiple single requests
+```http
+GET /users/1
+GET /users/5  
+GET /users/12
+```
+3 round trips. Latency compounds.
+
+**Option 4:** Switch to GraphQL
+```graphql
+query { user1: user(id: 1), user5: user(id: 5) }
+```
+You've abandoned REST entirely.
+
+**Option 5:** Use query params anyway and endure the code review comments.
+
 RPC treats all cardinalities equally as function parameters:
 - `getAllUsers()` - all
 - `getUser(id: 123)` - one  
