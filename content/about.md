@@ -6,7 +6,7 @@ draft: false
 
 Written by Dayna Blackwell.
 
-Technical writing on developer tools, automation, systems programming, artificial intelligence, distributed systems.
+Technical writing on developer tools, automation, systems programming, artificial intelligence, and distributed systems.
 
 ## Open Source Projects
 
