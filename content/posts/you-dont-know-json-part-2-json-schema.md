@@ -27,7 +27,30 @@ In [Part 1]({{< relref "you-dont-know-json-part-1-origins.md" >}}), we explored 
 All three parse successfully. But which is correct? Your application crashes at runtime when it expects a number.
 
 {{< callout type="info" >}}
-**Modularity in Action:** This incompleteness was by design. XML included validation (XSD), namespaces, and transformation (XSLT) in one monolithic specification. JSON chose the opposite - stay minimal, let the ecosystem build composable solutions. JSON Schema exemplifies this: validation as a separate, optional layer that can evolve independently of JSON parsers.
+**What XML Had:** XSD (XML Schema Definition) - 2001
+
+**XML's approach:** Built-in validation system with complex type hierarchies, inheritance, constraints, and namespaces integrated into the core specification.
+
+```xml
+<!-- XSD schema -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:element name="user">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="age" type="xs:integer"/>
+        <xs:element name="email" type="xs:string"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>
+```
+
+**Benefit:** Comprehensive type system with inheritance and built-in validation  
+**Cost:** Extreme complexity, tight coupling to XML parsers, difficult to learn
+
+**JSON's approach:** External validation layer (JSON Schema) - separate standard
+
+**Architecture shift:** Built-in validation → External validation, Complex type system → Simple constraint-based, Monolithic → Modular
 {{< /callout >}}
 
 JSON Schema solves this. It's a vocabulary for defining the structure, types, and constraints of JSON documents. Think of it as TypeScript for JSON - adding type safety and validation without changing the underlying format.

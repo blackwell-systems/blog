@@ -131,6 +131,32 @@ The parser can't know it's valid JSON until it sees the closing `]`. Each `,` co
 
 **Streaming parsers exist** (SAX-style event-based parsers), but they're complex and still require tracking nesting depth, bracket matching, and state across the entire document.
 
+{{< callout type="info" >}}
+**What XML Had:** SAX and StAX streaming parsers (1998-2004)
+
+**XML's approach:** Built-in streaming support through complex parser APIs. SAX provided event-driven parsing, StAX enabled pull-based streaming - both required extensive state management and event handling.
+
+```java
+// SAX: Complex event-driven streaming
+DefaultHandler handler = new DefaultHandler() {
+    @Override
+    public void startElement(String uri, String localName, String qName, Attributes attr) {
+        if (qName.equals("user")) {
+            processUser(attr.getValue("id"), attr.getValue("name"));
+        }
+    }
+};
+parser.parse("users.xml", handler);
+```
+
+**Benefit:** Constant memory usage for any file size, built into XML ecosystem  
+**Cost:** Complex APIs (200+ lines for simple tasks), steep learning curve, stateful parsing
+
+**JSON's approach:** Format convention (JSON Lines) - separate standard  
+
+**Architecture shift:** Built-in streaming → Format-based streaming, Complex APIs → Simple line reading, Stateful parsing → Stateless processing
+{{< /callout >}}
+
 ### What XML Had: SAX and StAX
 
 **XML solved streaming with built-in parser APIs:**

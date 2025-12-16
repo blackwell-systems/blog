@@ -19,7 +19,31 @@ Now we complete the series with JSON's most critical missing piece: **security**
 {{< /callout >}}
 
 {{< callout type="info" >}}
-**The Modular Security Layer:** Rather than build security into JSON (the XML approach with XML Encryption and XML Signature), the ecosystem created composable security standards. JWT for authentication tokens, JWS for digital signatures, JWE for encryption. Each can be used independently or combined, maintaining JSON's flexibility while adding cryptographic protection where needed.
+**What XML Had:** XML Signature and XML Encryption (2000-2002)
+
+**XML's approach:** Comprehensive security built into the core specification. XML Signature for digital signatures, XML Encryption for confidentiality, WS-Security for SOAP authentication - all integrated with complex canonicalization and namespace handling.
+
+```xml
+<!-- XML Signature: Built-in but complex -->
+<Signature xmlns="http://www.w3.org/2000/09/xmldsig#">
+  <SignedInfo>
+    <CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"/>
+    <SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha1"/>
+    <Reference URI="">
+      <Transforms>...</Transforms>
+      <DigestValue>...</DigestValue>
+    </Reference>
+  </SignedInfo>
+  <SignatureValue>...</SignatureValue>
+</Signature>
+```
+
+**Benefit:** Complete cryptographic infrastructure, standardized across tools  
+**Cost:** Extreme complexity, canonicalization nightmares, implementation errors common
+
+**JSON's approach:** Separate security standards (JWT, JWS, JWE) - modular composition
+
+**Architecture shift:** Built-in security → Composable security layers, Monolithic → Mix-and-match, Complex canonicalization → Simple Base64 encoding
 {{< /callout >}}
 
 This article covers:

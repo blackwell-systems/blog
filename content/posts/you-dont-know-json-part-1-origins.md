@@ -16,6 +16,28 @@ But how did we get here? Why does the world's most popular data format have such
 
 This series explores the JSON you don't know - the one beyond basic syntax. We'll examine binary formats, streaming protocols, validation schemas, RPC layers, and security considerations. But first, we need to understand why JSON exists and where it falls short.
 
+{{< callout type="info" >}}
+**What XML Had:** Everything built-in (1998-2005)
+
+**XML's approach:** Monolithic specification with validation (XSD), transformation (XSLT), namespaces, querying (XPath), protocols (SOAP), and security (XML Signature/Encryption) all integrated into one ecosystem.
+
+```xml
+<!-- XML had it all in one place -->
+<user xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="user.xsd">
+  <name>Alice</name>
+  <email>alice@example.com</email>
+</user>
+```
+
+**Benefit:** Complete solution with built-in type safety, validation, and extensibility  
+**Cost:** Massive complexity, steep learning curve, rigid coupling between features
+
+**JSON's approach:** Minimal core with separate standards for each need
+
+**Architecture shift:** Integrated → Modular, Everything built-in → Composable solutions, Monolithic → Ecosystem-driven
+{{< /callout >}}
+
 ---
 
 ## The Pre-JSON Dark Ages: XML Everywhere

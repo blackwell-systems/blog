@@ -15,7 +15,30 @@ In [Part 1]({{< relref "you-dont-know-json-part-1-origins.md" >}}), we explored 
 Now we examine JSON as a **protocol layer** - not just data format, but a communication standard for distributed systems.
 
 {{< callout type="info" >}}
-**Filling Another Gap:** JSON provides no protocol conventions - no standard way to structure requests, responses, or errors. XML had built-in protocol layers (SOAP, XML-RPC), but they were monolithic and complex. JSON-RPC exemplifies the modular ecosystem approach: a lightweight protocol layer that sits atop JSON, adding structure where needed without changing the core format or parser.
+**What XML Had:** SOAP and XML-RPC (1999-2003)
+
+**XML's approach:** Comprehensive protocol stack with SOAP envelopes, WSDL service definitions, WS-* extensions for security/reliability/transactions, and automatic code generation from schemas.
+
+```xml
+<!-- SOAP: Full protocol infrastructure -->
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  <soap:Header>
+    <wsse:Security>...</wsse:Security>
+  </soap:Header>
+  <soap:Body>
+    <tns:GetUser xmlns:tns="http://example.com/users">
+      <tns:UserId>123</tns:UserId>
+    </tns:GetUser>
+  </soap:Body>
+</soap:Envelope>
+```
+
+**Benefit:** Complete protocol definition, automatic tooling, enterprise features  
+**Cost:** Massive complexity, heavyweight infrastructure, steep learning curve
+
+**JSON's approach:** Lightweight protocol conventions (JSON-RPC) - optional structure
+
+**Architecture shift:** Heavyweight protocol → Lightweight convention, Built-in tooling → Simple libraries, Enterprise features → Essential simplicity
 {{< /callout >}}
 
 REST dominates web APIs, but its resource-oriented model doesn't fit every problem. How do you represent `transfer_funds(from, to, amount)` as HTTP verbs and URLs? You could force it into `POST /transfers` with a body, but you're fighting the paradigm.

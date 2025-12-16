@@ -17,7 +17,31 @@ Now we tackle the next performance frontier: **API data transfer and bandwidth o
 While database binary formats optimize storage and queries, API binary formats optimize network efficiency - smaller payloads, faster serialization, and reduced bandwidth costs for mobile and distributed systems.
 
 {{< callout type="info" >}}
-**The Network Challenge:** Database binary formats (JSONB, BSON) excel at storage but aren't designed for APIs. MessagePack and CBOR solve different problems - universal serialization across languages and networks, bandwidth optimization for mobile apps, and standardized formats for IoT systems. They maintain JSON's flexibility while eliminating text parsing overhead.
+**What XML Had:** No binary transfer format (1998-2015)
+
+**XML's approach:** XML over HTTP was purely textual with massive overhead. Every API call included verbose XML with repeated namespace declarations, schema references, and nested elements. SOAP messages routinely exceeded 5KB for simple requests.
+
+```xml
+<!-- XML SOAP: Massive overhead for simple data -->
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"
+               xmlns:user="http://example.com/users">
+  <soap:Header>
+    <wsse:Security>...</wsse:Security>
+  </soap:Header>
+  <soap:Body>
+    <user:GetUser>
+      <user:UserId>123</user:UserId>
+    </user:GetUser>
+  </soap:Body>
+</soap:Envelope>
+```
+
+**Benefit:** Self-describing, schema-aware, standardized protocols  
+**Cost:** Extreme bandwidth usage, slow parsing, mobile-unfriendly sizes
+
+**JSON's approach:** Multiple binary formats (MessagePack, CBOR) - choose per use case
+
+**Architecture shift:** Verbose self-description → Compact binary encoding, One standard → Multiple optimized formats, Protocol-heavy → Lightweight alternatives
 {{< /callout >}}
 
 This article focuses on **MessagePack** (universal binary JSON) and **CBOR** (IETF-standardized format), comparing them with Protocol Buffers and analyzing real bandwidth cost savings.
