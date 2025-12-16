@@ -1072,6 +1072,78 @@ flowchart LR
     style targets fill:#3A4C43,stroke:#6b7280,color:#f0f0f0
 {{< /mermaid >}}
 
+### Integrating Code Generation into Your Workflow
+
+Code generation becomes powerful when integrated into your development process. Here's how production teams use it:
+
+**Development workflow:**
+
+```bash
+# 1. Define schema (source of truth)
+# schemas/user.json
+
+# 2. Generate types for all languages in project
+npm run generate-types
+
+# package.json scripts:
+{
+  "scripts": {
+    "generate-types": "npm run gen:ts && npm run gen:go && npm run gen:python",
+    "gen:ts": "json-schema-to-typescript schemas/*.json -o src/types/",
+    "gen:go": "gojsonschema -p models schemas/*.json",
+    "gen:python": "datamodel-codegen --input schemas/ --output api/models/"
+  }
+}
+```
+
+**CI/CD integration:**
+
+```yaml
+# .github/workflows/validate-schemas.yml
+name: Schema Validation
+on: [pull_request]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Validate schemas
+        run: |
+          npm install -g ajv-cli
+          ajv validate -s schemas/user.json -d tests/valid-users/*.json
+      
+      - name: Generate types
+        run: npm run generate-types
+      
+      - name: Check for uncommitted changes
+        run: |
+          if [[ -n $(git status -s) ]]; then
+            echo "Generated types out of sync with schemas!"
+            exit 1
+          fi
+```
+
+**Why this matters:**
+
+**Schema drift prevention:** If someone modifies a schema without regenerating types, CI catches it. Types are always in sync with schemas.
+
+**Type safety across services:** A microservices architecture with TypeScript frontend, Go backend, and Python ML service all generate types from the same schema source. No manual synchronization needed.
+
+**Contract-driven development:** Define the schema first (the contract), generate types for all services, then implement. Services can't accidentally send invalid data because the types enforce the contract at compile time.
+
+**Real-world example from Stripe:**
+
+Stripe's API uses JSON Schema extensively. When they add a new field to their `Customer` object:
+
+1. Update `customer.json` schema
+2. Run code generator for all SDK languages (Ruby, Python, Go, Java, PHP, etc.)
+3. CI validates all example requests still pass schema validation
+4. Deploy updated SDKs
+
+Result: Type-safe SDKs in 8+ languages, all guaranteed to match the API contract, generated from a single source of truth.
+
 ---
 
 ## OpenAPI Integration
@@ -1135,6 +1207,112 @@ openapi-generator-cli generate \
   -g typescript-axios \
   -o ./generated
 ```
+
+### OpenAPI-Driven Development Workflow
+
+OpenAPI 3.1's full JSON Schema support enables a powerful development workflow:
+
+**1. Design-first approach:**
+
+```yaml
+# openapi.yaml - Define API contract first
+openapi: 3.1.0
+paths:
+  /users/{id}:
+    get:
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+```
+
+**2. Generate server stubs and client SDKs:**
+
+```bash
+# Generate Node.js/Express server
+openapi-generator generate -i openapi.yaml -g nodejs-express-server
+
+# Generate TypeScript client
+openapi-generator generate -i openapi.yaml -g typescript-axios
+
+# Generate Go client
+openapi-generator generate -i openapi.yaml -g go
+```
+
+**3. Implement business logic in generated stubs:**
+
+```javascript
+// Server implementation (handlers/userController.js)
+exports.getUser = async (req, res) => {
+  const user = await db.users.findById(req.params.id);
+  if (!user) {
+    return res.status(404).json({
+      error: 'User not found',
+      code: 'USER_NOT_FOUND'
+    });
+  }
+  // Response automatically validated against schema
+  res.json(user);
+};
+```
+
+**4. Contract testing ensures compliance:**
+
+```javascript
+// tests/contract.test.js
+const { validate } = require('@seriousme/openapi-schema-validator');
+
+test('API responses match OpenAPI spec', async () => {
+  const validator = await validate('openapi.yaml');
+  const response = await fetch('/users/123');
+  const data = await response.json();
+  
+  // Validate response against schema
+  const result = validator.validate(data, '/components/schemas/User');
+  expect(result.errors).toHaveLength(0);
+});
+```
+
+**Production example - AWS API Gateway:**
+
+AWS API Gateway integrates OpenAPI directly:
+
+```yaml
+x-amazon-apigateway-request-validator: all
+
+paths:
+  /orders:
+    post:
+      x-amazon-apigateway-integration:
+        type: aws_proxy
+        uri: arn:aws:lambda:us-east-1:123456789:function:createOrder
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Order'
+```
+
+**Benefits:**
+- API Gateway validates requests before hitting Lambda (saves costs)
+- Invalid requests rejected at edge (protects backend)
+- Schema violations return clear error messages
+- Single source of truth for validation logic
 
 ---
 
@@ -1254,8 +1432,71 @@ Old data with shorter strings fails.
 }
 ```
 
+### Real-World Migration Pattern
+
+When GitHub migrated their API from v3 to v4, they used this strategy:
+
+**Phase 1: Parallel schemas (months 1-6)**
+```javascript
+// Validator supports both v1 and v2
+const validateUser = (data, version = '1') => {
+  const schema = version === '2' 
+    ? userSchemaV2 
+    : userSchemaV1;
+  return ajv.validate(schema, data);
+};
+
+app.post('/users', (req, res) => {
+  const apiVersion = req.header('API-Version') || '1';
+  if (!validateUser(req.body, apiVersion)) {
+    return res.status(400).json({errors: ajv.errors});
+  }
+  // Process...
+});
+```
+
+**Phase 2: Deprecation warnings (months 7-12)**
+```javascript
+app.post('/users', (req, res) => {
+  const apiVersion = req.header('API-Version') || '1';
+  
+  if (apiVersion === '1') {
+    res.set('Deprecation', 'true');
+    res.set('Sunset', '2024-12-31');
+    res.set('Link', '<https://docs.api.com/v2>; rel="successor"');
+  }
+  
+  // Validate...
+});
+```
+
+**Phase 3: Removal (month 13+)**
+```javascript
+app.post('/users', (req, res) => {
+  const apiVersion = req.header('API-Version') || '2';
+  
+  if (apiVersion === '1') {
+    return res.status(410).json({
+      error: 'API v1 is no longer supported',
+      upgrade_url: 'https://docs.api.com/migration-guide'
+    });
+  }
+  
+  // Only v2 supported now
+});
+```
+
+**Key insights:**
+
++ **Dual validation period:** Both schemas work concurrently (no hard cutoff)
++ **Clear deprecation timeline:** 6+ months notice before removal
++ **Monitoring:** Track v1 usage to identify clients that need to migrate
++ **Migration tooling:** Provide scripts to auto-convert v1 data to v2
+
+**Cost of poor migration:** Twitter's API v1.1 to v2 migration took years and broke thousands of applications because they didn't support parallel schemas. Learn from their mistake.
+
 {{< callout type="warning" >}}
-**Migration Strategy:** When introducing breaking schema changes, support both old and new versions during a transition period. Use API versioning or content negotiation to route requests to appropriate validators.
+**Migration Strategy:** When introducing breaking schema changes, support both old and new versions during a transition period (6+ months minimum). Use API versioning or content negotiation to route requests to appropriate validators. Monitor old version usage and provide migration tooling.
 {{< /callout >}}
 
 ---
