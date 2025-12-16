@@ -1396,6 +1396,321 @@ function verifyToken(token) {
 
 ---
 
+### Advanced Security Hardening
+
+Beyond the basics, production JWT implementations need defense-in-depth strategies.
+
+**1. Token revocation strategies**
+
+JWTs are stateless - once signed, they're valid until expiry. But what if a token is compromised?
+
+**Revocation via blacklist (Redis):**
+
+```javascript
+const redis = require('redis');
+const client = redis.createClient();
+
+// Revoke token
+async function revokeToken(jti, expiresAt) {
+  const ttl = Math.floor((expiresAt - Date.now()) / 1000);
+  await client.setEx(`revoked:${jti}`, ttl, '1');
+}
+
+// Check if revoked before processing
+async function verifyToken(token, secret) {
+  const decoded = jwt.verify(token, secret);
+  
+  // Check blacklist
+  const isRevoked = await client.exists(`revoked:${decoded.jti}`);
+  if (isRevoked) {
+    throw new Error('Token has been revoked');
+  }
+  
+  return decoded;
+}
+
+// Revoke on logout or password change
+app.post('/logout', async (req, res) => {
+  const token = extractToken(req);
+  const decoded = jwt.decode(token);
+  
+  await revokeToken(decoded.jti, decoded.exp * 1000);
+  res.json({success: true});
+});
+```
+
+**Why this works:**
+- Redis TTL matches token expiry (auto-cleanup)
+- Only revoked tokens stored (not all valid tokens)
+- Fast lookup (O(1) Redis check)
+
+**Cost:** One Redis call per request (adds ~2ms latency)
+
+**Alternative: Short-lived tokens + refresh rotation**
+
+```javascript
+// Issue very short access tokens (5 minutes)
+const accessToken = jwt.sign(payload, secret, {expiresIn: '5m'});
+
+// Separate refresh token (stored in database)
+const refreshToken = crypto.randomBytes(32).toString('hex');
+await db.refreshTokens.insert({
+  token: refreshToken,
+  userId: user.id,
+  expiresAt: Date.now() + 7 * 24 * 60 * 60 * 1000,
+  createdAt: Date.now()
+});
+
+// Rotate refresh token on each use
+app.post('/token/refresh', async (req, res) => {
+  const {refreshToken} = req.body;
+  
+  // Validate refresh token
+  const tokenRecord = await db.refreshTokens.findOne({token: refreshToken});
+  if (!tokenRecord || tokenRecord.expiresAt < Date.now()) {
+    return res.status(401).json({error: 'Invalid refresh token'});
+  }
+  
+  // Delete old refresh token
+  await db.refreshTokens.delete({token: refreshToken});
+  
+  // Issue new tokens
+  const newAccessToken = jwt.sign({sub: tokenRecord.userId}, secret, {expiresIn: '5m'});
+  const newRefreshToken = crypto.randomBytes(32).toString('hex');
+  
+  await db.refreshTokens.insert({
+    token: newRefreshToken,
+    userId: tokenRecord.userId,
+    expiresAt: Date.now() + 7 * 24 * 60 * 60 * 1000
+  });
+  
+  res.json({
+    accessToken: newAccessToken,
+    refreshToken: newRefreshToken
+  });
+});
+```
+
+**Benefits:**
+- Compromised access token only valid 5 minutes
+- Refresh token rotation detects theft (one use per token)
+- Database check only on refresh (not every request)
+
+**2. Rate limiting per user**
+
+Prevent brute-force attacks on JWT endpoints:
+
+```javascript
+const rateLimit = require('express-rate-limit');
+
+// Global rate limit
+const globalLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // 100 requests per window
+  message: 'Too many requests'
+});
+
+// Stricter limit for auth endpoints
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 5, // Only 5 login attempts per 15 minutes
+  skipSuccessfulRequests: true, // Only count failures
+  keyGenerator: (req) => {
+    // Rate limit by username, not IP (avoid IP sharing)
+    return req.body.username || req.ip;
+  }
+});
+
+app.post('/login', authLimiter, async (req, res) => {
+  // Login logic
+});
+
+app.post('/token/refresh', rateLimit({
+  windowMs: 60 * 1000,
+  max: 10 // 10 refresh attempts per minute
+}), async (req, res) => {
+  // Refresh logic
+});
+```
+
+**3. Secure token storage (client-side)**
+
+Never store JWTs in localStorage (vulnerable to XSS):
+
+```javascript
+// BAD - localStorage accessible to any script
+localStorage.setItem('token', accessToken);
+
+// GOOD - HttpOnly cookie (inaccessible to JavaScript)
+res.cookie('accessToken', accessToken, {
+  httpOnly: true,      // No JavaScript access
+  secure: true,        // HTTPS only
+  sameSite: 'strict',  // CSRF protection
+  maxAge: 15 * 60 * 1000  // 15 minutes
+});
+
+// Refresh token in separate HttpOnly cookie
+res.cookie('refreshToken', refreshToken, {
+  httpOnly: true,
+  secure: true,
+  sameSite: 'strict',
+  path: '/token/refresh',  // Only sent to refresh endpoint
+  maxAge: 7 * 24 * 60 * 60 * 1000  // 7 days
+});
+```
+
+**Why HttpOnly cookies:**
+- XSS attacks can't steal tokens (JavaScript can't access)
+- Browser handles token sending automatically
+- SameSite prevents CSRF attacks
+- Path restriction limits exposure
+
+**Trade-off:** Harder for SPAs (can't read token for API calls). Solution: Use credentials mode:
+
+```javascript
+// Client-side fetch with credentials
+fetch('/api/users', {
+  credentials: 'include'  // Send cookies automatically
+});
+```
+
+**4. Token binding (advanced)**
+
+Bind token to client characteristics:
+
+```javascript
+const fingerprint = crypto.createHash('sha256')
+  .update(req.headers['user-agent'])
+  .update(req.ip)
+  .digest('hex');
+
+const token = jwt.sign({
+  sub: userId,
+  fingerprint: fingerprint
+}, secret);
+
+// Verify fingerprint on each request
+function verifyFingerprint(req, decoded) {
+  const currentFingerprint = crypto.createHash('sha256')
+    .update(req.headers['user-agent'])
+    .update(req.ip)
+    .digest('hex');
+  
+  if (decoded.fingerprint !== currentFingerprint) {
+    throw new Error('Token fingerprint mismatch - possible theft');
+  }
+}
+```
+
+**Prevents:** Token theft and replay from different device/IP
+
+**Trade-off:** Users behind proxies or VPNs may have changing IPs (causes false positives)
+
+**5. Audit logging**
+
+Log all token operations for security monitoring:
+
+```javascript
+async function logTokenEvent(event, details) {
+  await db.auditLog.insert({
+    event,           // 'issued', 'verified', 'revoked', 'failed'
+    userId: details.userId,
+    tokenId: details.jti,
+    ip: details.ip,
+    userAgent: details.userAgent,
+    reason: details.reason,
+    timestamp: new Date()
+  });
+}
+
+// Log token issuance
+app.post('/login', async (req, res) => {
+  const user = await authenticate(req.body);
+  const token = jwt.sign({sub: user.id, jti: uuidv4()}, secret);
+  
+  await logTokenEvent('issued', {
+    userId: user.id,
+    jti: token.jti,
+    ip: req.ip,
+    userAgent: req.headers['user-agent']
+  });
+  
+  res.json({token});
+});
+
+// Log verification failures
+app.use(async (req, res, next) => {
+  try {
+    const token = extractToken(req);
+    const decoded = await verifyToken(token, secret);
+    req.user = decoded;
+    next();
+  } catch (err) {
+    await logTokenEvent('failed', {
+      ip: req.ip,
+      userAgent: req.headers['user-agent'],
+      reason: err.message
+    });
+    res.status(401).json({error: 'Invalid token'});
+  }
+});
+```
+
+**Security benefits:**
+- Detect brute-force attempts (multiple failed verifications)
+- Track token usage patterns (unusual IP, user-agent)
+- Investigate compromises (when was token last used?)
+- Compliance (audit trail for regulated industries)
+
+### Production Security Checklist
+
+Before deploying JWT in production:
+
+**Token generation:**
+- [ ] Use cryptographically secure random for secrets (`crypto.randomBytes`)
+- [ ] Minimum 256-bit secrets for HS256 (32 bytes)
+- [ ] Minimum 2048-bit RSA keys for RS256
+- [ ] Include `jti` (unique token ID) for revocation
+- [ ] Include `iat` (issued at) for age verification
+- [ ] Set `exp` (expiry) - never issue permanent tokens
+- [ ] Set `nbf` (not before) for future-dated tokens if needed
+
+**Token verification:**
+- [ ] Explicitly specify allowed algorithms
+- [ ] Reject `none` algorithm
+- [ ] Verify `iss` (issuer) matches expected
+- [ ] Verify `aud` (audience) matches your API
+- [ ] Check `exp` hasn't passed (libraries do this by default)
+- [ ] Check `nbf` if present
+- [ ] Validate custom claims (role, permissions)
+
+**Storage:**
+- [ ] Secrets in environment variables (never code)
+- [ ] Use secret management (AWS Secrets Manager, HashiCorp Vault)
+- [ ] Rotate keys periodically (quarterly at minimum)
+- [ ] Support multiple keys simultaneously (for rotation)
+- [ ] HttpOnly cookies for web apps (not localStorage)
+- [ ] Secure flag enabled (HTTPS only)
+- [ ] SameSite=Strict for CSRF protection
+
+**Infrastructure:**
+- [ ] Rate limiting on auth endpoints (5-10 attempts per 15min)
+- [ ] Audit logging (token issued, verified, failed)
+- [ ] Monitoring and alerting (failed verification spikes)
+- [ ] Token revocation strategy (blacklist or short expiry)
+- [ ] HTTPS enforced (reject HTTP)
+- [ ] CORS configured properly (don't use wildcard `*`)
+
+**Testing:**
+- [ ] Test algorithm confusion attack (verify fix works)
+- [ ] Test none algorithm (verify rejected)
+- [ ] Test expired token (verify rejected)
+- [ ] Test wrong audience/issuer (verify rejected)
+- [ ] Test token replay after logout (verify revoked)
+- [ ] Penetration testing (OWASP JWT vulnerabilities)
+
+---
+
 ## Real-World Examples
 
 ### OAuth 2.0 with JWT
