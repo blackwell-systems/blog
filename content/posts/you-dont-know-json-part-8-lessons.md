@@ -691,29 +691,6 @@ When choosing technologies, ask: "Does this align with contemporary architectura
 When zeitgeist shifts, successful technologies shift with it. Unsuccessful ones cling to old patterns.
 {{< /callout >}}
 
-### What You Can Do Now
-
-**1. Explore the ecosystem this series documented:**
-- Try JSON Schema for validation
-- Experiment with MessagePack for performance
-- Use JSON Lines for log processing
-- Implement JWT properly (not homebrew)
-
-**2. Recognize architectural patterns:**
-- Notice when you're fighting modularity
-- Identify when coupling is appropriate
-- Understand trade-offs in system design
-
-**3. Apply meta-lessons:**
-- Evaluate technologies through architectural lens
-- Recognize zeitgeist in tool choices
-- Adapt to shifting patterns
-
-**4. Help others discover:**
-- Share ecosystem knowledge
-- Bridge fragmentation gaps
-- Write about patterns you've learned
-
 ### The Series Complete
 
 **You now know JSON** - not just the syntax, but:
