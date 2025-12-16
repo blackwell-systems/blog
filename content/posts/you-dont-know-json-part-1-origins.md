@@ -929,12 +929,12 @@ JSON deliberately omitted developer-friendly features to stay minimal. For machi
 
 | Feature | JSON | JSON5 | HJSON | YAML | TOML |
 |---------|------|-------|-------|------|------|
-| Comments | ❌ | ✓ | ✓ | ✓ | ✓ |
-| Trailing commas | ❌ | ✓ | ✓ | N/A | N/A |
-| Unquoted keys | ❌ | ✓ | ✓ | ✓ | ✓ |
-| Unquoted strings | ❌ | ❌ | ✓ | ✓ | ✓ |
-| Native browser support | ✓ | ❌ | ❌ | ❌ | ❌ |
-| Designed for configs | ❌ | Partial | ✓ | ✓ | ✓ |
+| Comments | No | Yes | Yes | Yes | Yes |
+| Trailing commas | No | Yes | Yes | N/A | N/A |
+| Unquoted keys | No | Yes | Yes | Yes | Yes |
+| Unquoted strings | No | No | Yes | Yes | Yes |
+| Native browser support | Yes | No | No | No | No |
+| Designed for configs | No | Partial | Yes | Yes | Yes |
 
 **When to use:**
 
