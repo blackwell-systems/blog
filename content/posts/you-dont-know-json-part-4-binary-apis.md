@@ -17,12 +17,12 @@ Now we tackle the next performance frontier: **API data transfer and bandwidth o
 While database binary formats optimize storage and queries, API binary formats optimize network efficiency - smaller payloads, faster serialization, and reduced bandwidth costs for mobile and distributed systems.
 
 {{< callout type="info" >}}
-**What XML Had:** No binary transfer format (1998-2015)
+**What XML Had:** Text-based encoding only for APIs (1998-2015)
 
-**XML's approach:** XML over HTTP was purely textual with massive overhead. Every API call included verbose XML with repeated namespace declarations, schema references, and nested elements. SOAP messages routinely exceeded 5KB for simple requests.
+**XML's approach:** XML APIs (SOAP/REST) encoded data as human-readable text characters. Every API response used verbose XML syntax with repeated namespace declarations, schema references, and nested element tags.
 
 ```xml
-<!-- XML SOAP: Massive overhead for simple data -->
+<!-- SOAP: Text-based encoding (verbose characters) -->
 <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"
                xmlns:user="http://example.com/users">
   <soap:Header>
@@ -35,24 +35,31 @@ While database binary formats optimize storage and queries, API binary formats o
   </soap:Body>
 </soap:Envelope>
 ```
+**Size:** 400+ bytes for simple request (all ASCII text characters)
 
 **Binary encoding attempts existed but failed:**
-- **Fast Infoset** (2005): Complex, required specialized libraries
-- **EXI** (2011): IETF standard but too late, minimal adoption
-- **Binary XML**: Various proprietary attempts, none gained traction
+- **Fast Infoset** (2005): Binary XML encoding, complex spec, minimal adoption
+- **EXI** (2011): IETF standard, too late, required specialized parsers
+- None achieved widespread API usage
 
-**For transferring binary content (files, images), XML same as JSON:**
+**Note on embedding binary content:** Both XML and JSON equally bad - must base64 encode files/images (33% overhead):
 ```xml
-<!-- Must base64 encode (33% size overhead) -->
-<file>iVBORw0KGgoAAAANSUhEUgAAAAUA...</file>
+<image>iVBORw0KGgoAAAANSUhEUgAAAAUA...</image>  <!-- XML -->
+```
+```json
+{"image": "iVBORw0KGgoAAAANSUhEUgAAAAUA..."}  // JSON
 ```
 
-**Benefit:** Self-describing, schema-aware, standardized protocols  
-**Cost:** Extreme bandwidth usage (XML text + namespace overhead), slow parsing, mobile-unfriendly sizes, no native binary type
+**Benefit:** Human-readable responses, universal parser support, debuggable  
+**Cost:** Large payloads (verbose text), slow parsing, high bandwidth costs, mobile-unfriendly
 
-**JSON's approach:** Multiple binary formats (MessagePack, CBOR) succeeded - modular, choose per use case
+**JSON's approach:** Multiple binary encoding formats (MessagePack, CBOR) - compact byte representation
 
-**Architecture shift:** Verbose self-description → Compact binary encoding, Failed standards → Successful modular formats, One approach → Multiple optimized options
+**The key distinction:**
+- **Text encoding:** Data as ASCII/UTF-8 characters - `{"id":123}` = readable text
+- **Binary encoding:** Data as compact bytes - `0x82 0xa2 id 0x7b` = efficient binary
+
+**Architecture shift:** Text-only encoding → Binary encoding options, Failed standards → Modular ecosystem success, One verbose approach → Multiple optimized formats
 {{< /callout >}}
 
 This article focuses on **MessagePack** (universal binary JSON) and **CBOR** (IETF-standardized format), comparing them with Protocol Buffers and analyzing real bandwidth cost savings.
