@@ -714,30 +714,24 @@ console.log(decoded);
 | BSON | 7.8 MB | 4.1 MB | 11.8 MB |
 
 {{< mermaid >}}
-flowchart LR
+flowchart TB
     subgraph perf["Performance Characteristics"]
-        size[Size Efficiency]
-        speed[Parse Speed]
-        memory[Memory Usage]
+        size[Size Efficiency<br/>36% smaller than JSON]
+        speed[Parse Speed<br/>1.7x faster]
+        memory[Memory Usage<br/>25% less memory]
     end
     
-    subgraph formats["Format Rankings"]
-        msgpack[MessagePack<br/>Best Overall]
-        cbor[CBOR<br/>Close Second]
-        bson[BSON<br/>Extended Types]
-        json[JSON<br/>Human-Readable]
+    subgraph formats["Binary Format Rankings"]
+        msgpack[MessagePack<br/>Best Overall Balance]
+        cbor[CBOR<br/>Standards Compliant]
+        bson[BSON<br/>MongoDB Extended Types]
     end
     
     perf --> formats
     
-    msgpack -.36% smaller.-> size
-    msgpack -.1.7x faster.-> speed
-    msgpack -.25% less memory.-> memory
-    
     style msgpack fill:#3A4C43,stroke:#6b7280,color:#f0f0f0
     style cbor fill:#3A4A5C,stroke:#6b7280,color:#f0f0f0
     style bson fill:#4C4538,stroke:#6b7280,color:#f0f0f0
-    style json fill:#4C3A3C,stroke:#6b7280,color:#f0f0f0
     style perf fill:#3A4A5C,stroke:#6b7280,color:#f0f0f0
     style formats fill:#3A4C43,stroke:#6b7280,color:#f0f0f0
 {{< /mermaid >}}
