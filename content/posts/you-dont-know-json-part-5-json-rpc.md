@@ -130,10 +130,12 @@ The paradigm matches the problem naturally.
 - `GET /users/123` - one user (item)
 - `GET /users?ids=1,5,12` - some specific users (awkward, not RESTful)
 
+Try that last one in a code review and your local architect will have opinions.
+
 RPC treats all cardinalities equally as function parameters:
 - `getAllUsers()` - all
 - `getUser(id: 123)` - one  
-- `getUsers(ids: [1,5,12])` - some (no awkwardness)
+- `getUsers(ids: [1,5,12])` - some (no awkwardness, no arguments)
 - `searchUsers(query, filters)` - filtered some
 
 **Key Insight:** REST excels at resource manipulation (CRUD). RPC excels at action invocation (function calls). Choose based on your domain - don't force actions into resource models or vice versa. If your API is mostly verbs (calculate, process, execute, transform), RPC is the natural fit.
