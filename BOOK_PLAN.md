@@ -470,16 +470,16 @@ Understanding **why** JSON succeeded requires understanding what it replaced and
 
 **Chapter completion status:**
 - Chapter 10 (Human-friendly formats): 5,800 words - ✓ COMPLETE (7 diagrams)
-- Chapter 11 (API Design): 7,000 words - ✓ COMPLETE (13 diagrams - ready to add)
-- Chapter 12 (Data Pipelines): 7,000 words - TO BE WRITTEN (prep complete)
+- Chapter 11 (API Design): 7,000 words - ✓ COMPLETE (8 diagrams integrated)
+- Chapter 12 (Data Pipelines): 7,000 words - ✓ COMPLETE (ETL→streaming→production, 5 architectures, 50+ code examples)
 - Chapter 13 (Testing): 6,000 words - TO BE WRITTEN (prep complete)
 - Chapter 14 (Future): 4,118 words - ✓ COMPLETE (13 diagrams)
 
 **Progress:**
-- Chapters written: 3 of 5 (Chapters 10, 11, 14)
-- Words written: 16,918 of ~31,000 target (55% complete)
+- Chapters written: 4 of 5 (Chapters 10, 11, 12, 14)
+- Words written: 23,918 of ~31,000 target (77% complete)
 - Preparation: 100% complete (all outlines + 53 diagrams ready)
-- Total book: 72,708 words (78% of ~92,800 target)
+- Total book: 79,708 words (85% of ~92,800 target)
 
 **New chapters subtotal (projected):** ~29,000 words (natural completion patterns observed)
 
@@ -493,13 +493,13 @@ Understanding **why** JSON succeeded requires understanding what it replaced and
 ### Total Realistic Book Length
 
 **Existing chapters:** 55,790 words (✓ foundation complete)  
-**New chapters (in progress):** ~29,000 words projected (16,918 written)  
+**New chapters (in progress):** ~29,000 words projected (23,918 written)  
 **Front/back matter:** 7,000 words  
 **Total projected:** **~91,800 words** (~204 pages at 450 words/page)
 
-**Current total:** 72,708 words (foundation + Chapters 10, 11 & 14)  
-**Remaining to write:** ~19,000 words (chapters 12-13 + front/back matter)  
-**Completion:** 78% done
+**Current total:** 79,708 words (foundation + Chapters 10, 11, 12 & 14)  
+**Remaining to write:** ~13,000 words (chapter 13 + front/back matter)  
+**Completion:** 85% done
 
 **Previous unrealistic target:** 109,600 words (bloated with padding)  
 **Revised realistic target:** ~92,800 words (natural, quality-focused)
