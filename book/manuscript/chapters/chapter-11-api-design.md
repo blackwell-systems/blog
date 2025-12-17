@@ -193,6 +193,26 @@ if (response.status === 422) {
 
 ### Richardson Maturity Model
 
+```mermaid
+flowchart TB
+    level0[Level 0: The Swamp of POX<br/>Single endpoint, single method<br/>POST /api with action in body]
+    
+    level1[Level 1: Resources<br/>Multiple endpoints<br/>POST /users, POST /orders]
+    
+    level2[Level 2: HTTP Verbs<br/>Proper HTTP methods<br/>GET /users, POST /users, DELETE /users/123]
+    
+    level3[Level 3: Hypermedia Controls<br/>HATEOAS - links in responses<br/>Self-describing API]
+    
+    level0 -->|Add resources| level1
+    level1 -->|Add HTTP verbs| level2
+    level2 -->|Add hypermedia| level3
+    
+    style level0 fill:#4C3A3C,stroke:#6b7280,color:#f0f0f0
+    style level1 fill:#4C4538,stroke:#6b7280,color:#f0f0f0
+    style level2 fill:#3A4C43,stroke:#6b7280,color:#f0f0f0
+    style level3 fill:#3A4A5C,stroke:#6b7280,color:#f0f0f0
+```
+
 Leonard Richardson identified four levels of REST maturity:
 
 **Level 0: Single endpoint, single method (RPC)**
@@ -295,6 +315,38 @@ This resource-oriented approach scales naturally as APIs grow, provides intuitiv
 ## 2. Pagination Patterns
 
 When your API returns collections of resources, you face an immediate scalability problem: you can't return a million users in a single response. Pagination solves this by breaking large result sets into manageable chunks, but the pagination strategy you choose has profound implications for performance, consistency, and client complexity.
+
+```mermaid
+flowchart TB
+    subgraph offset["Offset-Based"]
+        o1["Page 1<br/>offset=0, limit=20"]
+        o2["Page 2<br/>offset=20, limit=20"]
+        o3["Page 3<br/>offset=40, limit=20"]
+        oprob["❌ Problems:<br/>Inefficient for large offsets<br/>Inconsistent if data changes"]
+    end
+    
+    subgraph cursor["Cursor-Based"]
+        c1["Page 1<br/>limit=20"]
+        c2["Page 2<br/>cursor=abc123, limit=20"]
+        c3["Page 3<br/>cursor=def456, limit=20"]
+        cbenefit["✓ Benefits:<br/>Efficient (uses index)<br/>Consistent results"]
+    end
+    
+    subgraph keyset["Keyset"]
+        k1["Page 1<br/>limit=20"]
+        k2["Page 2<br/>after=102, limit=20"]
+        k3["Page 3<br/>after=122, limit=20"]
+        kbenefit["✓ Benefits:<br/>Simple & efficient<br/>Transparent cursor"]
+    end
+    
+    o1 --> o2 --> o3 --> oprob
+    c1 --> c2 --> c3 --> cbenefit
+    k1 --> k2 --> k3 --> kbenefit
+    
+    style offset fill:#4C3A3C,stroke:#6b7280,color:#f0f0f0
+    style cursor fill:#3A4C43,stroke:#6b7280,color:#f0f0f0
+    style keyset fill:#3A4A5C,stroke:#6b7280,color:#f0f0f0
+```
 
 ### The Pagination Problem
 
@@ -608,6 +660,43 @@ flowchart TB
 ## 3. Error Response Formats
 
 Nothing frustrates developers more than inconsistent error responses. When your API returns errors in different formats across endpoints, clients must implement custom error handling for every operation. Standardized error formats make APIs predictable and enable generic error handling code.
+
+```mermaid
+flowchart TB
+    error[Error Occurs]
+    
+    classify{Error<br/>Type?}
+    
+    validation[Validation Error<br/>400 Bad Request]
+    auth[Auth Error<br/>401/403]
+    notfound[Not Found<br/>404]
+    conflict[Conflict<br/>409]
+    ratelimit[Rate Limit<br/>429]
+    server[Server Error<br/>500]
+    
+    subgraph response["Standard Error Response"]
+        type["type: Error type URI"]
+        title["title: Human-readable"]
+        status["status: HTTP code"]
+        detail["detail: Specific explanation"]
+        errors["errors: Field-level array"]
+        requestId["requestId: Trace ID"]
+    end
+    
+    error --> classify
+    classify --> validation
+    classify --> auth
+    classify --> notfound
+    classify --> conflict
+    classify --> ratelimit
+    classify --> server
+    
+    validation & auth & notfound & conflict & ratelimit & server --> response
+    
+    style validation fill:#4C4538,stroke:#6b7280,color:#f0f0f0
+    style auth fill:#4C3A3C,stroke:#6b7280,color:#f0f0f0
+    style response fill:#3A4A5C,stroke:#6b7280,color:#f0f0f0
+```
 
 ### The Inconsistency Problem
 
