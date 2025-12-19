@@ -752,6 +752,43 @@ RFC 7807 defines a standard format for HTTP error responses that has gained wide
 - `instance` - URI where this specific error occurred
 - Custom fields for additional context
 
+```mermaid
+flowchart TB
+    error[Error Occurs]
+    
+    classify{Error<br/>Type?}
+    
+    validation[Validation Error<br/>400 Bad Request]
+    auth[Auth Error<br/>401/403]
+    notfound[Not Found<br/>404]
+    conflict[Conflict<br/>409]
+    ratelimit[Rate Limit<br/>429]
+    server[Server Error<br/>500]
+    
+    subgraph response["Standard Error Response"]
+        type["type: Error type URI"]
+        title["title: Human-readable"]
+        status["status: HTTP code"]
+        detail["detail: Specific explanation"]
+        errors["errors: Field-level array"]
+        requestId["requestId: Trace ID"]
+    end
+    
+    error --> classify
+    classify --> validation
+    classify --> auth
+    classify --> notfound
+    classify --> conflict
+    classify --> ratelimit
+    classify --> server
+    
+    validation & auth & notfound & conflict & ratelimit & server --> response
+    
+    style validation fill:#4C4538,stroke:#6b7280,color:#f0f0f0
+    style auth fill:#4C3A3C,stroke:#6b7280,color:#f0f0f0
+    style response fill:#3A4A5C,stroke:#6b7280,color:#f0f0f0
+```
+
 ### Field-Level Validation Errors
 
 For form validation, extend the RFC 7807 format with field-specific details:
@@ -1612,6 +1649,45 @@ if (result.allowed) {
 } else {
   console.log('Request denied, try again at:', new Date(result.resetTime));
 }
+```
+
+```mermaid
+flowchart TB
+    request[Incoming Request]
+    
+    identify{Identify<br/>Client}
+    check{Check<br/>Rate Limit}
+    
+    allowed[Process Request]
+    blocked[Return 429<br/>Too Many Requests]
+    
+    subgraph headers["Response Headers"]
+        limit["RateLimit-Limit: 100"]
+        remaining["RateLimit-Remaining: 42"]
+        reset["RateLimit-Reset: 1642089600"]
+    end
+    
+    subgraph implementation["Implementation"]
+        token["Token Bucket<br/>Refill at rate"]
+        sliding["Sliding Window<br/>Recent requests"]
+        fixed["Fixed Window<br/>Reset period"]
+    end
+    
+    request --> identify
+    identify -->|API key/Token| check
+    
+    check -->|Under limit| allowed
+    check -->|Over limit| blocked
+    
+    allowed --> headers
+    blocked --> headers
+    
+    check -.Uses.-> implementation
+    
+    style blocked fill:#4C3A3C,stroke:#6b7280,color:#f0f0f0
+    style allowed fill:#3A4C43,stroke:#6b7280,color:#f0f0f0
+    style headers fill:#3A4A5C,stroke:#6b7280,color:#f0f0f0
+    style implementation fill:#4C4538,stroke:#6b7280,color:#f0f0f0
 ```
 
 ### Redis-Based Distributed Rate Limiting

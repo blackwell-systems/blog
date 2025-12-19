@@ -1,8 +1,7 @@
 ---
 title: "Chapter 10: Human-Friendly JSON Variants"
 status: COMPLETE
-target_words: 6000
-current_words: 5800
+current_words: 2721
 diagrams: 7 mermaid diagrams inserted
 ---
 
