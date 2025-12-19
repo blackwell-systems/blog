@@ -334,9 +334,53 @@ code-examples/
 
 ## Publication Preparation Guide
 
-### Platform Selection (Decision Required)
+### Multi-Platform Publishing Strategy
 
-**Option A: Leanpub** (Recommended for technical books)
+**Yes, you CAN and SHOULD publish to multiple platforms!** Each platform reaches different audiences and offers unique advantages. Most successful technical authors use a multi-platform approach.
+
+#### Platform Comparison
+
+| Platform | Exclusivity? | Format | Updates | Print? | Royalty |
+|----------|--------------|--------|---------|--------|---------|
+| **Leanpub** | No | Markdown (native) | Easy (instant) | No | 90% |
+| **Amazon KDP** | Optional* | PDF, EPUB | Moderate | Yes | 70% |
+| **Gumroad** | No | Any | Easy (instant) | No | 90% |
+| **Your Site** | No | Any | Easy (instant) | Via 3rd party | 100% |
+| **Apple Books** | No | EPUB | Moderate | No | 70% |
+| **Google Play** | No | EPUB | Moderate | No | 70% |
+
+*Amazon KDP Select requires exclusivity but is optional. Most tech authors skip it to publish "wide."
+
+#### Recommended: Hybrid Multi-Platform Approach
+
+**Phase 1: Soft Launch (Weeks 1-4)**
+- **Leanpub** as primary platform
+- Early access pricing ($19, 33% discount)
+- Gather feedback and testimonials
+- Iterate quickly on technical accuracy
+- Build email list of engaged readers
+
+**Phase 2: Refinement (Weeks 5-6)**
+- Incorporate reader feedback
+- Polish based on common questions
+- Collect testimonials for broader marketing
+- Prepare assets for other platforms
+
+**Phase 3: Wide Launch (Week 7+)**
+- **Amazon KDP** (ebook + print): $29 ebook, $39 print - mass market reach
+- **Leanpub** (continued): Raise to $29, maintain for tech audience
+- **Gumroad** (optional): $29-49 with bonus materials - direct sales, 100% minus fees
+
+**Benefits of Multi-Platform:**
+- Maximum audience reach from day one
+- Revenue diversification
+- Different demographics per platform
+- Cross-promotion opportunities
+- Platform-specific features (print, bundles, reader feedback)
+
+#### Platform Deep-Dive
+
+**Leanpub** (Recommended Primary)
 - Accepts markdown directly with minimal conversion
 - Native mermaid diagram support
 - Outputs PDF, EPUB, MOBI automatically
@@ -346,7 +390,7 @@ code-examples/
 - **Time to publish:** 1-2 days
 - **Best for:** Iterative publishing, technical accuracy, rapid updates
 
-**Option B: Amazon KDP** (Wider audience reach)
+**Amazon KDP** (Recommended Secondary)
 - Requires PDF/EPUB conversion via Pandoc
 - Access to Amazon's massive distribution network
 - Print-on-demand available via KDP Print
@@ -355,16 +399,22 @@ code-examples/
 - **Time to publish:** 1-2 weeks
 - **Best for:** Maximum visibility, print edition, passive income
 
-**Option C: Self-Hosted** (Maximum control)
+**Gumroad** (Recommended Tertiary)
+- Complete control over pricing and distribution
+- Upload any format (PDF, EPUB, bundles)
+- Offer multiple formats and bundles
+- 90% revenue (10% platform fee)
+- Built-in payment processing
+- **Time to publish:** 1 hour
+- **Best for:** Direct sales, bundle offerings, email list building
+
+**Your Own Site** (Advanced)
 - Complete control over pricing and distribution
 - Build custom pipeline with Pandoc/LaTeX
-- Offer multiple formats and bundles
-- No platform fees (100% revenue)
-- Requires payment processing setup (Gumroad/Stripe)
+- No platform fees (100% revenue minus payment processing)
+- Requires setup (Gumroad/Stripe integration)
 - **Time to publish:** 2-3 weeks
-- **Best for:** Brand control, bundle offerings, email list building
-
-**Hybrid Approach:** Start with Leanpub for rapid launch and technical audience, then republish to KDP for broader reach.
+- **Best for:** Brand control, maximum profit, existing audience
 
 ### Build System Setup
 
@@ -453,6 +503,106 @@ pandoc manuscript/front-matter/introduction.md \
   -o "$OUTPUT_DIR/you-dont-know-json.epub"
 
 echo "Build complete: $OUTPUT_DIR/"
+```
+
+#### Multi-Platform Build Script
+
+For publishing to multiple platforms simultaneously, use this comprehensive build script:
+
+```bash
+#!/bin/bash
+# build-all-platforms.sh - Build for Leanpub, Amazon KDP, and Gumroad
+
+OUTPUT_DIR="build"
+mkdir -p "$OUTPUT_DIR"/{leanpub,kindle,gumroad}
+
+echo "=== Building for all platforms ==="
+echo ""
+
+# 1. Leanpub (markdown - just copy)
+echo "[1/3] Building for Leanpub..."
+cp -r manuscript/* "$OUTPUT_DIR/leanpub/"
+cp Book.txt "$OUTPUT_DIR/leanpub/" 2>/dev/null || echo "Note: Book.txt not found (create for Leanpub)"
+echo "  ✓ Leanpub build ready: $OUTPUT_DIR/leanpub/"
+echo ""
+
+# 2. Amazon KDP (EPUB + Print PDF)
+echo "[2/3] Building for Amazon KDP..."
+
+# Ebook (EPUB)
+pandoc manuscript/front-matter/introduction.md \
+       manuscript/chapters/chapter-*.md \
+       manuscript/back-matter/conclusion.md \
+       manuscript/appendices/appendix-*.md \
+  --from markdown \
+  --to epub3 \
+  --toc \
+  --toc-depth=2 \
+  --metadata-file=metadata.yaml \
+  --css=styles/epub.css \
+  -o "$OUTPUT_DIR/kindle/you-dont-know-json.epub"
+
+# Print PDF (6x9 paperback format)
+pandoc manuscript/front-matter/introduction.md \
+       manuscript/chapters/chapter-*.md \
+       manuscript/back-matter/conclusion.md \
+       manuscript/appendices/appendix-*.md \
+  --from markdown \
+  --to pdf \
+  --pdf-engine=xelatex \
+  --toc \
+  --toc-depth=2 \
+  --number-sections \
+  --metadata-file=metadata.yaml \
+  -V geometry:paperwidth=6in \
+  -V geometry:paperheight=9in \
+  -V geometry:margin=0.75in \
+  --highlight-style=tango \
+  -o "$OUTPUT_DIR/kindle/you-dont-know-json-print.pdf"
+
+echo "  ✓ KDP ebook: $OUTPUT_DIR/kindle/you-dont-know-json.epub"
+echo "  ✓ KDP print: $OUTPUT_DIR/kindle/you-dont-know-json-print.pdf"
+echo ""
+
+# 3. Gumroad (PDF + EPUB bundle)
+echo "[3/3] Building for Gumroad..."
+
+# Copy EPUB from KDP build
+cp "$OUTPUT_DIR/kindle/you-dont-know-json.epub" "$OUTPUT_DIR/gumroad/"
+
+# Digital PDF (optimized for screen reading, color diagrams)
+pandoc manuscript/front-matter/introduction.md \
+       manuscript/chapters/chapter-*.md \
+       manuscript/back-matter/conclusion.md \
+       manuscript/appendices/appendix-*.md \
+  --from markdown \
+  --to pdf \
+  --pdf-engine=xelatex \
+  --toc \
+  --toc-depth=2 \
+  --number-sections \
+  --metadata-file=metadata.yaml \
+  --highlight-style=tango \
+  -o "$OUTPUT_DIR/gumroad/you-dont-know-json.pdf"
+
+echo "  ✓ Gumroad PDF: $OUTPUT_DIR/gumroad/you-dont-know-json.pdf"
+echo "  ✓ Gumroad EPUB: $OUTPUT_DIR/gumroad/you-dont-know-json.epub"
+echo ""
+
+echo "=== Build Summary ==="
+echo "Leanpub:     $OUTPUT_DIR/leanpub/ (upload to Leanpub repo)"
+echo "Amazon KDP:  $OUTPUT_DIR/kindle/ (upload via KDP dashboard)"
+echo "Gumroad:     $OUTPUT_DIR/gumroad/ (upload as product bundle)"
+echo ""
+echo "Next steps:"
+echo "1. Leanpub: Push $OUTPUT_DIR/leanpub/ to your Leanpub git repo"
+echo "2. Amazon KDP: Upload EPUB and print PDF via kdp.amazon.com"
+echo "3. Gumroad: Create product at gumroad.com, upload both files"
+```
+
+Make it executable:
+```bash
+chmod +x build-all-platforms.sh
 ```
 
 **Create metadata.yaml:**
@@ -594,6 +744,92 @@ for f in manuscript/chapters/chapter-*.md; do
   echo "$(basename $f): $(wc -w < $f) words"
 done
 ```
+
+### Pricing Strategy
+
+**Recommended pricing for technical books:**
+
+**Base Price:** $29
+- Competitive with O'Reilly ($30-40)
+- Higher than typical Leanpub ($15-25) but justified by quality
+- Same across all platforms (avoid arbitrage)
+
+**Platform-Specific Pricing:**
+```
+Leanpub:
+├─ Early access: $19 (33% off, first 4 weeks)
+├─ Regular price: $29 (after launch)
+└─ Suggested range: $19-49 (let readers choose)
+
+Amazon KDP:
+├─ Ebook: $29 (70% royalty applies)
+├─ Print: $39 (higher costs for physical)
+└─ Bundle: Not available (sell separately)
+
+Gumroad:
+├─ Standard: $29 (matches other platforms)
+├─ Premium: $49 (includes bonus materials)
+└─ Bundle options: PDF + EPUB + source code examples
+```
+
+**Pricing Psychology:**
+- Early bird discount ($19) creates urgency
+- $29 price point avoids "impulse buy" perception (signals quality)
+- $49 premium tier for bundle justifies extra value
+- Print at $39 reflects production costs while maintaining margin
+
+**Revenue Comparison:**
+```
+Leanpub:     $29 × 90% = $26.10 per sale
+Amazon KDP:  $29 × 70% = $20.30 per sale (ebook)
+             $39 × ~60% = $23.40 per sale (print, varies by page count)
+Gumroad:     $29 × 90% = $26.10 per sale
+             $49 × 90% = $44.10 per sale (premium)
+```
+
+### Update Management Across Platforms
+
+**When you update content (add examples, fix errors, clarify concepts):**
+
+**Leanpub (Easiest):**
+```bash
+# Edit markdown files
+vim manuscript/chapters/chapter-05-binary-apis.md
+
+# Commit and push
+git add manuscript/
+git commit -m "Add Protocol Buffers optimization examples"
+git push
+
+# Leanpub auto-rebuilds, readers notified via email
+```
+
+**Amazon KDP (Moderate):**
+```bash
+# Rebuild outputs
+./build-all-platforms.sh
+
+# Upload new files via KDP dashboard
+# 1. Go to kdp.amazon.com
+# 2. Select "Update content"
+# 3. Upload new EPUB/PDF
+# 4. Readers notified via "Updates Available" in Kindle app
+```
+
+**Gumroad (Easy):**
+```bash
+# Rebuild and upload via Gumroad dashboard
+./build-all-platforms.sh
+
+# Upload new version at gumroad.com
+# Old purchase links automatically get new version
+# Buyers receive email notification
+```
+
+**Update Frequency Recommendations:**
+- **Minor fixes** (typos, code tweaks): Batch monthly, push to all platforms
+- **New examples/sections**: Push immediately to Leanpub, quarterly to KDP/Gumroad
+- **Major revisions**: Treat as new edition, update all platforms simultaneously
 
 ### Publication Workflow (Step-by-Step)
 
