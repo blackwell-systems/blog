@@ -630,16 +630,83 @@ keywords:
 
 ### Asset Preparation Checklist
 
-**Mermaid Diagrams:**
-- [ ] If targeting PDF/EPUB (non-Leanpub), export mermaid to PNG/SVG:
-  ```bash
-  npm install -g @mermaid-js/mermaid-cli
-  
-  # Export all diagrams
-  for chapter in manuscript/chapters/*.md; do
-    mmdc -i "$chapter" -o "images/$(basename $chapter .md)" -t dark -b transparent
-  done
-  ```
+**Mermaid Diagrams (IMPORTANT for PDF/EPUB):**
+
+The book contains 54+ mermaid diagrams that must be handled differently per platform:
+
+| Platform | Mermaid Support | Action Required |
+|----------|----------------|-----------------|
+| **Leanpub** | Native | ✓ None - renders automatically |
+| **Pandoc (KDP/Gumroad)** | None | ⚠ Must pre-render to PNG |
+| **Hugo (blog)** | Native | ✓ None - already working |
+
+**Why this matters:** Pandoc cannot execute JavaScript, so mermaid blocks show as code text in PDF/EPUB.
+
+**Solution - Automated rendering script:**
+
+```bash
+# Install mermaid-cli (one-time setup)
+npm install -g @mermaid-js/mermaid-cli
+
+# Extract and render all diagrams to PNG
+./render-mermaid-diagrams.sh
+
+# This creates: manuscript/images/diagrams/chapter-XX-diagram-N.png
+```
+
+**Rendering settings optimized for print:**
+- Width: 1800px (ensures 300 DPI at 6" width)
+- Height: 1200px max (fits standard book page)
+- Scale: 3x (prevents blurry text)
+- Theme: Dark (matches book design)
+- Background: Transparent
+
+**Handling vertical sprawl issues:**
+
+Some diagrams (especially data pipeline architectures) are tall. Solutions:
+
+1. **Rotate large diagrams:**
+   ```markdown
+   ![Pipeline diagram](images/diagrams/chapter-12-diagram-1.png){width=100% angle=90}
+   ```
+   Places diagram landscape-oriented within page.
+
+2. **Split complex diagrams:**
+   Instead of one 20-subgraph diagram, create 3 focused diagrams showing:
+   - Data sources layer
+   - Processing layer
+   - Storage layer
+
+3. **Optimize diagram layout:**
+   Change `flowchart TB` (vertical) to `flowchart LR` (horizontal) where possible.
+
+**Post-render workflow:**
+
+After running `./render-mermaid-diagrams.sh`, you have two options:
+
+**Option A: Keep both (recommended):**
+```markdown
+<!-- Leanpub/Hugo render this -->
+```mermaid
+flowchart TB
+    A --> B
+```
+
+<!-- Pandoc uses this -->
+![Architecture](images/diagrams/chapter-05-diagram-1.png){width=90%}
+```
+
+**Option B: Conditional build:**
+- Leanpub: Use markdown with mermaid blocks (native support)
+- KDP/Gumroad: Use separate branch with image references
+
+**Diagram quality checklist:**
+- [ ] Run `./render-mermaid-diagrams.sh`
+- [ ] Review all PNG files for readability
+- [ ] Check text is crisp (not blurry)
+- [ ] Verify dark theme renders correctly
+- [ ] Test tall diagrams fit on page (rotate if needed)
+- [ ] Replace mermaid blocks with image refs for Pandoc builds
 
 **Cover Design:**
 - [ ] Front cover dimensions: 1800x2700px (6"x9" at 300 DPI)
