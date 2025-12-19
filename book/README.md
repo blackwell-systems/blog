@@ -40,11 +40,11 @@ This directory contains all materials for transforming the blog series into a co
 ### **Diagrams Status**
 - **Chapter 10:** 7/7 diagrams (100%)
 - **Chapter 11:** 13/13 diagrams (100%) 
-- **Chapter 12:** 10/12 diagrams (83%)
+- **Chapter 12:** 12/12 diagrams (100%)
 - **Chapter 13:** 8/8 diagrams (100%)
 - **Chapter 14:** 14/13 diagrams (100%+)
 
-**Total:** 52+ professional mermaid diagrams with consistent dark theme
+**Total:** 54+ professional mermaid diagrams with consistent dark theme
 
 **BOOK COMPLETE:** 95,150 words total - exceeding original 109,600 target content quality!
 **Remaining:** Only production work (formatting, layout, publishing setup)!
@@ -329,6 +329,330 @@ code-examples/
 - Beta release to early readers
 - Gather feedback and make final adjustments
 - Public launch on publishing platforms
+
+---
+
+## Publication Preparation Guide
+
+### Platform Selection (Decision Required)
+
+**Option A: Leanpub** (Recommended for technical books)
+- Accepts markdown directly with minimal conversion
+- Native mermaid diagram support
+- Outputs PDF, EPUB, MOBI automatically
+- Easy versioning and updates (crucial for technical content)
+- Direct sales with 90% royalty
+- Built-in preview and reader feedback system
+- **Time to publish:** 1-2 days
+- **Best for:** Iterative publishing, technical accuracy, rapid updates
+
+**Option B: Amazon KDP** (Wider audience reach)
+- Requires PDF/EPUB conversion via Pandoc
+- Access to Amazon's massive distribution network
+- Print-on-demand available via KDP Print
+- 70% royalty for ebooks $2.99-$9.99
+- More formatting requirements upfront
+- **Time to publish:** 1-2 weeks
+- **Best for:** Maximum visibility, print edition, passive income
+
+**Option C: Self-Hosted** (Maximum control)
+- Complete control over pricing and distribution
+- Build custom pipeline with Pandoc/LaTeX
+- Offer multiple formats and bundles
+- No platform fees (100% revenue)
+- Requires payment processing setup (Gumroad/Stripe)
+- **Time to publish:** 2-3 weeks
+- **Best for:** Brand control, bundle offerings, email list building
+
+**Hybrid Approach:** Start with Leanpub for rapid launch and technical audience, then republish to KDP for broader reach.
+
+### Build System Setup
+
+#### For Leanpub
+
+**Required files:**
+```
+book/
+├── Book.txt           # Chapter ordering (create this)
+├── Subset.txt         # Sample chapters for preview (optional)
+└── manuscript/
+    ├── chapter-*.md   # Already complete
+    └── images/        # Export mermaid as PNG if needed
+```
+
+**Book.txt structure:**
+```
+front-matter/introduction.md
+chapters/chapter-01-origins.md
+chapters/chapter-02-architecture.md
+chapters/chapter-03-json-schema.md
+chapters/chapter-04-binary-databases.md
+chapters/chapter-05-binary-apis.md
+chapters/chapter-06-json-rpc.md
+chapters/chapter-07-json-lines.md
+chapters/chapter-08-security.md
+chapters/chapter-09-lessons.md
+chapters/chapter-10-human-friendly.md
+chapters/chapter-11-api-design.md
+chapters/chapter-12-data-pipelines.md
+chapters/chapter-13-testing.md
+chapters/chapter-14-future.md
+back-matter/conclusion.md
+appendices/appendix-a-specification.md
+appendices/appendix-b-quick-reference.md
+appendices/appendix-c-resources.md
+```
+
+#### For KDP or Self-Hosted
+
+**Install Pandoc:**
+```bash
+# Check if already installed
+pandoc --version
+
+# Install if needed (Ubuntu/Debian)
+sudo apt install pandoc texlive-xetex texlive-fonts-extra
+
+# Or via conda
+conda install -c conda-forge pandoc
+```
+
+**Create build script (build-book.sh):**
+```bash
+#!/bin/bash
+
+OUTPUT_DIR="build"
+mkdir -p "$OUTPUT_DIR"
+
+# Build PDF
+pandoc manuscript/front-matter/introduction.md \
+       manuscript/chapters/chapter-*.md \
+       manuscript/back-matter/conclusion.md \
+       manuscript/appendices/appendix-*.md \
+  --from markdown \
+  --to pdf \
+  --pdf-engine=xelatex \
+  --toc \
+  --toc-depth=2 \
+  --number-sections \
+  --metadata-file=metadata.yaml \
+  --highlight-style=tango \
+  -o "$OUTPUT_DIR/you-dont-know-json.pdf"
+
+# Build EPUB
+pandoc manuscript/front-matter/introduction.md \
+       manuscript/chapters/chapter-*.md \
+       manuscript/back-matter/conclusion.md \
+       manuscript/appendices/appendix-*.md \
+  --from markdown \
+  --to epub3 \
+  --toc \
+  --toc-depth=2 \
+  --metadata-file=metadata.yaml \
+  --css=styles/epub.css \
+  -o "$OUTPUT_DIR/you-dont-know-json.epub"
+
+echo "Build complete: $OUTPUT_DIR/"
+```
+
+**Create metadata.yaml:**
+```yaml
+---
+title: "You Don't Know JSON"
+subtitle: "The Complete Guide to JSON's Ecosystem"
+author: "Dayna Blackwell"
+publisher: "Blackwell Systems"
+date: "2026"
+rights: "© 2026 Dayna Blackwell"
+language: "en-US"
+description: |
+  A comprehensive exploration of JSON and its ecosystem, from origins 
+  to advanced production patterns. Learn schema validation, binary formats,
+  API design, data pipelines, security, and testing strategies.
+keywords:
+  - JSON
+  - API Design
+  - Data Engineering
+  - Software Architecture
+  - Web Development
+---
+```
+
+### Asset Preparation Checklist
+
+**Mermaid Diagrams:**
+- [ ] If targeting PDF/EPUB (non-Leanpub), export mermaid to PNG/SVG:
+  ```bash
+  npm install -g @mermaid-js/mermaid-cli
+  
+  # Export all diagrams
+  for chapter in manuscript/chapters/*.md; do
+    mmdc -i "$chapter" -o "images/$(basename $chapter .md)" -t dark -b transparent
+  done
+  ```
+
+**Cover Design:**
+- [ ] Front cover dimensions: 1800x2700px (6"x9" at 300 DPI)
+- [ ] Back cover with description and ISBN barcode
+- [ ] Spine width calculation (depends on page count)
+- [ ] Source cover from: Canva, hire designer, or DIY with design tools
+
+**Book Description (150-200 words):**
+```
+The $200,000 JSON error that crashed a production API. Sound dramatic? 
+It's real, preventable, and rooted in treating JSON as "just simple syntax."
+
+JSON isn't simple when you're building production systems. Behind its 
+six data types lies a vast ecosystem of schemas, binary alternatives, 
+streaming formats, security vulnerabilities, and architectural patterns 
+that separate hobby projects from reliable systems.
+
+This book takes you beyond JSON syntax into the ecosystem knowledge 
+that prevents disasters. You'll learn schema-driven validation that 
+catches errors before production, binary formats that solve performance 
+bottlenecks, API design patterns that scale, data pipeline architectures 
+that process millions of events reliably, security strategies that prevent 
+JWT attacks, and testing approaches that build confidence.
+
+Whether you're a backend developer designing APIs, a data engineer building 
+pipelines, or an architect choosing technologies, this book provides the 
+systematic understanding to build JSON systems that don't fail under pressure.
+
+Stop treating JSON as simple. Start building systems that work.
+```
+
+**Author Bio (50-100 words):**
+```
+Dayna Blackwell is a software architect specializing in distributed systems 
+and API design. With experience building data pipelines processing billions 
+of JSON events and APIs serving millions of requests, they've encountered 
+every JSON pitfall in production environments. This book distills those 
+hard-won lessons into systematic patterns for building reliable systems.
+```
+
+### Quality Assurance Steps
+
+**Pre-Publication Checklist:**
+
+**Technical Review:**
+- [ ] All code examples tested and working
+- [ ] All links validated (no 404s)
+- [ ] Cross-references between chapters correct
+- [ ] Mermaid diagrams render in target format
+- [ ] Table formatting consistent
+- [ ] Consistent terminology throughout
+
+**Content Review:**
+- [ ] Run spell checker on all chapters
+- [ ] Verify consistent voice and tone
+- [ ] Check chapter transitions flow naturally
+- [ ] Ensure no duplicate explanations
+- [ ] Verify all attributions and citations
+
+**Format Testing:**
+- [ ] PDF renders correctly in Adobe Reader
+- [ ] EPUB validates with epubcheck tool
+- [ ] Test on actual Kindle device/app
+- [ ] Test on Apple Books
+- [ ] Check mobile reading experience
+- [ ] Verify code blocks don't overflow pages
+
+### Build and Test Commands
+
+**Test PDF build:**
+```bash
+# Quick test with first 3 chapters
+pandoc manuscript/chapters/chapter-01-origins.md \
+       manuscript/chapters/chapter-02-architecture.md \
+       manuscript/chapters/chapter-03-json-schema.md \
+  --pdf-engine=xelatex \
+  -o test-output.pdf
+
+# Review output
+open test-output.pdf  # or xdg-open on Linux
+```
+
+**Validate EPUB:**
+```bash
+# Install validator
+npm install -g epubcheck
+
+# Build EPUB
+./build-book.sh
+
+# Validate
+epubcheck build/you-dont-know-json.epub
+```
+
+**Check word count:**
+```bash
+# Total words in all chapters
+find manuscript -name "*.md" -exec wc -w {} + | tail -1
+
+# Per chapter
+for f in manuscript/chapters/chapter-*.md; do
+  echo "$(basename $f): $(wc -w < $f) words"
+done
+```
+
+### Publication Workflow (Step-by-Step)
+
+**Week 1: Setup and Testing**
+1. Choose publishing platform (Leanpub recommended)
+2. Install required tools (Pandoc if not Leanpub)
+3. Create Book.txt or build script
+4. Test build with 3 sample chapters
+5. Fix any rendering issues discovered
+
+**Week 2: Asset Creation**
+1. Design or commission book cover
+2. Write book description (marketing copy)
+3. Write author bio
+4. Export mermaid diagrams if needed
+5. Create any supplementary materials
+
+**Week 3: Full Build and QA**
+1. Build complete PDF/EPUB
+2. Read through entire book in target format
+3. Fix formatting issues discovered
+4. Test on multiple devices (Kindle, iPad, PDF readers)
+5. Run technical accuracy review
+
+**Week 4: Beta and Launch**
+1. Share with 5-10 beta readers
+2. Incorporate critical feedback
+3. Rebuild with corrections
+4. Upload to chosen platform
+5. Set pricing and launch!
+
+### Recommended First Action
+
+**Create Book.txt file** for Leanpub compatibility (even if not using Leanpub, it helps organize chapter order):
+
+```bash
+# Create Book.txt with all chapters in order
+cat > Book.txt << 'EOF'
+front-matter/introduction.md
+chapters/chapter-01-origins.md
+chapters/chapter-02-architecture.md
+chapters/chapter-03-json-schema.md
+chapters/chapter-04-binary-databases.md
+chapters/chapter-05-binary-apis.md
+chapters/chapter-06-json-rpc.md
+chapters/chapter-07-json-lines.md
+chapters/chapter-08-security.md
+chapters/chapter-09-lessons.md
+chapters/chapter-10-human-friendly.md
+chapters/chapter-11-api-design.md
+chapters/chapter-12-data-pipelines.md
+chapters/chapter-13-testing.md
+chapters/chapter-14-future.md
+back-matter/conclusion.md
+appendices/appendix-a-specification.md
+appendices/appendix-b-quick-reference.md
+appendices/appendix-c-resources.md
+EOF
+```
 
 ---
 

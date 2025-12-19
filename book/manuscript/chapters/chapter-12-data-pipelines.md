@@ -1860,6 +1860,36 @@ class DeadLetterQueue {
 
 Processing the same message multiple times should be safe:
 
+```mermaid
+flowchart TB
+    message[Incoming Message<br/>ID: msg-12345]
+    
+    check{Message ID<br/>Already<br/>Processed?}
+    
+    process[Process Message<br/>Business logic]
+    record[Record Message ID<br/>In database]
+    skip[Skip Processing<br/>Already done]
+    
+    commit[Commit Offset<br/>Mark as complete]
+    
+    message --> check
+    check -->|No| process
+    check -->|Yes| skip
+    
+    process --> record
+    record --> commit
+    skip --> commit
+    
+    subgraph transaction["Database Transaction"]
+        process
+        record
+    end
+    
+    style check fill:#3A4A5C,stroke:#6b7280,color:#f0f0f0
+    style transaction fill:#3A4C43,stroke:#6b7280,color:#f0f0f0
+    style skip fill:#4C4538,stroke:#6b7280,color:#f0f0f0
+```
+
 ```javascript
 class IdempotentProcessor {
   constructor(options = {}) {
@@ -2645,6 +2675,50 @@ Microservices → Filebeat → Kafka → Logstash → Elasticsearch → Kibana
               JSON Lines logs
 ```
 
+```mermaid
+flowchart TB
+    subgraph services["Microservices (100+)"]
+        svc1[Service A<br/>JSON logs]
+        svc2[Service B<br/>JSON logs]
+        svc3[Service C<br/>JSON logs]
+    end
+    
+    subgraph collection["Log Collection"]
+        filebeat[Filebeat<br/>Tail log files]
+        kafka[Kafka<br/>logs topic]
+    end
+    
+    subgraph processing["Processing"]
+        logstash[Logstash<br/>Parse, enrich]
+        filter[Filter<br/>Drop debug logs]
+    end
+    
+    subgraph storage["Storage & Query"]
+        elastic[(Elasticsearch<br/>Indexed logs)]
+        kibana[Kibana<br/>Dashboards]
+    end
+    
+    subgraph alerting["Alerting"]
+        alert[Alert Rules<br/>Error rate > 5%]
+        notify[Slack/PagerDuty<br/>Notifications]
+    end
+    
+    services --> filebeat
+    filebeat --> kafka
+    kafka --> logstash
+    logstash --> filter
+    filter --> elastic
+    elastic --> kibana
+    elastic --> alert
+    alert -->|Triggered| notify
+    
+    style services fill:#3A4A5C,stroke:#6b7280,color:#f0f0f0
+    style collection fill:#3A4C43,stroke:#6b7280,color:#f0f0f0
+    style processing fill:#4C4538,stroke:#6b7280,color:#f0f0f0
+    style storage fill:#4C3A3C,stroke:#6b7280,color:#f0f0f0
+    style alerting fill:#3A4A5C,stroke:#6b7280,color:#f0f0f0
+```
+
 **Implementation:**
 
 ```javascript
@@ -2837,6 +2911,41 @@ public class UserEventProcessor extends DataStream<UserEvent> {
         env.execute("User Event Processing");
     }
 }
+```
+
+```mermaid
+flowchart LR
+    subgraph events["Event Stream"]
+        e1[Event T+0]
+        e2[Event T+1]
+        e3[Event T+2]
+        e4[Event T+5]
+        e5[Event T+8]
+    end
+    
+    subgraph window1["Window 1: T0-T5"]
+        w1[3 events<br/>Aggregate]
+    end
+    
+    subgraph window2["Window 2: T5-T10"]
+        w2[2 events<br/>Aggregate]
+    end
+    
+    subgraph output["Output"]
+        result1[Sum: 150<br/>Count: 3]
+        result2[Sum: 200<br/>Count: 2]
+    end
+    
+    e1 & e2 & e3 --> w1
+    e4 & e5 --> w2
+    
+    w1 --> result1
+    w2 --> result2
+    
+    style events fill:#3A4A5C,stroke:#6b7280,color:#f0f0f0
+    style window1 fill:#3A4C43,stroke:#6b7280,color:#f0f0f0
+    style window2 fill:#3A4C43,stroke:#6b7280,color:#f0f0f0
+    style output fill:#4C4538,stroke:#6b7280,color:#f0f0f0
 ```
 
 ### Architecture 3: Data Warehouse ETL
