@@ -609,7 +609,7 @@ chmod +x build-all-platforms.sh
 ```yaml
 ---
 title: "You Don't Know JSON"
-subtitle: "The Complete Guide to JSON's Ecosystem"
+subtitle: "Beyond Six Data Types: The Complete Ecosystem"
 author: "Dayna Blackwell"
 publisher: "Blackwell Systems"
 date: "2026"
