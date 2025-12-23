@@ -86,20 +86,20 @@ The `?` operator works differently depending on context:
 
 {{< mermaid >}}
 flowchart TB
-    subgraph result["Result<T, E>"]
+    subgraph result["Result Type"]
         result_ok["Ok(value)"]
         result_err["Err(error)"]
     end
 
-    subgraph option["Option<T>"]
+    subgraph option["Option Type"]
         option_some["Some(value)"]
         option_none["None"]
     end
 
     subgraph action["? Operator Action"]
-        unwrap["Returns: value"]
-        early_return["Early return:<br/>Err(error.into())"]
-        early_none["Early return:<br/>None"]
+        unwrap["Returns value"]
+        early_return["Early return: Err(error.into())"]
+        early_none["Early return: None"]
     end
 
     result_ok --> unwrap
@@ -315,7 +315,7 @@ The `?` operator has constraints:
 ```rust
 // This FAILS to compile:
 fn main() {
-    let contents = std::fs::read_to_string("file.txt")?;  // ❌ main returns (), not Result
+    let contents = std::fs::read_to_string("file.txt")?;  // ERROR: main returns (), not Result
 }
 ```
 
@@ -323,7 +323,7 @@ fn main() {
 
 ```rust
 fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let contents = std::fs::read_to_string("file.txt")?;  // ✓ Works now
+    let contents = std::fs::read_to_string("file.txt")?;  // Works now
     println!("{}", contents);
     Ok(())
 }
@@ -334,7 +334,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 ```rust
 // This FAILS to compile:
 fn get_config_value(key: &str) -> Result<String, ConfigError> {
-    let value = config_map.get(key)?;  // ❌ Returns Option, but function returns Result
+    let value = config_map.get(key)?;  // ERROR: Returns Option, but function returns Result
     Ok(value.clone())
 }
 ```
@@ -344,7 +344,7 @@ fn get_config_value(key: &str) -> Result<String, ConfigError> {
 ```rust
 fn get_config_value(key: &str) -> Result<String, ConfigError> {
     let value = config_map.get(key)
-        .ok_or(ConfigError::MissingKey(key.to_string()))?;  // ✓ Option → Result
+        .ok_or(ConfigError::MissingKey(key.to_string()))?;  // Option → Result
     Ok(value.clone())
 }
 ```
@@ -360,7 +360,7 @@ struct OtherError;
 
 // This FAILS to compile:
 fn process() -> Result<(), MyError> {
-    some_function()?  // ❌ Returns Result<(), OtherError>, no From<OtherError> for MyError
+    some_function()?  // ERROR: Returns Result<(), OtherError>, no From<OtherError> for MyError
 }
 ```
 
@@ -376,7 +376,7 @@ impl From<OtherError> for MyError {
 
 // Option 2: Transform error explicitly
 fn process() -> Result<(), MyError> {
-    some_function().map_err(|_| MyError)?;  // ✓ Converts OtherError → MyError
+    some_function().map_err(|_| MyError)?;  // Converts OtherError → MyError
     Ok(())
 }
 ```
@@ -666,12 +666,12 @@ fn parse_all_ids(inputs: Vec<&str>) -> Result<Vec<u64>, ParseError> {
 ### Mistake 1: Using ? in Functions That Don't Return Result
 
 ```rust
-// ❌ Wrong - main returns ()
+// Wrong - main returns ()
 fn main() {
     let config = load_config()?;  // Compile error!
 }
 
-// ✓ Right - main returns Result
+// Right - main returns Result
 fn main() -> anyhow::Result<()> {
     let config = load_config()?;
     Ok(())
@@ -681,14 +681,14 @@ fn main() -> anyhow::Result<()> {
 ### Mistake 2: Mixing ? with unwrap()
 
 ```rust
-// ❌ Bad - inconsistent error handling
+// Bad - inconsistent error handling
 fn process() -> Result<Data, Error> {
     let a = fetch_a()?;           // Propagates error
     let b = fetch_b().unwrap();   // Panics on error!
     Ok(Data { a, b })
 }
 
-// ✓ Good - consistent
+// Good - consistent
 fn process() -> Result<Data, Error> {
     let a = fetch_a()?;
     let b = fetch_b()?;
@@ -699,12 +699,12 @@ fn process() -> Result<Data, Error> {
 ### Mistake 3: Ignoring Error Type Mismatches
 
 ```rust
-// ❌ Wrong - error types don't match
+// Wrong - error types don't match
 fn process() -> Result<(), MyError> {
     some_function()?  // Returns OtherError, no From impl
 }
 
-// ✓ Right - explicit conversion
+// Right - explicit conversion
 fn process() -> Result<(), MyError> {
     some_function().map_err(|e| MyError::from(e))?
 }
