@@ -652,9 +652,13 @@ fn map_checkout_error(err: anyhow::Error) -> Error {
 {{< mermaid >}}
 sequenceDiagram
     participant Client
-    participant Handler as HTTP Handler<br/>(error-envelope)
-    participant Service as Service Layer<br/>(anyhow)
-    participant Domain as Domain Logic<br/>(thiserror)
+    participant Handler as HTTP Handler
+    participant Service as Service Layer
+    participant Domain as Domain Logic
+
+    Note over Handler: error-envelope
+    Note over Service: anyhow
+    Note over Domain: thiserror
 
     Client->>Handler: POST /checkout/123
     Handler->>Service: process_checkout(123)
@@ -664,17 +668,13 @@ sequenceDiagram
         Domain-->>Service: PaymentError::InsufficientFunds
         Service-->>Handler: anyhow::Error (with context)
         Handler->>Handler: map_checkout_error()
-        Handler-->>Client: JSON {code: "UNPROCESSABLE_ENTITY", status: 402}
+        Handler-->>Client: JSON error response
     else Success
         Domain-->>Service: Ok(())
         Service->>Service: charge_card()
         Service-->>Handler: Ok(Receipt)
-        Handler-->>Client: JSON {receipt}
+        Handler-->>Client: JSON success
     end
-
-    style Handler fill:#3A4A5C,stroke:#6b7280,color:#f0f0f0
-    style Service fill:#3A4C43,stroke:#6b7280,color:#f0f0f0
-    style Domain fill:#4C4538,stroke:#6b7280,color:#f0f0f0
 {{< /mermaid >}}
 
 **Error flow breakdown:**
