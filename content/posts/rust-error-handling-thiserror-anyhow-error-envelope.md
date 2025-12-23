@@ -2,6 +2,8 @@
 title: "Rust Error Handling: thiserror, anyhow, and error-envelope"
 date: 2025-12-23
 draft: false
+series: ["rust-error-handling"]
+seriesOrder: 1
 tags: ["rust", "error-handling", "thiserror", "anyhow", "error-envelope", "api-design", "web-development", "axum", "rest-api", "http", "architecture", "best-practices", "library-design", "application-development", "type-safety", "debugging", "observability", "ergonomics", "rust-crates", "web-frameworks"]
 categories: ["rust", "tutorials", "architecture"]
 description: "Understand when to use thiserror, anyhow, and error-envelope in Rust. Learn how these three crates work together to handle errors across application layers, from typed domain logic to HTTP responses."
