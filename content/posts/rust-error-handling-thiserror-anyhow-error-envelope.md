@@ -877,9 +877,9 @@ fn map_error(err: anyhow::Error, trace_id: String) -> Error {
 
 ---
 
-## Real-World Example: Dormir Adapter
+## Real-World Example: Hotel Booking Service
 
-The [Dormir hotel booking adapter](https://github.com/blackwell-systems/dormir) uses all three:
+A hotel booking service demonstrates how all three crates work together:
 
 **Domain layer (thiserror):**
 ```rust
@@ -1121,7 +1121,6 @@ The three crates aren't redundant--they're specialized tools for different stage
 ---
 
 **Code Examples:**
-- [Dormir adapter](https://github.com/blackwell-systems/dormir) - Real-world usage of all three
 - [error-envelope](https://github.com/blackwell-systems/error-envelope) - HTTP error responses for Rust
 - [thiserror](https://github.com/dtolnay/thiserror) - Typed error definitions
 - [anyhow](https://github.com/dtolnay/anyhow) - Flexible error handling
