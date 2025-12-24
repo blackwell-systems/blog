@@ -575,9 +575,6 @@ async fn test_fetch_user(#[future] api_client: ApiClient) {
 - - You're testing randomized inputs (use proptest)
 - - You want property-based testing
 
-`★ Insight ─────────────────────────────────────`
-**rstest** shines when you have "shape-preserving" tests—tests where the structure stays the same but the data changes. Instead of copying test functions, you parameterize one function with multiple data sets.
-`─────────────────────────────────────────────────`
 
 ---
 
@@ -763,9 +760,6 @@ proptest! {
 **Best Practice:** Use property-based testing alongside example-based tests. Examples document expected behavior, properties catch unexpected edge cases.
 {{< /callout >}}
 
-`★ Insight ─────────────────────────────────────`
-Property-based testing forces you to think about **what your code guarantees** rather than specific examples. If you can't express your function's behavior as properties, it might be a sign that the function is doing too much.
-`─────────────────────────────────────────────────`
 
 ---
 
