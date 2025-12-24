@@ -983,10 +983,6 @@ Snapshot:
 **Important:** Snapshot tests are only as good as the reviews. Don't blindly accept all changes with `cargo insta accept`. Review diffs carefully—snapshot tests can hide regressions if you're not paying attention.
 {{< /callout >}}
 
-`★ Insight ─────────────────────────────────────`
-Snapshot testing excels when the **structure** of output matters more than exact values. It's perfect for catching regressions in complex outputs where writing manual assertions would be tedious and brittle.
-`─────────────────────────────────────────────────`
-
 ---
 
 ## Part 3: Test Strategies and Patterns
