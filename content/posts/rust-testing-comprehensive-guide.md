@@ -777,7 +777,7 @@ sequenceDiagram
     participant Test
     participant Snapshot
 
-    Note over Developer,Snapshot: First Run (No snapshot exists)
+    Note over Developer,Snapshot: First Run - No snapshot exists
     Developer->>Test: cargo test
     Test->>Snapshot: Create new snapshot
     Test-->>Developer: Test passes
