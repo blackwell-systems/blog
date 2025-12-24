@@ -781,7 +781,7 @@ Property-based testing forces you to think about **what your code guarantees** r
 sequenceDiagram
     participant Developer
     participant Test
-    participant Snapshot as .snap File
+    participant Snapshot
 
     Note over Developer,Snapshot: First Run (No snapshot exists)
     Developer->>Test: cargo test
