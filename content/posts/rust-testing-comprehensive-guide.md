@@ -797,10 +797,6 @@ sequenceDiagram
     else Reject Changes
         Developer->>Test: Fix code
     end
-
-    style Developer fill:#3A4A5C,stroke:#6b7280,color:#f0f0f0
-    style Test fill:#3A4C43,stroke:#6b7280,color:#f0f0f0
-    style Snapshot fill:#4C4538,stroke:#6b7280,color:#f0f0f0
 {{< /mermaid >}}
 
 #### Basic Snapshot Test
