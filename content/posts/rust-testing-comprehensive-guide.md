@@ -792,7 +792,7 @@ sequenceDiagram
     Developer->>Test: Modify output
     Developer->>Test: cargo test
     Test->>Snapshot: Compare with existing
-    Test-->>Developer: ❌ Snapshot mismatch
+    Test-->>Developer: Snapshot mismatch
 
     Developer->>Test: cargo insta review
     Note over Developer: Review diff in UI
@@ -1301,7 +1301,7 @@ flowchart TD
 
     unit --> inputs{Input space?}
     
-    inputs -->|Specific examples| standard[Standard #[test]]
+    inputs -->|Specific examples| standard["Standard test"]
     inputs -->|Many similar cases| rstest[rstest]
     inputs -->|Random/properties| proptest[proptest]
 
@@ -1309,7 +1309,7 @@ flowchart TD
     rstest --> output
     proptest --> output
 
-    output -->|Simple value| assert[assert_eq!]
+    output -->|Simple value| assert["assert_eq!"]
     output -->|Complex structure| snapshot[insta snapshot]
     output -->|Documentation| doctest[Doc test]
 
