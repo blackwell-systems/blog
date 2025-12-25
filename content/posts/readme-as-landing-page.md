@@ -37,8 +37,8 @@ The pattern is predictable:
 5. **Hit 500+ lines** - README is now a documentation dump
 6. **Engagement drops** - New users bounce, stars decrease, issues go up ("where's the documentation?")
 
-{{< callout type="danger" >}}
-**Critical Threshold:** Once a README exceeds 500 lines, engagement metrics drop sharply. Users scroll, get overwhelmed, and leave. The very completeness that feels helpful is actually hostile to adoption.
+{{< callout type="warning" >}}
+**The Sprawl Problem:** Long READMEs create a discoverability problem. When documentation exceeds 500+ lines, key information (Quick Start, Installation) gets pushed down. Users who arrive looking for a quick evaluation often scroll briefly, then leave to check alternatives. The completeness that feels helpful to maintainers can become a barrier to first-time users.
 {{< /callout >}}
 
 ## Why Sprawl Happens
