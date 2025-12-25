@@ -86,6 +86,8 @@ Then link out to detailed documentation (installation guides, tutorials, API ref
 
 ## The README Formula
 
+People look for libraries because they're trying to solve a problem. **Your README needs to validate their pain point before showing your solution.** If they can't figure out whether this solves their problem in the first 30 seconds, they bounce.
+
 Here's the structure that works:
 
 ### 1. Hero Section (Lines 1-10)
@@ -139,6 +141,25 @@ Not three examples. Not "here's basic, here's intermediate, here's advanced." **
 {{< callout type="success" >}}
 **Best Practice:** Your quick example should be copy-pasteable and runnable. If it requires 10 lines of setup code, it's not quick anymore.
 {{< /callout >}}
+
+### 3.5. The Problem Statement (Optional but Powerful)
+
+Before listing features, consider articulating the pain point:
+
+```markdown
+## Why
+
+Without a standard, every endpoint returns errors differently:
+- `{"error": "bad request"}`
+- `{"message": "invalid email"}`  
+- `{"code": "E123", "details": {...}}`
+
+This forces clients to handle each endpoint specially. error-envelope provides one predictable error shape.
+```
+
+**This validates the reader's experience.** If they've felt this pain, they immediately know: "This is for me."
+
+Don't skip this. The reader needs to see their problem reflected back before they trust your solution.
 
 ### 4. Features (Lines 31-50)
 
