@@ -1034,79 +1034,16 @@ This feels harsh. It feels like you're hiding information. You're not. You're **
 **Key Insight:** Every line you add to the README makes all other lines harder to find. This isn't theoretical - it's information design. Density works against discoverability.
 {{< /callout >}}
 
-## The Cultural Shift
+## Start Today
 
-This isn't just about your README. It's about how your project approaches documentation.
+The longer you wait, the harder extraction becomes. Start with one section:
 
-### Old mindset:
-- "Let's put everything in the README so it's easy to find"
-- "More documentation in one place is better"
-- "Users want comprehensive"
+1. `wc -l README.md` - Check current length
+2. Pick the longest section (API reference, error codes, examples)
+3. Extract to dedicated file (API.md, ERROR_CODES.md, EXAMPLES.md)
+4. Replace with 3-5 line summary + link
+5. Commit: "Extract [section] from README to reduce sprawl"
 
-### New mindset:
-- "Let's organize docs so users can find what they need"
-- "More organized documentation is better"
-- "Users want clarity, not completeness"
-
-It's the same content. Different organization. **Massively** different user experience.
-
-**Old approach:** README.md (800 lines) → User lands → Scrolls endlessly → Gives up
-
-**New approach:** README.md (200 lines) → User lands → Gets answer quickly → Clicks to detailed docs → Finds exactly what they need
-
-## Conclusion: README Discipline is Marketing Discipline
-
-Here's what we've covered:
-
-**The Problem:**
-- Feature creep leads to documentation sprawl
-- Engineers treat READMEs as documentation dumps
-- Long READMEs decrease engagement, not increase it
-- Once over 500 lines, you're losing users
-
-**The Solution:**
-- README as landing page (200-400 lines)
-- One value prop, one example, bullets + links
-- Extract detailed docs to separate files (API.md, ERROR_CODES.md, EXAMPLES.md, ARCHITECTURE.md)
-- Maintain discipline with line budgets and quarterly audits
-
-**The Mindset:**
-- Your README is marketing, not documentation
-- Users decide in 30 seconds whether to invest time
-- Every inline paragraph is friction
-- Links are lower friction than scrolling
-- Organized docs beat comprehensive READMEs
-
-**The Practice:**
-- Set a line budget (200-400 max)
-- One example rule (rest go to examples/)
-- Extract API reference (link to docs.rs or API.md)
-- Extract error codes (link to ERROR_CODES.md)
-- No troubleshooting inline (link to TROUBLESHOOTING.md)
-- Add length checks to CI
-- Review quarterly
-
-**The Result:**
-- Users evaluate your project in seconds, not minutes
-- Time-to-first-clone drops dramatically
-- "Where is X?" support questions decrease
-- Star-to-clone ratio improves (more actual users)
-- Documentation is findable because it's organized
-
-{{< callout type="success" >}}
-**Final Insight:** A 200-line README with organized docs is infinitely more useful than an 800-line README with everything inline. Users don't want more - they want clarity. Give them a landing page, not a manual.
-{{< /callout >}}
-
----
-
-**Start today:**
-
-1. Check your README length: `wc -l README.md`
-2. If over 400 lines, extract one section to a separate file
-3. Replace with a hook (brief summary + link)
-4. Commit with message: "Extract [section] from README to reduce sprawl"
-5. Repeat until under 400 lines
-
-Your future contributors will thank you. Your users will thank you. Your future self will thank you.
+Set a line budget for your project scope. Defend it. Every new feature doesn't need a README section - most need a bullet + link.
 
 **More hooks, less sprawl.**
