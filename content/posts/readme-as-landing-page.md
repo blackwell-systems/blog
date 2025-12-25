@@ -320,20 +320,21 @@ Here's how to maintain README discipline over time:
 
 ### Rule 1: Line Budget
 
-Set a target: **200-400 lines max.**
+Set a target based on project scope:
 
-Every time you add a section, something else must get extracted or trimmed. No exceptions.
+- **Single-purpose library:** 200-400 lines max
+- **Framework or tool:** 400-600 lines max
+- **Monorepo/workspace (multiple crates):** 500-800 lines max
+- **Large platform:** 800-1000 lines max (but consider splitting to docs/)
 
-```bash
-# Add this to your CI
-- name: Check README length
-  run: |
-    LINES=$(wc -l < README.md)
-    if [ $LINES -gt 400 ]; then
-      echo "README.md is $LINES lines (max 400)"
-      exit 1
-    fi
-```
+The key: **set a number and stick to it.** Every time you add a section, something else must get extracted or trimmed.
+
+**Examples:**
+- `serde` (single crate, focused): ~200 lines
+- `tokio` (runtime with multiple components): ~500 lines
+- `rust-lang/rust` (massive monorepo): ~800 lines, but heavily links out
+
+If you're a single library and hitting 600 lines, you have sprawl. If you're a workspace with 8 crates and at 600 lines, you're probably fine.
 
 ### Rule 2: One Example Rule
 
