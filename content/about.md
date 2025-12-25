@@ -16,6 +16,8 @@ Technical writing on developer tools, automation, systems programming, artificia
 
 **[dotclaude](https://blackwell-systems.github.io/dotclaude/#/)** - Profile manager for Claude Code. Switch between work/personal contexts, multi-backend routing.
 
+**[gcp-secret-manager-emulator](https://github.com/blackwell-systems/gcp-secret-manager-emulator)** - Lightweight gRPC emulator for Google Cloud Secret Manager API. Local testing and CI/CD without GCP credentials.
+
 ### Libraries
 
 **[domainstack](https://github.com/blackwell-systems/domainstack)** - Full-stack validation ecosystem for Rust: Type-safe validation with automatic TypeScript/Zod schema generation, serde integration, OpenAPI schemas, and web framework adapters (Axum, Actix, Rocket).
@@ -35,4 +37,4 @@ Technical writing on developer tools, automation, systems programming, artificia
 ## Contact
 
 - GitHub: [@blackwell-systems](https://github.com/blackwell-systems)
-- Issues: [blackdot](https://github.com/blackwell-systems/blackdot/issues) | [dotclaude](https://github.com/blackwell-systems/dotclaude/issues) | [domainstack](https://github.com/blackwell-systems/domainstack/issues) | [error-envelope](https://github.com/blackwell-systems/error-envelope/issues) | [vaultmux](https://github.com/blackwell-systems/vaultmux/issues) | [err-envelope](https://github.com/blackwell-systems/err-envelope/issues) | [mdfx](https://github.com/blackwell-systems/mdfx/issues) | [pipeboard](https://github.com/blackwell-systems/pipeboard/issues)
+- Issues: [blackdot](https://github.com/blackwell-systems/blackdot/issues) | [dotclaude](https://github.com/blackwell-systems/dotclaude/issues) | [gcp-secret-manager-emulator](https://github.com/blackwell-systems/gcp-secret-manager-emulator/issues) | [domainstack](https://github.com/blackwell-systems/domainstack/issues) | [error-envelope](https://github.com/blackwell-systems/error-envelope/issues) | [vaultmux](https://github.com/blackwell-systems/vaultmux/issues) | [err-envelope](https://github.com/blackwell-systems/err-envelope/issues) | [mdfx](https://github.com/blackwell-systems/mdfx/issues) | [pipeboard](https://github.com/blackwell-systems/pipeboard/issues)
