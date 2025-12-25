@@ -246,36 +246,6 @@ Error::unauthorized("Missing token");               // 401
 **Full API documentation:** [API.md](API.md) - Complete constructor reference, builder patterns, advanced usage
 ```
 
-{{< mermaid >}}
-flowchart LR
-    subgraph before["Before: 600-line README"]
-        intro1["Introduction"]
-        install1["Installation"]
-        api1["API Reference<br/>(150 lines)"]
-        errors1["Error Codes<br/>(80 lines)"]
-        examples1["Examples<br/>(120 lines)"]
-        arch1["Architecture<br/>(100 lines)"]
-    end
-
-    subgraph after["After: 200-line README + Docs"]
-        intro2["Introduction"]
-        install2["Installation"]
-        api2["API Hook<br/>(20 lines)"]
-        errors2["Error Hook<br/>(15 lines)"]
-        
-        api_doc["API.md<br/>(Full reference)"]
-        error_doc["ERROR_CODES.md<br/>(Complete table)"]
-        examples_doc["EXAMPLES.md<br/>(Gallery)"]
-        arch_doc["ARCHITECTURE.md<br/>(Deep dive)"]
-    end
-
-    api2 -.Link.-> api_doc
-    errors2 -.Link.-> error_doc
-
-    style before fill:#4C3A3C,stroke:#6b7280,color:#f0f0f0
-    style after fill:#3A4C43,stroke:#6b7280,color:#f0f0f0
-{{< /mermaid >}}
-
 ### Step 4: Measure the Result
 
 ```bash
