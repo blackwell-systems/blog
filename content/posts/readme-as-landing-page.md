@@ -16,7 +16,9 @@ This isn't a documentation problem. **It's a marketing problem.**
 
 ## The Uncomfortable Truth
 
-Engineers don't want to hear this, but it's true: **your README is more about marketing than documentation.**
+{{< callout type="warning" >}}
+**Engineers don't want to hear this, but it's true:** Your README is more about marketing than documentation.
+{{< /callout >}}
 
 Not marketing in the sleazy sense. Marketing in the "I have 30 seconds to convince someone this solves their problem" sense. Marketing in the "every line needs to earn its place" sense. Marketing in the "if they're still reading at line 200, you've already lost" sense.
 
