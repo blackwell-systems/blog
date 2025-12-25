@@ -94,6 +94,8 @@ Here's the structure that works:
 
 One sentence. What does this do? Who is it for?
 
+**This is your value proposition:** the benefit someone gets from using your project, stated clearly enough that they understand it in 5 seconds.
+
 ```markdown
 # project-name
 
