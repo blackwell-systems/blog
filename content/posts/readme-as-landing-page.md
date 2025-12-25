@@ -144,6 +144,22 @@ Not three examples. Not "here's basic, here's intermediate, here's advanced." **
 **Best Practice:** Your quick example should be copy-pasteable and runnable. If it requires 10 lines of setup code, it's not quick anymore.
 {{< /callout >}}
 
+**Hero vs Quick Start confusion:**
+
+Many READMEs duplicate content between a hero example (top) and a Quick Start section (later). This is the easiest place to create redundancy.
+
+**Differentiate them:**
+- **Hero example** - Shows "batteries included" functionality. Demonstrates the full power with integrations, multiple features, complete output. This is your sales pitch.
+- **Quick Start section** (if you have one) - Shows minimal, initial use case. Ease-in to the product. Just enough to get something working.
+
+If your hero already shows the complete picture, your Quick Start should be tiny (3-5 lines) and show the simplest possible usage. Or skip Quick Start entirely and link to examples/.
+
+**Example (error-envelope):**
+- Hero: Shows anyhow integration + validation + structured output (full power)
+- Quick Start: `Error::not_found("...").with_trace_id("...")` (minimal builder pattern)
+
+Don't repeat the hero example in Quick Start. If they're the same, you're wasting space.
+
 ### 3.5. The Problem Statement (Optional but Powerful)
 
 Before listing features, consider articulating the pain point:
