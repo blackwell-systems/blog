@@ -14,6 +14,26 @@ Before you know it, your README is 800 lines. New users bounce. Contributors get
 
 This isn't a documentation problem. **It's a marketing problem.**
 
+## Table of Contents
+
+- [The Uncomfortable Truth](#the-uncomfortable-truth) - READMEs are marketing
+- [The Sprawl Pattern](#the-sprawl-pattern) - How it happens
+- [Why Sprawl Happens](#why-sprawl-happens) - Engineering mindset traps
+- [The Landing Page Mindset](#the-landing-page-mindset) - Think like a product page
+- [The README Formula](#the-readme-formula) - Hero, pain point, features, installation
+- [The Extraction Pattern](#the-extraction-pattern) - Surgical reduction in 4 steps
+- [Real Example: error-envelope](#real-example-error-envelope) - 337→257 lines (24% reduction)
+- [The "But What About..." Questions](#the-but-what-about-questions) - Objections answered
+- [The Discipline Framework](#the-discipline-framework) - Line budgets and maintenance rules
+- [The Maintenance Trap](#the-maintenance-trap) - Why waiting makes it harder
+- [The Templates](#the-templates) - Copy-paste starting points
+- [The README Refactor Checklist](#the-readme-refactor-checklist) - Audit your existing README
+- [The Hard Part: Saying No](#the-hard-part-saying-no) - Defending your line budget
+- [The Documentation Hierarchy](#the-documentation-hierarchy) - Where different content belongs
+- [The Anti-Patterns](#the-anti-patterns) - Common README killers
+- [The Psychology of Scrolling](#the-psychology-of-scrolling) - User behavior patterns
+- [Start Today](#start-today) - Actionable next steps
+
 ## The Uncomfortable Truth
 
 {{< callout type="warning" >}}
