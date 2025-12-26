@@ -22,7 +22,7 @@ This isn't a documentation problem. **It's a marketing problem.**
 - [The Landing Page Mindset](#the-landing-page-mindset) - Think like a product page
 - [The README Formula](#the-readme-formula) - Hero, pain point, features, installation
 - [The Extraction Pattern](#the-extraction-pattern) - Surgical reduction in 4 steps
-- [Real Example: error-envelope](#real-example-error-envelope) - 337→257 lines (24% reduction)
+- [Real Example: error-envelope](#real-example-error-envelope) - ~500→235 lines (53% reduction)
 - [The "But What About..." Questions](#the-but-what-about-questions) - Objections answered
 - [The Discipline Framework](#the-discipline-framework) - Line budgets and maintenance rules
 - [The Templates](#the-templates) - Copy-paste starting points
@@ -321,24 +321,26 @@ Target: **200-400 lines.** If you're still over 400, extract more.
 I recently did this with [error-envelope](https://github.com/blackwell-systems/error-envelope), a Rust crate for HTTP error responses.
 
 **Before:**
-- README.md: 337 lines
+- README.md: ~500 lines
 - Full API reference inline (18 constructors, full signatures)
 - Complete error codes table (18 rows with descriptions)
+- 13 mermaid diagrams explaining architecture
 - Multiple framework integration examples
 - Architecture explanations mixed throughout
 
-**Problem:** New users had to scroll past 100+ lines of API documentation to find the Quick Start.
+**Problem:** New users had to scroll past 200+ lines of API documentation, diagrams, and architecture discussion to find the Quick Start.
 
 **After (surgical extraction):**
-- README.md: 257 lines (24% reduction)
+- README.md: 235 lines (53% reduction)
 - API.md: 364 lines (complete API reference)
 - ERROR_CODES.md: 167 lines (full error code documentation)
-- ARCHITECTURE.md: 721 lines (design decisions with 6 mermaid diagrams)
+- ARCHITECTURE.md: 272 lines (design decisions with 4 essential mermaid diagrams)
 
 **README changes:**
 - API section reduced from 90 lines to 30 lines (8 common constructors + link to API.md)
 - Error codes reduced from 18-row table to 5-row table (most common codes + link)
-- Table of contents trimmed from 11 sections to 4 key anchors
+- Mermaid diagrams reduced from 13 to 4 (moved 9 to ARCHITECTURE.md)
+- Table of contents trimmed from 11 sections to 6 key links
 
 **Result:** The README now serves as a landing page. If you want the full API, you click a link. If you want to see all error codes, you click a link. But if you just want to understand what this crate does and whether it solves your problem, **you get your answer in the first 50 lines.**
 
