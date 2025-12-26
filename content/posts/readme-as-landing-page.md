@@ -95,12 +95,12 @@ That's it. Everything else is resistance.
 
 Think about every landing page you've seen for a SaaS product. The landing page is short, focused, with one job: convince you to click "Get Started." Everything else lives somewhere else.
 
-**Your README should work the same way:**
-- Hero: One-line value prop
-- Social proof: badges, stars
-- Quick example: 5-10 lines
-- Features: Bullets + links
-- CTA: Get Started link
+**Your README is a front door.** You don't stack everything in the front yard blocking the entrance. You present a nice landscape, help visitors find the door, and structure your content into dedicated spaces that can be easily discovered and understood.
+
+A good README tells people:
+- What this is
+- Why they should care
+- Exactly how to use it in the fewest steps possible
 
 Then link out to detailed documentation (installation guides, tutorials, API reference, example gallery, migration guides).
 
