@@ -824,7 +824,6 @@ Use this when auditing an existing README:
 - [ ] README has a line count budget (400 max)
 - [ ] New features get bullets + links (not full sections)
 - [ ] Examples follow "one inline, rest external" rule
-- [ ] Quarterly review scheduled for sprawl prevention
 ```
 
 ## The Hard Part: Saying No
