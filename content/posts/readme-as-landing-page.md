@@ -259,7 +259,7 @@ Everything else lives in separate files.
 
 ## The Extraction Pattern
 
-You've already got a 600-line README. How do you fix it?
+You've already got an 800-line README. How do you fix it?
 
 ### Step 1: Create Dedicated Files
 
