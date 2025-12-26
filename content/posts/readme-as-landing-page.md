@@ -26,7 +26,6 @@ This isn't a documentation problem. **It's a marketing problem.**
 - [The "But What About..." Questions](#the-but-what-about-questions) - Objections answered
 - [The Discipline Framework](#the-discipline-framework) - Line budgets and maintenance rules
 - [The Templates](#the-templates) - Copy-paste starting points
-- [The README Refactor Checklist](#the-readme-refactor-checklist) - Audit your existing README
 - [The Hard Part: Saying No](#the-hard-part-saying-no) - Defending your line budget
 - [The Documentation Hierarchy](#the-documentation-hierarchy) - Where different content belongs
 - [The Anti-Patterns](#the-anti-patterns) - Common README killers
@@ -772,59 +771,6 @@ If you see error X, try:
 Users don't read READMEs linearly - they scan. In the first 10 seconds, they decide if this solves their problem. In the next 20 seconds, they look for proof it works (Quick Start). Then they check how hard it is to set up (Installation). After that, they either try it or bounce to another tab.
 
 **Key insight:** Every line between the title and Quick Start is friction. Your README competes with 10 other open tabs. Make it easy to choose yours.
-
-## The README Refactor Checklist
-
-Use this when auditing an existing README:
-
-```markdown
-## README Audit Checklist
-
-### Length Check
-- [ ] README is under 400 lines (target: 200-300)
-- [ ] If over 400 lines, identify extraction targets
-
-### Structure Check
-- [ ] One-sentence value prop in first paragraph
-- [ ] Social proof badges in first 10 lines
-- [ ] Quick Start visible without scrolling (< 50 lines from top)
-- [ ] Installation instructions are 5-10 lines max
-- [ ] Table of contents (if present) has < 7 top-level items
-
-### Content Check
-- [ ] One working example (not 3+)
-- [ ] Features section uses bullets + links (not full explanations)
-- [ ] API reference is summarized (5-8 common functions) with link to full docs
-- [ ] No more than 2 examples inline (rest extracted to examples/ or EXAMPLES.md)
-- [ ] No inline troubleshooting (extracted to TROUBLESHOOTING.md)
-- [ ] No installation permutations (extracted to INSTALLATION.md)
-
-### Extraction Targets
-- [ ] Full API reference → API.md or docs.rs
-- [ ] Complete error codes table → ERROR_CODES.md
-- [ ] Multiple examples → examples/ directory or EXAMPLES.md
-- [ ] Architecture explanations → ARCHITECTURE.md
-- [ ] Migration guides → MIGRATION.md
-- [ ] Troubleshooting → TROUBLESHOOTING.md
-- [ ] Installation variants → INSTALLATION.md
-
-### Link Quality
-- [ ] All extracted docs have clear links in README
-- [ ] Links use descriptive text ("Complete API reference" not "here")
-- [ ] Internal links use anchors (#section) not line numbers
-- [ ] External links (docs.rs, crates.io) are current
-
-### First-Time User Experience
-- [ ] Can determine what this does in < 10 seconds
-- [ ] Can find installation command in < 20 seconds
-- [ ] Can find working example in < 30 seconds
-- [ ] Can identify next steps (docs links) in < 60 seconds
-
-### Maintenance
-- [ ] README has a line count budget (400 max)
-- [ ] New features get bullets + links (not full sections)
-- [ ] Examples follow "one inline, rest external" rule
-```
 
 ## The Hard Part: Saying No
 
