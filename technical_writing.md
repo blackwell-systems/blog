@@ -19,6 +19,16 @@ Personal reference for pursuing technical writing opportunities while maintainin
 - [Building Your Portfolio](#building-your-portfolio)
   - [Published Articles](#published-articles-27-total)
   - [Open Source Projects](#open-source-projects-10-production-tools)
+    - [1. blackdot](#1-blackdot)
+    - [2. dotclaude](#2-dotclaude)
+    - [3. error-envelope (Rust)](#3-error-envelope-rust)
+    - [4. err-envelope (Go)](#4-err-envelope-go)
+    - [5. vaultmux](#5-vaultmux)
+    - [6. pipeboard](#6-pipeboard)
+    - [7. gcp-secret-manager-emulator](#7-gcp-secret-manager-emulator)
+    - [8. mdfx](#8-mdfx)
+    - [9. domainstack](#9-domainstack)
+    - [10. prettychars](#10-prettychars)
 - [Interview Preparation](#interview-preparation)
 - [Next Steps](#next-steps)
 - [Resources](#resources)
@@ -613,24 +623,39 @@ You understand:
 ### 3. error-envelope (Rust)
 **GitHub:** https://github.com/blackwell-systems/error-envelope
 
-**Problem:** Rust web services return inconsistent error structures across endpoints, frustrating API consumers and complicating monitoring. Every endpoint handles errors differently.
+**Problem:** Rust web APIs need three layers of error handling—domain logic (thiserror), application propagation (anyhow), and HTTP responses—but nothing bridges anyhow to structured HTTP contracts. Every endpoint reinvents JSON error formatting, trace IDs, and retry logic.
 
-**Solution:** error-envelope implements a **type-safe enum with 18 standardized HTTP error codes**, providing constructors for common scenarios while maintaining a predictable JSON envelope structure across all error types.
+**Solution:** error-envelope completes the Rust error handling ecosystem as the **HTTP boundary layer**. Sits between anyhow (propagation) and web frameworks (Axum), implementing a predictable JSON envelope with 18 type-safe HTTP error codes that automatically convert from anyhow::Error while preserving semantic meaning.
+
+**The Rust Error Handling Stack:**
+- **thiserror** (domain layer): Typed errors for business logic with pattern matching (`PaymentError::InsufficientFunds`)
+- **anyhow** (application layer): Ergonomic error propagation with `?` operator and context chaining
+- **error-envelope** (HTTP boundary): Converts both into consistent HTTP responses with status codes, trace IDs, retry hints
+- **Axum** (framework): IntoResponse implementation for seamless integration
 
 **Technical Architecture:**
-- **Rust trait system**: `From<anyhow::Error>` for seamless conversion, `IntoResponse` for Axum integration
-- **Framework-agnostic core**: Optional features via Cargo flags (anyhow-support, axum-support)
-- **Type-state approach**: Compile-time guarantees about error structure consistency
-- **Automatic trace ID attachment**: For distributed tracing
-- **Retry hints**: With backoff strategies for intelligent client retry logic
+- **Framework-agnostic core**: ~500 lines, zero dependencies, works standalone
+- **Optional integrations**: `anyhow-support` (From<anyhow::Error>), `axum-support` (IntoResponse) via Cargo features
+- **Type-safe error codes**: Enum prevents invalid HTTP status/code combinations at compile time
+- **Automatic HTTP semantics**: 404 for NotFound, 429 for RateLimited with Retry-After header, 400 for ValidationFailed with field details
+- **Trace ID propagation**: Attaches trace IDs, emits X-Request-ID headers for distributed tracing
 
-**Key Capabilities:**
-- Structured metadata enabling sophisticated error analysis
-- Predictable contract: every error has same structure/fields
-- Consistent error handling for clients
-- Reliable monitoring for operations teams
+**Key Features:**
+- **Structured validation errors**: Field-level validation with HashMap<String, String> details
+- **Retry hints**: Duration-based retry_after with automatic Retry-After header generation
+- **Builder pattern**: Fluent API for adding trace IDs, details, metadata
+- **thiserror mapping**: Implement `From<DomainError>` for error-envelope to map domain errors to HTTP semantics
 
-**Architectural Sophistication:** Transforms ad-hoc error handling into a systematic approach where invalid error states are difficult to represent at compile time.
+**Ecosystem Integration:**
+```rust
+// Domain errors (thiserror) → Application propagation (anyhow) → HTTP boundary (error-envelope) → Framework (Axum)
+async fn handler() -> Result<Json<User>, Error> {
+    let user = db::find_user(&id).await?;  // anyhow error converts automatically
+    Ok(Json(user))
+}
+```
+
+**Value:** Completes the Rust error handling story by providing the missing HTTP layer. Eliminates per-endpoint error formatting while maintaining type safety from domain logic to HTTP responses. Published on crates.io with comprehensive docs showing integration patterns across the entire error handling stack.
 
 ### 4. err-envelope (Go)
 **GitHub:** https://github.com/blackwell-systems/err-envelope
