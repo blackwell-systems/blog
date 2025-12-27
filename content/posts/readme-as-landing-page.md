@@ -92,6 +92,14 @@ Users don't need comprehensive in your README. They need:
 
 That's it. Everything else is resistance.
 
+### "It's already explained somewhere else"
+
+Repetition happens more often than you might think as documentation grows. You add a diagram showing the architecture. Then later, you add a table with the same information "for clarity." Then someone adds prose explaining both. Before long, the same concept is documented three times in different formats.
+
+Each version made sense when added. But together, they create bloat.
+
+**The pattern:** Search before you add. If the information exists, link to it. Don't duplicate it.
+
 ## The Landing Page Mindset
 
 {{< callout type="success" >}}
