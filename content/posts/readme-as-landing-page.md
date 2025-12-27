@@ -743,7 +743,11 @@ If you see error X, try:
 
 ## The Psychology of Scrolling
 
-Users don't read READMEs linearly - they scan. In the first 10 seconds, they decide if this solves their problem. In the next 20 seconds, they look for proof it works (Quick Start). Then they check how hard it is to set up (Installation). After that, they either try it or bounce to another tab.
+{{< callout type="info" >}}
+Users don't read READMEs linearly - they scan.
+{{< /callout >}}
+
+In the first 10 seconds, they decide if this solves their problem. In the next 20 seconds, they look for proof it works (Quick Start). Then they check how hard it is to set up (Installation). After that, they either try it or bounce to another tab.
 
 Every line between the title and Quick Start is friction. Your README competes with 10 other open tabs. Make it easy to choose yours.
 
