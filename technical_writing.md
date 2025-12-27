@@ -2,6 +2,31 @@
 
 Personal reference for pursuing technical writing opportunities while maintaining backend engineering career.
 
+## Table of Contents
+
+- [Current Position (Dec 2025)](#current-position-dec-2025)
+- [When You Can Call Yourself a Technical Writer](#when-you-can-call-yourself-a-technical-writer)
+- [Dual Employment Strategy](#dual-employment-strategy)
+- [LinkedIn Positioning](#linkedin-positioning)
+- [Resume Positioning](#resume-positioning)
+- [Job Titles & Roles](#job-titles--roles)
+  - [Roles You're Qualified For Now](#roles-youre-qualified-for-now)
+  - [Roles That Require More Experience](#roles-that-require-more-experience-6-12-months-away)
+- [Job Search Strategy](#job-search-strategy)
+- [What to Avoid vs. Pursue](#what-to-avoid-vs-pursue)
+- [Salary Expectations (US, 2025)](#salary-expectations-us-2025)
+- [Why Your Background is Valuable](#why-your-background-is-valuable)
+- [Building Your Portfolio](#building-your-portfolio)
+  - [Published Articles](#published-articles-27-total)
+  - [Open Source Projects](#open-source-projects-10-production-tools)
+- [Interview Preparation](#interview-preparation)
+- [Next Steps](#next-steps)
+- [Decision: Full-Time vs. Hybrid vs. Side Writing](#decision-full-time-technical-writing-vs-hybrid-role)
+- [Resources](#resources)
+- [Final Assessment](#final-assessment)
+
+---
+
 ## Current Position (Dec 2025)
 
 **Background:**
