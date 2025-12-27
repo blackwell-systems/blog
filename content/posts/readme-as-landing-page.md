@@ -38,7 +38,11 @@ This isn't a documentation problem. **It's a marketing problem.**
 **Engineers don't want to hear this, but it's true:** Your README is more about marketing than documentation.
 {{< /callout >}}
 
-Not marketing in the sleazy sense. Marketing in the "I have 30 seconds to convince someone this solves their problem" sense. Marketing in the "every line needs to earn its place" sense. Marketing in the "if they're still reading at line 200, you've already lost" sense.
+Not marketing in the sleazy sense. Marketing in the:
+
+- "I have 30 seconds to convince someone this solves their problem" sense
+- "Every line needs to earn its place" sense
+- "If they're still reading at line 200, you've already lost" sense
 
 Your README isn't where people learn your API. It's where they decide whether to learn your API at all.
 
@@ -769,7 +773,7 @@ If you see error X, try:
 
 Users don't read READMEs linearly - they scan. In the first 10 seconds, they decide if this solves their problem. In the next 20 seconds, they look for proof it works (Quick Start). Then they check how hard it is to set up (Installation). After that, they either try it or bounce to another tab.
 
-**Key insight:** Every line between the title and Quick Start is friction. Your README competes with 10 other open tabs. Make it easy to choose yours.
+Every line between the title and Quick Start is friction. Your README competes with 10 other open tabs. Make it easy to choose yours.
 
 ## The Hard Part: Saying No
 
