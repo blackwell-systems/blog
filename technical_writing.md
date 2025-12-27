@@ -584,7 +584,18 @@ You understand:
 - Git safety hooks preventing destructive operations
 - Cross-machine synchronization for consistent AI assistance everywhere
 
-**Self-Healing Architecture:** Continuous monitoring of configuration drift, missing dependencies, and secrets availability with automatic repair—transforming static dotfiles into an intelligent, self-maintaining development environment orchestration system.
+**Developer Tool Integrations (120+ aliases):**
+- **AWS Tools** (`aws_helpers`): Profile switching with fzf, SSO login/logout, identity display, role assumption
+- **CDK Tools** (`cdk_tools`): Deploy, diff, synth with smart defaults and environment awareness
+- **Rust Tools** (`rust_tools`): Build, test, clippy, fmt, cargo-watch integration
+- **Go Tools** (`go_tools`): Build, test with coverage, module management, tool installation
+- **Python Tools** (`python_tools`): uv package manager, pytest integration, auto-venv activation
+- **Docker Tools** (`docker_tools`): Container lifecycle, compose management, network utilities
+- **SSH Tools** (`ssh_tools`): Config management, key handling, agent setup, tunnel automation
+- **NVM** (`nvm_integration`): Lazy-loaded Node.js version manager
+- **SDKMAN** (`sdkman_integration`): Lazy-loaded Java/Gradle/Kotlin manager
+
+**Self-Healing Architecture:** Continuous monitoring of configuration drift, missing dependencies, and secrets availability with automatic repair—transforming static dotfiles into an intelligent, self-maintaining development environment orchestration system that provides comprehensive toolchain integration across 9 developer ecosystems.
 
 ### 2. dotclaude
 **GitHub:** https://github.com/blackwell-systems/dotclaude
