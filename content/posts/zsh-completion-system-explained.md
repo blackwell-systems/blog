@@ -1,7 +1,7 @@
 ---
 title: "Mastering ZSH: Part 4 - Completion System Demystified"
 date: 2025-12-27
-draft: true
+draft: false
 series: ["mastering-zsh"]
 seriesOrder: 4
 tags: ["zsh", "completion", "tab-completion", "shell-scripting", "command-line", "productivity", "terminal", "compinit", "compdef", "automation"]
