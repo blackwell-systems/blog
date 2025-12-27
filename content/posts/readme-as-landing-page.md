@@ -102,7 +102,7 @@ Think about every landing page you've seen for a SaaS product. The landing page 
 
 A good README tells people:
 - What this is
-- Why they should care
+- **Why they should care**
 - Exactly how to use it in the fewest steps possible
 
 Then link out to detailed documentation (installation guides, tutorials, API reference, example gallery, migration guides).
