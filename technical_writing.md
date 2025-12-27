@@ -1,17 +1,20 @@
 # Technical Writing Career Guide
 
-Personal reference for transitioning from software engineering to technical writing or hybrid roles.
+Personal reference for pursuing technical writing opportunities while maintaining backend engineering career.
 
 ## Current Position (Dec 2025)
 
 **Background:**
 - 4 years backend engineering in enterprise hospitality
-- Contributed to enterprise documentation (APIs, services, internal guides)
-- Published 10+ technical articles on developer tools, shell automation, error handling
-- Maintained open-source project documentation (error-envelope, blackdot)
-- Active technical blog: https://blackwell-systems.github.io/blog/
+- Founder, Blackwell Systems (OSS + future proprietary developer tools)
+- 10 open-source projects with comprehensive documentation
+- Published technical blog: 94,152 lines of markdown content
+- Total documentation: ~190,000 lines across all projects
+- 3x AWS Certified, Azure, Terraform
 
-**Qualification Status:** Ready to apply for technical writing roles now.
+**Strategy:** Dual employment - maintain backend engineering while pursuing technical writing contracts/opportunities.
+
+**Qualification Status:** Qualified for Senior/Staff technical writing roles based on portfolio.
 
 ---
 
@@ -33,23 +36,102 @@ You're qualified when you have:
 
 ---
 
+## Dual Employment Strategy
+
+**Goal:** Maintain backend engineering career while pursuing technical writing contracts/opportunities.
+
+**Approach:** Position existing OSS and writing work as separate business (Blackwell Systems), pursue contracts without conflict with primary employment.
+
+---
+
+## LinkedIn Positioning
+
+### Headline Options
+
+**Recommended:**
+```
+Founder & Engineer, Blackwell Systems | Backend Engineering | Technical Writing | 3x AWS + Azure + Terraform Certified
+```
+
+**Alternative:**
+```
+Senior Backend Engineer | Founder, Blackwell Systems | Technical Writer | 190k+ Lines Documentation | 3x AWS Certified
+```
+
+**Why "Founder" positioning:**
+- Explains 10 major projects (it's your company, not hobby)
+- Sets up future proprietary products
+- Works for both engineering and writing audiences
+- Shows entrepreneurial initiative
+
+### Experience Section
+
+**Entry 1: Blackwell Systems (Your Company)**
+```
+Founder & Engineer
+Blackwell Systems | Self-Employed
+2021 - Present
+
+Building developer tools and infrastructure software that eliminate repetitive work 
+and improve developer experience across platforms.
+
+Technical Work:
+• Built unified secrets management supporting 8+ backends (vaultmux) - write once, deploy anywhere
+• Created standardized error handling for Rust and Go APIs with trace IDs and retry hints
+• Developed cross-platform environment replication system (dotfiles) - one command setup
+• Built full-stack validation framework (domainstack) - define once, validate everywhere (API + frontend)
+• Created local GCP Secret Manager emulator for testing without cloud credentials
+• Developed encrypted SSH clipboard sync (pipeboard) for seamless remote workflows
+• Built profile management for Claude Code (dotclaude) with context auto-detection
+• Created offline README enhancement tool (utf8fx) generating SVG badges locally
+• Developed zero-overhead Unicode text styling library (prettychars) for CLI tools
+
+Documentation & Technical Writing:
+• Authored comprehensive documentation for all projects (~96,000 lines)
+• Built 6 interactive documentation sites using docs-as-code practices
+• Published technical blog covering shell automation, glob patterns, and system design (94,152 lines)
+• Wrote API references, architecture guides, CLI documentation, and developer onboarding
+• Total documentation portfolio: ~190,000 lines
+
+Portfolio: blackwell-systems.github.io/blog/ | github.com/blackwell-systems
+```
+
+**Entry 2: Current Backend Role**
+```
+Backend Engineer
+[Current Company]
+2020 - Present
+
+[Your backend engineering work - standard description]
+[Keep this separate, don't mention documentation overlap]
+```
+
+**What each audience sees:**
+- **Backend employers:** "They have a side company, that's cool" (not threatening)
+- **Writing contracts:** "They run a developer tools company" (credible, substantial)
+- **Neither knows about the other** - OSS work is legitimately independent
+
+---
+
 ## Resume Positioning
 
-### Software Engineer Who Writes
+### Resume 1: Backend Engineering Focus
+
+**For backend/cloud engineering roles:**
 
 ```
 Software Engineer & Technical Writer
-Blackwell Systems | Dec 2024 - Present
+Blackwell Systems | 2021 - Present
 
-- Published technical blog covering shell automation, glob patterns, 
-  error handling, and documentation best practices
-- Created "Mastering ZSH" series (4 parts, 2000+ lines) covering hooks, 
-  completions, prompts, and custom widgets
-- Wrote comprehensive glob patterns guide explaining invisible abstractions 
-  in developer tooling
-- Maintained open-source documentation for error-envelope and blackdot projects
+- Published 27 technical articles (94,152 lines) covering shell automation, 
+  glob patterns, error handling, and documentation best practices
+- Created "Mastering ZSH" series (4 parts) covering hooks, completions, 
+  prompts, and custom widgets
+- Wrote "Glob Patterns" series explaining invisible abstractions in developer tooling
+- Maintained comprehensive documentation for 10 open-source projects (86,000+ lines)
+- Built 6 interactive documentation sites using docs-as-code practices
 
-Portfolio: blackwell-systems.github.io/blog/
+Portfolio: blackwell-systems.github.io/blog/ | github.com/blackwell-systems
 ```
 
 ### Backend Engineer with Documentation Experience
@@ -73,7 +155,7 @@ Portfolio: blackwell-systems.github.io/blog/
 
 ### Interview Positioning
 
-"I'm a software engineer who specializes in developer tools and writes extensively about the systems I build. I've published 10+ technical articles on shell automation and tooling, and I maintain documentation for my open-source projects. My writing focuses on explaining invisible infrastructure - things developers use daily but never learn formally, like glob patterns and ZSH completions."
+"I'm a software engineer who specializes in developer tools and writes extensively about the systems I build. I've published 27 technical articles on shell automation, glob patterns, ZSH, and system architecture, and I maintain comprehensive documentation for 10 open-source projects. My writing focuses on explaining invisible infrastructure - things developers use daily but never learn formally, like glob patterns and ZSH completions."
 
 ---
 
@@ -110,7 +192,7 @@ Portfolio: blackwell-systems.github.io/blog/
 
 **Why you're qualified:**
 - You're literally doing this already
-- 10+ published articles with code examples
+- 27 published articles with code examples
 - SEO-optimized comprehensive guides
 
 #### 3. Documentation Engineer
@@ -126,9 +208,9 @@ Portfolio: blackwell-systems.github.io/blog/
 
 **Why you're qualified:**
 - Backend engineering experience (4 years)
-- Your blog shows writing ability
-- error-envelope docs show API documentation skills
-- blackdot docs show CLI tool documentation
+- Your blog shows writing ability (27 articles, 94k lines)
+- 10 OSS projects with complete documentation (86k lines)
+- API documentation (error-envelope), CLI docs (dotfiles, utf8fx), emulator docs (gcp-secret-manager)
 
 #### 4. Technical Writer (Developer Tools Focus)
 **What it is:**
@@ -143,8 +225,9 @@ Portfolio: blackwell-systems.github.io/blog/
 
 **Why you're qualified:**
 - Your README article shows you understand user-facing documentation
-- error-envelope docs: API documentation
-- blackdot docs: CLI tool documentation
+- 10 OSS projects with complete documentation ecosystems
+- error-envelope: API documentation, err-envelope: Go error patterns
+- dotfiles, dotclaude, utf8fx: CLI tool documentation
 - Backend experience means you understand the systems
 
 #### 5. Senior Technical Writer - Developer Experience
@@ -436,17 +519,89 @@ You understand:
 
 ### What You Already Have
 
-**Published Articles (10+):**
-- Mastering ZSH series (4 parts)
-- Glob patterns series (2 parts)
-- README as landing page
-- Error handling guides
+**Published Articles (27 total):**
+- Mastering ZSH series (4 parts: hooks, completion system, prompts, widgets)
+- Glob patterns series (2 parts: invisible abstraction, complete syntax reference)
+- README as landing page (documentation sprawl and extraction patterns)
+- Error handling guides (error-envelope patterns, Rust error handling)
+- Shell scripting, developer tools, and system architecture
+- All articles: comprehensive (1,500-5,000+ words), with code examples and diagrams
 
-**Project Documentation:**
-- error-envelope: API documentation, README, ERROR_CODES.md, ARCHITECTURE.md
-- blackdot: CLI tool documentation, hook system docs
+**Open Source Projects (10 Production Tools):**
 
-**This is already a strong portfolio.**
+1. **dotfiles** - Solve the "my dev environment is different on every machine" problem
+   - One command to replicate your entire development setup across macOS, Linux, Windows, WSL2
+   - Pulls secrets from Bitwarden/1Password/pass and injects them into configs automatically
+   - Modular design: enable only what you need (package managers, shell configs, workspace layouts)
+   - Integration with Claude Code for AI-assisted development workflows
+
+2. **dotclaude** - Switch between different Claude Code contexts instantly
+   - Problem: You work on multiple projects with different coding standards, each needs different Claude instructions
+   - Solution: Profile system with inheritance - base configs + project overrides
+   - Detects project context automatically via `.dotclaude` file
+   - Git hooks for auto-activating profiles when switching branches
+
+3. **error-envelope** (Rust) - Stop writing the same error handling boilerplate in every API
+   - Standardized HTTP error format: error code, message, trace ID, retry hints
+   - 18 predefined error types (validation, auth, rate limit, etc.) with automatic HTTP status codes
+   - Framework-agnostic: works with Axum, Actix, or raw HTTP
+   - Clients know exactly how to handle errors and whether to retry
+
+4. **err-envelope** (Go) - Same problem as error-envelope, but for Go APIs
+   - Minimal implementation: consistent error responses without framework bloat
+   - Trace ID middleware for tracking errors across microservices
+   - Structured logging integration (slog) for production debugging
+   - Drop-in replacement for manual error handling
+
+5. **vaultmux** - Write secrets code once, support 8+ secret managers
+   - Problem: Customers use different secret managers (AWS, GCP, Azure, Bitwarden, 1Password, pass)
+   - Solution: Unified Go interface - same API regardless of backend
+   - Write your application logic once, deploy anywhere
+   - Session caching and mock backend for testing
+
+6. **pipeboard** - Clipboard that works like a Unix pipe across machines
+   - SSH-sync clipboards between your laptop and remote servers (encrypted)
+   - Named clipboard slots: store multiple items, recall by name
+   - Transform clipboard content (base64 encode, jq filter, grep)
+   - Zero telemetry: all data stays on your machines
+
+7. **gcp-secret-manager-emulator** - Test GCP Secret Manager code without GCP
+   - Full gRPC implementation that runs locally in milliseconds
+   - No credentials, no network, no GCP project needed
+   - Use official Google client library, point at localhost instead of GCP
+   - Deterministic testing: same secrets every run in CI/CD
+
+8. **utf8fx** - Make GitHub READMEs beautiful without external services
+   - Generate tech badges, progress bars, gauges locally as SVG
+   - 24 Unicode text styles (bold, italic, script, monospace, etc.)
+   - Never breaks: no external APIs, renders at commit time
+   - Offline-first: works without internet, no rate limits
+
+9. **domainstack** - Full-stack validation from API to frontend, one definition
+   - Define validation rules once in Rust (email, length, range, regex, dates)
+   - Generate OpenAPI/JSON schemas automatically for API docs
+   - Compile same rules to WebAssembly for client-side validation
+   - Framework adapters for Axum, Actix, Rocket - plug validation into routes
+
+10. **prettychars** - Add Unicode symbols to CLI output without copying from websites
+    - Name-based lookup: `glyph("check")` → ✓, `glyph("arrow_right")` → →
+    - 531 named glyphs across categories (arrows, shapes, math, emoji)
+    - Zero runtime cost: compile-time perfect hash function
+    - 24 text styles: bold, italic, strikethrough (terminal-compatible)
+
+**What These Projects Show:**
+- **Abstractions that eliminate repetitive work** - vaultmux, error-envelope, domainstack
+- **Local-first tooling** - utf8fx, gcp-emulator, pipeboard (no external dependencies)
+- **Cross-platform consistency** - dotfiles, dotclaude (same experience everywhere)
+- **Developer experience focus** - prettychars, pipeboard (CLI ergonomics)
+- **Production-ready design** - trace IDs, structured logging, encryption, testing infrastructure
+
+**Documentation Volume:**
+- Blog: 94,152 lines (verified)
+- OSS projects: ~96,000 lines (9 verified at 86,011 + pipeboard estimated ~10k)
+- Total: ~190,000 lines
+
+**This is Staff-level documentation volume.**
 
 ### What to Add (Optional)
 
@@ -480,7 +635,7 @@ You understand:
 **"Why do you want to move from engineering to technical writing?"**
 
 Good answer:
-- "I've realized I get more satisfaction from teaching and explaining systems than building them. My blog has 10+ articles because I genuinely enjoy breaking down complex topics. I want to do that full-time."
+- "I've realized I get more satisfaction from teaching and explaining systems than building them. My blog has 27 articles because I genuinely enjoy breaking down complex topics. I want to do that full-time."
 - Or: "I want a hybrid role where I can leverage my engineering experience to create better documentation. I've seen how bad docs slow down developers, and I want to fix that."
 
 Bad answer:
