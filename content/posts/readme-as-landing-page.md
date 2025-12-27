@@ -105,7 +105,7 @@ A good README tells people:
 - **Why they should care**
 - Exactly how to use it in the fewest steps possible
 
-**Your README should be less about WHAT and more about WHY, with the whats connecting directly to the whys.**
+**Your README should be less about "what" and more about "why," with the "whats" connecting directly to the "whys."**
 
 Then link out to detailed documentation (installation guides, tutorials, API reference, example gallery, migration guides).
 
