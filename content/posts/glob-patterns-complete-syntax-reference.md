@@ -14,6 +14,17 @@ In [Part 1](/posts/glob-patterns-invisible-abstraction/), we covered why glob pa
 
 **This is your glob syntax cheat sheet.** Bookmark it. Use it when debugging patterns. Reference it when writing configs.
 
+## Table of Contents
+
+- [The Core Patterns (Universal)](#the-core-patterns-universal) - `*`, `**`, `?`, `[...]`, `[!...]`
+- [Brace Expansion](#brace-expansion-shell-feature) - `{a,b}`, `{1..5}`
+- [Extended Globs](#extended-globs-shell-specific) - `?(pattern)`, `*(pattern)`, `+(pattern)`, `@(a|b)`, `!(pattern)`
+- [Dotfile Handling](#dotfile-handling-hidden-files) - Shell differences for hidden files
+- [Tool-Specific Behavior](#tool-specific-behavior) - .gitignore, rsync, find
+- [Common Edge Cases and Gotchas](#common-edge-cases-and-gotchas) - What breaks and why
+- [Quick Reference Table](#quick-reference-table) - All patterns at a glance
+- [Practice Exercises](#practice-exercises) - Test your understanding
+
 ## The Core Patterns (Universal)
 
 These patterns work in all shells and most tools (git, rsync, build tools, etc.).
