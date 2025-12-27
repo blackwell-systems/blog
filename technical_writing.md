@@ -21,7 +21,6 @@ Personal reference for pursuing technical writing opportunities while maintainin
   - [Open Source Projects](#open-source-projects-10-production-tools)
 - [Interview Preparation](#interview-preparation)
 - [Next Steps](#next-steps)
-- [Decision: Full-Time vs. Hybrid vs. Side Writing](#decision-full-time-technical-writing-vs-hybrid-role)
 - [Resources](#resources)
 - [Final Assessment](#final-assessment)
 
@@ -961,55 +960,6 @@ Walk through one of your blog articles:
 
 ---
 
-## Decision: Full-Time Technical Writing vs. Hybrid Role
-
-### Full-Time Technical Writing
-
-**Pros:**
-- Deep focus on documentation quality
-- Clear career path (Junior → Senior → Staff → Lead)
-- Less on-call, less production pressure
-- Writing every day
-
-**Cons:**
-- Engineering skills may atrophy
-- Can feel disconnected from product
-- Lower ceiling than staff engineer ($200k vs $300k+)
-- May miss hands-on coding
-
-**Good if:** You genuinely prefer writing to coding, want work-life balance, enjoy teaching/explaining.
-
-### Hybrid Role (Documentation Engineer / Developer Advocate)
-
-**Pros:**
-- Keep engineering skills sharp
-- Build tools to support documentation
-- Higher salary ceiling
-- More variety in work
-
-**Cons:**
-- May not be "deep" in either writing or engineering
-- Can be pulled in multiple directions
-- Fewer roles available (niche)
-
-**Good if:** You like both writing and building, want flexibility, enjoy variety.
-
-### Stay Engineer, Write on the Side
-
-**Pros:**
-- Highest salary potential (staff engineer = $300k+)
-- Keep all engineering career options open
-- Blog builds personal brand
-- Less risk
-
-**Cons:**
-- Writing is "extra" work, not your job
-- May not have time to write consistently
-- Don't get feedback/editing from team
-
-**Good if:** You like engineering, writing is a hobby, want the blog to stay fun.
-
----
 
 ## Resources
 
@@ -1028,23 +978,6 @@ Walk through one of your blog articles:
   - Focused on API documentation
   - Conferences and community
 
-### Learning Resources
-
-**Books:**
-- "Docs for Developers" by Jared Bhatti et al.
-- "Every Page is Page One" by Mark Baker
-- "The Product is Docs" by Splunk team
-
-**Courses:**
-- Google Technical Writing Course (free)
-- Write the Docs resources
-- API documentation courses (Udemy, Coursera)
-
-**Blogs to Follow:**
-- I'd Rather Be Writing (Tom Johnson)
-- Write the Docs blog
-- Every Page is Page One (Mark Baker)
-- Divio documentation system
 
 ### Tools to Learn (Optional)
 
