@@ -572,11 +572,6 @@ _arguments \
 
 ## What's Next
 
-Now you understand the completion system. Next in the series:
-
-- **Part 5:** Parameter expansion - ZSH's built-in text processing
-- **Part 7:** Glob qualifiers - Advanced file filtering
-
 **Use completions immediately:**
 - Build completion for your deployment scripts
 - Add completion for project-specific commands
