@@ -44,7 +44,7 @@ Not marketing in the sleazy sense. Marketing in the:
 - "Every line needs to earn its place" sense
 - "If they're still reading at line 200, you've already lost" sense
 
-Your README isn't where people learn your API. It's where they decide whether to learn your API at all.
+Your README isn't where people learn your API. It's where they decide **whether to learn your API at all.**
 
 {{< callout type="warning" >}}
 **Reality Check:** Users make a decision about your project in the first 10 seconds. If they're scrolling past 300 lines of API documentation to find the Quick Start, they're not coming back.
