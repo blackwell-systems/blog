@@ -1,7 +1,7 @@
 ---
 title: "Glob Patterns: The Invisible Abstraction Everyone Uses But Nobody Learns"
 date: 2025-12-27
-draft: true
+draft: false
 tags: ["shell", "unix", "patterns", "glob", "regex", "cli", "developer-tools", "terminal", "bash", "zsh", "gitignore", "file-matching", "pattern-matching"]
 categories: ["developer-tools", "tutorials"]
 description: "You use glob patterns every day in .gitignore, package.json, and shell commands - but when did you actually learn glob syntax? Most developers never do."
