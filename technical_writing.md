@@ -573,11 +573,19 @@ You understand:
 
 **Solution:** blackdot is a modular dotfiles framework that reimagines environment management for the era of AI-assisted coding and multi-platform workflows. Unlike traditional dotfiles relying on symlinks and shell scripts, blackdot implements a **feature registry architecture** where developers activate only needed components through an interactive wizard or granular presets (minimal, developer, Claude, full).
 
+**5-Layer Configuration System:**
+1. **Environment** (`BLACKDOT_*` vars): Session-only overrides for testing/CI
+2. **Project** (`.blackdot.json`): Git-tracked project-specific settings (auto-venv, hooks, aliases)
+3. **Machine** (`~/.config/blackdot/machine.json`): This-computer-only (vault backend, workspace path, work vs personal)
+4. **User** (`~/.config/blackdot/config.json`): Default preferences across all machines
+5. **Defaults**: Built-in fallbacks
+
+Each layer overrides lower priority layers, enabling work laptop using 1Password while personal desktop uses Bitwarden—same codebase, different machine configs. Handlebars templating enables sophisticated variable interpolation and conditional logic across platform-specific configurations.
+
 **Technical Architecture:**
-- **5-layer configuration priority system** with Handlebars templating for variable interpolation and conditional logic
 - **vaultmux integration**: Unified secrets API abstracting over Bitwarden, 1Password, and pass with automatic vault discovery and drift detection
 - **19 lifecycle hooks**: Pre-commit hooks prevent secret leaks, post-sync hooks rebuild completions, workspace-change hooks activate environments
-- **Cross-platform consistency**: macOS, Linux, Windows, WSL2 through unified `/workspace` symlinks maintaining session portability
+- **Workspace portability**: `/workspace` symlink (configurable target like `~/code`) maintains session portability—Claude Code sessions using `/workspace/project` paths work identically across macOS/Linux/WSL2 regardless of underlying OS conventions
 
 **Built for Claude Code:**
 - Portable AI coding sessions with project-specific profiles
