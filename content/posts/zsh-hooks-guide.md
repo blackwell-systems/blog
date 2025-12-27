@@ -27,6 +27,13 @@ ZSH hooks are **function arrays** that execute at specific lifecycle points:
 
 You register functions in these arrays. ZSH calls them automatically at the right time.
 
+**Execution order matters:** Functions execute in array order (first to last). If one hook depends on another's output, put it later in the array.
+
+```zsh
+precmd_functions=(check_git update_prompt measure_timing)
+# Executes: check_git → update_prompt → measure_timing
+```
+
 ## The Six Core Hook Types
 
 ZSH provides six commonly used built-in hook arrays.
