@@ -49,7 +49,7 @@ Somewhere around the 2000s-2010s, this reversed:
 Here's how most developers encounter glob today:
 
 **Scenario 1: .gitignore**
-```
+```gitignore
 # What does this actually mean?
 *.log
 build/
@@ -59,6 +59,11 @@ dist/**/*.map
 
 You copy this from a template. It works. You never learn the rules.
 
+**Then it breaks:**
+- Why doesn't `*.log` ignore `logs/debug.log`? (because `*` doesn't cross directory boundaries)
+- Why does `node_modules/` ignore `src/vendor/node_modules/`? (because trailing `/` means "directory anywhere")
+- What's the difference between `**/foo` and `foo/**`? (you have no idea)
+
 **Scenario 2: Shell wildcards**
 ```bash
 rm temp-*
@@ -66,6 +71,16 @@ mv src/**/*.test.js tests/
 ```
 
 You've seen `*` before. You guess `**` means "recursive." It works. You move on.
+
+**Until it doesn't:**
+```bash
+rm *.tmp
+# Works in current dir
+
+rm **/*.tmp  
+# Why does this work in zsh but not bash?
+# (bash needs `shopt -s globstar`)
+```
 
 **Scenario 3: Build configs**
 ```json
@@ -75,6 +90,13 @@ You've seen `*` before. You guess `**` means "recursive." It works. You move on.
 ```
 
 You copy this from documentation. Adjust the paths. Ship it. Never learn what `!` actually does.
+
+**Then you need to modify it:**
+- How do I exclude multiple patterns?
+- Can I use `{js,ts}` here?
+- Why isn't `[!.]*.js` working?
+
+You're stuck copy-pasting variations until something works.
 
 ## What You're Actually Using
 
@@ -111,6 +133,64 @@ Glob patterns have specific rules, distinct from regex:
 10. GitHub Actions `paths` filters
 
 **Glob is invisible infrastructure.** You interact with it daily without realizing it.
+
+## Common Mistakes (Because Nobody Teaches This)
+
+**Mistake 1: Using regex syntax in glob**
+```bash
+# Doesn't work - no + quantifier in glob
+ls file*.+js
+
+# Glob doesn't have character classes
+ls \d{3}-report.txt
+
+# What you actually need
+ls file*.js        # * already means "zero or more"
+ls [0-9][0-9][0-9]-report.txt
+```
+
+**Mistake 2: Expecting `*` to be recursive**
+```gitignore
+# Only ignores *.log in root directory
+*.log
+
+# Ignores *.log in all subdirectories
+**/*.log
+
+# Ignores *.log everywhere (root + subdirs)
+*.log
+**/*.log
+```
+
+**Mistake 3: Misunderstanding trailing `/`**
+```gitignore
+# Matches file OR directory named "build"
+build
+
+# Only matches directory named "build"
+build/
+```
+
+**Mistake 4: Forgetting shell-specific behavior**
+```bash
+# zsh: recursive glob works by default
+ls **/*.js
+
+# bash: needs globstar enabled first
+shopt -s globstar
+ls **/*.js
+```
+
+**Mistake 5: Not knowing brace expansion**
+```bash
+# Verbose
+cp file.js backup/
+cp file.ts backup/
+cp file.jsx backup/
+
+# Concise
+cp *.{js,ts,jsx} backup/
+```
 
 ## Why This Matters
 
@@ -156,16 +236,101 @@ This is the start of a series on glob patterns:
 - **Part 3:** Common glob patterns for `.gitignore`, shell, and build tools
 - **Part 4:** Glob vs regex - when to use each
 
+## Start Learning Glob Today
+
+Here's a practical path to learn glob explicitly:
+
+**1. Learn the core patterns (5 minutes)**
+
+Practice in your shell right now:
+
+```bash
+# List all .js files in current directory
+ls *.js
+
+# List all .js files recursively
+ls **/*.js
+
+# List files starting with "test" and one more character
+ls test?.js
+
+# List files with numbers
+ls file[0-9].txt
+
+# List multiple extensions
+ls *.{js,ts,jsx}
+```
+
+**2. Fix your .gitignore (10 minutes)**
+
+Open your `.gitignore` and understand every line:
+
+```gitignore
+# What these actually mean:
+*.log          # All .log files in root only
+**/*.log       # All .log files in any subdirectory
+logs/          # Directory named "logs" anywhere
+/logs/         # Only logs/ in root directory
+*.log          # Ignore pattern
+!important.log # But keep this one (negation)
+```
+
+**3. Practice with real scenarios**
+
+Try these exercises:
+
+```bash
+# Find all test files
+ls **/*test.js
+
+# Copy all source files to backup
+cp src/**/*.{js,ts} backup/
+
+# Remove all temp files except one
+rm temp-*.txt
+# (How would you exclude temp-important.txt?)
+
+# Create .gitignore to ignore:
+# - All .log files everywhere
+# - node_modules directory anywhere
+# - dist/ but only in root
+# - All .map files in dist/ recursively
+```
+
+**4. Build intuition through experimentation**
+
+Create a test directory and try patterns:
+
+```bash
+mkdir -p test/{a,b,c}/{1,2,3}
+touch test/{a,b,c}/{1,2,3}/file.txt
+touch test/a/1/special.log
+
+# Now experiment:
+ls test/*/1/*.txt        # What matches?
+ls test/**/file.txt      # What's different?
+ls test/a/*/*.{txt,log}  # How does this work?
+```
+
 ## Try This
 
 Next time you write a `.gitignore` pattern or use `*` in the shell, pause and ask:
 
-- Do I understand why this pattern works?
+- Do I understand **why** this pattern works?
 - Could I write this from scratch without copying?
 - What would happen if I changed `*` to `**` or added `[...]`?
 
-If you can't answer confidently, you're using glob by copy-paste. And you're not alone.
+If you can't answer confidently, you're using glob by copy-paste. And you're not alone - but now you know how to change that.
+
+## What's Next
+
+This is Part 1 of a series on glob patterns. Coming soon:
+
+- **Part 2:** Complete glob syntax reference with edge cases
+- **Part 3:** Mastering .gitignore patterns
+- **Part 4:** Glob vs regex: when to use each
+- **Part 5:** Advanced glob: negation, ranges, and tool-specific extensions
 
 ---
 
-**What do you think?** Should glob be taught explicitly like regex, or is it fine as an invisible abstraction you learn by osmosis? Let me know.
+**Think glob deserves explicit teaching?** Or is learning by osmosis fine? Drop a comment.
