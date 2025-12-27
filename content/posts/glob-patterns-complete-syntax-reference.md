@@ -1,7 +1,7 @@
 ---
 title: "Glob Patterns: Complete Syntax Reference with Examples"
 date: 2025-12-27
-draft: true
+draft: false
 tags: ["shell", "unix", "patterns", "glob", "cli", "developer-tools", "terminal", "bash", "zsh", "reference", "syntax", "gitignore", "file-matching"]
 categories: ["developer-tools", "tutorials"]
 description: "Complete reference for glob pattern syntax - wildcards, character classes, brace expansion, and shell-specific features. Every pattern explained with examples."
