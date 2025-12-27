@@ -6,6 +6,8 @@ Personal reference for pursuing technical writing opportunities while maintainin
 
 **Background:**
 - 4 years backend engineering in enterprise hospitality
+- Created API and system documentation for technical and non-technical stakeholders
+- Extensive experience writing integration documentation relied upon by external partners
 - Founder, Blackwell Systems (OSS + future proprietary developer tools)
 - 10 open-source projects with comprehensive documentation
 - Published technical blog: 94,152 lines of markdown content
@@ -142,20 +144,20 @@ Senior Backend Engineer & Technical Writer
 
 Backend Engineering:
 - Designed and maintained microservices architecture for hospitality platform
-- [Existing backend experience]
+- Built APIs for booking, payments, and property management system integrations
 
 Technical Documentation:
-- Authored internal API documentation for booking, payments, and integration services
-- Created developer onboarding guides reducing ramp-up time by 40%
-- Maintained architecture decision records (ADRs) for platform decisions
-- Published external technical blog covering developer tools and system design
+- Authored API and system documentation for both technical and non-technical stakeholders
+- Created integration documentation relied upon by external partners for system integrations
+- Documented microservices architecture, API contracts, and integration patterns
+- Published external technical blog covering developer tools and system architecture
 
 Portfolio: blackwell-systems.github.io/blog/
 ```
 
 ### Interview Positioning
 
-"I'm a software engineer who specializes in developer tools and writes extensively about the systems I build. I've published 27 technical articles on shell automation, glob patterns, ZSH, and system architecture, and I maintain comprehensive documentation for 10 open-source projects. My writing focuses on explaining invisible infrastructure - things developers use daily but never learn formally, like glob patterns and ZSH completions."
+"I'm a backend engineer with 4 years of experience writing API and integration documentation for both technical and non-technical audiences in enterprise hospitality. I've created documentation relied upon by external partners for system integrations, combining deep technical understanding with the ability to explain complex systems clearly. Beyond my enterprise work, I've published 27 technical articles and maintain comprehensive documentation for 10 open-source projects totaling 190,000 lines. My writing focuses on making complex technical concepts accessible - from API contracts and integration patterns to developer tools and system architecture."
 
 ---
 
@@ -242,10 +244,11 @@ Portfolio: blackwell-systems.github.io/blog/
 **Salary:** $130-180k
 
 **Why you're qualified:**
-- 4 years backend engineering in enterprise
-- You know what confuses new backend engineers
-- You've read bad internal docs and know what's missing
-- Understanding of microservices, distributed systems
+- 4 years creating API and system documentation for enterprise hospitality
+- Experience writing for both technical and non-technical stakeholders
+- Created integration documentation relied upon by external partners
+- Deep understanding of microservices, distributed systems, and API contracts
+- You know what confuses developers because you've documented complex systems
 
 #### 6. API Technical Writer
 **What it is:**
