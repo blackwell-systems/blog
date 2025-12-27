@@ -16,7 +16,7 @@ This guide covers all six native ZSH hook types with working examples you can pa
 
 ## What ZSH Hooks Actually Do
 
-ZSH hooks are function arrays that execute at specific lifecycle points:
+ZSH hooks are **function arrays** that execute at specific lifecycle points:
 
 - **Before each prompt displays** (update git status, refresh context)
 - **Before each command runs** (start timing, log commands)
@@ -520,7 +520,7 @@ For structured hook management with ordering, validation, and feature gating, se
 
 ### What are ZSH hooks?
 
-ZSH hooks are function arrays built into the shell that execute automatically at specific lifecycle points--before prompts display, before commands run, after directory changes, etc. You add functions to these arrays and ZSH calls them at the right time.
+ZSH hooks are **function arrays** built into the shell that execute automatically at specific lifecycle points--before prompts display, before commands run, after directory changes, etc. You add functions to these arrays and ZSH calls them at the right time.
 
 ### How do I add a hook to ZSH?
 
