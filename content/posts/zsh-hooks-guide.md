@@ -16,16 +16,16 @@ This guide covers all six native ZSH hook types with working examples you can pa
 
 ## What ZSH Hooks Actually Do
 
-ZSH hooks are **function arrays** that execute at specific lifecycle points:
+ZSH hooks are **function arrays** that execute at specific lifecycle points. You register functions in these arrays and ZSH calls them automatically at the right time.
 
-- **Before each prompt displays** (update git status, refresh context)
-- **Before each command runs** (start timing, log commands)
-- **After directory changes** (activate envs, load project config)
-- **Before adding commands to history** (filter secrets)
-- **When the shell exits** (cleanup, save state)
-- **Every N seconds** (periodic checks, refresh cached data)
-
-You register functions in these arrays. ZSH calls them automatically at the right time.
+| Hook | When It Runs | Common Use Cases |
+|------|--------------|------------------|
+| `precmd_functions` | Before each prompt displays | Update git status, refresh context |
+| `preexec_functions` | Before each command runs | Start timing, log commands |
+| `chpwd_functions` | After directory changes | Activate envs, load project config |
+| `zshaddhistory_functions` | Before adding commands to history | Filter secrets |
+| `zshexit_functions` | When the shell exits | Cleanup, save state |
+| `periodic_functions` | Every N seconds | Periodic checks, refresh cached data |
 
 **Execution order matters:** Functions execute in array order (first to last). If one hook depends on another's output, put it later in the array.
 
