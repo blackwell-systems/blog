@@ -44,8 +44,9 @@ Personal reference for pursuing technical writing opportunities while maintainin
 - Extensive experience writing integration documentation relied upon by external partners
 - Founder, Blackwell Systems (OSS + future proprietary developer tools)
 - 10 open-source projects with comprehensive documentation
-- Published technical blog: 94,152 lines of markdown content
-- Total documentation: ~190,000 lines across all projects
+- Published technical blog: 94,152 lines (27 articles)
+- Unpublished book manuscript: "You Don't Know JSON" - 95,150 words, 14 chapters, 54+ diagrams
+- Total documentation: ~225,000 lines across all work
 - 3x AWS Certified, Azure, Terraform
 
 **Strategy:** Dual employment - maintain backend engineering while pursuing technical writing contracts/opportunities.
@@ -564,6 +565,13 @@ You understand:
 - Shell scripting, developer tools, and system architecture
 - All articles: comprehensive (1,500-5,000+ words), with code examples and diagrams
 
+**Book Manuscript (Unpublished):**
+- **"You Don't Know JSON"** - 95,150 words (35,703 lines), 14 chapters + 3 appendices
+- Comprehensive technical book covering JSON architecture, API design, security, testing, and data pipelines
+- 54+ professional mermaid diagrams with consistent visual theme
+- Production-ready code examples in JavaScript, Go, Python, Rust, SQL, Bash
+- Status: Content complete, ready for publishing (target: January 2026)
+
 **Open Source Projects (10 Production Tools):**
 
 ### 1. blackdot
@@ -868,8 +876,9 @@ async fn handler() -> Result<Json<User>, Error> {
 
 **Documentation Volume:**
 - Blog: 94,152 lines (verified)
+- Book manuscript: 35,703 lines (verified)
 - OSS projects: ~96,000 lines (9 verified at 86,011 + pipeboard estimated ~10k)
-- Total: ~190,000 lines
+- Total: ~225,000 lines
 
 **This is Staff-level documentation volume.**
 
