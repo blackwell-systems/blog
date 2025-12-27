@@ -762,7 +762,7 @@ The hardest part of README discipline isn't the refactoring. It's saying no to w
 This feels harsh. It feels like you're hiding information. You're not. You're **organizing** information so users can find it.
 
 {{< callout type="info" >}}
-Every line you add to the README makes all other lines harder to find. This isn't theoretical - it's information design. Density works against discoverability.
+Every line you add to the README makes all other lines harder to find. This isn't theoretical - it's information design. **Density works against discoverability.**
 {{< /callout >}}
 
 ## Start Today
