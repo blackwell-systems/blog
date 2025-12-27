@@ -109,7 +109,7 @@ Technical Work:
 • Created local GCP Secret Manager emulator for testing without cloud credentials
 • Developed encrypted SSH clipboard sync (pipeboard) for seamless remote workflows
 • Built profile management for Claude Code (dotclaude) with context auto-detection
-• Created offline README enhancement tool (utf8fx) generating SVG badges locally
+• Created offline README enhancement tool (mdfx) generating SVG badges locally
 • Developed zero-overhead Unicode text styling library (prettychars) for CLI tools
 
 Documentation & Technical Writing:
@@ -236,7 +236,7 @@ Portfolio: blackwell-systems.github.io/blog/
 - Backend engineering experience (4 years)
 - Your blog shows writing ability (27 articles, 94k lines)
 - 10 OSS projects with complete documentation (86k lines)
-- API documentation (error-envelope), CLI docs (dotfiles, utf8fx), emulator docs (gcp-secret-manager)
+- API documentation (error-envelope), CLI docs (dotfiles, mdfx), emulator docs (gcp-secret-manager)
 
 #### 4. Technical Writer (Developer Tools Focus)
 **What it is:**
@@ -253,7 +253,7 @@ Portfolio: blackwell-systems.github.io/blog/
 - Your README article shows you understand user-facing documentation
 - 10 OSS projects with complete documentation ecosystems
 - error-envelope: API documentation, err-envelope: Go error patterns
-- dotfiles, dotclaude, utf8fx: CLI tool documentation
+- dotfiles, dotclaude, mdfx: CLI tool documentation
 - Backend experience means you understand the systems
 
 #### 5. Senior Technical Writer - Developer Experience
@@ -740,8 +740,8 @@ You understand:
 
 **Value:** Transforms GCP Secret Manager development from cloud-dependent (auth + network) into fast, reliable local experience enabling offline work, reduced CI/CD costs, and consistent testing environments.
 
-### 8. utf8fx
-**GitHub:** https://github.com/blackwell-systems/utf8fx
+### 8. mdfx
+**GitHub:** https://github.com/blackwell-systems/mdfx
 
 **Problem:** External README enhancement services (shields.io) have limited customization, require network access, and break documentation builds when they go down.
 
