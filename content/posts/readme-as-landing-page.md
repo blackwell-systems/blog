@@ -58,7 +58,7 @@ The pattern is predictable:
 2. **Add "just one more thing"** - Someone asks about error handling, so you add a section
 3. **Duplicate for clarity** - Show the same concept in three languages "to be helpful"
 4. **Inline everything** - Full API reference because "it's convenient"
-5. **Hit 500+ lines** - README is now a documentation dump
+5. **Hit 800+ lines** - README is now a documentation dump
 
 {{< callout type="warning" >}}
 **The Sprawl Problem:** Long READMEs create a discoverability problem. When documentation exceeds 500+ lines, key information (Quick Start, Installation) gets pushed down. Users who arrive looking for a quick evaluation often scroll briefly, then leave to check alternatives. The completeness that feels helpful to maintainers can become a barrier to first-time users.
