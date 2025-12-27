@@ -330,7 +330,3 @@ This is Part 1 of a series on glob patterns. Coming soon:
 - **Part 3:** Mastering .gitignore patterns
 - **Part 4:** Glob vs regex: when to use each
 - **Part 5:** Advanced glob: negation, ranges, and tool-specific extensions
-
----
-
-**Think glob deserves explicit teaching?** Or is learning by osmosis fine? Drop a comment.
