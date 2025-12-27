@@ -600,46 +600,6 @@ MIT
 
 Here's where different content belongs:
 
-{{< mermaid >}}
-flowchart TB
-    subgraph readme["README.md (Landing Page)"]
-        hero["One-line value prop"]
-        quick["One working example"]
-        features["Feature bullets + links"]
-        install["Installation command"]
-    end
-
-    subgraph quickref["Quick References"]
-        api["API.md - Complete API reference"]
-        errors["ERROR_CODES.md - All error codes"]
-        examples["EXAMPLES.md - Example gallery"]
-    end
-
-    subgraph guides["Guides & Deep Dives"]
-        arch["ARCHITECTURE.md - Design decisions"]
-        migration["MIGRATION.md - Version upgrades"]
-        contrib["CONTRIBUTING.md - Dev guide"]
-        tutorial["docs/TUTORIAL.md - Step-by-step"]
-    end
-
-    subgraph generated["Generated Documentation"]
-        docsrs["docs.rs - API documentation"]
-        wiki["GitHub Wiki - Community content"]
-    end
-
-    readme --> quickref
-    readme --> guides
-    readme --> generated
-    quickref --> guides
-
-    style readme fill:#3A4A5C,stroke:#6b7280,color:#f0f0f0
-    style quickref fill:#3A4C43,stroke:#6b7280,color:#f0f0f0
-    style guides fill:#4C4538,stroke:#6b7280,color:#f0f0f0
-    style generated fill:#4C3A3C,stroke:#6b7280,color:#f0f0f0
-{{< /mermaid >}}
-
-**Content placement guide:**
-
 | Content Type | Location | Why |
 |--------------|----------|-----|
 | Value proposition | README | First thing users see |
