@@ -557,6 +557,7 @@ You understand:
 **Open Source Projects (10 Production Tools):**
 
 ### 1. blackdot
+**GitHub:** https://github.com/blackwell-systems/blackdot
 
 **Problem:** Maintaining consistent development environments across multiple machines and platforms is a nightmare of manual syncing, platform-specific quirks, and configuration drift.
 
@@ -576,6 +577,7 @@ You understand:
 **Self-Healing Architecture:** Continuous monitoring of configuration drift, missing dependencies, and secrets availability with automatic repair—transforming static dotfiles into an intelligent, self-maintaining development environment orchestration system.
 
 ### 2. dotclaude
+**GitHub:** https://github.com/blackwell-systems/dotclaude
 
 **Problem:** Working across multiple projects with different coding standards, tech stacks, and compliance requirements means constantly switching Claude Code contexts manually—or worse, using the wrong standards for the current project and getting inappropriate AI guidance.
 
@@ -609,6 +611,7 @@ You understand:
 **Value:** Transforms Claude Code from a static AI assistant into a context-aware development partner that automatically adapts guidance to specific project requirements, preventing inappropriate suggestions and maintaining consistency across team members.
 
 ### 3. error-envelope (Rust)
+**GitHub:** https://github.com/blackwell-systems/error-envelope
 
 **Problem:** Rust web services return inconsistent error structures across endpoints, frustrating API consumers and complicating monitoring. Every endpoint handles errors differently.
 
@@ -630,6 +633,7 @@ You understand:
 **Architectural Sophistication:** Transforms ad-hoc error handling into a systematic approach where invalid error states are difficult to represent at compile time.
 
 ### 4. err-envelope (Go)
+**GitHub:** https://github.com/blackwell-systems/err-envelope
 
 **Problem:** Standard Go error handling results in inconsistent JSON responses and poor observability across microservices—every service invents its own error format.
 
@@ -650,6 +654,7 @@ You understand:
 **Value:** Transforms Go's simple error interface into a rich, traceable system without sacrificing performance or idiomaticity.
 
 ### 5. vaultmux
+**GitHub:** https://github.com/blackwell-systems/vaultmux
 
 **Problem:** Teams use different secret providers (Bitwarden, 1Password, AWS, GCP, Azure, pass) requiring provider-specific code in every application—vendor lock-in, painful migrations, and duplicate secret management logic across services.
 
@@ -688,6 +693,7 @@ You understand:
 **Value:** Eliminates vendor lock-in, enables customer choice of secret provider, prevents secret management code duplication, and supports testing without production credentials—transforming fragmented provider-specific implementations into a unified, testable abstraction.
 
 ### 6. pipeboard
+**GitHub:** https://github.com/blackwell-systems/pipeboard
 
 **Problem:** Traditional clipboard managers treat clipboards as ephemeral, single-device state—useless for developers working across multiple machines who need persistent, synchronized, programmable clipboard workflows.
 
@@ -710,6 +716,7 @@ You understand:
 **Architectural Sophistication:** Zero-telemetry design (all data on your machines), slot management treating clipboard history as queryable state, and programmable workflows. Built in Go (92.2%) with modular separation of clipboard management, authentication, encryption, and synchronization—systems thinking applied to a tool most never considered programmable.
 
 ### 7. gcp-secret-manager-emulator
+**GitHub:** https://github.com/blackwell-systems/gcp-secret-manager-emulator
 
 **Problem:** Testing GCP Secret Manager code requires cloud connectivity, authentication, and expensive resources—slowing down local development and CI/CD pipelines.
 
@@ -734,6 +741,7 @@ You understand:
 **Value:** Transforms GCP Secret Manager development from cloud-dependent (auth + network) into fast, reliable local experience enabling offline work, reduced CI/CD costs, and consistent testing environments.
 
 ### 8. utf8fx
+**GitHub:** https://github.com/blackwell-systems/utf8fx
 
 **Problem:** External README enhancement services (shields.io) have limited customization, require network access, and break documentation builds when they go down.
 
@@ -759,6 +767,7 @@ You understand:
 **Value:** Transforms README creation from external service dependence into a powerful, flexible toolset with zero-dependency reliability.
 
 ### 9. domainstack
+**GitHub:** https://github.com/blackwell-systems/domainstack
 
 **Problem:** Business rules duplicated across frontend TypeScript, backend validation, and API docs lead to drift, bugs, and massive maintenance overhead.
 
@@ -780,6 +789,7 @@ You understand:
 **Value:** Eliminates validation duplication across the stack while maintaining compile-time guarantees and precise user feedback.
 
 ### 10. prettychars
+**GitHub:** https://github.com/blackwell-systems/prettychars
 
 **Problem:** Terminal applications need Unicode glyphs, but runtime string matching creates latency bottlenecks and inconsistent rendering frustrates UIs.
 
