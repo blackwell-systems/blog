@@ -2,12 +2,12 @@
 title: "Glob Patterns: Complete Syntax Reference with Examples"
 date: 2025-12-27
 draft: false
+series: ["glob-patterns"]
+seriesOrder: 2
 tags: ["shell", "unix", "patterns", "glob", "cli", "developer-tools", "terminal", "bash", "zsh", "reference", "syntax", "gitignore", "file-matching"]
 categories: ["developer-tools", "tutorials"]
 description: "Complete reference for glob pattern syntax - wildcards, character classes, brace expansion, and shell-specific features. Every pattern explained with examples."
 summary: "Part 2: A comprehensive reference covering every glob pattern from basic wildcards to advanced features like brace expansion and extended globs. Learn the rules that apply everywhere."
-series: "glob-patterns"
-seriesOrder: 2
 ---
 
 In [Part 1](/posts/glob-patterns-invisible-abstraction/), we covered why glob patterns are everywhere but never taught explicitly. This is the reference you wish existed when you first encountered `**/*.js` or tried to write a `.gitignore`.
