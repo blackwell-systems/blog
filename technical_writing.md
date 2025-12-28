@@ -45,8 +45,8 @@ Personal reference for pursuing technical writing opportunities while maintainin
 - Founder, Blackwell Systems (OSS + future proprietary developer tools)
 - 10 open-source projects with comprehensive documentation
 - Published technical blog: 94,152 lines (27 articles)
-- Book manuscript near-publication: "You Don't Know JSON" - 95,150 words (~350 pages), content complete
-- Total documentation: ~225,000 lines across all work
+- Book manuscript near-publication: "You Don't Know JSON" - 96,110 words (28,716 lines, ~350 pages), content complete
+- Total documentation: ~226,000 lines across all work
 - 3x AWS Certified, Azure, Terraform
 
 **Strategy:** Dual employment - maintain backend engineering while pursuing technical writing contracts/opportunities.
@@ -566,12 +566,13 @@ You understand:
 - All articles: comprehensive (1,500-5,000+ words), with code examples and diagrams
 
 **Book Manuscript (Near-Publication):**
-- **"You Don't Know JSON"** - 95,150 words (~350-370 pages), 14 chapters + 3 appendices
+- **"You Don't Know JSON"** - 96,110 words (28,716 lines, ~350-370 pages), 14 chapters + 3 appendices
 - Comprehensive technical book covering JSON architecture, API design, security, testing, and data pipelines
-- 54+ professional mermaid diagrams with consistent visual theme
+- 64+ professional mermaid diagrams with consistent visual theme
 - Production-ready code examples in JavaScript, Go, Python, Rust, SQL, Bash
-- Status: Content complete (35,703 lines), needs only cover design and final polish before publishing
-- Target: January 2026
+- Cover design complete (2100×3000px for Leanpub digital format)
+- Status: Content and cover complete, ready for final publishing setup
+- Target: January 2026 launch
 
 **Open Source Projects (10 Production Tools):**
 
@@ -877,9 +878,9 @@ async fn handler() -> Result<Json<User>, Error> {
 
 **Documentation Volume:**
 - Blog: 94,152 lines (verified)
-- Book manuscript: 35,703 lines (verified)
+- Book manuscript: 28,716 lines / 96,110 words (verified)
 - OSS projects: ~96,000 lines (9 verified at 86,011 + pipeboard estimated ~10k)
-- Total: ~225,000 lines
+- Total: ~219,000 lines / 96,110+ words
 
 **This is Staff-level documentation volume.**
 
