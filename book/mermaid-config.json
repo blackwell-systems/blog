@@ -8,16 +8,9 @@
     "primaryBorderColor": "#6b7280",
     "secondaryColor": "#3A4C43",
     "tertiaryColor": "#4C4538",
-    "lineColor": "#6b7280",
-    "textColor": "#f0f0f0",
-    "mainBkg": "#3A4A5C",
-    "secondBkg": "#3A4C43",
-    "cScale0": "#5B8AAF",
-    "cScale1": "#3A4C43",
-    "cScale2": "#4C4538",
-    "cScale3": "#5B8AAF",
-    "cScale4": "#3A4C43",
-    "cScale5": "#4C4538"
+    "noteBkgColor": "#4C3A3C",
+    "noteTextColor": "#f0f0f0",
+    "noteBorderColor": "#6b7280"
   },
   "flowchart": {
     "curve": "basis"
