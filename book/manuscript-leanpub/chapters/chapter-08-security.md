@@ -1,18 +1,8 @@
----
-title: "You Don't Know JSON: Part 7 - Security: Authentication, Signatures, and Attacks"
-date: 2025-12-15
-draft: false
-series: ["you-dont-know-json"]
-seriesOrder: 7
-tags: ["json", "security", "jwt", "jws", "jwe", "authentication", "encryption", "cryptography", "oauth", "api-security", "web-security", "tokens", "signing", "canonicalization", "injection", "deserialization", "attacks", "vulnerabilities", "best-practices", "hmac", "rsa"]
-categories: ["fundamentals", "programming", "security"]
-description: "Master JSON security: JWT authentication, JWS signing, JWE encryption, and common attacks. Learn canonicalization, algorithm confusion, injection vulnerabilities, and production security best practices."
-summary: "JSON has no built-in security. The ecosystem response: JWT for authentication, JWS for signing, JWE for encryption. Learn how these work, common attacks (algorithm confusion, injection, timing), and how to secure JSON-based systems."
----
+# Chapter 8: JSON Security - Authentication, Signatures, and Attacks
 
-In [Part 1](#), we explored JSON's origins. In [Part 2](#), we added validation. In [Part 3](#) and [Part 4](#), we optimized with binary formats. In [Part 5](#), we built RPC protocols. In [Part 6](#), we enabled streaming.
+We've explored how JSON's ecosystem filled gaps modularly: validation (Chapter 3), storage efficiency (Chapter 4), network optimization (Chapter 5), protocols (Chapter 6), and streaming (Chapter 7). One critical gap remains: **security**.
 
-Now we complete the series with JSON's most critical missing piece: **security**.
+JSON carries authentication tokens, financial data, and sensitive information across networks - but the format provides no security primitives. No authentication, no encryption, no signing. Just plain text that anyone can read and modify.
 
 {blurb, class: warning}
 **The Security Gap:** JSON provides no authentication, no encryption, no signing, no integrity checking. It's pure data with zero security primitives. In a world where JSON carries user credentials, financial data, and access tokens across the internet, this incompleteness creates serious vulnerabilities.
@@ -1966,11 +1956,13 @@ With JWT, JWS, and JWE, we've seen how JSON's security layer follows the same pa
 
 **The trade-off:** Flexibility requires knowledge. Developers must understand algorithm confusion attacks, token substitution, timing vulnerabilities. XML's bundled security was harder to get started but forced awareness. JSON's modular security is easier to adopt but easier to get wrong.
 
-This completes our technical journey through the JSON ecosystem. But there's a deeper story here about **why** JSON succeeded, what it teaches us about technology evolution, and the hidden costs of modularity.
+**We've now completed the core modular layers of the JSON ecosystem.** Each chapter showed an independent solution to a specific gap: schemas for validation, binary formats for performance, protocols for structure, streaming for big data, and cryptographic standards for security.
 
-{blurb, class: information}
-**Continue to Part 8:** [Lessons from the JSON Revolution](#) - Explore the architectural zeitgeist, the JSX vindication, and what JSON teaches us about technology evolution beyond data formats.
-{/blurb}
+But understanding what JSON has doesn't explain what you should do with it. The next chapters shift from ecosystem mechanics to practical application: how to design APIs, build data pipelines, test JSON systems, and evaluate when JSON is the right choice versus when it's not.
+
+Chapter 9 synthesizes the lessons from JSON's evolution - what this ecosystem's success teaches us about technology design, architectural thinking, and when to choose modularity versus integration.
+
+**Next:** Chapter 9 - Lessons from the JSON Revolution
 
 ### Security Best Practices Summary
 
