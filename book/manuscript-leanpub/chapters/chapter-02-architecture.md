@@ -1148,16 +1148,15 @@ This chapter established the architectural framework for understanding the rest 
    - Also enables uninformed ignorance
    - Fragmentation is the cost of flexibility
 
-**The remaining chapters** show how JSON's modular ecosystem filled every gap:
-- Chapter 3: Validation (JSON Schema)
-- Chapter 4-5: Performance (Binary formats)
-- Chapter 6: Protocols (JSON-RPC)
-- Chapter 7: Streaming (JSON Lines)
-- Chapter 8: Security (JWT/JWS/JWE)
+**Now we examine how this modular approach played out in practice.** JSON's deliberate incompleteness created gaps that the ecosystem filled independently. The first and most critical gap: validation. 
 
-Each chapter follows the pattern: **JSON left a gap → ecosystem filled it → modular solution succeeded.**
+JSON parsers accept any syntactically valid structure, but can't tell you if the data makes sense for your application. `{"age": "thirty"}` parses successfully, but crashes your code when it expects a number. XML had XSD built-in from the start. JSON left validation undefined.
 
-**In Chapter 3**, we'll examine the first gap: validation. How does a format with no type system enforce data contracts? The answer: JSON Schema, a separate standard that lets you opt into validation only when you need it.
+This wasn't an oversight - it was an architectural decision. Rather than standardizing validation within JSON itself (the monolithic approach), the ecosystem developed JSON Schema as a separate, optional layer. This modular solution lets you add validation only when you need it, choose between competing validator implementations, and evolve validation rules independently of the JSON format.
+
+The next chapter explores JSON Schema in depth: how it works, why it succeeded as a separate standard, and how to use it to transform JSON from "untyped text" into "strongly validated contracts" without sacrificing the simplicity that made JSON successful.
+
+**Next:** Chapter 3 - JSON Schema and the Art of Validation
 
 ---
 
