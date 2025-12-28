@@ -90,25 +90,15 @@ Understanding this distinction explains:
 
 **The philosophy:** Build small, focused components. Let developers choose what they need. Enable independent evolution. Optimize for flexibility over completeness.
 
-{{< mermaid >}}
-timeline
-    title Software Architecture Evolution
-    1990s : Monolithic Applications
-          : CORBA, J2EE, XML
-          : All-in-one frameworks
-    2000-2005 : SOA Emergence
-          : Service-Oriented Architecture
-          : Web Services (still monolithic)
-    2005-2010 : REST + Agile
-          : Lightweight services
-          : JSON adoption
-    2010-2015 : Microservices
-          : Docker, containers
-          : Modular systems
-    2015-2025 : Cloud Native
-          : Kubernetes, serverless
-          : Compose everything
-{{< /mermaid >}}
+**Software Architecture Evolution:**
+
+| Era | Pattern | Key Technologies | Philosophy |
+|-----|---------|-----------------|------------|
+| **1990s** | Monolithic Applications | CORBA, J2EE, XML | All-in-one frameworks |
+| **2000-2005** | SOA Emergence | Service-Oriented Architecture | Web Services (still monolithic) |
+| **2005-2010** | REST + Agile | Lightweight services, JSON adoption | Modular thinking begins |
+| **2010-2015** | Microservices | Docker, containers | Modular systems |
+| **2015-2025** | Cloud Native | Kubernetes, serverless | Compose everything |
 
 ---
 
