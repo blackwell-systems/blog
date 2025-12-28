@@ -122,10 +122,11 @@ while IFS= read -r filepath; do
     fi
 done < Book.txt
 
-# Copy images directory
+# Copy images to resources/mermaid-diagrams (for Leanpub Editor Resources)
 echo ""
-echo "Copying images..."
-cp -r "$SOURCE_DIR/images" "$OUTPUT_DIR/"
+echo "Copying images to resources/mermaid-diagrams/..."
+mkdir -p "$OUTPUT_DIR/resources/mermaid-diagrams"
+cp "$SOURCE_DIR/images/diagrams/"*.png "$OUTPUT_DIR/resources/mermaid-diagrams/"
 
 echo ""
 echo "=== Conversion Complete ==="
