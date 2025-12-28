@@ -1,18 +1,8 @@
----
-title: "You Don't Know JSON: Part 6 - JSON Lines: Processing Gigabytes Without Running Out of Memory"
-date: 2025-12-15
-draft: false
-series: ["you-dont-know-json"]
-seriesOrder: 6
-tags: ["json", "jsonl", "json-lines", "ndjson", "streaming", "log-processing", "data-pipelines", "unix", "etl", "big-data", "kafka", "elasticsearch", "log-aggregation", "grep", "awk", "sed", "stream-processing", "newline-delimited", "append-only", "fault-tolerant"]
-categories: ["fundamentals", "programming", "data-engineering"]
-description: "Master JSON Lines (JSONL): the streaming-friendly JSON format for log processing, data pipelines, and big data. Learn how newline-delimited JSON enables Unix pipelines, fault-tolerant processing, and handling datasets larger than memory."
-summary: "Standard JSON can't stream - you must parse the entire document. JSON Lines solves this with one JSON object per line, enabling streaming processing, log aggregation, Unix pipelines, and handling gigabyte-scale datasets with constant memory usage."
----
+# Chapter 7: JSON Lines - Processing Gigabytes Without Running Out of Memory
 
-In [Part 1](#), we explored JSON's origins. In [Part 2](#), we added validation. In [Part 3](#) and [Part 4](#), we optimized with binary formats. In [Part 5](#), we built RPC protocols.
+JSON-RPC (Chapter 6) solved protocol structure for remote calls. But protocols and efficient encoding don't help when you need to process datasets that don't fit in memory. Standard JSON arrays must be parsed completely before you can access the first element.
 
-Now we tackle JSON's streaming problem: **you can't process JSON incrementally**.
+This chapter explores another modular solution: **JSON Lines** - a simple convention that enables streaming by separating JSON objects with newlines. No new format, no parser changes, just a pattern that unlocks streaming capabilities.
 
 {blurb, class: warning}
 **The Fundamental Problem:** Standard JSON arrays require parsing the entire document. You cannot read the first element until you've read the last closing bracket. This all-or-nothing parsing makes JSON unsuitable for large datasets.
@@ -2153,9 +2143,13 @@ JSON Lines is the pragmatic solution to JSON's streaming problem. It's not a new
 - **Part 7**: Security (JWT, canonicalization, attacks)
 {/blurb}
 
-In Part 6, we'll complete the series with JSON security: JWT authentication, JWS/JWE encryption, canonicalization for signatures, and common JSON-based attacks (injection, deserialization, schema poisoning).
+**The pattern continues:** JSON Lines demonstrates modularity again - it's a convention, not a new format. Works with any JSON parser, any transport, any processing tool. The ecosystem solved streaming without changing JSON itself.
 
-**Next:** Part 6 - JSON Security: Authentication, Encryption, and Attacks
+We've now covered the major modular layers of the JSON ecosystem: validation, storage, network efficiency, protocols, and streaming. But one critical gap remains: **security**. JSON carries sensitive data across networks and between services, but the format itself has no security features.
+
+Chapter 8 explores how the ecosystem addressed this - JWT for authentication tokens, JWS/JWE for signing and encryption, and defensive patterns against JSON-specific attacks.
+
+**Next:** Chapter 8 - JSON Security: Authentication, Encryption, and Attacks
 
 ---
 

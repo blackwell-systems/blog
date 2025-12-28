@@ -1,18 +1,8 @@
----
-title: "You Don't Know JSON: Part 5 - JSON-RPC: When REST Isn't Enough"
-date: 2025-12-15
-draft: false
-series: ["you-dont-know-json"]
-seriesOrder: 5
-tags: ["json", "json-rpc", "rpc", "remote-procedure-call", "api-design", "microservices", "ethereum", "websocket", "rest", "grpc", "protocol", "node-rpc", "go-rpc", "python-rpc", "api-protocols", "distributed-systems", "language-server-protocol", "batch-requests", "realtime-api", "blockchain"]
-categories: ["fundamentals", "programming", "architecture"]
-description: "Master JSON-RPC: the simple RPC protocol built on JSON. Learn when REST's resource model breaks down, how JSON-RPC enables action-oriented APIs, and why Ethereum, VS Code, and Bitcoin chose this protocol."
-summary: "REST is great for resources, but what about actions? JSON-RPC provides a simple, transport-agnostic protocol for calling remote functions. Learn the spec, implementation patterns, and why major projects like Ethereum and VS Code chose JSON-RPC over REST."
----
+# Chapter 6: JSON-RPC - When REST Isn't Enough
 
-In [Part 1](#), we explored JSON's origins. In [Part 2](#), we added validation. In [Part 3](#) and [Part 4](#), we optimized performance with binary formats.
+We've covered validation (JSON Schema), storage optimization (JSONB/BSON), and network efficiency (MessagePack/CBOR). Each addressed a different gap in JSON's capabilities as a modular, independent solution.
 
-Now we examine JSON as a **protocol layer** - not just data format, but a communication standard for distributed systems.
+Now we examine another gap: **protocol conventions**. JSON defines data structure, but doesn't define how remote procedure calls should work. REST emerged as one answer, but its resource-oriented model doesn't fit every problem.
 
 {blurb, class: information}
 **What XML Had:** SOAP and XML-RPC (1999-2003)
@@ -49,7 +39,7 @@ This article covers the JSON-RPC 2.0 specification, implementation patterns, rea
 
 ## Running Example: User API with JSON-RPC
 
-In [Part 1](#), we started with basic JSON users. In [Part 2](#), we added validation. In [Part 3](#), we stored them efficiently in JSONB.
+Our running User API example from Chapter 1 now has validation (Chapter 3) and efficient storage (Chapter 4).
 
 Now JSON-RPC adds the **protocol layer** - structured remote function calls for our User API.
 
@@ -2299,20 +2289,13 @@ JSON-RPC fills the gap between REST's resource orientation and gRPC's performanc
 - Performance-critical systems (use gRPC)
 - Need strong typing (use gRPC with Protobuf)
 
-{blurb, class: information}
-**Series Progress:**
-- **Part 1**: JSON's origins and fundamental weaknesses
-- **Part 2**: JSON Schema for validation and contracts
-- **Part 3**: Binary JSON in databases (JSONB, BSON)
-- **Part 4**: Binary JSON for APIs (MessagePack, CBOR)
-- **Part 5** (this article): JSON-RPC protocol and patterns
-- **Part 6**: Streaming JSON with JSON Lines
-- **Part 7**: Security (JWT, canonicalization, attacks)
-{/blurb}
+**JSON-RPC demonstrates the modular pattern once again:** it's a protocol layer that works with any serialization format (JSON, MessagePack, CBOR) and any transport (HTTP, WebSockets, IPC). Each component evolves independently.
 
-In Part 5, we'll tackle streaming JSON with JSON Lines (JSONL) - solving JSON's inability to handle large datasets that don't fit in memory. We'll explore newline-delimited JSON for log processing, data pipelines, and Unix-style streaming.
+But protocols and efficient encoding don't solve every problem. What about processing datasets too large to fit in memory? Standard JSON arrays require loading everything at once - fundamentally incompatible with streaming.
 
-**Next:** Part 5 - Streaming JSON: Processing Gigabytes Without Running Out of Memory
+Chapter 7 explores JSON Lines - another modular solution that enables streaming by adding one simple convention: separate JSON objects with newlines. No parser changes needed, no new format, just a pattern that unlocks streaming for log processing, data pipelines, and big data workflows.
+
+**Next:** Chapter 7 - JSON Lines: Processing Gigabytes Without Running Out of Memory
 
 ---
 

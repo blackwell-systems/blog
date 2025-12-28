@@ -1,18 +1,8 @@
----
-title: "You Don't Know JSON: Part 4 - Binary JSON for APIs and Data Transfer"
-date: 2025-12-15
-draft: false
-series: ["you-dont-know-json"]
-seriesOrder: 4
-tags: ["json", "messagepack", "cbor", "binary-serialization", "performance", "optimization", "api-performance", "microservices", "bandwidth-optimization", "data-transfer", "mobile", "iot"]
-categories: ["fundamentals", "programming", "performance"]
-description: "Master MessagePack and CBOR for API optimization: universal binary serialization that cuts bandwidth costs and improves mobile performance. Compare with Protocol Buffers and learn when to use each format."
-summary: "Beyond database storage, binary JSON formats optimize API data transfer. MessagePack provides universal serialization with 30-40% size reduction. CBOR adds IETF standardization for IoT and security. Learn when binary beats JSON for network efficiency."
----
+# Chapter 5: Binary JSON for APIs and Data Transfer
 
-In [Part 1](#), we explored JSON's triumph through simplicity. In [Part 2](#), we added validation with JSON Schema. In [Part 3](#), we optimized database storage with JSONB and BSON.
+Chapter 4 showed how databases optimize JSON storage with binary formats (JSONB, BSON). But database storage is only half the performance equation. The other half: **network transfer**.
 
-Now we tackle the next performance frontier: **API data transfer and bandwidth optimization**.
+Every API response travels across the network as bytes. JSON's text format is human-readable but wasteful for high-volume APIs, mobile applications, and IoT devices where bandwidth costs real money.
 
 While database binary formats optimize storage and queries, API binary formats optimize network efficiency - smaller payloads, faster serialization, and reduced bandwidth costs for mobile and distributed systems.
 
@@ -1819,18 +1809,13 @@ Binary JSON formats solve the performance limitations of text JSON for API and d
 
 ---
 
-## What's Next: Streaming JSON
+**We've now covered two modular performance layers:** database storage optimization (Chapter 4) and network transfer optimization (this chapter). Both solve performance problems independently, without changing JSON's core format.
 
-We've optimized JSON storage (Part 3) and network transfer (this part). But what about processing large datasets that don't fit in memory? What about streaming APIs and log processing?
+But optimizing individual requests isn't enough when APIs need to support structured remote procedure calls with consistent error handling, batching, and notifications. Chapter 6 explores JSON-RPC - another modular layer that adds protocol conventions on top of JSON without requiring new serialization formats.
 
-In [Part 5](#), we'll explore JSON-RPC - adding structured RPC protocols on top of JSON for API consistency and type safety. Then in [Part 6](#), we'll tackle streaming with JSON Lines (JSONL) for processing gigabytes of data without running out of memory.
+This demonstrates the modularity pattern again: MessagePack handles efficient encoding, JSON-RPC handles protocol structure. Each solves one problem, neither depends on the other.
 
-**Coming up:**
-- JSON-RPC: Structured remote procedure calls
-- JSON Lines: Streaming and big data processing
-- Security considerations: JWT, canonicalization, and attacks
-
-The goal remains the same - extending JSON's capabilities while maintaining its fundamental simplicity and flexibility.
+**Next:** Chapter 6 - JSON-RPC: Structured Remote Procedure Calls
 
 ---
 
