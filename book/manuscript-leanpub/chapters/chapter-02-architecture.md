@@ -104,7 +104,7 @@ XML wasn't designed as just a data format. It was designed as a **complete solut
 **The XML stack (all standardized together):**
 
 
-![XML Monolithic Stack](chapter-02-architecture-diagram-xml-stack.png){width=70%}
+![Diagram 1](chapter-02-architecture-diagram-1.png){width=70%}
 
 
 **Every layer was specified by the same body (W3C) and designed to work together.**
@@ -219,7 +219,7 @@ No validation. No querying. No transformation. No protocols. No security. Just p
 **The JSON "stack" (loosely coupled components):**
 
 
-![JSON Modular Stack](chapter-02-architecture-diagram-json-stack.png){width=70%}
+![Diagram 3](chapter-02-architecture-diagram-3.png){width=70%}
 
 
 **Every layer is specified separately, maintained separately, and adopted independently.**
@@ -386,7 +386,7 @@ cat access.log | grep "ERROR" | cut -d' ' -f1 | sort | uniq -c
 **Microservices (2010s) applied modularity to architecture:**
 
 
-![Microservices Architecture](chapter-02-architecture-diagram-microservices.png){width=85%}
+![Diagram 4](chapter-02-architecture-diagram-4.png){width=85%}
 
 
 **Each service:**
