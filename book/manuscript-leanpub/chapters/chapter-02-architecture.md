@@ -103,27 +103,9 @@ XML wasn't designed as just a data format. It was designed as a **complete solut
 
 **The XML stack (all standardized together):**
 
-```
-┌─────────────────────────────────────┐
-│         Security Layer              │
-│  XML Signature, XML Encryption      │
-├─────────────────────────────────────┤
-│         Protocol Layer              │
-│    SOAP, WSDL, WS-* (50+ specs)     │
-├─────────────────────────────────────┤
-│       Transformation Layer          │
-│         XSLT, XSL-FO                │
-├─────────────────────────────────────┤
-│          Query Layer                │
-│        XPath, XQuery                │
-├─────────────────────────────────────┤
-│        Validation Layer             │
-│     DTD, XSD, RelaxNG               │
-├─────────────────────────────────────┤
-│          Core Layer                 │
-│     XML 1.0, Namespaces             │
-└─────────────────────────────────────┘
-```
+
+![XML Monolithic Stack](chapter-02-architecture-diagram-xml-stack.png){width=70%}
+
 
 **Every layer was specified by the same body (W3C) and designed to work together.**
 
@@ -236,27 +218,9 @@ No validation. No querying. No transformation. No protocols. No security. Just p
 
 **The JSON "stack" (loosely coupled components):**
 
-```
-┌─────────────────────────────────────┐
-│         Security Layer              │
-│    JWT, JWS, JWE (separate RFCs)   │  ← Independent
-├─────────────────────────────────────┤
-│         Protocol Layer              │
-│   JSON-RPC, REST, GraphQL (separate)│  ← Independent
-├─────────────────────────────────────┤
-│          Query Layer                │
-│   jq, JSONPath, JMESPath (separate) │  ← Independent
-├─────────────────────────────────────┤
-│        Validation Layer             │
-│   JSON Schema (separate standard)   │  ← Independent
-├─────────────────────────────────────┤
-│       Performance Layer             │
-│ MessagePack, CBOR, JSONB (separate) │  ← Independent
-├─────────────────────────────────────┤
-│          Core Layer                 │
-│       JSON (RFC 8259 only)          │
-└─────────────────────────────────────┘
-```
+
+![JSON Modular Stack](chapter-02-architecture-diagram-json-stack.png){width=70%}
+
 
 **Every layer is specified separately, maintained separately, and adopted independently.**
 
@@ -421,16 +385,9 @@ cat access.log | grep "ERROR" | cut -d' ' -f1 | sort | uniq -c
 
 **Microservices (2010s) applied modularity to architecture:**
 
-```
-┌──────────────┐    ┌──────────────┐    ┌──────────────┐
-│   User       │    │   Order      │    │   Payment    │
-│   Service    │───>│   Service    │───>│   Service    │
-│              │    │              │    │              │
-│ - JSON API   │    │ - JSON API   │    │ - JSON API   │
-│ - PostgreSQL │    │ - MongoDB    │    │ - MySQL      │
-│ - Go         │    │ - Node.js    │    │ - Python     │
-└──────────────┘    └──────────────┘    └──────────────┘
-```
+
+![Microservices Architecture](chapter-02-architecture-diagram-microservices.png){width=85%}
+
 
 **Each service:**
 - Different language (Go, Node.js, Python)
