@@ -178,7 +178,7 @@ flowchart TB
     subgraph edge["Edge Computing"]
         cf[Cloudflare Workers<br/>JSON everywhere]
         fastly[Fastly Compute<br/>JSON processing]
-        lambda[Lambda@Edge<br/>JSON transforms]
+        lambda[Lambda at Edge<br/>JSON transforms]
     end
     
     subgraph wasm["WebAssembly"]
