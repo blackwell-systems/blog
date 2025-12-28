@@ -10,7 +10,7 @@ description: "Master JSON security: JWT authentication, JWS signing, JWE encrypt
 summary: "JSON has no built-in security. The ecosystem response: JWT for authentication, JWS for signing, JWE for encryption. Learn how these work, common attacks (algorithm confusion, injection, timing), and how to secure JSON-based systems."
 ---
 
-In [Part 1]({{< relref "you-dont-know-json-part-1-origins.md" >}}), we explored JSON's origins. In [Part 2]({{< relref "you-dont-know-json-part-2-json-schema.md" >}}), we added validation. In [Part 3]({{< relref "you-dont-know-json-part-3-binary-databases.md" >}}) and [Part 4]({{< relref "you-dont-know-json-part-4-binary-apis.md" >}}), we optimized with binary formats. In [Part 5]({{< relref "you-dont-know-json-part-5-json-rpc.md" >}}), we built RPC protocols. In [Part 6]({{< relref "you-dont-know-json-part-6-json-lines.md" >}}), we enabled streaming.
+In [Part 1](#), we explored JSON's origins. In [Part 2](#), we added validation. In [Part 3](#) and [Part 4](#), we optimized with binary formats. In [Part 5](#), we built RPC protocols. In [Part 6](#), we enabled streaming.
 
 Now we complete the series with JSON's most critical missing piece: **security**.
 
@@ -56,7 +56,7 @@ This article covers:
 
 ## Running Example: Securing the User API
 
-In [Part 1]({{< relref "you-dont-know-json-part-1-origins.md" >}}), we created basic JSON users. In [Part 2]({{< relref "you-dont-know-json-part-2-json-schema.md" >}}), we added validation. In [Part 3]({{< relref "you-dont-know-json-part-3-binary-databases.md" >}}), we stored them in JSONB. In [Part 5]({{< relref "you-dont-know-json-part-5-json-rpc.md" >}}), we added protocol structure. In [Part 6]({{< relref "you-dont-know-json-part-6-json-lines.md" >}}), we enabled streaming exports.
+In [Part 1](#), we created basic JSON users. In [Part 2](#), we added validation. In [Part 3](#), we stored them in JSONB. In [Part 5](#), we added protocol structure. In [Part 6](#), we enabled streaming exports.
 
 Now we complete the journey with the **security layer** - protecting our User API with JWT authentication.
 
@@ -1969,7 +1969,7 @@ With JWT, JWS, and JWE, we've seen how JSON's security layer follows the same pa
 This completes our technical journey through the JSON ecosystem. But there's a deeper story here about **why** JSON succeeded, what it teaches us about technology evolution, and the hidden costs of modularity.
 
 {blurb, class: information}
-**Continue to Part 8:** [Lessons from the JSON Revolution]({{< relref "you-dont-know-json-part-8-lessons.md" >}}) - Explore the architectural zeitgeist, the JSX vindication, and what JSON teaches us about technology evolution beyond data formats.
+**Continue to Part 8:** [Lessons from the JSON Revolution](#) - Explore the architectural zeitgeist, the JSX vindication, and what JSON teaches us about technology evolution beyond data formats.
 {/blurb}
 
 ### Security Best Practices Summary
@@ -2012,7 +2012,7 @@ Each part showed the same pattern: identify incompleteness, build modular soluti
 But there's a deeper question: **Why did this approach succeed where XML's integrated approach failed?**
 
 {blurb, class: information}
-**Continue to Part 8:** [Lessons from the JSON Revolution]({{< relref "you-dont-know-json-part-8-lessons.md" >}}) - The final part explores the meta-patterns: how technologies reflect their era's architectural zeitgeist, why good patterns survive regardless of packaging (JSX vindication), and the hidden costs of modularity through ecosystem fragmentation.
+**Continue to Part 8:** [Lessons from the JSON Revolution](#) - The final part explores the meta-patterns: how technologies reflect their era's architectural zeitgeist, why good patterns survive regardless of packaging (JSX vindication), and the hidden costs of modularity through ecosystem fragmentation.
 
 **Not just about JSON anymore** - Part 8 examines what JSON teaches us about technology evolution, architectural thinking, and why "better" technologies don't always win.
 {/blurb}
@@ -2039,9 +2039,9 @@ But there's a deeper question: **Why did this approach succeed where XML's integ
 - [jose (Node.js - JWE/JWS/JWT)](https://github.com/panva/jose)
 
 **Related Articles:**
-- [Part 1: JSON Origins]({{< relref "you-dont-know-json-part-1-origins.md" >}})
-- [Part 2: JSON Schema]({{< relref "you-dont-know-json-part-2-json-schema.md" >}})
-- [Part 3: Binary JSON in Databases]({{< relref "you-dont-know-json-part-3-binary-databases.md" >}})
-- [Part 4: Binary JSON for APIs]({{< relref "you-dont-know-json-part-4-binary-apis.md" >}})
-- [Part 5: JSON-RPC]({{< relref "you-dont-know-json-part-5-json-rpc.md" >}})
-- [Part 6: JSON Lines]({{< relref "you-dont-know-json-part-6-json-lines.md" >}})
+- [Part 1: JSON Origins](#)
+- [Part 2: JSON Schema](#)
+- [Part 3: Binary JSON in Databases](#)
+- [Part 4: Binary JSON for APIs](#)
+- [Part 5: JSON-RPC](#)
+- [Part 6: JSON Lines](#)

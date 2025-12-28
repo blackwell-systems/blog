@@ -10,7 +10,7 @@ description: "The meta-lessons from JSON's triumph: how architectural zeitgeist 
 summary: "JSON recreated XML's entire ecosystem modularly. JSX brought back XML's syntax. What does this teach us about technology evolution? Explore the architectural zeitgeist, pattern survival, and the modularity paradox: choice vs. discoverability."
 ---
 
-We've completed our journey through the JSON ecosystem. From [origins]({{< relref "you-dont-know-json-part-1-origins.md" >}}) through [validation]({{< relref "you-dont-know-json-part-2-json-schema.md" >}}), [binary formats]({{< relref "you-dont-know-json-part-3-binary-databases.md" >}}) for [databases]({{< relref "you-dont-know-json-part-3-binary-databases.md" >}}) and [APIs]({{< relref "you-dont-know-json-part-4-binary-apis.md" >}}), [protocols]({{< relref "you-dont-know-json-part-5-json-rpc.md" >}}), [streaming]({{< relref "you-dont-know-json-part-6-json-lines.md" >}}), and [security]({{< relref "you-dont-know-json-part-7-security.md" >}}) - each part demonstrated JSON's modular architecture.
+We've completed our journey through the JSON ecosystem. From [origins](#) through [validation](#), [binary formats](#) for [databases](#) and [APIs](#), [protocols](#), [streaming](#), and [security](#) - each part demonstrated JSON's modular architecture.
 
 But there's a deeper story here. **Why did JSON succeed where XML failed?** Not because JSON was "better" in absolute terms, but because it reflected the architectural thinking of its era.
 
@@ -689,10 +689,10 @@ That's what JSON did. That's why it won.
 - [The Pragmatic Programmer](https://pragprog.com/titles/tpp20/) - Timeless principles
 
 **Related series articles:**
-- [Part 1: Origins]({{< relref "you-dont-know-json-part-1-origins.md" >}}) - Where it all began
-- [Part 2: JSON Schema]({{< relref "you-dont-know-json-part-2-json-schema.md" >}}) - Validation layer
-- [Part 3: Binary Databases]({{< relref "you-dont-know-json-part-3-binary-databases.md" >}}) - JSONB, BSON
-- [Part 4: Binary APIs]({{< relref "you-dont-know-json-part-4-binary-apis.md" >}}) - MessagePack, CBOR
-- [Part 5: JSON-RPC]({{< relref "you-dont-know-json-part-5-json-rpc.md" >}}) - Protocol layer
-- [Part 6: JSON Lines]({{< relref "you-dont-know-json-part-6-json-lines.md" >}}) - Streaming
-- [Part 7: Security]({{< relref "you-dont-know-json-part-7-security.md" >}}) - JWT, JWS, JWE
+- [Part 1: Origins](#) - Where it all began
+- [Part 2: JSON Schema](#) - Validation layer
+- [Part 3: Binary Databases](#) - JSONB, BSON
+- [Part 4: Binary APIs](#) - MessagePack, CBOR
+- [Part 5: JSON-RPC](#) - Protocol layer
+- [Part 6: JSON Lines](#) - Streaming
+- [Part 7: Security](#) - JWT, JWS, JWE

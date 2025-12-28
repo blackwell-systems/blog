@@ -1031,7 +1031,7 @@ JSON.stringify(person);
 // TypeError: Converting circular structure to JSON
 ```
 
-You must manually break cycles or use a [serialization library]({{< relref "serialization-explained.md" >}}) that detects and handles them.
+You must manually break cycles or use a [serialization library](#) that detects and handles them.
 
 {blurb, class: warning}
 **Critical Insight:** JSON's weaknesses aren't bugs - they're consequences of extreme simplification. Every missing feature (schemas, comments, binary support) was left out intentionally to keep the format minimal.
@@ -1184,14 +1184,14 @@ JSON's limitations didn't kill it. Instead, an entire ecosystem evolved to addre
 **Transformation:** This single innovation transformed JSON from "hope the data is correct" to "validate at runtime with strict schemas." JSON Schema adds the type safety layer that JSON itself deliberately omitted.
 {/blurb}
 
-**Next article:** [Part 2]({{< relref "you-dont-know-json-part-2-json-schema.md" >}}) dives deep into JSON Schema - how it works, why it matters, and how it solves JSON's validation problem.
+**Next article:** [Part 2](#) dives deep into JSON Schema - how it works, why it matters, and how it solves JSON's validation problem.
 
 ### 2. Binary Variants: JSONB, BSON, MessagePack
 
 **Problem:** Text format is inefficient  
 **Solution:** Binary encoding with JSON-like structure
 
-These formats maintain JSON's structure while using efficient binary [serialization]({{< relref "serialization-explained.md" >}}):
+These formats maintain JSON's structure while using efficient binary [serialization](#):
 
 - **PostgreSQL JSONB:** Decomposed binary format, indexable, faster queries
 - **MongoDB BSON:** Binary JSON with extended types
@@ -1398,7 +1398,7 @@ In Part 2, we'll solve JSON's most critical weakness: the lack of validation. JS
 
 **The core problem JSON Schema solves:** How do you maintain the simplicity of JSON while gaining the safety of typed, validated data?
 
-**Next:** [You Don't Know JSON: Part 2 - JSON Schema and the Art of Validation]({{< relref "you-dont-know-json-part-2-json-schema.md" >}})
+**Next:** [You Don't Know JSON: Part 2 - JSON Schema and the Art of Validation](#)
 
 ---
 

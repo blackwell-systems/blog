@@ -10,7 +10,7 @@ description: "Master binary JSON in databases: PostgreSQL's JSONB and MongoDB's 
 summary: "Database-managed binary JSON formats solve storage and query performance problems. JSONB enables fast PostgreSQL queries with indexing, while BSON adds extended types for MongoDB. Learn when databases beat text JSON."
 ---
 
-In [Part 1]({{< relref "you-dont-know-json-part-1-origins.md" >}}), we explored JSON's triumph through simplicity. In [Part 2]({{< relref "you-dont-know-json-part-2-json-schema.md" >}}), we added validation with JSON Schema. Now we tackle JSON's performance tax when storing millions of documents: **database-managed binary formats**.
+In [Part 1](#), we explored JSON's triumph through simplicity. In [Part 2](#), we added validation with JSON Schema. Now we tackle JSON's performance tax when storing millions of documents: **database-managed binary formats**.
 
 JSON's human-readability is both its greatest strength and its Achilles heel. Every byte is text. Field names repeat in every object. Numbers are stored as strings. Parsing requires scanning every character.
 
@@ -58,7 +58,7 @@ Database binary JSON formats solve this at the storage layer - maintaining JSON'
 
 ## Running Example: Storing 10 Million Users
 
-Our User API from [Part 1]({{< relref "you-dont-know-json-part-1-origins.md" >}}#running-example-building-a-user-api) now has validation from [Part 2]({{< relref "you-dont-know-json-part-2-json-schema.md" >}}). Next challenge: **storing 10 million users efficiently in a database**.
+Our User API from [Part 1](##running-example-building-a-user-api) now has validation from [Part 2](#). Next challenge: **storing 10 million users efficiently in a database**.
 
 **Current user object (text JSON):**
 ```json
@@ -1349,7 +1349,7 @@ Database binary JSON formats excel at different use cases:
 
 Database binary JSON solves storage and query performance within individual databases. But what about data transfer between services, mobile applications, and distributed systems?
 
-In [Part 4]({{< relref "you-dont-know-json-part-4-binary-apis.md" >}}), we'll explore binary JSON formats designed for APIs and data transfer: MessagePack for universal serialization and CBOR for IoT and security protocols. These formats optimize for network bandwidth and serialization speed rather than database storage.
+In [Part 4](#), we'll explore binary JSON formats designed for APIs and data transfer: MessagePack for universal serialization and CBOR for IoT and security protocols. These formats optimize for network bandwidth and serialization speed rather than database storage.
 
 **Coming up:**
 - MessagePack: The universal binary JSON

@@ -10,7 +10,7 @@ description: "Master JSON Lines (JSONL): the streaming-friendly JSON format for 
 summary: "Standard JSON can't stream - you must parse the entire document. JSON Lines solves this with one JSON object per line, enabling streaming processing, log aggregation, Unix pipelines, and handling gigabyte-scale datasets with constant memory usage."
 ---
 
-In [Part 1]({{< relref "you-dont-know-json-part-1-origins.md" >}}), we explored JSON's origins. In [Part 2]({{< relref "you-dont-know-json-part-2-json-schema.md" >}}), we added validation. In [Part 3]({{< relref "you-dont-know-json-part-3-binary-databases.md" >}}) and [Part 4]({{< relref "you-dont-know-json-part-4-binary-apis.md" >}}), we optimized with binary formats. In [Part 5]({{< relref "you-dont-know-json-part-5-json-rpc.md" >}}), we built RPC protocols.
+In [Part 1](#), we explored JSON's origins. In [Part 2](#), we added validation. In [Part 3](#) and [Part 4](#), we optimized with binary formats. In [Part 5](#), we built RPC protocols.
 
 Now we tackle JSON's streaming problem: **you can't process JSON incrementally**.
 
@@ -47,7 +47,7 @@ This article covers streaming JSON processing, log aggregation, Unix pipeline in
 
 ## Running Example: Exporting 10 Million Users
 
-In [Part 1]({{< relref "you-dont-know-json-part-1-origins.md" >}}), we started with basic JSON. In [Part 2]({{< relref "you-dont-know-json-part-2-json-schema.md" >}}), we added validation. In [Part 3]({{< relref "you-dont-know-json-part-3-binary-databases.md" >}}), we stored efficiently in JSONB. In [Part 5]({{< relref "you-dont-know-json-part-5-json-rpc.md" >}}), we added protocol structure.
+In [Part 1](#), we started with basic JSON. In [Part 2](#), we added validation. In [Part 3](#), we stored efficiently in JSONB. In [Part 5](#), we added protocol structure.
 
 Now we face the **scalability problem**: our User API has grown to 10 million users. How do we export them for analytics?
 
@@ -2181,4 +2181,4 @@ In Part 6, we'll complete the series with JSON security: JWT authentication, JWS
 - [Fluentd JSON Lines](https://docs.fluentd.org/parser/json)
 
 **Related:**
-- [Serialization Explained]({{< relref "serialization-explained.md" >}})
+- [Serialization Explained](#)

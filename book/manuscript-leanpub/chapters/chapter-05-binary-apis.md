@@ -10,7 +10,7 @@ description: "Master MessagePack and CBOR for API optimization: universal binary
 summary: "Beyond database storage, binary JSON formats optimize API data transfer. MessagePack provides universal serialization with 30-40% size reduction. CBOR adds IETF standardization for IoT and security. Learn when binary beats JSON for network efficiency."
 ---
 
-In [Part 1]({{< relref "you-dont-know-json-part-1-origins.md" >}}), we explored JSON's triumph through simplicity. In [Part 2]({{< relref "you-dont-know-json-part-2-json-schema.md" >}}), we added validation with JSON Schema. In [Part 3]({{< relref "you-dont-know-json-part-3-binary-databases.md" >}}), we optimized database storage with JSONB and BSON.
+In [Part 1](#), we explored JSON's triumph through simplicity. In [Part 2](#), we added validation with JSON Schema. In [Part 3](#), we optimized database storage with JSONB and BSON.
 
 Now we tackle the next performance frontier: **API data transfer and bandwidth optimization**.
 
@@ -1102,7 +1102,7 @@ app.post('/api/users', async (req, res) => {
 // Step 4: Deprecate JSON after migration complete
 ```
 
-For more on Protocol Buffers, see: [Understanding Protocol Buffers: Part 1]({{< relref "understanding-protobuf-part-1.md" >}})
+For more on Protocol Buffers, see: [Understanding Protocol Buffers: Part 1](#)
 
 ---
 
@@ -1823,7 +1823,7 @@ Binary JSON formats solve the performance limitations of text JSON for API and d
 
 We've optimized JSON storage (Part 3) and network transfer (this part). But what about processing large datasets that don't fit in memory? What about streaming APIs and log processing?
 
-In [Part 5]({{< relref "you-dont-know-json-part-5-json-rpc.md" >}}), we'll explore JSON-RPC - adding structured RPC protocols on top of JSON for API consistency and type safety. Then in [Part 6]({{< relref "you-dont-know-json-part-6-json-lines.md" >}}), we'll tackle streaming with JSON Lines (JSONL) for processing gigabytes of data without running out of memory.
+In [Part 5](#), we'll explore JSON-RPC - adding structured RPC protocols on top of JSON for API consistency and type safety. Then in [Part 6](#), we'll tackle streaming with JSON Lines (JSONL) for processing gigabytes of data without running out of memory.
 
 **Coming up:**
 - JSON-RPC: Structured remote procedure calls
@@ -1851,4 +1851,4 @@ The goal remains the same - extending JSON's capabilities while maintaining its 
 - [Binary Serialization Comparison](https://github.com/alecthomas/go_serialization_benchmarks)
 
 **Related:**
-- [Understanding Protocol Buffers: Part 1]({{< relref "understanding-protobuf-part-1.md" >}})
+- [Understanding Protocol Buffers: Part 1](#)

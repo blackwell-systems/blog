@@ -97,6 +97,10 @@ process_file() {
             continue
         fi
         
+        # Convert Hugo relref shortcodes to plain text (remove shortcode syntax)
+        # Example: [text]({{< relref "file.md" >}}) → [text](#)
+        line=$(echo "$line" | sed 's/{{< relref "[^"]*" >}}/#/g')
+        
         # Output normal lines
         echo "$line" >> "$output_file"
     done < "$source_file"

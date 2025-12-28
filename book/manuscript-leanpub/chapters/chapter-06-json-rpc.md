@@ -10,7 +10,7 @@ description: "Master JSON-RPC: the simple RPC protocol built on JSON. Learn when
 summary: "REST is great for resources, but what about actions? JSON-RPC provides a simple, transport-agnostic protocol for calling remote functions. Learn the spec, implementation patterns, and why major projects like Ethereum and VS Code chose JSON-RPC over REST."
 ---
 
-In [Part 1]({{< relref "you-dont-know-json-part-1-origins.md" >}}), we explored JSON's origins. In [Part 2]({{< relref "you-dont-know-json-part-2-json-schema.md" >}}), we added validation. In [Part 3]({{< relref "you-dont-know-json-part-3-binary-databases.md" >}}) and [Part 4]({{< relref "you-dont-know-json-part-4-binary-apis.md" >}}), we optimized performance with binary formats.
+In [Part 1](#), we explored JSON's origins. In [Part 2](#), we added validation. In [Part 3](#) and [Part 4](#), we optimized performance with binary formats.
 
 Now we examine JSON as a **protocol layer** - not just data format, but a communication standard for distributed systems.
 
@@ -49,7 +49,7 @@ This article covers the JSON-RPC 2.0 specification, implementation patterns, rea
 
 ## Running Example: User API with JSON-RPC
 
-In [Part 1]({{< relref "you-dont-know-json-part-1-origins.md" >}}), we started with basic JSON users. In [Part 2]({{< relref "you-dont-know-json-part-2-json-schema.md" >}}), we added validation. In [Part 3]({{< relref "you-dont-know-json-part-3-binary-databases.md" >}}), we stored them efficiently in JSONB.
+In [Part 1](#), we started with basic JSON users. In [Part 2](#), we added validation. In [Part 3](#), we stored them efficiently in JSONB.
 
 Now JSON-RPC adds the **protocol layer** - structured remote function calls for our User API.
 
@@ -248,7 +248,7 @@ RPC isn't new - it dates to the 1980s (Sun RPC, CORBA). But modern RPC protocols
 
 ## What is JSON-RPC?
 
-JSON-RPC 2.0 is a **stateless, light-weight remote procedure call protocol** that uses JSON for [serialization]({{< relref "serialization-explained.md" >}}).
+JSON-RPC 2.0 is a **stateless, light-weight remote procedure call protocol** that uses JSON for [serialization](#).
 
 **Specification:** [jsonrpc.org/spec](https://www.jsonrpc.org/specification)  
 **Length:** 8 pages  
@@ -2333,5 +2333,5 @@ In Part 5, we'll tackle streaming JSON with JSON Lines (JSONL) - solving JSON's 
 - [python-jsonrpc (Python)](https://github.com/pavlov99/python-jsonrpc)
 
 **Related:**
-- [Understanding Protocol Buffers: Part 1]({{< relref "understanding-protobuf-part-1.md" >}})
-- [Serialization Explained]({{< relref "serialization-explained.md" >}})
+- [Understanding Protocol Buffers: Part 1](#)
+- [Serialization Explained](#)
