@@ -1,10 +1,3 @@
----
-title: "Chapter 2: The Modular Architecture - Why JSON's Incompleteness Was Its Strength"
-status: DRAFT
-target_words: 7000
-current_words: 6800
----
-
 # Chapter 2: The Modular Architecture
 
 In Chapter 1, we saw how JSON displaced XML for data interchange through simplicity. But there's a deeper story: **JSON succeeded because it matched the architectural thinking of its era.**
