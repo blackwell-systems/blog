@@ -47,7 +47,7 @@ All three parse successfully. But which is correct? Your application crashes at 
 
 JSON Schema solves this. It's a vocabulary for defining the structure, types, and constraints of JSON documents. Think of it as TypeScript for JSON - adding type safety and validation without changing the underlying format.
 
-This article covers:
+This chapter covers:
 - How JSON Schema works (concepts and syntax)
 - Validation in Go, JavaScript, and Python
 - Advanced patterns (composition, references, recursion)
@@ -59,7 +59,7 @@ This article covers:
 
 ## Running Example: Validating Our User API
 
-In [Part 1](##running-example-building-a-user-api), we introduced a User API for a social platform. We have basic JSON, but no validation:
+In Chapter 1, we introduced a User API for a social platform. We have basic JSON, but no validation:
 
 ```json
 {
@@ -102,7 +102,7 @@ Every system boundary is a vulnerability. Never trust input from external source
 
 JSON Schema is itself a JSON document that describes other JSON documents.
 
-**Let's validate our User API from Part 1:**
+**Let's validate our User API from Chapter 1:**
 
 **User data:**
 ```json

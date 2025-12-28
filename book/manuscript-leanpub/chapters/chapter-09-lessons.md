@@ -29,11 +29,11 @@ Here's the remarkable pattern we've documented across this series:
 ### Same Problems, Different Organization
 
 **Every gap we've explored in this series:**
-- Part 2: No validation → JSON Schema
-- Part 3-4: Text format tax → Binary formats
-- Part 5: No protocol structure → JSON-RPC
-- Part 6: Can't stream → JSON Lines
-- Part 7: No security → JWT/JWS/JWE
+- Chapter 3: No validation → JSON Schema
+- Chapters 4-5: Text format tax → Binary formats
+- Chapter 6: No protocol structure → JSON-RPC
+- Chapter 7: Can't stream → JSON Lines
+- Chapter 8: No security → JWT/JWS/JWE
 
 **XML solved these too:**
 - Validation: XSD (built into parsers)
@@ -570,19 +570,19 @@ Let's be honest about modularity's costs.
 
 ### What We Learned
 
-**Part 1:** JSON's triumph through simplicity - but incompleteness enabled modularity
+**Chapters 1-2:** JSON's triumph through simplicity - incompleteness enabled modularity
 
-**Part 2:** Validation gap filled by JSON Schema - separate, evolvable, optional
+**Chapter 3:** Validation gap filled by JSON Schema - separate, evolvable, optional
 
-**Part 3-4:** Performance gap filled by binary formats - choose per use case (JSONB, BSON, MessagePack, CBOR)
+**Chapters 4-5:** Performance gap filled by binary formats - choose per use case (JSONB, BSON, MessagePack, CBOR)
 
-**Part 5:** Protocol gap filled by JSON-RPC - structured APIs without REST constraints
+**Chapter 6:** Protocol gap filled by JSON-RPC - structured APIs without REST constraints
 
-**Part 6:** Streaming gap filled by JSON Lines - simplest possible convention (newlines)
+**Chapter 7:** Streaming gap filled by JSON Lines - simplest possible convention (newlines)
 
-**Part 7:** Security gap filled by JWT/JWS/JWE - composable cryptographic protection
+**Chapter 8:** Security gap filled by JWT/JWS/JWE - composable cryptographic protection
 
-**Part 8:** Meta-lessons - technologies reflect their era's architectural zeitgeist
+**Chapter 9:** Meta-lessons - technologies reflect their era's architectural zeitgeist
 
 ### The Architectural Framework
 

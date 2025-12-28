@@ -35,7 +35,7 @@ REST dominates web APIs, but its resource-oriented model doesn't fit every probl
 
 **JSON-RPC solves this:** It's a simple protocol for calling remote functions over any transport (HTTP, WebSockets, Unix sockets). No mental gymnastics to fit actions into resource models.
 
-This article covers the JSON-RPC 2.0 specification, implementation patterns, real-world usage (Ethereum, Language Server Protocol, Bitcoin), and when to choose RPC over REST.
+This chapter covers the JSON-RPC 2.0 specification, implementation patterns, real-world usage (Ethereum, Language Server Protocol, Bitcoin), and when to choose RPC over REST.
 
 ## Running Example: User API with JSON-RPC
 

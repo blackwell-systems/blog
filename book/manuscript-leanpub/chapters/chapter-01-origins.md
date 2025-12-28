@@ -343,6 +343,8 @@ var person = {
 - Human-readable
 - Machine-friendly
 
+{pagebreak}
+
 ### The Same Data in JSON
 
 ```json
@@ -457,6 +459,8 @@ Parsing time for 1000 markers: ~15ms (IE 6), ~8ms (Firefox 1.5)
 
 **JSON was 10-20x faster** because `JSON.parse()` was implemented in native C code while XML parsing required building an entire DOM tree in JavaScript.
 
+{pagebreak}
+
 **2. Bandwidth costs (critical in 2005)**
 
 Average connection speeds in 2005:
@@ -493,6 +497,8 @@ JSON response:
 - JSON: 0.45 seconds to transfer
 
 **The difference was user-perceptible.** Google Maps with JSON felt snappy. With XML, it would have felt sluggish.
+
+{pagebreak}
 
 **3. Developer ergonomics**
 
@@ -602,7 +608,7 @@ JSON displaced XML in configuration:
   }
 }
 ```
-
+{pagebreak}
 **tsconfig.json (TypeScript):**
 ```json
 {
@@ -647,7 +653,7 @@ XML:
 </user>
 ```
 **Size:** 512 bytes
-
+{pagebreak}
 JSON:
 ```json
 {
@@ -773,6 +779,8 @@ Mixed content (text + markup) is natural in XML, awkward in JSON. HTML, DocBook,
 ```
 
 XML namespaces allow mixing HTML and SVG without ambiguity. JSON has no equivalent.
+
+{pagebreak}
 
 **3. Schema evolution with extensibility:**
 ```xml
@@ -984,6 +992,8 @@ Why is debug enabled? What does this configuration do? You can't document it in 
 
 Use fake fields for comments. But parsers still process these as data.
 
+{pagebreak}
+
 ### 5. No Binary Data Support
 
 JSON is text-based. Binary data must be encoded:
@@ -1106,6 +1116,8 @@ Read more: [Understanding Protocol Buffers: Part 1](#)
 
 When developers edit config files frequently:
 
+{pagebreak}
+
 **TOML:**
 ```toml
 [database]
@@ -1117,8 +1129,6 @@ port = 5432
 max_connections = 100
 min_connections = 10
 ```
-
-{pagebreak}
 
 **YAML:**
 ```yaml
@@ -1343,7 +1353,9 @@ Throughout this series, we'll follow a single use case: **a User API for a socia
 - Mobile and web clients
 - Need authentication, validation, performance, and security
 
-**Part 1 (this article):** The basic JSON structure
+{pagebreak}
+
+**Chapter 1 (this chapter):** The basic JSON structure
 ```json
 {
   "id": "user-5f9d88c",
@@ -1364,11 +1376,11 @@ Throughout this series, we'll follow a single use case: **a User API for a socia
 - No protocol (how do clients call getUserById?)
 
 **The journey ahead:**
-- **Part 2:** Add JSON Schema validation for type safety
-- **Part 3:** Store users in PostgreSQL JSONB for performance
-- **Part 5:** Add JSON-RPC protocol for structured API calls
-- **Part 5:** Export users with JSON Lines for streaming
-- **Part 6:** Secure API with JWT authentication
+- **Chapter 3:** Add JSON Schema validation for type safety
+- **Chapter 4:** Store users in PostgreSQL JSONB for performance
+- **Chapter 6:** Add JSON-RPC protocol for structured API calls
+- **Chapter 7:** Export users with JSON Lines for streaming
+- **Chapter 8:** Secure API with JWT authentication
 
 This single API will demonstrate how each ecosystem layer solves a real problem.
 
@@ -1396,13 +1408,21 @@ JSON won not because it was perfect, but because it was simple enough to underst
 
 The JSON ecosystem evolved to patch these gaps while preserving the core simplicity that made JSON successful.
 
-**Understanding JSON's success requires understanding a deeper pattern:** JSON didn't just win because it was simpler than XML - it won because it matched the architectural thinking of its era. XML embodied 1990s monolithic design: everything built into one comprehensive specification. JSON embodied 2000s modular thinking: minimal core, extensible ecosystem.
+{blurb, class: information}
+**Series Roadmap:** This series explores the JSON ecosystem:
+- **Part 1** (this article): Origins and fundamental weaknesses
+- **Part 2**: JSON Schema - validation, types, and contracts
+- **Part 3**: Binary JSON formats - JSONB, BSON, MessagePack
+- **Part 6**: Streaming JSON - JSON Lines and large datasets
+- **Part 5**: JSON-RPC and protocol layers
+- **Part 6**: Security - JWT, canonicalization, and attacks
+{/blurb}
 
-This architectural difference explains why JSON's "incompleteness" became a strength. Each gap in the format - no validation, no binary support, no streaming, no protocol layer - spawned independent solutions that evolved separately. The result: a flexible, composable ecosystem that could adapt faster than XML's coordinated specifications ever could.
+In Part 2, we'll solve JSON's most critical weakness: the lack of validation. JSON Schema transforms JSON from "untyped text" into "strongly validated contracts" without sacrificing simplicity. We'll explore how to define schemas, validate data at runtime, generate code from schemas, and integrate validation into your entire stack.
 
-The next chapter explores this core thesis in depth: **technologies reflect their era's architectural patterns**. Understanding why JSON's modular approach succeeded over XML's monolithic approach provides the lens for evaluating the entire JSON ecosystem - and future technologies that will eventually replace it.
+**The core problem JSON Schema solves:** How do you maintain the simplicity of JSON while gaining the safety of typed, validated data?
 
-**Next:** Chapter 2 - The Modular Architecture: Why JSON's Incompleteness Was Its Strength
+**Next:** [You Don't Know JSON: Part 2 - JSON Schema and the Art of Validation](#)
 
 ---
 

@@ -36,7 +36,7 @@ JSON carries authentication tokens, financial data, and sensitive information ac
 **Architecture shift:** Built-in security → Composable security layers, Monolithic → Mix-and-match, Complex canonicalization → Simple Base64 encoding
 {/blurb}
 
-This article covers:
+This chapter covers:
 - JWT (JSON Web Tokens) for stateless authentication
 - JWS (JSON Web Signature) for integrity and authenticity
 - JWE (JSON Web Encryption) for confidentiality
@@ -46,7 +46,7 @@ This article covers:
 
 ## Running Example: Securing the User API
 
-In [Part 1](#), we created basic JSON users. In [Part 2](#), we added validation. In [Part 3](#), we stored them in JSONB. In [Part 5](#), we added protocol structure. In [Part 6](#), we enabled streaming exports.
+Our User API now has validation (Chapter 3), efficient storage (Chapter 4), protocol structure (Chapter 6), and can stream exports (Chapter 7).
 
 Now we complete the journey with the **security layer** - protecting our User API with JWT authentication.
 
@@ -1988,27 +1988,6 @@ Chapter 9 synthesizes the lessons from JSON's evolution - what this ecosystem's 
 - SQL injection via claims
 - Token substitution attacks
 
-### The Technical Series Complete
-
-**What we've learned:**
-- **Part 1:** JSON's triumph through simplicity
-- **Part 2:** Validation with JSON Schema  
-- **Part 3:** Binary JSON in databases (JSONB, BSON)
-- **Part 4:** Binary JSON for APIs (MessagePack, CBOR)
-- **Part 5:** Protocols with JSON-RPC
-- **Part 6:** Streaming with JSON Lines
-- **Part 7:** Security with JWT/JWS/JWE
-
-Each part showed the same pattern: identify incompleteness, build modular solution, maintain JSON's core simplicity.
-
-But there's a deeper question: **Why did this approach succeed where XML's integrated approach failed?**
-
-{blurb, class: information}
-**Continue to Part 8:** [Lessons from the JSON Revolution](#) - The final part explores the meta-patterns: how technologies reflect their era's architectural zeitgeist, why good patterns survive regardless of packaging (JSX vindication), and the hidden costs of modularity through ecosystem fragmentation.
-
-**Not just about JSON anymore** - Part 8 examines what JSON teaches us about technology evolution, architectural thinking, and why "better" technologies don't always win.
-{/blurb}
-
 ---
 
 ## Further Reading
@@ -2029,11 +2008,3 @@ But there's a deeper question: **Why did this approach succeed where XML's integ
 - [golang-jwt (Go)](https://github.com/golang-jwt/jwt)
 - [PyJWT (Python)](https://github.com/jpadilla/pyjwt)
 - [jose (Node.js - JWE/JWS/JWT)](https://github.com/panva/jose)
-
-**Related Articles:**
-- [Part 1: JSON Origins](#)
-- [Part 2: JSON Schema](#)
-- [Part 3: Binary JSON in Databases](#)
-- [Part 4: Binary JSON for APIs](#)
-- [Part 5: JSON-RPC](#)
-- [Part 6: JSON Lines](#)

@@ -52,7 +52,7 @@ While database binary formats optimize storage and queries, API binary formats o
 **Architecture shift:** Text-only encoding → Binary encoding options, Failed standards → Modular ecosystem success, One verbose approach → Multiple optimized formats
 {/blurb}
 
-This article focuses on **MessagePack** (universal binary JSON) and **CBOR** (IETF-standardized format), comparing them with Protocol Buffers and analyzing real bandwidth cost savings.
+This chapter focuses on **MessagePack** (universal binary JSON) and **CBOR** (IETF-standardized format), comparing them with Protocol Buffers and analyzing real bandwidth cost savings.
 
 ---
 

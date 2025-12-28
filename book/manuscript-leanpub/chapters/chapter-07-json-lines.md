@@ -33,11 +33,11 @@ You must load all 1 million records into memory, parse the complete array, then 
 
 Read one line, parse one object, process it, discard it. Memory usage: constant. Dataset size: unlimited.
 
-This article covers streaming JSON processing, log aggregation, Unix pipeline integration, fault tolerance, and real-world data engineering patterns.
+This chapter covers streaming JSON processing, log aggregation, Unix pipeline integration, fault tolerance, and real-world data engineering patterns.
 
 ## Running Example: Exporting 10 Million Users
 
-In [Part 1](#), we started with basic JSON. In [Part 2](#), we added validation. In [Part 3](#), we stored efficiently in JSONB. In [Part 5](#), we added protocol structure.
+Our User API now has validation (Chapter 3), efficient storage (Chapter 4), and protocol structure (Chapter 6).
 
 Now we face the **scalability problem**: our User API has grown to 10 million users. How do we export them for analytics?
 
@@ -2132,16 +2132,6 @@ JSON Lines is the pragmatic solution to JSON's streaming problem. It's not a new
 - Complex nested relationships
 - Need whole-file JSON Schema validation
 
-{blurb, class: information}
-**Series Progress:**
-- **Part 1**: JSON's origins and fundamental weaknesses
-- **Part 2**: JSON Schema for validation and contracts
-- **Part 3**: Binary JSON in databases (JSONB, BSON)
-- **Part 4**: Binary JSON for APIs (MessagePack, CBOR)
-- **Part 5**: JSON-RPC protocol and patterns
-- **Part 6** (this article): JSON Lines for streaming
-- **Part 7**: Security (JWT, canonicalization, attacks)
-{/blurb}
 
 **The pattern continues:** JSON Lines demonstrates modularity again - it's a convention, not a new format. Works with any JSON parser, any transport, any processing tool. The ecosystem solved streaming without changing JSON itself.
 
