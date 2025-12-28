@@ -2411,4 +2411,4 @@ The patterns presented here aren't theoretical—they've been battle-tested acro
 
 As you design your APIs, remember that today's internal API often becomes tomorrow's public API. Building with these patterns from the start saves significant refactoring effort and provides a foundation that can scale with your needs.
 
-The next chapter explores how these API patterns apply in large-scale data pipeline architectures, where JSON serves as the lingua franca for distributed systems processing millions of events per second.
+**API design patterns show JSON's ecosystem maturity** - conventions emerged from real-world usage rather than upfront specification. This demonstrates modularity at the pattern level: REST principles, pagination strategies, and error formats all evolved independently.\n\nThese API patterns become building blocks for larger systems. Chapter 12 explores how JSON-based APIs compose into data pipelines - distributed architectures where JSON flows between services, transforms through processing stages, and lands in analytics systems.\n\n**Next:** Chapter 12 - Data Pipelines with JSON

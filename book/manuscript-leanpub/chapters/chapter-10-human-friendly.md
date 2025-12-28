@@ -1,11 +1,6 @@
----
-title: "Chapter 10: Human-Friendly JSON Variants"
-status: COMPLETE
-current_words: 2721
-diagrams: 7 mermaid diagrams inserted
----
-
 # Chapter 10: Human-Friendly JSON Variants
+
+Chapter 9 synthesized the architectural lessons from JSON's evolution. Now we apply those lessons to a practical problem: **configuration files**.
 
 JSON succeeded as a data interchange format because it was simple, minimal, and easy for machines to parse. But that same simplicity creates friction when humans edit configuration files daily. No comments to explain decisions. Trailing comma errors that break builds. Everything quoted, even simple identifiers.
 
@@ -730,6 +725,8 @@ JSON succeeded as a data interchange format, but its limitations create real fri
 - **YAML** dominates DevOps with indentation-based structure
 - **TOML** provides unambiguous clarity for package configs
 
-The lesson from Chapter 2 applies: JSON's incompleteness enabled this ecosystem to flourish. Rather than adding comments to JSON's spec (which would complicate parsers and break compatibility), the ecosystem created separate, purpose-built solutions.
+The lesson from Chapter 2 applies: JSON's incompleteness enabled this ecosystem to flourish. Rather than adding comments to JSON's spec, the ecosystem created separate, purpose-built solutions for human-edited files.
 
-Choose the format that matches your team, tooling, and tolerance for ambiguity. And remember: configuration is a distinct use case that deserves better than a data interchange format designed for machines.
+With configuration formats covered, we return to JSON itself for APIs. Chapter 11 explores the practical patterns for designing production APIs: pagination, error handling, versioning, rate limiting, and security - the conventions that make JSON-based APIs robust and maintainable at scale.
+
+**Next:** Chapter 11 - API Design with JSON
