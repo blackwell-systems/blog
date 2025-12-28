@@ -1,16 +1,8 @@
----
-title: "You Don't Know JSON: Part 2 - JSON Schema and the Art of Validation"
-date: 2025-12-15
-draft: false
-series: ["you-dont-know-json"]
-seriesOrder: 2
-tags: ["json", "json-schema", "validation", "api-design", "openapi", "swagger", "type-safety", "schema-validation", "ajv", "jsonschema", "data-validation", "typescript", "go", "python", "rest-api", "microservices", "contract-testing", "api-contracts", "schema-generation", "runtime-validation"]
-categories: ["fundamentals", "programming"]
-description: "Master JSON Schema: the validation layer that transforms JSON from untyped text into strongly-validated contracts. Learn schemas, composition patterns, code generation, and OpenAPI integration with real-world examples."
-summary: "JSON lacks types and validation - any structure parses successfully. JSON Schema solves this by adding a validation layer without changing JSON itself. Learn how to define schemas, validate at runtime, generate code, and build type-safe APIs."
----
+# Chapter 3: JSON Schema and the Art of Validation
 
-In [Part 1](#), we explored JSON's triumph over XML and its fundamental weakness: **no built-in validation**. JSON parsers accept any syntactically valid structure, but they can't tell you if the data makes sense for your application.
+In Chapter 2, we explored why JSON's incompleteness was architectural genius - leaving gaps for the ecosystem to fill modularly. Now we examine the first and most critical gap: **validation**.
+
+JSON parsers accept any syntactically valid structure, but they can't tell you if the data makes sense for your application.
 
 ```json
 {"age": "thirty"}
@@ -1848,9 +1840,13 @@ JSON Schema transforms JSON from "any structure passes" to "only valid structure
 - Version schemas when making breaking changes
 {/blurb}
 
-In Part 3, we'll explore binary JSON formats (JSONB, BSON, MessagePack) - solving JSON's size and performance limitations while maintaining JSON-like structure.
+**With validation solved, we face the next modular layer: performance.** JSON Schema lets us validate data structure, but doesn't address JSON's storage inefficiency. Text format is human-readable, but wasteful: field names repeat in every object, numbers are stored as strings, parsing requires scanning every character.
 
-**Next:** Part 3 - Binary JSON: When Text Format Isn't Fast Enough
+For API responses under 100KB, this is fine. But when databases store millions of documents, the text format becomes expensive. Chapter 4 explores how databases solved this with binary JSON formats - maintaining JSON's flexibility while dramatically improving storage density and query speed.
+
+This is modularity in action again: validation lives in JSON Schema, performance optimization lives in database storage layers. Each solves one problem well, neither constrains the other.
+
+**Next:** Chapter 4 - Binary JSON in Databases: JSONB and BSON
 
 ---
 

@@ -1,16 +1,6 @@
----
-title: "You Don't Know JSON: Part 3 - Binary JSON in Databases"
-date: 2025-12-15
-draft: false
-series: ["you-dont-know-json"]
-seriesOrder: 3
-tags: ["json", "jsonb", "bson", "binary-serialization", "performance", "optimization", "postgresql", "mongodb", "data-formats", "database-optimization", "parsing", "encoding"]
-categories: ["fundamentals", "programming", "performance"]
-description: "Master binary JSON in databases: PostgreSQL's JSONB and MongoDB's BSON. Learn how databases optimize JSON storage with binary formats for faster queries and efficient indexing."
-summary: "Database-managed binary JSON formats solve storage and query performance problems. JSONB enables fast PostgreSQL queries with indexing, while BSON adds extended types for MongoDB. Learn when databases beat text JSON."
----
+# Chapter 4: Binary JSON in Databases
 
-In [Part 1](#), we explored JSON's triumph through simplicity. In [Part 2](#), we added validation with JSON Schema. Now we tackle JSON's performance tax when storing millions of documents: **database-managed binary formats**.
+In Chapter 2, we saw how JSON's modular architecture enabled independent solutions for each gap. Chapter 3 showed validation as a separate layer (JSON Schema). Now we tackle the performance gap: **database-managed binary formats**.
 
 JSON's human-readability is both its greatest strength and its Achilles heel. Every byte is text. Field names repeat in every object. Numbers are stored as strings. Parsing requires scanning every character.
 
