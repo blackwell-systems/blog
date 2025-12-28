@@ -1,0 +1,18 @@
+{
+  "theme": "dark",
+  "themeVariables": {
+    "darkMode": true,
+    "background": "#252627",
+    "primaryColor": "#3A4A5C",
+    "primaryTextColor": "#f0f0f0",
+    "primaryBorderColor": "#6b7280",
+    "secondaryColor": "#3A4C43",
+    "tertiaryColor": "#4C4538",
+    "noteBkgColor": "#4C3A3C",
+    "noteTextColor": "#f0f0f0",
+    "noteBorderColor": "#6b7280"
+  },
+  "flowchart": {
+    "curve": "basis"
+  }
+}
