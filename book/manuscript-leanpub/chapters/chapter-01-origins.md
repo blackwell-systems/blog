@@ -1,14 +1,4 @@
----
-title: "You Don't Know JSON: Part 1 - Origins, Evolution, and the Cracks in the Foundation"
-date: 2025-12-15
-draft: false
-series: ["you-dont-know-json"]
-seriesOrder: 1
-tags: ["json", "data-formats", "xml", "yaml", "serialization", "web-development", "api-design", "javascript", "rest-api", "data-interchange", "json-schema", "standards", "rfc", "history", "web-standards", "parsing", "validation", "configuration", "distributed-systems", "microservices"]
-categories: ["fundamentals", "programming"]
-description: "The complete history of JSON from Douglas Crockford's discovery to today's dominance. Learn why JSON replaced XML, where it fails, and why the JSON ecosystem evolved beyond basic key-value pairs."
-summary: "Everyone thinks they know JSON. But do you know why it was created, what problems it solved, and more importantly - what problems it created? Part 1 explores JSON's origins, its triumph over XML, and the fundamental weaknesses that spawned an entire ecosystem of extensions."
----
+# Chapter 1: Origins, Evolution, and the Cracks in the Foundation
 
 Every developer knows JSON. You've written `{"key": "value"}` thousands of times. You've debugged missing commas, fought with trailing characters, and cursed the lack of comments in configuration files.
 
@@ -1071,7 +1061,7 @@ Despite JSON's dominance, there are clear cases where alternatives are better:
 
 ### 1. High-Performance Systems → Protocol Buffers, FlatBuffers
 
-When you're handling millions of requests per second, [Protocol Buffers](/posts/understanding-protobuf-part-1/) offer compelling advantages:
+When you're handling millions of requests per second, [Protocol Buffers](#) offer compelling advantages:
 
 ```protobuf
 message Person {
@@ -1089,7 +1079,7 @@ message Person {
 
 **Trade-off:** Not human-readable, requires schema compilation.
 
-Read more: [Understanding Protocol Buffers: Part 1](/posts/understanding-protobuf-part-1/)
+Read more: [Understanding Protocol Buffers: Part 1](#)
 
 ### 2. Human-Edited Configuration → YAML, TOML, JSON5
 
