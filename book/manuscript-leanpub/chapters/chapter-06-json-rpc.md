@@ -14,7 +14,7 @@ In [Part 1]({{< relref "you-dont-know-json-part-1-origins.md" >}}), we explored 
 
 Now we examine JSON as a **protocol layer** - not just data format, but a communication standard for distributed systems.
 
-{{< callout type="info" >}}
+{blurb, class: information}
 **What XML Had:** SOAP and XML-RPC (1999-2003)
 
 **XML's approach:** Comprehensive protocol stack with SOAP envelopes, WSDL service definitions, WS-* extensions for security/reliability/transactions, and automatic code generation from schemas.
@@ -39,7 +39,7 @@ Now we examine JSON as a **protocol layer** - not just data format, but a commun
 **JSON's approach:** Lightweight protocol conventions (JSON-RPC) - optional structure
 
 **Architecture shift:** Heavyweight protocol → Lightweight convention, Built-in tooling → Simple libraries, Enterprise features → Essential simplicity
-{{< /callout >}}
+{/blurb}
 
 REST dominates web APIs, but its resource-oriented model doesn't fit every problem. How do you represent `transfer_funds(from, to, amount)` as HTTP verbs and URLs? You could force it into `POST /transfers` with a body, but you're fighting the paradigm.
 
@@ -128,7 +128,7 @@ GET  /users?search=query&filter=...
 
 But you're working against the model. The endpoints become verb-heavy, the resource abstraction breaks down, and you end up with a de facto RPC API pretending to be REST.
 
-{{< callout type="warning" >}}
+{blurb, class: warning}
 **The REST Contortion Problem:** Many real-world operations violate REST's resource model and require awkward workarounds:
 
 **Batch operations:** How do you "delete 100 users" RESTfully? `DELETE /users?ids=1,2,3...` breaks URI semantics.  
@@ -145,9 +145,9 @@ But you're working against the model. The endpoints become verb-heavy, the resou
 - `startBuild(params) → pollBuildStatus(buildId) → getArtifacts(buildId)`
 
 The paradigm matches the problem naturally.
-{{< /callout >}}
+{/blurb}
 
-{{< callout type="info" >}}
+{blurb, class: information}
 **The Cardinality Problem:** REST naturally expresses "all or one" but struggles with "some":
 - `GET /users` - all users (collection)
 - `GET /users/123` - one user (item)
@@ -213,7 +213,7 @@ processOrder(orderId)   // Touches: 5 microservices across 3 databases
 **Benefit:** Refactor backend freely without breaking API contract. Add caching, change storage systems, split services - clients see the same method signature.
 
 **Key Insight:** REST excels at resource manipulation (CRUD). RPC excels at action invocation (function calls). Choose based on your domain - don't force actions into resource models or vice versa. If your API is mostly verbs (calculate, process, execute, transform), RPC is the natural fit.
-{{< /callout >}}
+{/blurb}
 
 ### The RPC Renaissance
 
@@ -254,7 +254,7 @@ JSON-RPC 2.0 is a **stateless, light-weight remote procedure call protocol** tha
 **Length:** 8 pages  
 **Release:** 2010
 
-{{< callout type="info" >}}
+{blurb, class: information}
 **Protocol vs Architectural Style:** JSON-RPC is a **protocol** (concrete specification with exact message format). REST is an **architectural style** (design principles without exact specification). This is why:
 - JSON-RPC compliance is objective: does your message have `jsonrpc`, `method`, `params`, `id`? Yes or no.
 - REST compliance is subjective: is this "RESTful enough"? Depends who you ask.
@@ -262,7 +262,7 @@ JSON-RPC 2.0 is a **stateless, light-weight remote procedure call protocol** tha
 - JSON-RPC debates are rare (spec is clear). REST debates are endless (principles are interpretable).
 
 This distinction matters: protocols give clarity, architectural styles give flexibility. Choose based on whether you need strict interoperability (protocol) or design guidance (style).
-{{< /callout >}}
+{/blurb}
 
 ### Core Concepts
 
@@ -428,9 +428,9 @@ const ErrorCodes = {
 };
 ```
 
-{{< callout type="warning" >}}
+{blurb, class: warning}
 **Error Code Convention:** Reserve -32000 to -32099 for server errors (infrastructure, not business logic). Use codes starting from -32100 or positive numbers for application-specific errors.
-{{< /callout >}}
+{/blurb}
 
 ---
 
@@ -731,7 +731,7 @@ func main() {
 
 **Python implementation available:** See [example repository](https://github.com/blackwell-systems/json-examples) for Flask-based JSON-RPC server with decorator pattern for method registration.
 
-{{< callout type="success" >}}
+{blurb, class: tip}
 **Implementation Checklist:**
 - [ ] Validate `jsonrpc` version field
 - [ ] Handle both positional and named parameters
@@ -740,7 +740,7 @@ func main() {
 - [ ] Return standard error codes
 - [ ] Use HTTP 200 for all JSON-RPC responses (errors included)
 - [ ] Set `Content-Type: application/json`
-{{< /callout >}}
+{/blurb}
 
 ---
 
@@ -1175,7 +1175,7 @@ client.notify('clientStatus', { status: 'active' });
 - Chat applications
 - IoT device control
 
-{{< callout type="info" >}}
+{blurb, class: information}
 **WebSocket Benefits:**
 - **Bidirectional:** Server can call client methods
 - **Low latency:** No HTTP overhead per message
@@ -1187,7 +1187,7 @@ client.notify('clientStatus', { status: 'active' });
 - Not cacheable (unlike HTTP)
 - Firewall/proxy challenges
 - State management required
-{{< /callout >}}
+{/blurb}
 
 ---
 
@@ -1636,7 +1636,7 @@ methods['getUser'] = async ({id}) => {
 
 Clear documentation is essential for API consumers.
 
-{{< callout type="success" >}}
+{blurb, class: tip}
 **Production Checklist:**
 - [ ] Named parameters for all methods
 - [ ] Consistent error code scheme
@@ -1648,7 +1648,7 @@ Clear documentation is essential for API consumers.
 - [ ] Method documentation
 - [ ] Batch request support
 - [ ] Health check endpoint
-{{< /callout >}}
+{/blurb}
 
 ### Production Deployment Patterns
 
@@ -2187,7 +2187,7 @@ JSON-RPC fills the gap between REST's resource orientation and gRPC's performanc
 - Performance-critical systems (use gRPC)
 - Need strong typing (use gRPC with Protobuf)
 
-{{< callout type="info" >}}
+{blurb, class: information}
 **Series Progress:**
 - **Part 1**: JSON's origins and fundamental weaknesses
 - **Part 2**: JSON Schema for validation and contracts
@@ -2196,7 +2196,7 @@ JSON-RPC fills the gap between REST's resource orientation and gRPC's performanc
 - **Part 5** (this article): JSON-RPC protocol and patterns
 - **Part 6**: Streaming JSON with JSON Lines
 - **Part 7**: Security (JWT, canonicalization, attacks)
-{{< /callout >}}
+{/blurb}
 
 In Part 5, we'll tackle streaming JSON with JSON Lines (JSONL) - solving JSON's inability to handle large datasets that don't fit in memory. We'll explore newline-delimited JSON for log processing, data pipelines, and Unix-style streaming.
 

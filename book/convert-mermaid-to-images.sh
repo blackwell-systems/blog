@@ -36,6 +36,28 @@ process_file() {
     
     # Process line by line
     while IFS= read -r line; do
+        # Convert Hugo callout shortcodes to Leanpub format
+        if [[ "$line" =~ ^\{\{.*callout\ type=\"info\".*\>\}\}$ ]]; then
+            echo "{blurb, class: information}" >> "$output_file"
+            continue
+        fi
+        if [[ "$line" =~ ^\{\{.*callout\ type=\"warning\".*\>\}\}$ ]]; then
+            echo "{blurb, class: warning}" >> "$output_file"
+            continue
+        fi
+        if [[ "$line" =~ ^\{\{.*callout\ type=\"success\".*\>\}\}$ ]]; then
+            echo "{blurb, class: tip}" >> "$output_file"
+            continue
+        fi
+        if [[ "$line" =~ ^\{\{.*callout\ type=\"danger\".*\>\}\}$ ]]; then
+            echo "{blurb, class: error}" >> "$output_file"
+            continue
+        fi
+        if [[ "$line" =~ ^\{\{.*\/callout.*\>\}\}$ ]]; then
+            echo "{/blurb}" >> "$output_file"
+            continue
+        fi
+        
         # Check for Hugo shortcode mermaid block start
         if [[ "$line" =~ ^\{\{.*mermaid.*\}\}$ ]]; then
             in_mermaid=true

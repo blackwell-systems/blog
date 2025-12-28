@@ -16,7 +16,7 @@ But how did we get here? Why does the world's most popular data format have such
 
 This series explores the JSON you don't know - the one beyond basic syntax. We'll examine binary formats, streaming protocols, validation schemas, RPC layers, and security considerations. But first, we need to understand why JSON exists and where it falls short.
 
-{{< callout type="info" >}}
+{blurb, class: information}
 **What XML Had:** Everything built-in (1998-2005)
 
 **XML's approach:** Monolithic specification with validation (XSD), transformation (XSLT), namespaces, querying (XPath), protocols (SOAP), and security (XML Signature/Encryption) all integrated into one ecosystem.
@@ -36,7 +36,7 @@ This series explores the JSON you don't know - the one beyond basic syntax. We'l
 **JSON's approach:** Minimal core with separate standards for each need
 
 **Architecture shift:** Integrated → Modular, Everything built-in → Composable solutions, Monolithic → Ecosystem-driven
-{{< /callout >}}
+{/blurb}
 
 ---
 
@@ -822,9 +822,9 @@ String json = mapper.writeValueAsString(person);  // encode
 Person person = mapper.readValue(json, Person.class);  // decode
 ```
 
-{{< callout type="info" >}}
+{blurb, class: information}
 **The Ecosystem Effect:** Once every language had JSON support, it became the obvious choice for data interchange. Network effects made JSON the default - not because it was technically superior, but because it was universally supported.
-{{< /callout >}}
+{/blurb}
 
 
 ![Diagram 3](images/diagrams/chapter-01-origins-diagram-3.png){width=85%}
@@ -878,7 +878,7 @@ console.log(9007199254740992 + 1);  // 9007199254740992
 // Lost precision!
 ```
 
-{{< callout type="danger" >}}
+{blurb, class: error}
 **Critical Production Issue:** JSON's number type causes real-world failures:
 - **Database IDs beyond 2^53 silently corrupt** (Snowflake IDs, Twitter IDs)
 - **Financial calculations lose cents** ($1234.56 becomes $1234.5599999999)
@@ -886,7 +886,7 @@ console.log(9007199254740992 + 1);  // 9007199254740992
 - **Different languages parse differently** (Python preserves precision, JavaScript doesn't)
 
 This isn't theoretical - major APIs (Twitter, Stripe, GitHub) return large IDs as strings to prevent JavaScript corruption. If your API has >10M records with auto-increment IDs, you WILL hit this.
-{{< /callout >}}
+{/blurb}
 
 **Problems:**
 - Large integers lose precision (database IDs, timestamps)
@@ -1003,9 +1003,9 @@ JSON.stringify(person);
 
 You must manually break cycles or use a [serialization library]({{< relref "serialization-explained.md" >}}) that detects and handles them.
 
-{{< callout type="warning" >}}
+{blurb, class: warning}
 **Critical Insight:** JSON's weaknesses aren't bugs - they're consequences of extreme simplification. Every missing feature (schemas, comments, binary support) was left out intentionally to keep the format minimal.
-{{< /callout >}}
+{/blurb}
 
 ---
 
@@ -1114,9 +1114,9 @@ When JSON-like flexibility meets binary efficiency:
 
 JSON's limitations didn't kill it. Instead, an entire ecosystem evolved to address the weaknesses while preserving the core simplicity:
 
-{{< callout type="warning" >}}
+{blurb, class: warning}
 **The Architectural Choice:** XML's completeness was a weakness - validation, namespaces, transformation, and querying were built into one monolithic specification. **Every XML parser needed to support everything, making the system rigid and complex.** JSON chose the opposite path: radical incompleteness. The core format has no validation, no binary support, no streaming, no protocol conventions. Each gap would be filled by modular, composable solutions that could evolve independently.
-{{< /callout >}}
+{/blurb}
 
 ### 1. Validation Layer: JSON Schema
 
@@ -1135,9 +1135,9 @@ JSON's limitations didn't kill it. Instead, an entire ecosystem evolved to addre
 }
 ```
 
-{{< callout type="success" >}}
+{blurb, class: tip}
 **Transformation:** This single innovation transformed JSON from "hope the data is correct" to "validate at runtime with strict schemas." JSON Schema adds the type safety layer that JSON itself deliberately omitted.
-{{< /callout >}}
+{/blurb}
 
 **Next article:** [Part 2]({{< relref "you-dont-know-json-part-2-json-schema.md" >}}) dives deep into JSON Schema - how it works, why it matters, and how it solves JSON's validation problem.
 
@@ -1263,9 +1263,9 @@ JSON deliberately omitted developer-friendly features to stay minimal. For machi
 
 **Why they're niche:** Unlike JSON Schema (essential for validation) or JSONB (essential for performance), JSON5/HJSON solve a convenience problem that YAML and TOML also solve. Most teams choose YAML or TOML for configuration files - they were designed for this purpose from the start and have broader ecosystem support.
 
-{{< callout type="info" >}}
+{blurb, class: information}
 **The Configuration Choice:** For human-edited configs, the ecosystem offers multiple solutions - JSON5, HJSON, YAML, TOML. Each makes different trade-offs between readability, features, and compatibility. JSON5 stays closest to JSON, YAML is most popular, TOML is clearest for nested config. The choice depends on your team's preferences and tooling.
-{{< /callout >}}
+{/blurb}
 
 ### 6. Security Layer: JWS, JWE
 
@@ -1317,7 +1317,7 @@ JSON won not because it was perfect, but because it was simple enough to underst
 
 The JSON ecosystem evolved to patch these gaps while preserving the core simplicity that made JSON successful.
 
-{{< callout type="info" >}}
+{blurb, class: information}
 **Series Roadmap:** This series explores the JSON ecosystem:
 - **Part 1** (this article): Origins and fundamental weaknesses
 - **Part 2**: JSON Schema - validation, types, and contracts
@@ -1325,7 +1325,7 @@ The JSON ecosystem evolved to patch these gaps while preserving the core simplic
 - **Part 6**: Streaming JSON - JSON Lines and large datasets
 - **Part 5**: JSON-RPC and protocol layers
 - **Part 6**: Security - JWT, canonicalization, and attacks
-{{< /callout >}}
+{/blurb}
 
 In Part 2, we'll solve JSON's most critical weakness: the lack of validation. JSON Schema transforms JSON from "untyped text" into "strongly validated contracts" without sacrificing simplicity. We'll explore how to define schemas, validate data at runtime, generate code from schemas, and integrate validation into your entire stack.
 

@@ -16,9 +16,9 @@ But there's a deeper story here. **Why did JSON succeed where XML failed?** Not 
 
 This final part steps back to examine the meta-patterns: what JSON teaches us about technology evolution, why good ideas survive architectural shifts, and the hidden trade-offs of modularity.
 
-{{< callout type="info" >}}
+{blurb, class: information}
 **Meta-Perspective:** This isn't about JSON vs XML anymore. It's about how software architecture patterns evolve across decades, how technologies embody their era's zeitgeist, and what that means for the systems we build today.
-{{< /callout >}}
+{/blurb}
 
 ---
 
@@ -74,9 +74,9 @@ The key insight: **Technologies don't just compete on features. They reflect the
 - Agile: evolve incrementally, not big design upfront
 - JSON Schema, JWT, MessagePack exist independently because that's how we build now
 
-{{< callout type="success" >}}
+{blurb, class: tip}
 **The Revelation:** XML was architecturally correct for 1990s software practices. JSON is architecturally correct for 2000s+ software practices. Neither is "better" in absolute terms - they're optimized for different development paradigms.
-{{< /callout >}}
+{/blurb}
 
 ### The Timeline Shows the Shift
 
@@ -140,9 +140,9 @@ But modularity has a hidden cost we haven't discussed: **fragmentation and disco
 - Pay bandwidth costs not knowing MessagePack exists
 - Roll homegrown JWT parsing with security holes
 
-{{< callout type="warning" >}}
+{blurb, class: warning}
 **The Fragmentation Problem:** Modularity enables informed choice but also enables uninformed ignorance. XML's bundling forced awareness. JSON's separation enables developers to never discover solutions to problems they'll eventually hit.
-{{< /callout >}}
+{/blurb}
 
 ### Real-World Fragmentation
 
@@ -298,11 +298,11 @@ React.createElement(
 
 **All major frameworks brought back XML-style markup.** But none brought back XSD, XSLT, namespaces, or monolithic parsing.
 
-{{< callout type="success" >}}
+{blurb, class: tip}
 **The Realization:** We didn't reject XML's syntax. We rejected XML's monolithic architecture. Once we could decouple the markup language from the validation/protocol stack, XML-style tags made sense again for UIs.
 
 **Good patterns survive architectural shifts.** Self-describing markup was always good for hierarchical UIs. It just needed to wait for the modular era to separate syntax from ecosystem burden.
-{{< /callout >}}
+{/blurb}
 
 ### The Evolution Table
 
@@ -473,3 +473,7 @@ Let's be honest about modularity's costs.
 
 ![Diagram 2](images/diagrams/chapter-09-lessons-diagram-2.png){width=85%}
 
+{blurb, class: information}
+{/blurb}
+{blurb, class: tip}
+{/blurb}

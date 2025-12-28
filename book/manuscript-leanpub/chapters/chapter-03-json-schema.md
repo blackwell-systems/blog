@@ -26,7 +26,7 @@ In [Part 1]({{< relref "you-dont-know-json-part-1-origins.md" >}}), we explored 
 
 All three parse successfully. But which is correct? Your application crashes at runtime when it expects a number.
 
-{{< callout type="info" >}}
+{blurb, class: information}
 **What XML Had:** XSD (XML Schema Definition) - 2001
 
 **XML's approach:** Built-in validation system with complex type hierarchies, inheritance, constraints, and namespaces integrated into the core specification.
@@ -51,7 +51,7 @@ All three parse successfully. But which is correct? Your application crashes at 
 **JSON's approach:** External validation layer (JSON Schema) - separate standard
 
 **Architecture shift:** Built-in validation → External validation, Complex type system → Simple constraint-based, Monolithic → Modular
-{{< /callout >}}
+{/blurb}
 
 JSON Schema solves this. It's a vocabulary for defining the structure, types, and constraints of JSON documents. Think of it as TypeScript for JSON - adding type safety and validation without changing the underlying format.
 
@@ -859,9 +859,9 @@ user = User(username="alice", email="alice@example.com", age=30)
 print(User.schema_json(indent=2))
 ```
 
-{{< callout type="info" >}}
+{blurb, class: information}
 **Performance Tip:** Compile schemas once and reuse the validator. Schema compilation is expensive, but validation is fast. In AJV and most libraries, compile at application startup, not per-request.
-{{< /callout >}}
+{/blurb}
 
 ---
 
@@ -1350,9 +1350,9 @@ app.post('/users', (req, res) => {
 
 **Cost of poor migration:** Twitter's API v1.1 to v2 migration took years and broke thousands of applications because they didn't support parallel schemas. Learn from their mistake.
 
-{{< callout type="warning" >}}
+{blurb, class: warning}
 **Migration Strategy:** When introducing breaking schema changes, support both old and new versions during a transition period (6+ months minimum). Use API versioning or content negotiation to route requests to appropriate validators. Monitor old version usage and provide migration tooling.
-{{< /callout >}}
+{/blurb}
 
 ---
 
@@ -1764,7 +1764,7 @@ JSON Schema transforms JSON from "any structure passes" to "only valid structure
 - Code generation from a single source of truth
 - Runtime validation with compile-time-like guarantees
 
-{{< callout type="success" >}}
+{blurb, class: tip}
 **Best Practice Summary:**
 - Specify `$schema` version explicitly
 - Validate at system boundaries (API endpoints, file readers)
@@ -1773,7 +1773,7 @@ JSON Schema transforms JSON from "any structure passes" to "only valid structure
 - Set `additionalProperties` explicitly
 - Test your schemas like code
 - Version schemas when making breaking changes
-{{< /callout >}}
+{/blurb}
 
 In Part 3, we'll explore binary JSON formats (JSONB, BSON, MessagePack) - solving JSON's size and performance limitations while maintaining JSON-like structure.
 

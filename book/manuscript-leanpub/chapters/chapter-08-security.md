@@ -14,11 +14,11 @@ In [Part 1]({{< relref "you-dont-know-json-part-1-origins.md" >}}), we explored 
 
 Now we complete the series with JSON's most critical missing piece: **security**.
 
-{{< callout type="warning" >}}
+{blurb, class: warning}
 **The Security Gap:** JSON provides no authentication, no encryption, no signing, no integrity checking. It's pure data with zero security primitives. In a world where JSON carries user credentials, financial data, and access tokens across the internet, this incompleteness creates serious vulnerabilities.
-{{< /callout >}}
+{/blurb}
 
-{{< callout type="info" >}}
+{blurb, class: information}
 **What XML Had:** XML Signature and XML Encryption (2000-2002)
 
 **XML's approach:** Comprehensive security built into the core specification. XML Signature for digital signatures, XML Encryption for confidentiality, WS-Security for SOAP authentication - all integrated with complex canonicalization and namespace handling.
@@ -44,7 +44,7 @@ Now we complete the series with JSON's most critical missing piece: **security**
 **JSON's approach:** Separate security standards (JWT, JWS, JWE) - modular composition
 
 **Architecture shift:** Built-in security → Composable security layers, Monolithic → Mix-and-match, Complex canonicalization → Simple Base64 encoding
-{{< /callout >}}
+{/blurb}
 
 This article covers:
 - JWT (JSON Web Tokens) for stateless authentication
@@ -679,9 +679,9 @@ decrypted_payload = json.loads(decrypted_bytes)
 - TLS already provides transport encryption
 - Performance critical (JWE is slower than JWS)
 
-{{< callout type="warning" >}}
+{blurb, class: warning}
 **JWE vs TLS:** JWE provides end-to-end encryption (only sender and recipient can decrypt). TLS provides transport encryption (protected in transit, but visible to intermediaries with TLS access). For most APIs, TLS is sufficient. Use JWE when you need protection beyond transport layer.
-{{< /callout >}}
+{/blurb}
 
 ---
 
@@ -823,9 +823,9 @@ func canonicalize(data interface{}) ([]byte, error) {
 }
 ```
 
-{{< callout type="info" >}}
+{blurb, class: information}
 **Best Practice:** Always canonicalize JSON before signing. Libraries like JWT handle this internally, but for custom signing schemes, explicit canonicalization prevents signature mismatches from benign formatting changes.
-{{< /callout >}}
+{/blurb}
 
 ---
 
@@ -1105,7 +1105,7 @@ app.get('/api/users/:userId', (req, res) => {
 });
 ```
 
-{{< callout type="danger" >}}
+{blurb, class: error}
 **Critical Checks:**
 - Always specify allowed algorithms explicitly
 - Reject `none` algorithm
@@ -1114,7 +1114,7 @@ app.get('/api/users/:userId', (req, res) => {
 - Validate claims match authorization context
 - Use constant-time comparisons
 - Never trust keys from token headers
-{{< /callout >}}
+{/blurb}
 
 ---
 
@@ -1852,9 +1852,9 @@ We've completed our journey through the JSON ecosystem. From JSON's origins thro
 - External protocols (JSON-RPC)
 - **Result:** Modular, simple, adaptable
 
-{{< callout type="success" >}}
+{blurb, class: tip}
 **The Architectural Lesson:** Incompleteness isn't weakness when you design for modularity. JSON's success came from staying minimal and letting the ecosystem build composable solutions. Each layer can evolve independently - JWT updates don't break JSON parsers, new binary formats don't require schema changes, streaming conventions don't impact existing APIs.
-{{< /callout >}}
+{/blurb}
 
 ### JSON Security: The Modular Approach Complete
 
@@ -1870,9 +1870,9 @@ With JWT, JWS, and JWE, we've seen how JSON's security layer follows the same pa
 
 This completes our technical journey through the JSON ecosystem. But there's a deeper story here about **why** JSON succeeded, what it teaches us about technology evolution, and the hidden costs of modularity.
 
-{{< callout type="info" >}}
+{blurb, class: information}
 **Continue to Part 8:** [Lessons from the JSON Revolution]({{< relref "you-dont-know-json-part-8-lessons.md" >}}) - Explore the architectural zeitgeist, the JSX vindication, and what JSON teaches us about technology evolution beyond data formats.
-{{< /callout >}}
+{/blurb}
 
 ### Security Best Practices Summary
 
@@ -1913,11 +1913,11 @@ Each part showed the same pattern: identify incompleteness, build modular soluti
 
 But there's a deeper question: **Why did this approach succeed where XML's integrated approach failed?**
 
-{{< callout type="info" >}}
+{blurb, class: information}
 **Continue to Part 8:** [Lessons from the JSON Revolution]({{< relref "you-dont-know-json-part-8-lessons.md" >}}) - The final part explores the meta-patterns: how technologies reflect their era's architectural zeitgeist, why good patterns survive regardless of packaging (JSX vindication), and the hidden costs of modularity through ecosystem fragmentation.
 
 **Not just about JSON anymore** - Part 8 examines what JSON teaches us about technology evolution, architectural thinking, and why "better" technologies don't always win.
-{{< /callout >}}
+{/blurb}
 
 ---
 

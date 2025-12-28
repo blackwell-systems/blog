@@ -16,7 +16,7 @@ JSON's human-readability is both its greatest strength and its Achilles heel. Ev
 
 For configuration files and API responses under 100KB, this is fine. But when storing millions of user records, events, or documents - the text format becomes expensive for databases.
 
-{{< callout type="info" >}}
+{blurb, class: information}
 **What XML Had:** No successful binary format (1998-2010)
 
 **XML's approach:** XML was purely textual for databases. Binary encoding attempts existed but failed:
@@ -50,7 +50,7 @@ For configuration files and API responses under 100KB, this is fine. But when st
 **JSON's approach:** Database-specific binary formats (JSONB, BSON) succeeded where XML's failed - modular, database-optimized solutions
 
 **Architecture shift:** Text-only → Binary storage with text compatibility, Failed standards → Database-integrated formats, No binary data type → Extended types (BSON)
-{{< /callout >}}
+{/blurb}
 
 Database binary JSON formats solve this at the storage layer - maintaining JSON's structure and flexibility while dramatically improving query speed and storage efficiency.
 
@@ -134,14 +134,14 @@ Database binary JSON formats solve this at the storage layer. Let's see the impa
 + **Backup/restore operations** - Processing entire datasets
 + **Analytics queries** - OLAP workloads on JSON data
 
-{{< callout type="info" >}}
+{blurb, class: information}
 **Database Rule of Thumb:** Text JSON columns are fine for rarely-queried metadata. Consider binary formats when you have:
 - Frequent queries on JSON fields
 - Large datasets (>100K rows with JSON)
 - Complex aggregations or analytics
 - Need to index JSON content
 - Performance-critical applications
-{{< /callout >}}
+{/blurb}
 
 **Database Binary JSON Evolution Timeline:**
 
@@ -186,9 +186,9 @@ Database binary JSON formats share common goals but differ in implementation and
 | **JSON** | MySQL 5.7+ | Binary JSON columns | Yes (virtual columns) | No |
 | **JSON** | SQL Server | JSON functions/indexing | Yes (computed columns) | No |
 
-{{< callout type="warning" >}}
+{blurb, class: warning}
 **Key Distinction:** Database binary JSON is **storage-optimized** - designed for frequent queries, indexing, and database operations. API/network binary formats (covered in Part 4) optimize for serialization speed and bandwidth.
-{{< /callout >}}
+{/blurb}
 
 
 ![Diagram 1](images/diagrams/chapter-04-binary-databases-diagram-1.png){width=85%}
@@ -341,7 +341,7 @@ SET event_data = event_data - 'ip';
 - Index size: +95 MB
 - Query speedup: 10-50x for containment queries
 
-{{< callout type="success" >}}
+{blurb, class: tip}
 **Best Practice:** Use JSONB for:
 - Semi-structured data in PostgreSQL
 - Documents with varied schemas
@@ -352,7 +352,7 @@ Stick with JSON column type only if you need:
 - Exact key order preservation
 - Faster inserts (no decomposition)
 - Original formatting preserved
-{{< /callout >}}
+{/blurb}
 
 ### Query Optimization with JSONB
 
@@ -976,7 +976,7 @@ print('Balance:', str(user['balance']))
 print('Avatar size:', len(user['avatar']))
 ```
 
-{{< callout type="info" >}}
+{blurb, class: information}
 **BSON Use Cases:**
 - MongoDB storage (native format)
 - MongoDB wire protocol
@@ -987,7 +987,7 @@ print('Avatar size:', len(user['avatar']))
 - General-purpose serialization (use MessagePack)
 - Non-MongoDB systems (ecosystem smaller)
 - Human debugging (binary format)
-{{< /callout >}}
+{/blurb}
 
 ### MongoDB Query Patterns with BSON
 

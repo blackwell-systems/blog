@@ -14,13 +14,13 @@ In [Part 1]({{< relref "you-dont-know-json-part-1-origins.md" >}}), we explored 
 
 Now we tackle JSON's streaming problem: **you can't process JSON incrementally**.
 
-{{< callout type="warning" >}}
+{blurb, class: warning}
 **The Fundamental Problem:** Standard JSON arrays require parsing the entire document. You cannot read the first element until you've read the last closing bracket. This all-or-nothing parsing makes JSON unsuitable for large datasets.
-{{< /callout >}}
+{/blurb}
 
-{{< callout type="info" >}}
+{blurb, class: information}
 **The Modular Solution:** JSON Lines demonstrates the ecosystem's response to incompleteness. Rather than add streaming to JSON's grammar (the monolithic approach), the community created a minimal convention - just separate objects with newlines. This preserves JSON parsers unchanged while enabling new use cases. It's modularity at its simplest: solve one problem (streaming) without touching the core format.
-{{< /callout >}}
+{/blurb}
 
 ```json
 [
@@ -131,7 +131,7 @@ The parser can't know it's valid JSON until it sees the closing `]`. Each `,` co
 
 **Streaming parsers exist** (SAX-style event-based parsers), but they're complex and still require tracking nesting depth, bracket matching, and state across the entire document.
 
-{{< callout type="info" >}}
+{blurb, class: information}
 **What XML Had:** SAX and StAX streaming parsers (1998-2004)
 
 **XML's approach:** Built-in streaming support through complex parser APIs. SAX provided event-driven parsing, StAX enabled pull-based streaming - both required extensive state management and event handling.
@@ -155,7 +155,7 @@ parser.parse("users.xml", handler);
 **JSON's approach:** Format convention (JSON Lines) - separate standard  
 
 **Architecture shift:** Built-in streaming → Format-based streaming, Complex APIs → Simple line reading, Stateful parsing → Stateless processing
-{{< /callout >}}
+{/blurb}
 
 ### What XML Had: SAX and StAX
 
@@ -202,11 +202,11 @@ while (reader.hasNext()) {
 
 **JSON's approach:** No built-in streaming support. Standard JSON parsers are DOM-style (load entire document). Streaming JSON parsers exist but are complex and non-standard.
 
-{{< callout type="warning" >}}
+{blurb, class: warning}
 **Memory Reality:** Loading a 1GB JSON array uses 3-5GB of RAM due to parsing overhead and object allocation. A 10GB file requires 30-50GB of memory and will crash most systems.
 
 **XML comparison:** SAX/StAX could process 10GB XML files with constant memory since 1998. JSON lacked this capability for its first decade, until JSON Lines emerged as the community solution.
-{{< /callout >}}
+{/blurb}
 
 ---
 
@@ -461,9 +461,9 @@ fn main() {
 }
 ```
 
-{{< callout type="success" >}}
+{blurb, class: tip}
 **Streaming Advantage:** These programs use constant memory regardless of file size. A 1GB file and a 100GB file use the same RAM - just one line at a time.
-{{< /callout >}}
+{/blurb}
 
 ---
 
@@ -1350,13 +1350,13 @@ setInterval(() => {
 }, 60000);
 ```
 
-{{< callout type="info" >}}
+{blurb, class: information}
 **Fault Tolerance Benefits:**
 - Corrupted lines are isolated (don't affect other lines)
 - Processing is resumable (checkpoint at any line)
 - Append-only writes are safe (no file locking needed)
 - Partial results available (process what you can)
-{{< /callout >}}
+{/blurb}
 
 ---
 
@@ -1810,7 +1810,7 @@ const stream = rfs.createStream('app.jsonl', {
 logger.stream(stream);
 ```
 
-{{< callout type="success" >}}
+{blurb, class: tip}
 **Production Checklist:**
 - [ ] One compact JSON object per line
 - [ ] Handle parse errors gracefully
@@ -1822,7 +1822,7 @@ logger.stream(stream);
 - [ ] Checkpoint progress for resumable processing
 - [ ] Validate critical data with JSON Schema
 - [ ] Monitor file sizes and processing rates
-{{< /callout >}}
+{/blurb}
 
 ---
 
@@ -2059,7 +2059,7 @@ JSON Lines is the pragmatic solution to JSON's streaming problem. It's not a new
 - Complex nested relationships
 - Need whole-file JSON Schema validation
 
-{{< callout type="info" >}}
+{blurb, class: information}
 **Series Progress:**
 - **Part 1**: JSON's origins and fundamental weaknesses
 - **Part 2**: JSON Schema for validation and contracts
@@ -2068,7 +2068,7 @@ JSON Lines is the pragmatic solution to JSON's streaming problem. It's not a new
 - **Part 5**: JSON-RPC protocol and patterns
 - **Part 6** (this article): JSON Lines for streaming
 - **Part 7**: Security (JWT, canonicalization, attacks)
-{{< /callout >}}
+{/blurb}
 
 In Part 6, we'll complete the series with JSON security: JWT authentication, JWS/JWE encryption, canonicalization for signatures, and common JSON-based attacks (injection, deserialization, schema poisoning).
 

@@ -16,7 +16,7 @@ Now we tackle the next performance frontier: **API data transfer and bandwidth o
 
 While database binary formats optimize storage and queries, API binary formats optimize network efficiency - smaller payloads, faster serialization, and reduced bandwidth costs for mobile and distributed systems.
 
-{{< callout type="info" >}}
+{blurb, class: information}
 **What XML Had:** Text-based encoding only for APIs (1998-2015)
 
 **XML's approach:** XML APIs (SOAP/REST) encoded data as human-readable text characters. Every API response used verbose XML syntax with repeated namespace declarations, schema references, and nested element tags.
@@ -60,7 +60,7 @@ While database binary formats optimize storage and queries, API binary formats o
 - **Binary encoding:** Data as compact bytes - `0x82 0xa2 id 0x7b` = efficient binary
 
 **Architecture shift:** Text-only encoding → Binary encoding options, Failed standards → Modular ecosystem success, One verbose approach → Multiple optimized formats
-{{< /callout >}}
+{/blurb}
 
 This article focuses on **MessagePack** (universal binary JSON) and **CBOR** (IETF-standardized format), comparing them with Protocol Buffers and analyzing real bandwidth cost savings.
 
@@ -421,7 +421,7 @@ function log(entry) {
 // Faster to parse when processing logs
 ```
 
-{{< callout type="success" >}}
+{blurb, class: tip}
 **MessagePack Best For:**
 + General-purpose binary serialization
 + Microservice communication (schemaless flexibility)
@@ -434,7 +434,7 @@ function log(entry) {
 - Human debugging needed (use JSON)
 - Schema enforcement critical (use Protocol Buffers)
 - Database-specific needs (use JSONB/BSON)
-{{< /callout >}}
+{/blurb}
 
 ---
 
@@ -647,7 +647,7 @@ console.log(decoded);
 - CBOR: 90 bytes
 - Difference: CBOR ~2 bytes larger (negligible)
 
-{{< callout type="info" >}}
+{blurb, class: information}
 **CBOR Best For:**
 + IoT devices and embedded systems
 + Security applications (WebAuthn, COSE)
@@ -659,7 +659,7 @@ console.log(decoded);
 - Performance critical (slight edge)
 - Simpler specification preferred
 - Wider ecosystem matters
-{{< /callout >}}
+{/blurb}
 
 ---
 
@@ -761,6 +761,8 @@ console.log(decoded);
 
 ![Diagram 2](images/diagrams/chapter-05-binary-apis-diagram-2.png){width=85%}
 
+{blurb, class: warning}
+{/blurb}
 
 **MessagePack direct encoding:**
 
@@ -1142,9 +1144,9 @@ For more on Protocol Buffers, see: [Understanding Protocol Buffers: Part 1]({{< 
 - Mobile API (10M requests): $1,800-$2,700/month → **ROI in 3-5 months**
 - Large API (10B requests): $7,200-$10,800/month → **ROI in 1 month**
 
-{{< callout type="success" >}}
+{blurb, class: tip}
 **Cost Optimization Strategy:** For APIs serving >100M requests/month or mobile apps with bandwidth-constrained users, binary formats often pay for themselves within 6 months purely from bandwidth savings - before considering performance improvements.
-{{< /callout >}}
+{/blurb}
 
 ### Additional Cost Benefits
 
@@ -1385,9 +1387,9 @@ logger.info({userId: 123, action: 'login'});
 + Third-party integrations - JSON required anyway
 + Development/staging - easier debugging
 
-{{< callout type="info" >}}
+{blurb, class: information}
 **The Real Answer:** Most successful systems use **both**. JSON for public APIs and configuration, Protobuf for internal high-traffic RPC. The "always use X" approach ignores the trade-offs between developer velocity, operational complexity, and performance gains.
-{{< /callout >}}
+{/blurb}
 
 ---
 
