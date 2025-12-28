@@ -901,7 +901,7 @@ console.log(9007199254740992 + 1);  // 9007199254740992
 {blurb, class: error}
 **Critical Production Issue:** JSON's number type causes real-world failures:
 - **Database IDs beyond 2^53 silently corrupt** (Snowflake IDs, Twitter IDs)
-- **Financial calculations lose cents** ($1234.56 becomes $1234.5599999999)
+- **Financial calculations lose cents** (\$1234.56 becomes \$1234.5599999999)
 - **Timestamps break** (millisecond precision lost after 2^53)
 - **Different languages parse differently** (Python preserves precision, JavaScript doesn't)
 
@@ -934,7 +934,7 @@ Represent numbers as strings to preserve precision. But now you need custom pars
 
 // Stripe amounts are integers (cents)
 {
-  "amount": 123456,  // $1234.56 as integer cents
+  "amount": 123456,  // \$1234.56 as integer cents
   "currency": "usd"
 }
 
