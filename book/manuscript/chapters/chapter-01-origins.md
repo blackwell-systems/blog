@@ -407,24 +407,22 @@ var json = JSON.stringify(data);
 
 No XML parser library needed. No SAX vs DOM decision. Just two functions.
 
-{{< mermaid >}}
-timeline
-    title Evolution of Data Formats
-    1998 : XML 1.0 Specification
-         : SOAP begins development
-    2001 : JSON discovered by Crockford
-         : First JSON parsers appear
-    2005 : JSON used in AJAX applications
-         : Web 2.0 movement
-    2006 : RFC 4627 - JSON specification
-         : JSON becomes formal standard
-    2013 : RFC 7159 - Updated JSON spec
-         : ECMA-404 standard
-    2017 : RFC 8259 - Current JSON standard
-         : JSON dominates REST APIs
-    2020+ : JSON Schema, JSONB, JSONL
-         : JSON ecosystem mature
-{{< /mermaid >}}
+**Evolution of Data Formats:**
+
+| Year | Milestone | Significance |
+|------|-----------|--------------|
+| **1998** | XML 1.0 Specification | Monolithic data format dominates |
+| | SOAP begins development | Enterprise web services standard |
+| **2001** | JSON discovered by Crockford | JavaScript object notation as data format |
+| | First JSON parsers appear | Language support begins |
+| **2005** | JSON used in AJAX applications | Google Maps, Web 2.0 movement |
+| **2006** | RFC 4627 - JSON specification | JSON becomes formal standard |
+| **2013** | RFC 7159 - Updated JSON spec | Improved specification |
+| | ECMA-404 standard | Dual standardization |
+| **2017** | RFC 8259 - Current JSON standard | Stable, mature specification |
+| | JSON dominates REST APIs | Clear winner for data interchange |
+| **2020+** | JSON Schema, JSONB, JSONL | Complete modular ecosystem |
+| | JSON ecosystem mature | Production-ready tooling |
 
 ---
 
