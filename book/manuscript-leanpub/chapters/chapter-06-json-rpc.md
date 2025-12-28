@@ -355,7 +355,7 @@ A request without `id` - fire-and-forget:
 No response expected or sent. Useful for logging, metrics, non-critical updates.
 
 
-![Diagram 1](images/diagrams/chapter-06-json-rpc-diagram-1.png){width=85%}
+![Diagram 1](resources/mermaid-diagrams/chapter-06-json-rpc-diagram-1.png){width=85%}
 
 
 ---
@@ -1054,7 +1054,7 @@ func main() {
 **Python client:** Similar pattern using `requests` library. See [example repository](https://github.com/blackwell-systems/json-examples) for complete implementation.
 
 
-![Diagram 2](images/diagrams/chapter-06-json-rpc-diagram-2.png){width=85%}
+![Diagram 2](resources/mermaid-diagrams/chapter-06-json-rpc-diagram-2.png){width=85%}
 
 
 ---
@@ -1529,7 +1529,7 @@ const [user, orders, preferences] = await userService.batch([
 + Language-agnostic code generation needed
 
 
-![Diagram 3](images/diagrams/chapter-06-json-rpc-diagram-3.png){width=85%}
+![Diagram 3](resources/mermaid-diagrams/chapter-06-json-rpc-diagram-3.png){width=85%}
 
 
 ### Hybrid Approaches

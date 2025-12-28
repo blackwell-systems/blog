@@ -468,7 +468,7 @@ Let's be honest about modularity's costs.
 **These are solved problems.** The solutions exist, documented, tested. But modularity means they're optional, and optional means many never discover them.
 
 
-![Diagram 1](images/diagrams/chapter-09-lessons-diagram-1.png){width=85%}
+![Diagram 1](resources/mermaid-diagrams/chapter-09-lessons-diagram-1.png){width=85%}
 
 
 ---

@@ -31,7 +31,7 @@ This chapter explores comprehensive testing strategies for JSON systems: schema-
 The goal is building JSON systems that fail fast, fail safely, and provide clear feedback when things go wrong.
 
 
-![Diagram 1](images/diagrams/chapter-13-testing-diagram-1.png){width=85%}
+![Diagram 1](resources/mermaid-diagrams/chapter-13-testing-diagram-1.png){width=85%}
 
 
 ## 1. Schema-Based Testing
@@ -157,7 +157,7 @@ function generateInvalidTestData(schema) {
 Property-based testing goes beyond examples to test invariants across generated data:
 
 
-![Diagram 2](images/diagrams/chapter-13-testing-diagram-2.png){width=85%}
+![Diagram 2](resources/mermaid-diagrams/chapter-13-testing-diagram-2.png){width=85%}
 
 
 ```javascript
@@ -414,7 +414,7 @@ Contract testing ensures that services can communicate reliably by defining and 
 Consider a typical microservice interaction where a frontend consumes user data from a backend API:
 
 
-![Diagram 3](images/diagrams/chapter-13-testing-diagram-3.png){width=85%}
+![Diagram 3](resources/mermaid-diagrams/chapter-13-testing-diagram-3.png){width=85%}
 
 
 ```javascript
@@ -859,7 +859,7 @@ Contract testing bridges the gap between unit tests and full integration tests, 
 While schema-based testing validates data structures and contract testing ensures service compatibility, API testing focuses on the behavior of individual endpoints under various conditions. Effective API testing covers the full spectrum from unit-level endpoint testing to comprehensive integration scenarios.
 
 
-![Diagram 4](images/diagrams/chapter-13-testing-diagram-4.png){width=85%}
+![Diagram 4](resources/mermaid-diagrams/chapter-13-testing-diagram-4.png){width=85%}
 
 
 ### Unit Testing HTTP Endpoints
@@ -1405,7 +1405,7 @@ API testing strategies provide comprehensive validation of endpoint behavior, fr
 JSON systems face unique security challenges that require systematic testing to prevent vulnerabilities. Unlike traditional applications where security testing might focus on buffer overflows or memory corruption, JSON systems must defend against injection attacks, authentication bypass, authorization failures, and denial-of-service attacks through malformed data.
 
 
-![Diagram 5](images/diagrams/chapter-13-testing-diagram-5.png){width=85%}
+![Diagram 5](resources/mermaid-diagrams/chapter-13-testing-diagram-5.png){width=85%}
 
 
 ### Authentication and Authorization Testing
@@ -1982,7 +1982,7 @@ Security testing for JSON systems requires systematic verification of authentica
 JSON systems face unique performance challenges related to parsing overhead, serialization costs, and memory usage patterns. Unlike binary formats, JSON's text-based nature creates CPU-intensive operations that scale poorly without careful optimization. Performance testing must verify that systems maintain acceptable response times and throughput under realistic load conditions.
 
 
-![Diagram 6](images/diagrams/chapter-13-testing-diagram-6.png){width=85%}
+![Diagram 6](resources/mermaid-diagrams/chapter-13-testing-diagram-6.png){width=85%}
 
 
 ### Load Testing with k6
@@ -2630,7 +2630,7 @@ Fuzz testing discovers edge cases and vulnerabilities by feeding systems unexpec
 Modern fuzzing tools can generate vast amounts of test cases to explore unexpected code paths:
 
 
-![Diagram 7](images/diagrams/chapter-13-testing-diagram-7.png){width=85%}
+![Diagram 7](resources/mermaid-diagrams/chapter-13-testing-diagram-7.png){width=85%}
 
 
 **Go fuzzing with the built-in fuzzer (Go 1.18+):**
@@ -2953,7 +2953,7 @@ describe('Malformed JSON handling', () => {
 Comprehensive testing automation ensures consistent quality across all changes:
 
 
-![Diagram 8](images/diagrams/chapter-13-testing-diagram-8.png){width=85%}
+![Diagram 8](resources/mermaid-diagrams/chapter-13-testing-diagram-8.png){width=85%}
 
 
 **GitHub Actions workflow for comprehensive JSON system testing:**

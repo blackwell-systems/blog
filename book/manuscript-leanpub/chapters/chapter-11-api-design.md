@@ -37,7 +37,7 @@ The difference isn't just stylistic—the REST approach leverages HTTP semantics
 This chapter examines seven critical areas where conventions transform basic JSON-over-HTTP into production-ready APIs: resource modeling, pagination strategies, error handling, versioning approaches, rate limiting, content negotiation, and security patterns.
 
 
-![Diagram 1](images/diagrams/chapter-11-api-design-diagram-1.png){width=85%}
+![Diagram 1](resources/mermaid-diagrams/chapter-11-api-design-diagram-1.png){width=85%}
 
 
 ## 1. REST API Fundamentals
@@ -160,7 +160,7 @@ if (response.status === 422) {
 ### Richardson Maturity Model
 
 
-![Diagram 2](images/diagrams/chapter-11-api-design-diagram-2.png){width=85%}
+![Diagram 2](resources/mermaid-diagrams/chapter-11-api-design-diagram-2.png){width=85%}
 
 
 Leonard Richardson identified four levels of REST maturity:
@@ -203,7 +203,7 @@ DELETE /users/123
 Most production APIs operate at Level 2, with some Level 3 elements for discoverability. Pure Level 3 is rare due to implementation complexity, but the principles guide good resource design.
 
 
-![Diagram 3](images/diagrams/chapter-11-api-design-diagram-3.png){width=85%}
+![Diagram 3](resources/mermaid-diagrams/chapter-11-api-design-diagram-3.png){width=85%}
 
 
 ### Resource Relationships
@@ -251,7 +251,7 @@ This resource-oriented approach scales naturally as APIs grow, provides intuitiv
 When your API returns collections of resources, you face an immediate scalability problem: you can't return a million users in a single response. Pagination solves this by breaking large result sets into manageable chunks, but the pagination strategy you choose has profound implications for performance, consistency, and client complexity.
 
 
-![Diagram 4](images/diagrams/chapter-11-api-design-diagram-4.png){width=85%}
+![Diagram 4](resources/mermaid-diagrams/chapter-11-api-design-diagram-4.png){width=85%}
 
 
 ### The Pagination Problem
@@ -532,7 +532,7 @@ GET /messages?after=cursor123&limit=20   // Next messages
 Choose your pagination strategy based on your specific requirements: offset for simplicity in admin tools, cursor for performance in public APIs, and keyset for the best balance of simplicity and efficiency.
 
 
-![Diagram 5](images/diagrams/chapter-11-api-design-diagram-5.png){width=85%}
+![Diagram 5](resources/mermaid-diagrams/chapter-11-api-design-diagram-5.png){width=85%}
 
 
 ## 3. Error Response Formats
@@ -540,7 +540,7 @@ Choose your pagination strategy based on your specific requirements: offset for 
 Nothing frustrates developers more than inconsistent error responses. When your API returns errors in different formats across endpoints, clients must implement custom error handling for every operation. Standardized error formats make APIs predictable and enable generic error handling code.
 
 
-![Diagram 6](images/diagrams/chapter-11-api-design-diagram-6.png){width=85%}
+![Diagram 6](resources/mermaid-diagrams/chapter-11-api-design-diagram-6.png){width=85%}
 
 
 ### The Inconsistency Problem
@@ -598,7 +598,7 @@ RFC 7807 defines a standard format for HTTP error responses that has gained wide
 - Custom fields for additional context
 
 
-![Diagram 7](images/diagrams/chapter-11-api-design-diagram-7.png){width=85%}
+![Diagram 7](resources/mermaid-diagrams/chapter-11-api-design-diagram-7.png){width=85%}
 
 
 ### Field-Level Validation Errors
@@ -915,7 +915,7 @@ This rich error context enables sophisticated client behavior: automatic retries
 Consistent error formats transform error handling from a tedious per-endpoint task into a standardized system that scales across your entire API.
 
 
-![Diagram 8](images/diagrams/chapter-11-api-design-diagram-8.png){width=85%}
+![Diagram 8](resources/mermaid-diagrams/chapter-11-api-design-diagram-8.png){width=85%}
 
 
 ## 4. API Versioning Strategies
@@ -1280,7 +1280,7 @@ GET /v2/users/123?version=2.3
 The key is consistency: pick one primary strategy and stick to it across your entire API surface.
 
 
-![Diagram 9](images/diagrams/chapter-11-api-design-diagram-9.png){width=85%}
+![Diagram 9](resources/mermaid-diagrams/chapter-11-api-design-diagram-9.png){width=85%}
 
 
 ## 5. Rate Limiting
@@ -1405,7 +1405,7 @@ if (result.allowed) {
 ```
 
 
-![Diagram 10](images/diagrams/chapter-11-api-design-diagram-10.png){width=85%}
+![Diagram 10](resources/mermaid-diagrams/chapter-11-api-design-diagram-10.png){width=85%}
 
 
 ### Redis-Based Distributed Rate Limiting
@@ -1619,7 +1619,7 @@ function adaptiveRateLimit(req, res, next) {
 Rate limiting is essential infrastructure that protects your API while providing clear feedback to clients about usage boundaries. Choose algorithms and implementation strategies that match your traffic patterns and infrastructure capabilities.
 
 
-![Diagram 11](images/diagrams/chapter-11-api-design-diagram-11.png){width=85%}
+![Diagram 11](resources/mermaid-diagrams/chapter-11-api-design-diagram-11.png){width=85%}
 
 
 ## 6. Content Negotiation
@@ -1966,7 +1966,7 @@ function generateCacheKey(req) {
 Content negotiation enables APIs to serve optimal representations while maintaining a single endpoint. Balance format support with implementation complexity, focusing on the formats that provide the most value for your specific use case.
 
 
-![Diagram 12](images/diagrams/chapter-11-api-design-diagram-12.png){width=85%}
+![Diagram 12](resources/mermaid-diagrams/chapter-11-api-design-diagram-12.png){width=85%}
 
 
 ## 7. Security Patterns
@@ -2400,7 +2400,7 @@ app.use('/auth/', securityRateLimit);
 These security patterns create multiple layers of protection that work together to secure your API. Remember that security is an ongoing process—regularly audit your code, update dependencies, and stay informed about new vulnerabilities and best practices.
 
 
-![Diagram 13](images/diagrams/chapter-11-api-design-diagram-13.png){width=85%}
+![Diagram 13](resources/mermaid-diagrams/chapter-11-api-design-diagram-13.png){width=85%}
 
 
 ## Conclusion

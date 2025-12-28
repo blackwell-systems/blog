@@ -63,7 +63,7 @@ process_file() {
             in_mermaid=true
             # Output image reference with width constraint
             echo "" >> "$output_file"
-            echo "![Diagram $diagram_counter](images/diagrams/${basename}-diagram-${diagram_counter}.png){width=85%}" >> "$output_file"
+            echo "![Diagram $diagram_counter](resources/mermaid-diagrams/${basename}-diagram-${diagram_counter}.png){width=85%}" >> "$output_file"
             echo "" >> "$output_file"
             diagram_counter=$((diagram_counter + 1))
             continue
@@ -80,7 +80,7 @@ process_file() {
             in_mermaid=true
             # Output image reference with width constraint
             echo "" >> "$output_file"
-            echo "![Diagram $diagram_counter](images/diagrams/${basename}-diagram-${diagram_counter}.png){width=85%}" >> "$output_file"
+            echo "![Diagram $diagram_counter](resources/mermaid-diagrams/${basename}-diagram-${diagram_counter}.png){width=85%}" >> "$output_file"
             echo "" >> "$output_file"
             diagram_counter=$((diagram_counter + 1))
             continue

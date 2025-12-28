@@ -293,7 +293,7 @@ stream.on('line', (line) => {
 | **Random access** | Must parse to position | Seek to line |
 
 
-![Diagram 1](images/diagrams/chapter-07-json-lines-diagram-1.png){width=85%}
+![Diagram 1](resources/mermaid-diagrams/chapter-07-json-lines-diagram-1.png){width=85%}
 
 
 ---
@@ -745,7 +745,7 @@ split -l 10000 data.jsonl chunk_
 ```
 
 
-![Diagram 2](images/diagrams/chapter-07-json-lines-diagram-2.png){width=85%}
+![Diagram 2](resources/mermaid-diagrams/chapter-07-json-lines-diagram-2.png){width=85%}
 
 
 ---
@@ -1465,7 +1465,7 @@ for await (const line of rl) {
 | **Resumable** | No | Yes |
 
 
-![Diagram 3](images/diagrams/chapter-07-json-lines-diagram-3.png){width=85%}
+![Diagram 3](resources/mermaid-diagrams/chapter-07-json-lines-diagram-3.png){width=85%}
 
 
 ---
