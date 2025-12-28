@@ -401,8 +401,34 @@ Validates `{"user_id": 123, "order_id": 456}` where field names match the patter
 ![Diagram 1](images/diagrams/chapter-03-json-schema-diagram-1.png){width=85%}
 
 
-![Diagram 2](images/diagrams/chapter-03-json-schema-diagram-2.png){width=85%}
+---
 
+## Schema Composition: Building Complex Schemas
+
+### allOf: Intersection (AND)
+
+Combines multiple schemas - data must satisfy all:
+
+```json
+{
+  "allOf": [
+    {
+      "type": "object",
+      "properties": {
+        "name": {"type": "string"}
+      },
+      "required": ["name"]
+    },
+    {
+      "type": "object",
+      "properties": {
+        "email": {"type": "string", "format": "email"}
+      },
+      "required": ["email"]
+    }
+  ]
+}
+```
 
 Data must have both `name` and `email`. Useful for combining base schemas with extensions.
 
@@ -517,11 +543,37 @@ Rejects `null` values. Useful for excluding specific patterns.
 Accepts users who are not admins.
 
 
-![Diagram 3](images/diagrams/chapter-03-json-schema-diagram-3.png){width=85%}
+![Diagram 2](images/diagrams/chapter-03-json-schema-diagram-2.png){width=85%}
 
 
-![Diagram 4](images/diagrams/chapter-03-json-schema-diagram-4.png){width=85%}
+---
 
+## Schema Reuse and References
+
+### Local Definitions with $defs
+
+Define reusable schemas within the document:
+
+```json
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "user": {"$ref": "#/$defs/User"},
+    "manager": {"$ref": "#/$defs/User"}
+  },
+  "$defs": {
+    "User": {
+      "type": "object",
+      "properties": {
+        "name": {"type": "string"},
+        "email": {"type": "string", "format": "email"}
+      },
+      "required": ["name", "email"]
+    }
+  }
+}
+```
 
 **Benefits:**
 - DRY principle (Don't Repeat Yourself)
@@ -945,11 +997,32 @@ class User(BaseModel):
 ```
 
 
-![Diagram 5](images/diagrams/chapter-03-json-schema-diagram-5.png){width=85%}
+![Diagram 3](images/diagrams/chapter-03-json-schema-diagram-3.png){width=85%}
 
 
-![Diagram 6](images/diagrams/chapter-03-json-schema-diagram-6.png){width=85%}
+### Integrating Code Generation into Your Workflow
 
+Code generation becomes powerful when integrated into your development process. Here's how production teams use it:
+
+**Development workflow:**
+
+```bash
+# 1. Define schema (source of truth)
+# schemas/user.json
+
+# 2. Generate types for all languages in project
+npm run generate-types
+
+# package.json scripts:
+{
+  "scripts": {
+    "generate-types": "npm run gen:ts && npm run gen:go && npm run gen:python",
+    "gen:ts": "json-schema-to-typescript schemas/*.json -o src/types/",
+    "gen:go": "gojsonschema -p models schemas/*.json",
+    "gen:python": "datamodel-codegen --input schemas/ --output api/models/"
+  }
+}
+```
 
 **CI/CD integration:**
 

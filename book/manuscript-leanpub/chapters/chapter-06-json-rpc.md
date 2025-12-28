@@ -358,8 +358,22 @@ No response expected or sent. Useful for logging, metrics, non-critical updates.
 ![Diagram 1](images/diagrams/chapter-06-json-rpc-diagram-1.png){width=85%}
 
 
-![Diagram 2](images/diagrams/chapter-06-json-rpc-diagram-2.png){width=85%}
+---
 
+## Parameter Formats
+
+JSON-RPC supports two parameter styles:
+
+### Positional Parameters (Array)
+
+```json
+{
+  "jsonrpc": "2.0",
+  "method": "subtract",
+  "params": [42, 23],
+  "id": 1
+}
+```
 
 Server receives parameters by position:
 
@@ -1040,11 +1054,105 @@ func main() {
 **Python client:** Similar pattern using `requests` library. See [example repository](https://github.com/blackwell-systems/json-examples) for complete implementation.
 
 
-![Diagram 3](images/diagrams/chapter-06-json-rpc-diagram-3.png){width=85%}
+![Diagram 2](images/diagrams/chapter-06-json-rpc-diagram-2.png){width=85%}
 
 
-![Diagram 4](images/diagrams/chapter-06-json-rpc-diagram-4.png){width=85%}
+---
 
+## JSON-RPC over WebSockets
+
+HTTP is request/response only. WebSockets enable **bidirectional** RPC - servers can call client methods and vice versa.
+
+### Server (Node.js)
+
+```javascript
+const WebSocket = require('ws');
+const wss = new WebSocket.Server({ port: 8080 });
+
+wss.on('connection', (ws) => {
+  console.log('Client connected');
+  
+  // Handle incoming requests
+  ws.on('message', (data) => {
+    try {
+      const request = JSON.parse(data);
+      const response = handleRequest(request);
+      if (response) {
+        ws.send(JSON.stringify(response));
+      }
+    } catch (error) {
+      ws.send(JSON.stringify({
+        jsonrpc: '2.0',
+        error: {code: -32700, message: 'Parse error'},
+        id: null
+      }));
+    }
+  });
+  
+  // Server can initiate requests to client
+  function notifyClient(event, data) {
+    ws.send(JSON.stringify({
+      jsonrpc: '2.0',
+      method: event,
+      params: data
+    }));
+  }
+  
+  // Example: Send notification to client every 5 seconds
+  const interval = setInterval(() => {
+    notifyClient('serverTime', { time: new Date().toISOString() });
+  }, 5000);
+  
+  ws.on('close', () => {
+    clearInterval(interval);
+    console.log('Client disconnected');
+  });
+});
+
+function handleRequest(request) {
+  const methods = {
+    ping: () => 'pong',
+    echo: (message) => message,
+    getServerInfo: () => ({
+      version: '1.0.0',
+      uptime: process.uptime()
+    })
+  };
+  
+  if (request.id === undefined) {
+    // Notification - no response
+    if (methods[request.method]) {
+      methods[request.method](...(request.params || []));
+    }
+    return null;
+  }
+  
+  if (!methods[request.method]) {
+    return {
+      jsonrpc: '2.0',
+      error: {code: -32601, message: 'Method not found'},
+      id: request.id
+    };
+  }
+  
+  try {
+    const result = methods[request.method](...(request.params || []));
+    return {
+      jsonrpc: '2.0',
+      result,
+      id: request.id
+    };
+  } catch (error) {
+    return {
+      jsonrpc: '2.0',
+      error: {code: -32000, message: error.message},
+      id: request.id
+    };
+  }
+}
+
+console.log('WebSocket JSON-RPC server on ws://localhost:8080');
+```
 
 ### Client (JavaScript)
 
@@ -1421,11 +1529,15 @@ const [user, orders, preferences] = await userService.batch([
 + Language-agnostic code generation needed
 
 
-![Diagram 5](images/diagrams/chapter-06-json-rpc-diagram-5.png){width=85%}
+![Diagram 3](images/diagrams/chapter-06-json-rpc-diagram-3.png){width=85%}
 
 
-![Diagram 6](images/diagrams/chapter-06-json-rpc-diagram-6.png){width=85%}
+### Hybrid Approaches
 
+Many systems use multiple protocols:
+
+**Example: E-commerce platform**
+```
 REST:        Public product catalog API
 JSON-RPC:    Internal order processing service
 gRPC:        High-performance inventory service

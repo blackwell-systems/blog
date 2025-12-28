@@ -400,8 +400,24 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 ![Diagram 1](images/diagrams/chapter-08-security-diagram-1.png){width=85%}
 
 
-![Diagram 2](images/diagrams/chapter-08-security-diagram-2.png){width=85%}
+---
 
+## JWS: JSON Web Signature
+
+### What JWS Is
+
+**JWS (RFC 7515)** provides integrity and authenticity for JSON data through digital signatures.
+
+**JWT is actually a JWS** - the signature part of JWT uses JWS.
+
+### Signing Algorithms
+
+**Symmetric (HMAC):**
+```json
+{
+  "alg": "HS256"  // HMAC + SHA-256
+}
+```
 - Same secret for signing and verification
 - Fast
 - Requires shared secret
@@ -1807,11 +1823,93 @@ func getUserHandler(w http.ResponseWriter, r *http.Request) {
 ```
 
 
-![Diagram 3](images/diagrams/chapter-08-security-diagram-3.png){width=85%}
+![Diagram 2](images/diagrams/chapter-08-security-diagram-2.png){width=85%}
 
 
-![Diagram 4](images/diagrams/chapter-08-security-diagram-4.png){width=85%}
+### Mobile App Authentication
 
+**Flow:**
+```javascript
+// 1. User logs in
+app.post('/api/auth/login', async (req, res) => {
+  const { email, password } = req.body;
+  
+  const user = await db.verifyCredentials(email, password);
+  if (!user) {
+    return res.status(401).json({ error: 'Invalid credentials' });
+  }
+  
+  // Issue access token
+  const accessToken = jwt.sign(
+    {
+      sub: user.id,
+      email: user.email,
+      roles: user.roles
+    },
+    secret,
+    { expiresIn: '15m' }
+  );
+  
+  // Issue refresh token
+  const refreshToken = jwt.sign(
+    { sub: user.id, jti: generateJti() },
+    refreshSecret,
+    { expiresIn: '90d' }  // Long-lived for mobile
+  );
+  
+  await db.storeRefreshToken({
+    token: refreshToken,
+    userId: user.id,
+    deviceId: req.body.deviceId
+  });
+  
+  res.json({
+    accessToken,
+    refreshToken,
+    expiresIn: 900
+  });
+});
+
+// 2. Mobile app stores tokens securely
+// iOS: Keychain, Android: Keystore
+
+// 3. App uses access token for requests
+// Authorization: Bearer <accessToken>
+
+// 4. When access token expires, refresh
+app.post('/api/auth/refresh', async (req, res) => {
+  const { refreshToken, deviceId } = req.body;
+  
+  try {
+    const decoded = jwt.verify(refreshToken, refreshSecret);
+    
+    // Verify refresh token in database
+    const stored = await db.getRefreshToken(decoded.jti);
+    if (!stored || stored.deviceId !== deviceId) {
+      throw new Error('Invalid refresh token');
+    }
+    
+    // Issue new access token
+    const newAccessToken = jwt.sign(
+      {
+        sub: decoded.sub,
+        email: stored.email,
+        roles: stored.roles
+      },
+      secret,
+      { expiresIn: '15m' }
+    );
+    
+    res.json({
+      accessToken: newAccessToken,
+      expiresIn: 900
+    });
+    
+  } catch (err) {
+    res.status(401).json({ error: 'Invalid refresh token' });
+  }
+});
+```
 
 ---
 

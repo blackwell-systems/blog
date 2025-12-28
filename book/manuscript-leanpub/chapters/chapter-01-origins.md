@@ -316,8 +316,24 @@ vs JSON Schema:
 ![Diagram 1](images/diagrams/chapter-01-origins-diagram-1.png){width=85%}
 
 
-![Diagram 2](images/diagrams/chapter-01-origins-diagram-2.png){width=85%}
+---
 
+## JSON's Accidental Discovery
+
+### Douglas Crockford's Realization (2001)
+
+JSON wasn't invented - it was discovered. Douglas Crockford realized that JavaScript's object literal notation was already a perfect data format:
+
+```javascript
+// JavaScript code that's also data
+var person = {
+    name: "Alice Johnson",
+    email: "alice@example.com",
+    age: 30,
+    active: true,
+    hobbies: ["reading", "cycling"]
+};
+```
 
 **Key insight:** This notation was:
 - Already in JavaScript engines (browsers everywhere)
@@ -827,11 +843,25 @@ Person person = mapper.readValue(json, Person.class);  // decode
 {/blurb}
 
 
-![Diagram 3](images/diagrams/chapter-01-origins-diagram-3.png){width=85%}
+![Diagram 2](images/diagrams/chapter-01-origins-diagram-2.png){width=85%}
 
 
-![Diagram 4](images/diagrams/chapter-01-origins-diagram-4.png){width=85%}
+---
 
+## JSON's Fundamental Weaknesses
+
+Now we reach the core problem. JSON won because it was simple. But that simplicity came with trade-offs that become painful at scale.
+
+### 1. No Schema or Validation
+
+**The problem:**
+
+```json
+{
+  "name": "Alice",
+  "age": "30"
+}
+```
 
 Is `age` a string or a number? Both are valid JSON. The parser accepts both. Your application crashes when it expects a number.
 
@@ -1030,11 +1060,26 @@ Let's compare JSON to its alternatives across key dimensions:
 *JSON Schema provides validation but isn't part of JSON itself.
 
 
-![Diagram 5](images/diagrams/chapter-01-origins-diagram-5.png){width=85%}
+![Diagram 3](images/diagrams/chapter-01-origins-diagram-3.png){width=85%}
 
 
-![Diagram 6](images/diagrams/chapter-01-origins-diagram-6.png){width=85%}
+---
 
+## When NOT to Use JSON
+
+Despite JSON's dominance, there are clear cases where alternatives are better:
+
+### 1. High-Performance Systems → Protocol Buffers, FlatBuffers
+
+When you're handling millions of requests per second, [Protocol Buffers](/posts/understanding-protobuf-part-1/) offer compelling advantages:
+
+```protobuf
+message Person {
+  string name = 1;
+  string email = 2;
+  int32 age = 3;
+}
+```
 
 **Benefits:**
 - 3-10x smaller than JSON
@@ -1273,11 +1318,33 @@ JSON deliberately omitted developer-friendly features to stay minimal. For machi
 **Solution:** JSON Web Signatures and Encryption standards
 
 
-![Diagram 7](images/diagrams/chapter-01-origins-diagram-7.png){width=85%}
+![Diagram 4](images/diagrams/chapter-01-origins-diagram-4.png){width=85%}
 
 
-![Diagram 8](images/diagrams/chapter-01-origins-diagram-8.png){width=85%}
+---
 
+## Running Example: Building a User API
+
+Throughout this series, we'll follow a single use case: **a User API for a social platform**. Each part will show how that layer of the ecosystem improves this real-world scenario.
+
+**The scenario:**
+- REST API for user management
+- 10 million users in PostgreSQL
+- Mobile and web clients
+- Need authentication, validation, performance, and security
+
+**Part 1 (this article):** The basic JSON structure
+```json
+{
+  "id": "user-5f9d88c",
+  "username": "alice",
+  "email": "alice@example.com",
+  "created": "2023-01-15T10:30:00Z",
+  "bio": "Software engineer",
+  "followers": 1234,
+  "verified": true
+}
+```
 
 **What's missing:**
 - No validation (what if email is invalid?)

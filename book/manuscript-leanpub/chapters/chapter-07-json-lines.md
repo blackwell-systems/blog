@@ -296,8 +296,49 @@ stream.on('line', (line) => {
 ![Diagram 1](images/diagrams/chapter-07-json-lines-diagram-1.png){width=85%}
 
 
-![Diagram 2](images/diagrams/chapter-07-json-lines-diagram-2.png){width=85%}
+---
 
+## Reading JSON Lines
+
+### Node.js (Streaming)
+
+```javascript
+const fs = require('fs');
+const readline = require('readline');
+
+async function processJSONL(filename) {
+  const fileStream = fs.createReadStream(filename);
+  
+  const rl = readline.createInterface({
+    input: fileStream,
+    crlfDelay: Infinity
+  });
+  
+  let count = 0;
+  
+  for await (const line of rl) {
+    if (!line.trim()) continue; // Skip empty lines
+    
+    try {
+      const obj = JSON.parse(line);
+      
+      // Process object
+      if (obj.level === 'error') {
+        console.log('Error:', obj.message);
+      }
+      
+      count++;
+    } catch (err) {
+      console.error(`Parse error on line ${count + 1}:`, err.message);
+    }
+  }
+  
+  console.log(`Processed ${count} records`);
+}
+
+// Usage
+processJSONL('logs.jsonl');
+```
 
 **Memory usage:** ~1KB per object, constant regardless of file size.
 
@@ -704,11 +745,33 @@ split -l 10000 data.jsonl chunk_
 ```
 
 
-![Diagram 3](images/diagrams/chapter-07-json-lines-diagram-3.png){width=85%}
+![Diagram 2](images/diagrams/chapter-07-json-lines-diagram-2.png){width=85%}
 
 
-![Diagram 4](images/diagrams/chapter-07-json-lines-diagram-4.png){width=85%}
+---
 
+## Log Processing with JSON Lines
+
+### Structured Logging
+
+Modern logging libraries output JSON Lines:
+
+**Node.js (pino):**
+```javascript
+const pino = require('pino');
+
+const logger = pino({
+  level: 'info',
+  // Output JSON Lines to stdout
+});
+
+logger.info({user: 'alice', action: 'login'}, 'User logged in');
+logger.error({error: err.message, stack: err.stack}, 'Request failed');
+
+// Output (JSONL):
+// {"level":30,"time":1673780400000,"user":"alice","action":"login","msg":"User logged in"}
+// {"level":50,"time":1673780401000,"error":"Timeout","msg":"Request failed"}
+```
 
 **Go (zerolog):**
 ```go
@@ -1402,11 +1465,31 @@ for await (const line of rl) {
 | **Resumable** | No | Yes |
 
 
-![Diagram 5](images/diagrams/chapter-07-json-lines-diagram-5.png){width=85%}
+![Diagram 3](images/diagrams/chapter-07-json-lines-diagram-3.png){width=85%}
 
 
-![Diagram 6](images/diagrams/chapter-07-json-lines-diagram-6.png){width=85%}
+---
 
+## Advanced Streaming Patterns
+
+### Backpressure Handling
+
+When processing streams, the consumer may be slower than the producer. Without backpressure handling, memory grows unbounded until crash.
+
+**The problem:**
+
+```javascript
+// Dangerous: No backpressure
+const readStream = fs.createReadStream('huge.jsonl');
+const rl = readline.createInterface({input: readStream});
+
+rl.on('line', async (line) => {
+  const record = JSON.parse(line);
+  // Slow operation (500ms each)
+  await slowDatabaseInsert(record);
+  // Lines arrive faster than processing - memory grows!
+});
+```
 
 **If file has 1M lines and processing takes 500ms each:**
 - Lines arrive: 1M/second (reading is fast)

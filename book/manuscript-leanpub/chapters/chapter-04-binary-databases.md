@@ -194,8 +194,26 @@ Database binary JSON formats share common goals but differ in implementation and
 ![Diagram 1](images/diagrams/chapter-04-binary-databases-diagram-1.png){width=85%}
 
 
-![Diagram 2](images/diagrams/chapter-04-binary-databases-diagram-2.png){width=85%}
+---
 
+## PostgreSQL JSONB: Indexable Documents
+
+### What is JSONB?
+
+JSONB is PostgreSQL's **binary JSON storage format**. Unlike the `JSON` column type (which stores text), JSONB decomposes JSON into a binary structure optimized for database operations.
+
+**Key difference:**
+```sql
+-- JSON column: stores text as-is, parses on every query
+CREATE TABLE users_json (
+    data JSON
+);
+
+-- JSONB column: stores binary, no reparse needed
+CREATE TABLE users_jsonb (
+    data JSONB
+);
+```
 
 ### Internal Structure
 

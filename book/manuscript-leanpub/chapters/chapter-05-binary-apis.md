@@ -759,10 +759,46 @@ console.log(decoded);
 ![Diagram 1](images/diagrams/chapter-05-binary-apis-diagram-1.png){width=85%}
 
 
-![Diagram 2](images/diagrams/chapter-05-binary-apis-diagram-2.png){width=85%}
+### Key Takeaways
+
+**Size savings:**
+- Binary formats: 28-36% smaller than JSON
+- MessagePack/CBOR most efficient
+- BSON less efficient (extended type overhead)
+
+**Speed improvements:**
+- 1.5-1.7x faster encoding/decoding
+- Go implementations fastest
+- Python benefits most from binary formats
+
+**Memory efficiency:**
+- 20-30% less memory than JSON
+- Streaming parsers reduce memory further
 
 {blurb, class: warning}
+**Benchmark Caveats:**
+- Results vary by data structure (nested vs flat)
+- Implementation quality matters (library choice)
+- Compression changes the equation (gzip, zstd)
+- Network overhead may dominate (size less critical)
+- Always benchmark with YOUR actual data
 {/blurb}
+
+### Why Binary Formats Are Faster: Internal Mechanics
+
+Understanding how MessagePack and CBOR achieve their performance helps optimize usage.
+
+**JSON parsing overhead:**
+
+```javascript
+// JSON: "123" (3 bytes as text)
+const input = "123";
+// Parser must:
+// 1. Scan character by character
+// 2. Identify number vs string vs boolean
+// 3. Parse digits into numeric value
+// 4. Handle floating point edge cases
+```
 
 **MessagePack direct encoding:**
 

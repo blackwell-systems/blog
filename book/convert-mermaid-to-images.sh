@@ -59,7 +59,7 @@ process_file() {
         fi
         
         # Check for Hugo shortcode mermaid block start
-        if [[ "$line" =~ ^\{\{.*mermaid.*\}\}$ ]]; then
+        if [[ "$line" =~ ^\{\{\<\ mermaid\ \>\}\}$ ]]; then
             in_mermaid=true
             # Output image reference with width constraint
             echo "" >> "$output_file"
