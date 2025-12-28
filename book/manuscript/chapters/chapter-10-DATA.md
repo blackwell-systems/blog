@@ -8,31 +8,17 @@
 
 ### 1. Configuration Format Evolution Timeline
 
-```mermaid
-timeline
-    title Configuration Format Evolution
-    1980s : INI Files
-          : Windows .ini
-          : Simple key=value
-    1990s : XML
-          : Complex, verbose
-          : Enterprise dominance
-    2001 : JSON
-          : Simple, minimal
-          : No comments (pain)
-    2012 : TOML
-          : INI-inspired clarity
-          : Rust adoption
-    2013 : JSON5
-          : ES5 syntax
-          : JSON + comments
-    2014 : HJSON
-          : Extreme readability
-          : Minimal syntax
-    2015+ : YAML dominance
-          : Docker, K8s, CI/CD
-          : DevOps standard
-```
+**Configuration Format Evolution Timeline:**
+
+| Year/Era | Format | Key Features | Adoption Context |
+|----------|--------|--------------|------------------|
+| 1980s | INI Files | Windows .ini, simple key=value | Early personal computers |
+| 1990s | XML | Complex, verbose | Enterprise dominance |
+| 2001 | JSON | Simple, minimal | No comments (pain point) |
+| 2012 | TOML | INI-inspired clarity | Rust adoption |
+| 2013 | JSON5 | ES5 syntax | JSON + comments |
+| 2014 | HJSON | Extreme readability | Minimal syntax |
+| 2015+ | YAML | Docker, K8s, CI/CD | DevOps standard |
 
 ### 2. Format Decision Tree
 

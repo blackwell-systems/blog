@@ -321,25 +321,15 @@ flowchart LR
 
 ## 10. API Deprecation Timeline
 
-```mermaid
-timeline
-    title API Version Lifecycle
-    Month 0 : v2 Released
-           : v1 Fully Supported
-           : Migration docs published
-    Month 3 : v1 Deprecated
-           : Deprecation headers added
-           : Warning emails sent
-    Month 6 : v1 Read-Only
-           : POST/PUT/DELETE disabled
-           : Only GET allowed
-    Month 9 : v1 Sunset
-           : Returns 410 Gone
-           : Force migration to v2
-    Month 12 : v1 Removed
-            : Infrastructure decommissioned
-            : Full v2 adoption
-```
+**API Version Lifecycle Timeline:**
+
+| Timeline | Status | Actions | Description |
+|----------|--------|---------|-------------|
+| Month 0 | v2 Released | v1 fully supported, migration docs published | New version launch |
+| Month 3 | v1 Deprecated | Deprecation headers added, warning emails sent | Deprecation notice phase |
+| Month 6 | v1 Read-Only | POST/PUT/DELETE disabled, only GET allowed | Restricted functionality |
+| Month 9 | v1 Sunset | Returns 410 Gone, force migration to v2 | Service discontinued |
+| Month 12 | v1 Removed | Infrastructure decommissioned, full v2 adoption | Complete migration |
 
 ## 11. HATEOAS Example
 

@@ -201,22 +201,16 @@ JSON Schema has evolved through multiple draft versions:
 
 **Always specify `$schema`:** Different validators support different drafts. Explicit declaration prevents compatibility issues.
 
-{{< mermaid >}}
-timeline
-    title JSON Schema Evolution
-    2013 : Draft 4 - First major adoption
-         : Basic validation keywords
-    2017 : Draft 6 - Property dependencies
-         : const keyword
-    2018 : Draft 7 - Conditional schemas
-         : readOnly/writeOnly
-    2019 : Draft 2019-09 - Recursive refs
-         : Vocabulary system
-    2020 : Draft 2020-12 - Dynamic refs
-         : Tuple validation
-    2024+ : Widespread tooling support
-         : OpenAPI 3.1 alignment
-{{< /mermaid >}}
+**JSON Schema Evolution Timeline:**
+
+| Year | Draft Version | Key Features | Significance |
+|------|---------------|--------------|--------------|
+| 2013 | Draft 4 | Basic validation keywords | First major adoption |
+| 2017 | Draft 6 | Property dependencies, `const` keyword | Enhanced validation capabilities |
+| 2018 | Draft 7 | Conditional schemas (`if/then/else`), `readOnly/writeOnly` | Dynamic validation logic |
+| 2019 | Draft 2019-09 | Recursive references, vocabulary system | Advanced schema composition |
+| 2020 | Draft 2020-12 | Dynamic references, tuple validation | Current specification |
+| 2024+ | - | Widespread tooling support, OpenAPI 3.1 alignment | Mainstream adoption |
 
 ---
 

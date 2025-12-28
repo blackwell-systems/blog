@@ -80,29 +80,14 @@ The key insight: **Technologies don't just compete on features. They reflect the
 
 ### The Timeline Shows the Shift
 
-{{< mermaid >}}
-timeline
-    title Architectural Zeitgeist Evolution
-    1990s : Monolithic Era
-          : CORBA, J2EE, COM+
-          : XML with XSD, SOAP, XSLT
-          : Integrated solutions
-    2000s : Transition Period
-          : Service-Oriented Architecture
-          : JSON emerges (2001)
-          : REST popularized (2006)
-          : Loose coupling concepts
-    2010s : Modular Era
-          : Microservices mainstream
-          : Docker, Kubernetes
-          : JSON ecosystem matures
-          : npm, cargo, composable tools
-    2020s : Cloud-Native Era
-          : Serverless, edge computing
-          : JSON remains dominant
-          : GraphQL, gRPC complement JSON
-          : Modular remains default
-{{< /mermaid >}}
+**Architectural Zeitgeist Evolution Timeline:**
+
+| Era | Years | Dominant Patterns | Key Technologies | Philosophy |
+|-----|-------|-------------------|------------------|-----------|
+| Monolithic Era | 1990s | Integrated solutions | CORBA, J2EE, COM+, XML with XSD, SOAP, XSLT | Everything bundled together |
+| Transition Period | 2000s | Service-Oriented Architecture | JSON emerges (2001), REST popularized (2006) | Loose coupling concepts |
+| Modular Era | 2010s | Microservices mainstream | Docker, Kubernetes, JSON ecosystem, npm, cargo | Composable tools |
+| Cloud-Native Era | 2020s | Serverless, edge computing | JSON remains dominant, GraphQL, gRPC | Modular remains default |
 
 **The pattern:** Each era's dominant data format reflects that era's architectural preferences.
 

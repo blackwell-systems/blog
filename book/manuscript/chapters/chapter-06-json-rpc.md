@@ -231,26 +231,18 @@ RPC isn't new - it dates to the 1980s (Sun RPC, CORBA). But modern RPC protocols
 - Excellent tooling
 - Efficient formats (JSON, Protocol Buffers)
 
-{{< mermaid >}}
-timeline
-    title Evolution of RPC Protocols
-    1984 : Sun RPC (ONC RPC)
-         : Binary protocol, C-centric
-    1991 : CORBA
-         : Complex, multi-language
-    1998 : XML-RPC
-         : Simple HTTP + XML
-    1999 : SOAP
-         : Enterprise standard, heavyweight
-    2005 : JSON-RPC 1.0
-         : Lightweight alternative
-    2010 : JSON-RPC 2.0
-         : Current specification
-    2015 : gRPC (Google)
-         : Protocol Buffers + HTTP/2
-    2020+ : Modern adoption
-         : Ethereum, LSP, Bitcoin use JSON-RPC
-{{< /mermaid >}}
+**Evolution of RPC Protocols Timeline:**
+
+| Year | Protocol | Description | Characteristics |
+|------|----------|-------------|-----------------|
+| 1984 | Sun RPC (ONC RPC) | Binary protocol, C-centric | First widely adopted RPC |
+| 1991 | CORBA | Complex, multi-language | Enterprise-grade, heavyweight |
+| 1998 | XML-RPC | Simple HTTP + XML | Human-readable, cross-platform |
+| 1999 | SOAP | Enterprise standard, heavyweight | Comprehensive but complex |
+| 2005 | JSON-RPC 1.0 | Lightweight alternative | Simple JSON-based RPC |
+| 2010 | JSON-RPC 2.0 | Current specification | Simplified and standardized |
+| 2015 | gRPC (Google) | Protocol Buffers + HTTP/2 | High-performance, type-safe |
+| 2020+ | Modern adoption | Ethereum, LSP, Bitcoin use JSON-RPC | Widespread production use |
 
 ---
 

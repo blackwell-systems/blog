@@ -143,22 +143,16 @@ Database binary JSON formats solve this at the storage layer. Let's see the impa
 - Performance-critical applications
 {{< /callout >}}
 
-{{< mermaid >}}
-timeline
-    title Database Binary JSON Evolution
-    2009 : MongoDB BSON
-         : Binary JSON with extended types
-    2012 : PostgreSQL JSON
-         : Text JSON column support
-    2014 : PostgreSQL JSONB
-         : Binary JSON with indexing
-    2015 : MySQL JSON
-         : Binary JSON column type
-    2016 : SQL Server JSON
-         : JSON functions and indexing
-    2020+ : Wide Adoption
-         : Binary JSON in production
-{{< /mermaid >}}
+**Database Binary JSON Evolution Timeline:**
+
+| Year | Database/Technology | Innovation | Impact |
+|------|-------------------|-----------|--------|
+| 2009 | MongoDB BSON | Binary JSON with extended types | First major binary JSON implementation |
+| 2012 | PostgreSQL JSON | Text JSON column support | SQL databases adopt JSON |
+| 2014 | PostgreSQL JSONB | Binary JSON with indexing | Performance breakthrough for SQL JSON |
+| 2015 | MySQL JSON | Binary JSON column type | Major database vendors adopt binary JSON |
+| 2016 | SQL Server JSON | JSON functions and indexing | Enterprise database JSON support |
+| 2020+ | Industry-wide | Wide adoption in production | Binary JSON becomes mainstream |
 
 ---
 

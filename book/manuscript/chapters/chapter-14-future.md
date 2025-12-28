@@ -1240,26 +1240,14 @@ JSON succeeded because it matched 2000s architectural patterns (modularity, simp
 - Developer ergonomics (debug, test, understand easily)
 - Ecosystem maturity (20+ years of tools, libraries, knowledge)
 
-```mermaid
-timeline
-    title Data Format Evolution Matching Architecture
-    1990s<br/>Monolithic : XML
-                          : SOAP
-                          : Built-in everything
-                          : Enterprise SOA
-    2000s<br/>Modular : JSON
-                      : REST
-                      : Composable ecosystem
-                      : Microservices
-    2010s<br/>Type-Safe : Protocol Buffers
-                        : gRPC
-                        : Code generation
-                        : Service mesh
-    2020s+<br/>Distributed : JSON (edge, serverless)
-                           : Protobuf (internal)
-                           : GraphQL (flexible)
-                           : Hybrid architectures
-```
+**Data Format Evolution Matching Architecture Timeline:**
+
+| Era | Architectural Pattern | Key Data Formats | Core Technologies | Philosophy |
+|-----|----------------------|-------------------|-------------------|-----------|
+| 1990s | Monolithic | XML, SOAP | Built-in everything, Enterprise SOA | Integrated solutions |
+| 2000s | Modular | JSON, REST | Composable ecosystem, Microservices | Loose coupling |
+| 2010s | Type-Safe | Protocol Buffers, gRPC | Code generation, Service mesh | Strong contracts |
+| 2020s+ | Distributed | JSON (edge, serverless), Protobuf (internal), GraphQL (flexible) | Hybrid architectures | Right tool per context |
 
 ### The Core Lesson
 
@@ -1336,25 +1324,15 @@ The question is never "Should I switch from JSON to Protobuf?" The question is "
 
 The zeitgeist lesson applies to all technology choices: understand the architectural patterns of your era, choose tools that match those patterns, and remember that "best practice" changes as architecture evolves.
 
-```mermaid
-timeline
-    title Typical Migration Journey
-    Phase 1<br/>JSON : Start with JSON
-                    : Rapid development
-                    : 10K requests/sec
-    Phase 2<br/>Binary JSON : Add MessagePack
-                             : Optimize hot paths
-                             : 50K requests/sec
-    Phase 3<br/>Mixed : JSON (external APIs)
-                      : MessagePack (internal)
-                      : 200K requests/sec
-    Phase 4<br/>Protobuf : Migrate critical services
-                         : Schema enforcement
-                         : 1M requests/sec
-    Phase 5<br/>Polyglot : JSON (web)
-                         : Protobuf (services)
-                         : GraphQL (mobile)
-```
+**Typical Migration Journey Timeline:**
+
+| Phase | Technology Focus | Key Actions | Performance Level |
+|-------|------------------|-------------|-------------------|
+| Phase 1 | JSON | Start with JSON, rapid development | 10K requests/sec |
+| Phase 2 | Binary JSON | Add MessagePack, optimize hot paths | 50K requests/sec |
+| Phase 3 | Mixed Approach | JSON (external APIs), MessagePack (internal) | 200K requests/sec |
+| Phase 4 | Protobuf | Migrate critical services, schema enforcement | 1M requests/sec |
+| Phase 5 | Polyglot | JSON (web), Protobuf (services), GraphQL (mobile) | Optimized per use case |
 
 ```mermaid
 flowchart TB
