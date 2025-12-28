@@ -1237,9 +1237,7 @@ JSON deliberately omitted developer-friendly features to stay minimal. For machi
     maxConnections: 1_000,     // Numeric separators
   },
   
-  // Multi-line strings
-  description: 'This is a \
-    multi-line description',
+  description: 'JSON5 supports cleaner syntax',
 }
 ```
 
