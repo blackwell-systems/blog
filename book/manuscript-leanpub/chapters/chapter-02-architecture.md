@@ -1020,7 +1020,7 @@ app.use(validateMiddleware(schema));
 - DevOps culture (automation handles complexity)
 
 
-![Diagram 1](resources/mermaid-diagrams/chapter-02-architecture-diagram-1.png){width=85%}
+![Diagram 1](chapter-02-architecture-diagram-1.png){width=85%}
 
 
 ---

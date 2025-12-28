@@ -18,11 +18,11 @@ A single malformed JSON record—network truncated during transmission—crashes
 This chapter examines how to build production-grade JSON data pipelines that handle millions of events reliably. We'll cover the complete ecosystem: ETL patterns with JSON Lines, streaming with Kafka, validation strategies, error handling, monitoring, and real-world architectures that process JSON at scale.
 
 
-![Diagram 1](resources/mermaid-diagrams/chapter-12-data-pipelines-diagram-1.png){width=85%}
+![Diagram 1](chapter-12-data-pipelines-diagram-1.png){width=85%}
 
 
 
-![Diagram 2](resources/mermaid-diagrams/chapter-12-data-pipelines-diagram-2.png){width=85%}
+![Diagram 2](chapter-12-data-pipelines-diagram-2.png){width=85%}
 
 
 ## 1. ETL Fundamentals with JSON Lines
@@ -335,7 +335,7 @@ df.to_sql('users', engine, if_exists='append', index=False)
 - Event-driven architectures
 
 
-![Diagram 3](resources/mermaid-diagrams/chapter-12-data-pipelines-diagram-3.png){width=85%}
+![Diagram 3](chapter-12-data-pipelines-diagram-3.png){width=85%}
 
 
 This ETL foundation provides the building blocks for reliable JSON data processing. The next sections explore how these patterns scale to handle millions of JSON events through streaming systems like Kafka.
@@ -358,7 +358,7 @@ File-based pipelines lose data when processes crash. Kafka persists JSON events 
 Single-machine ETL hits CPU and I/O limits. Kafka enables horizontal scaling by partitioning JSON streams across multiple consumer instances.
 
 
-![Diagram 4](resources/mermaid-diagrams/chapter-12-data-pipelines-diagram-4.png){width=85%}
+![Diagram 4](chapter-12-data-pipelines-diagram-4.png){width=85%}
 
 
 ### JSON Message Production
@@ -700,7 +700,7 @@ class SchemaAwareProducer {
 ```
 
 
-![Diagram 5](resources/mermaid-diagrams/chapter-12-data-pipelines-diagram-5.png){width=85%}
+![Diagram 5](chapter-12-data-pipelines-diagram-5.png){width=85%}
 
 
 ### Monitoring Kafka JSON Pipelines
@@ -789,7 +789,7 @@ setInterval(monitorConsumerLag, 60000); // Check every minute
 ```
 
 
-![Diagram 6](resources/mermaid-diagrams/chapter-12-data-pipelines-diagram-6.png){width=85%}
+![Diagram 6](chapter-12-data-pipelines-diagram-6.png){width=85%}
 
 
 This Kafka integration provides the foundation for real-time JSON processing at scale. The streaming approach enables immediate processing of events as they occur, supporting use cases like real-time analytics, fraud detection, and live dashboards that batch ETL cannot achieve.
@@ -1359,7 +1359,7 @@ function classifyError(error, context = {}) {
 ```
 
 
-![Diagram 7](resources/mermaid-diagrams/chapter-12-data-pipelines-diagram-7.png){width=85%}
+![Diagram 7](chapter-12-data-pipelines-diagram-7.png){width=85%}
 
 
 ### Exponential Backoff with Jitter
@@ -1585,7 +1585,7 @@ class DeadLetterQueue {
 Processing the same message multiple times should be safe:
 
 
-![Diagram 8](resources/mermaid-diagrams/chapter-12-data-pipelines-diagram-8.png){width=85%}
+![Diagram 8](chapter-12-data-pipelines-diagram-8.png){width=85%}
 
 
 ```javascript
@@ -1799,7 +1799,7 @@ async function callExternalService(data) {
 ```
 
 
-![Diagram 9](resources/mermaid-diagrams/chapter-12-data-pipelines-diagram-9.png){width=85%}
+![Diagram 9](chapter-12-data-pipelines-diagram-9.png){width=85%}
 
 
 These error handling patterns create resilient JSON pipelines that gracefully handle failures, preserve data through quarantine and DLQ mechanisms, and prevent cascading failures that can bring down entire systems.
@@ -2279,7 +2279,7 @@ groups:
 ```
 
 
-![Diagram 10](resources/mermaid-diagrams/chapter-12-data-pipelines-diagram-10.png){width=85%}
+![Diagram 10](chapter-12-data-pipelines-diagram-10.png){width=85%}
 
 
 This observability foundation enables proactive monitoring, rapid debugging, and continuous optimization of JSON data pipelines at scale.
@@ -2300,7 +2300,7 @@ Microservices → Filebeat → Kafka → Logstash → Elasticsearch → Kibana
 ```
 
 
-![Diagram 11](resources/mermaid-diagrams/chapter-12-data-pipelines-diagram-11.png){width=85%}
+![Diagram 11](chapter-12-data-pipelines-diagram-11.png){width=85%}
 
 
 **Implementation:**
@@ -2498,7 +2498,7 @@ public class UserEventProcessor extends DataStream<UserEvent> {
 ```
 
 
-![Diagram 12](resources/mermaid-diagrams/chapter-12-data-pipelines-diagram-12.png){width=85%}
+![Diagram 12](chapter-12-data-pipelines-diagram-12.png){width=85%}
 
 
 ### Architecture 3: Data Warehouse ETL

@@ -85,7 +85,7 @@ The visual noise of quotes everywhere reduces readability. Compare to a format w
 The configuration problem is real, widespread, and expensive. The ecosystem responded with four modular solutions, each optimizing different trade-offs.
 
 
-![Diagram 1](resources/mermaid-diagrams/chapter-10-human-friendly-diagram-1.png){width=85%}
+![Diagram 1](chapter-10-human-friendly-diagram-1.png){width=85%}
 
 
 ## JSON5: ECMAScript 5 for Configs
@@ -316,7 +316,7 @@ staging:
 YAML's power comes with complexity. Several gotchas trip up developers:
 
 
-![Diagram 2](resources/mermaid-diagrams/chapter-10-human-friendly-diagram-2.png){width=85%}
+![Diagram 2](chapter-10-human-friendly-diagram-2.png){width=85%}
 
 
 **The Norway problem:**
@@ -579,7 +579,7 @@ Each format occupies a different niche. The right choice depends on your team, t
 ### Comparison Matrix
 
 
-![Diagram 3](resources/mermaid-diagrams/chapter-10-human-friendly-diagram-3.png){width=85%}
+![Diagram 3](chapter-10-human-friendly-diagram-3.png){width=85%}
 
 
 | Dimension | JSON5 | HJSON | YAML | TOML |
@@ -599,7 +599,7 @@ Each format occupies a different niche. The right choice depends on your team, t
 ### Decision Framework
 
 
-![Diagram 4](resources/mermaid-diagrams/chapter-10-human-friendly-diagram-4.png){width=85%}
+![Diagram 4](chapter-10-human-friendly-diagram-4.png){width=85%}
 
 
 **Use JSON when:**
@@ -641,7 +641,7 @@ Switching configuration formats mid-project requires planning. Here's how to mig
 ### JSON → JSON5 (Easiest)
 
 
-![Diagram 5](resources/mermaid-diagrams/chapter-10-human-friendly-diagram-5.png){width=85%}
+![Diagram 5](chapter-10-human-friendly-diagram-5.png){width=85%}
 
 
 **Step 1:** Rename files:
