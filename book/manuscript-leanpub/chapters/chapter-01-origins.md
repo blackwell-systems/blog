@@ -25,7 +25,7 @@ This series explores the JSON you don't know - the one beyond basic syntax. We'l
 
 **JSON's approach:** Minimal core with separate standards for each need
 
-**Architecture shift:** Integrated -> Modular, Everything built-in -> Composable solutions, Monolithic -> Ecosystem-driven
+**Architecture shift:** Integrated → Modular, Everything built-in → Composable solutions, Monolithic → Ecosystem-driven
 {/blurb}
 
 ---
@@ -1059,7 +1059,7 @@ Let's compare JSON to its alternatives across key dimensions:
 
 Despite JSON's dominance, there are clear cases where alternatives are better:
 
-### 1. High-Performance Systems -> Protocol Buffers, FlatBuffers
+### 1. High-Performance Systems → Protocol Buffers, FlatBuffers
 
 When you're handling millions of requests per second, [Protocol Buffers](#) offer compelling advantages:
 
@@ -1081,7 +1081,7 @@ message Person {
 
 Read more: [Understanding Protocol Buffers: Part 1](#)
 
-### 2. Human-Edited Configuration -> YAML, TOML, JSON5
+### 2. Human-Edited Configuration → YAML, TOML, JSON5
 
 When developers edit config files frequently:
 
@@ -1111,7 +1111,7 @@ database:
 
 **Trade-off:** YAML has subtle parsing gotchas (indentation, special values like `no`/`yes`).
 
-### 3. Large Tabular Datasets -> CSV, Parquet, Arrow
+### 3. Large Tabular Datasets → CSV, Parquet, Arrow
 
 For analytics and data pipelines:
 
@@ -1125,7 +1125,7 @@ id,name,email,created
 
 **Trade-off:** No nested structures, limited type information.
 
-### 4. Document Storage -> BSON, MessagePack
+### 4. Document Storage → BSON, MessagePack
 
 When JSON-like flexibility meets binary efficiency:
 
