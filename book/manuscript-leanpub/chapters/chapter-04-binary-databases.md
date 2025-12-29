@@ -9,11 +9,7 @@ For configuration files and API responses under 100KB, this is fine. But when st
 {blurb, class: information}
 **What XML Had:** No successful binary format (1998-2010)
 
-**XML's approach:** XML was purely textual for databases. Binary encoding attempts existed but failed:
-- **WBXML** (1999): WAP-specific, limited adoption
-- **Fast Infoset** (2005): Complex, required special parsers
-- **EXI** (2011): Too late, minimal database support
-- **Binary XML (.NET)**: Proprietary, Microsoft-only
+**XML's approach:** XML was purely textual for databases. Binary encoding attempts existed but failed: WBXML (1999) was WAP-specific with limited adoption, Fast Infoset (2005) was too complex and required special parsers, EXI (2011) arrived too late with minimal database support, and Binary XML (.NET) was proprietary and Microsoft-only.
 
 ```xml
 <!-- XML: Always text in databases, even for large datasets -->
@@ -66,11 +62,7 @@ Our User API from [Part 1](##running-example-building-a-user-api) now has valida
 **Size:** 156 bytes per user
 **10M users:** 1.56 GB as text JSON
 
-**Problems at scale in databases:**
-- Field names repeated 10 million times in storage
-- Text parsing required on every query
-- No indexing into JSON structure without parsing
-- Inefficient storage and retrieval for database operations
+**Problems at scale in databases:** Field names get repeated 10 million times in storage, text parsing is required on every query, indexing into JSON structure demands parsing the entire document, and storage and retrieval become increasingly inefficient for database operations.
 
 Database binary JSON formats solve this at the storage layer. Let's see the impact.
 
@@ -104,13 +96,7 @@ Database binary JSON formats solve this at the storage layer. Let's see the impa
 6. Handle escape sequences
 7. Build object structure in memory for every query
 
-**The database-specific costs:**
-- Field names stored repeatedly (`"id"`, `"username"`, `"email"` in every record)
-- Numbers stored as text (`123456789` = 9 bytes vs 4 bytes as integer)
-- Date stored as 24-character string vs 8-byte timestamp
-- Parse overhead: string scanning, allocation for every query
-- No indexing without parsing entire document
-- JOIN operations require reparsing for every row
+**The database-specific costs:** Field names like `"id"`, `"username"`, and `"email"` get stored repeatedly in every record. Numbers are stored as text (the number 123456789 takes 9 bytes as text versus 4 bytes as an integer). Dates occupy 24 characters as ISO strings versus 8 bytes as timestamps. Parse overhead includes string scanning and memory allocation for every query. Indexing requires parsing the entire document, and JOIN operations must reparse JSON for every row.
 
 ### When Does This Matter in Databases?
 
@@ -125,12 +111,7 @@ Database binary JSON formats solve this at the storage layer. Let's see the impa
 + **Analytics queries** - OLAP workloads on JSON data
 
 {blurb, class: information}
-**Database Rule of Thumb:** Text JSON columns are fine for rarely-queried metadata. Consider binary formats when you have:
-- Frequent queries on JSON fields
-- Large datasets (>100K rows with JSON)
-- Complex aggregations or analytics
-- Need to index JSON content
-- Performance-critical applications
+**Database Rule of Thumb:** Text JSON columns are fine for rarely-queried metadata. Consider binary formats when you have frequent queries on JSON fields, large datasets (>100K rows with JSON), complex aggregations or analytics, need to index JSON content, or performance-critical applications.
 {/blurb}
 
 **Database Binary JSON Evolution Timeline:**
@@ -153,19 +134,13 @@ Database binary JSON formats share common goals but differ in implementation and
 ### Common Database Goals
 
 **1. Smaller Storage**
-- Remove repeated field names (or compress them)
-- Efficient number encoding (binary, not text)
-- No syntax overhead stored on disk
+Remove repeated field names or compress them. Use efficient number encoding with binary representation instead of text. Eliminate syntax overhead from disk storage.
 
 **2. Faster Queries**
-- Skip string parsing on queries (pre-decomposed data)
-- Direct field access via offsets
-- Type information embedded (no string-to-type conversion)
+Skip string parsing on queries because data is already pre-decomposed. Direct field access happens via offsets, and type information is embedded, eliminating string-to-type conversion overhead.
 
 **3. Indexable Structure**
-- Extract fields without full document parsing
-- Support complex index types (GIN, GiST)
-- Enable fast WHERE clauses on JSON content
+Extract fields without requiring full document parsing. Support complex index types like GIN and GiST. Enable fast WHERE clauses on JSON content through efficient field extraction.
 
 ### The Database Formats
 
@@ -215,16 +190,9 @@ JSONB uses a decomposed binary format:
 - **JEntry array:** Metadata for each key/value (offset, length, type)
 - **Data section:** Actual values in binary form
 
-**Benefits:**
-- No reparsing on queries (already decomposed)
-- Keys stored once per object
-- Direct access to nested fields (offset jumping)
-- Indexable (GIN, GiST indexes)
+**Benefits:** No reparsing on queries since the data is already decomposed. Keys are stored once per object. Direct access to nested fields happens via offset jumping. The structure is indexable using GIN or GiST indexes.
 
-**Trade-off:**
-- Slower to insert (decomposition overhead)
-- Slightly larger than compressed JSON text
-- Key order not preserved (sorted for efficiency)
+**Trade-off:** Inserts are slower due to decomposition overhead. Storage is slightly larger than compressed JSON text. Key order isn't preserved—keys are sorted for efficiency instead.
 
 ### Querying JSONB
 
@@ -346,21 +314,12 @@ SET event_data = event_data - 'ip';
 | UPDATE field | 1.8s | 0.9s | 2x |
 | Storage size | 285 MB | 310 MB | 1.09x (larger) |
 
-**With GIN index:**
-- Index size: +95 MB
-- Query speedup: 10-50x for containment queries
+**With GIN index:** Index size adds 95 MB. Query speedup ranges from 10-50x for containment queries.
 
 {blurb, class: tip}
-**Best Practice:** Use JSONB for:
-- Semi-structured data in PostgreSQL
-- Documents with varied schemas
-- Fast queries on JSON fields
-- When you need indexing
+**Best Practice:** Use JSONB for semi-structured data in PostgreSQL, documents with varied schemas, fast queries on JSON fields, and when you need indexing.
 
-Stick with JSON column type only if you need:
-- Exact key order preservation
-- Faster inserts (no decomposition)
-- Original formatting preserved
+Stick with JSON column type only if you need exact key order preservation, faster inserts without decomposition overhead, or original formatting preserved.
 {/blurb}
 
 ### Query Optimization with JSONB
@@ -467,15 +426,9 @@ PostgreSQL offers two JSONB index types with different trade-offs:
 CREATE INDEX idx_users_data_gin ON users USING GIN (data);
 ```
 
-**Optimizes:**
-- Containment queries (`@>`, `<@`)
-- Existence checks (`?`, `?|`, `?&`)
-- Full-text search within JSONB
+**Optimizes:** Containment queries (`@>`, `<@`), existence checks (`?`, `?|`, `?&`), and full-text search within JSONB.
 
-**Characteristics:**
-- Larger index size (1.5-2x the data size)
-- Slower inserts/updates (index maintenance)
-- Faster queries (most common use case)
+**Characteristics:** Larger index size at 1.5-2x the data size. Slower inserts and updates due to index maintenance. Faster queries for the most common use cases.
 
 **Use when:** Read-heavy workloads, complex containment queries
 
@@ -485,15 +438,9 @@ CREATE INDEX idx_users_data_gin ON users USING GIN (data);
 CREATE INDEX idx_users_data_gist ON users USING GiST (data);
 ```
 
-**Optimizes:**
-- Range queries
-- Nearest-neighbor searches
-- Custom operators
+**Optimizes:** Range queries, nearest-neighbor searches, and custom operators.
 
-**Characteristics:**
-- Smaller index size (0.5-1x the data size)
-- Faster inserts/updates
-- Slower containment queries than GIN
+**Characteristics:** Smaller index size at 0.5-1x the data size. Faster inserts and updates. Slower containment queries compared to GIN.
 
 **Use when:** Write-heavy workloads, index size is critical
 
