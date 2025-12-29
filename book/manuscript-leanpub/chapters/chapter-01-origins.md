@@ -102,7 +102,6 @@ The specification aimed for the sweet spot: simpler than SGML, more powerful tha
 
 **Microsoft embraced XML aggressively:** XML support in IE 5 in 1999. XML as configuration format in .NET in 2000. Office XML formats as precursor to DOCX. MSXML parser bundled with Windows.
 
-{pagebreak}
 
 **Sun Microsystems pushed XML for Java:**
 - JAXP (Java API for XML Processing)
@@ -130,7 +129,6 @@ XML's killer app (and eventual albatross) was SOAP - Simple Object Access Protoc
 - 50+ WS-* specifications (WS-Security, WS-ReliableMessaging, etc.)
 - Interoperability nightmares despite "standard" protocols
 
-{pagebreak}
 
 **Example SOAP call to add two numbers:**
 ```xml
@@ -183,7 +181,6 @@ But XML's complexity became its downfall. The problem wasn't any single feature 
 
 **Validation layer (built-in):** DTD (Document Type Definition) as the original schema language. XSD (XML Schema Definition) providing a complex type system. RelaxNG as alternative schema language. Schematron for rule-based validation.
 
-{pagebreak}
 
 **Query layer (built-in):** XPath as query language for selecting nodes. XQuery as SQL-like language for XML. XSLT for transformation and templating.
 
@@ -215,7 +212,6 @@ vs
 {"name":"Alice","email":"alice@example.com"}
 ```
 
-{pagebreak}
 
 **Namespace confusion:**
 ```xml
@@ -288,7 +284,6 @@ var person = {
 - Human-readable
 - Machine-friendly
 
-{pagebreak}
 
 ### The Same Data in JSON
 
@@ -404,7 +399,6 @@ Parsing time for 1000 markers: ~15ms (IE 6), ~8ms (Firefox 1.5)
 
 **JSON was 10-20x faster** because `JSON.parse()` was implemented in native C code while XML parsing required building an entire DOM tree in JavaScript.
 
-{pagebreak}
 
 **2. Bandwidth costs (critical in 2005)**
 
@@ -443,7 +437,6 @@ JSON response:
 
 **The difference was user-perceptible.** Google Maps with JSON felt snappy. With XML, it would have felt sluggish.
 
-{pagebreak}
 
 **3. Developer ergonomics**
 
@@ -517,7 +510,6 @@ Accept: application/json
 
 The difference was stark. REST + JSON became the de facto standard for web APIs.
 
-{pagebreak}
 
 ### 3. NoSQL Movement (2009+)
 
@@ -553,7 +545,6 @@ JSON displaced XML in configuration:
   }
 }
 ```
-{pagebreak}
 **tsconfig.json (TypeScript):**
 ```json
 {
@@ -598,7 +589,6 @@ XML:
 </user>
 ```
 **Size:** 512 bytes
-{pagebreak}
 JSON:
 ```json
 {
@@ -711,7 +701,6 @@ Mixed content (text + markup) is natural in XML, awkward in JSON. HTML, DocBook,
 
 XML namespaces allow mixing HTML and SVG without ambiguity. JSON has no equivalent.
 
-{pagebreak}
 
 **3. Schema evolution with extensibility:**
 ```xml
@@ -739,7 +728,6 @@ JSON didn't "win" universally—it won for **data interchange** specifically. AP
 
 JSON succeeded because it **matched the right use case** (data interchange) with the **right architecture** (minimal, composable) at the **right time** (AJAX revolution, REST APIs emerging).
 
-{pagebreak}
 
 ### 6. Language Support Explosion
 
@@ -914,7 +902,6 @@ Why is debug enabled? What does this configuration do? You can't document it in 
 
 Use fake fields for comments. But parsers still process these as data.
 
-{pagebreak}
 
 ### 5. No Binary Data Support
 
@@ -977,7 +964,6 @@ You must manually break cycles or use a [serialization library](#) that detects 
 
 ---
 
-{pagebreak}
 
 ## The Format Comparison Landscape
 
@@ -1006,7 +992,6 @@ Let's compare JSON to its alternatives across key dimensions:
 
 ---
 
-{pagebreak}
 
 ## When NOT to Use JSON
 
@@ -1038,7 +1023,6 @@ Read more: [Understanding Protocol Buffers: Part 1](#)
 
 When developers edit config files frequently:
 
-{pagebreak}
 
 **TOML:**
 ```toml
@@ -1275,7 +1259,6 @@ Throughout this series, we'll follow a single use case: **a User API for a socia
 - Mobile and web clients
 - Need authentication, validation, performance, and security
 
-{pagebreak}
 
 **Chapter 1 (this chapter):** The basic JSON structure
 ```json
@@ -1308,7 +1291,6 @@ This single API will demonstrate how each ecosystem layer solves a real problem.
 
 ---
 
-{pagebreak}
 
 ## Conclusion: JSON's Success Through Simplicity
 
