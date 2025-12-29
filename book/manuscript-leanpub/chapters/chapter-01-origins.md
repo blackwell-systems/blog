@@ -313,8 +313,7 @@ vs JSON Schema:
 **The real killer:** Developer experience. Writing XML by hand was tedious. Reading XML logs was painful. Debugging SOAP requests required specialized tools. The monolithic architecture meant you couldn't use just the parts you needed - it was all or nothing.
 
 
-![Diagram 1](chapter-01-origins-diagram-1-light.png)
-{width: 85%}
+![Diagram 1](chapter-01-origins-diagram-1-light.png){width=85%}
 
 
 ---
@@ -856,8 +855,7 @@ Person person = mapper.readValue(json, Person.class);  // decode
 {/blurb}
 
 
-![Diagram 2](chapter-01-origins-diagram-2-light.png)
-{width: 85%}
+![Diagram 2](chapter-01-origins-diagram-2-light.png){width=85%}
 
 
 ---
@@ -1078,8 +1076,7 @@ Let's compare JSON to its alternatives across key dimensions:
 *JSON Schema provides validation but isn't part of JSON itself.
 
 
-![Diagram 3](chapter-01-origins-diagram-3-light.png)
-{width: 85%}
+![Diagram 3](chapter-01-origins-diagram-3-light.png){width=85%}
 
 
 ---
@@ -1337,8 +1334,7 @@ JSON deliberately omitted developer-friendly features to stay minimal. For machi
 **Solution:** JSON Web Signatures and Encryption standards
 
 
-![Diagram 4](chapter-01-origins-diagram-4-light.png)
-{width: 85%}
+![Diagram 4](chapter-01-origins-diagram-4-light.png){width=85%}
 
 
 ---
