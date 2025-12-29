@@ -250,21 +250,11 @@ Each component does one thing: `cat` reads files, `grep` filters lines, `cut` ex
 {width: 85%}
 
 
-**Each service:**
-- Different language (Go, Node.js, Python)
-- Different database (PostgreSQL, MongoDB, MySQL)
-- Independent deployment
-- Team autonomy
+**Each service:** Different language (Go, Node.js, Python). Different database (PostgreSQL, MongoDB, MySQL). Independent deployment. Team autonomy.
 
-**What enables this? JSON as universal interchange format:**
-- Language-agnostic (every language parses JSON)
-- Database-agnostic (every DB supports JSON)
-- Protocol-agnostic (HTTP + JSON is universal)
+**What enables this? JSON as universal interchange format:** Language-agnostic so every language parses JSON. Database-agnostic so every DB supports JSON. Protocol-agnostic because HTTP plus JSON is universal.
 
-**Without JSON:**
-- Need shared binary protocol (Protocol Buffers) - requires schemas
-- Need shared language (limits technology choices)
-- Need shared framework (reduces autonomy)
+**Without JSON:** Need shared binary protocol like Protocol Buffers requiring schemas. Need shared language limiting technology choices. Need shared framework reducing autonomy.
 
 **JSON enabled microservices** by providing a simple, universal data layer that every component could speak without coordination.
 
@@ -289,16 +279,9 @@ services:
       - POSTGRES_JSON_EXTENSION=enabled
 ```
 
-**Each container:**
-- Single responsibility
-- Replace independently (node:18 → node:20)
-- Different data formats inside (doesn't matter)
-- Communicate via standard protocols (HTTP + JSON)
+**Each container:** Single responsibility. Replace independently (node:18 → node:20). Different data formats inside (doesn't matter). Communicate via standard protocols (HTTP + JSON).
 
-**The parallel:**
-- Docker containers are independent (like JSON ecosystem components)
-- Compose via well-defined interfaces (like JSON + HTTP)
-- Replace without affecting others (like swapping MessagePack for JSON)
+**The parallel:** Docker containers are independent like JSON ecosystem components. Compose via well-defined interfaces like JSON plus HTTP. Replace without affecting others like swapping MessagePack for JSON.
 
 ---
 
@@ -320,11 +303,7 @@ Let's examine specific failures of the monolithic approach.
 
 **Timeline:** 5+ years for widespread XSD adoption
 
-**Pain points:**
-- Parsers without XSD support were "incomplete"
-- SOAP stacks fragmented based on XSD support
-- Interoperability suffered during transition
-- Developers forced to learn XSD even if they didn't need it
+**Pain points:** Parsers without XSD support were considered "incomplete." SOAP stacks fragmented based on XSD support. Interoperability suffered during transition. Developers were forced to learn XSD even if they didn't need it.
 
 **JSON's modular approach:**
 1. Community creates JSON Schema (2010)
@@ -362,12 +341,7 @@ Let's examine specific failures of the monolithic approach.
 </config>
 ```
 
-**To write this 6-line config, you must understand:**
-- XML syntax (tags, attributes, nesting)
-- XML declaration (`<?xml ... ?>`)
-- Namespaces (`xmlns`)
-- XSD integration (`xsi:schemaLocation`)
-- Schema validation concepts
+**To write this 6-line config, you must understand:** XML syntax with tags, attributes, and nesting. XML declaration using `<?xml ... ?>`. Namespaces via `xmlns`. XSD integration through `xsi:schemaLocation`. Schema validation concepts.
 
 **JSON equivalent:**
 
@@ -380,8 +354,7 @@ Let's examine specific failures of the monolithic approach.
 }
 ```
 
-**To write this, you must understand:**
-- JSON syntax (objects, values, nesting)
+**To write this, you must understand:** JSON syntax with objects, values, and nesting.
 
 That's it. Validation is optional (add JSON Schema later if needed).
 
@@ -410,11 +383,7 @@ Example: SOAP message signing with WS-Security
 </soap:Envelope>
 ```
 
-**Dependencies:**
-- WS-Security depends on SOAP
-- XML Signature depends on XML namespaces
-- SOAP depends on XSD (for type definitions)
-- All must be updated together
+**Dependencies:** WS-Security depends on SOAP. XML Signature depends on XML namespaces. SOAP depends on XSD for type definitions. All must be updated together.
 
 **JSON equivalent with JWT:**
 
@@ -429,11 +398,7 @@ fetch('/api/rpc', {
 });
 ```
 
-**Dependencies:**
-- JWT library is independent
-- JSON-RPC is independent
-- HTTP is independent
-- Update one without touching others
+**Dependencies:** JWT library is independent. JSON-RPC is independent. HTTP is independent. Update one without touching others.
 
 ### Problem 4: The Innovation Barrier
 
@@ -444,11 +409,7 @@ fetch('/api/rpc', {
 4. Implementation in all XML toolkits
 5. Backwards compatibility guarantees
 
-**Example: XSD 1.1 (adding assertions)**
-- First proposal: 2005
-- Final recommendation: 2012
-- **7 years** from idea to standard
-- Many parsers still don't support it (as of 2025)
+**Example: XSD 1.1 (adding assertions):** First proposal in 2005. Final recommendation in 2012. **7 years** from idea to standard. Many parsers still don't support it as of 2025.
 
 **JSON ecosystem innovation:**
 - Anyone can create a new library
@@ -456,11 +417,7 @@ fetch('/api/rpc', {
 - Community adoption is organic
 - No standards committee required
 
-**Example: Ajv (popular JSON Schema validator)**
-- Created: 2015
-- Widespread adoption: 2016-2017
-- **1-2 years** from idea to production use
-- Multiple alternatives emerged (joi, yup, zod)
+**Example: Ajv (popular JSON Schema validator):** Created in 2015. Widespread adoption by 2016-2017. **1-2 years** from idea to production use. Multiple alternatives emerged including joi, yup, and zod.
 
 **The difference:** Permissionless innovation vs committee-driven standardization.
 
@@ -480,11 +437,7 @@ const output = JSON.stringify(data); // Any JSON destination
 // Everything in between is replaceable
 ```
 
-**This enables:**
-- Swap validation libraries (ajv → joi → zod)
-- Swap binary formats (MessagePack → CBOR → JSONB)
-- Swap protocols (REST → JSON-RPC → GraphQL)
-- Core JSON never changes
+**This enables:** Swap validation libraries from ajv to joi to zod. Swap binary formats from MessagePack to CBOR to JSONB. Swap protocols from REST to JSON-RPC to GraphQL. Core JSON never changes.
 
 **XML's tight coupling:**
 
@@ -538,10 +491,7 @@ app.get('/users/:id', (req, res) => {
 
 **Each stage is optional.** You can stay at Stage 1 forever if it meets your needs.
 
-**XML forced everything upfront:**
-- Namespaces from day one (even if not needed)
-- Schema declarations (even without validation)
-- Verbose syntax (no simple mode)
+**XML forced everything upfront:** Namespaces from day one even if not needed. Schema declarations even without validation. Verbose syntax with no simple mode.
 
 ### Principle 3: Competition Drives Quality
 
@@ -709,10 +659,7 @@ Contract: Parse and stringify (no more, no less)
 - Querying? Not JSON's job
 - Security? Not JSON's job
 
-**This clarity enables:**
-- Multiple implementations of core (fast, safe, streaming parsers)
-- Multiple solutions for each layer (competition)
-- No confusion about what "JSON" means
+**This clarity enables:** Multiple implementations of core producing fast, safe, streaming parsers. Multiple solutions for each layer creating competition. No confusion about what "JSON" means.
 
 ### 3. Permissionless Extension
 
@@ -728,17 +675,9 @@ const myValidator = {
 };
 ```
 
-**No centralized approval needed:**
-- npm package published instantly
-- GitHub repo created freely
-- Community adoption is organic
-- Market decides winners
+**No centralized approval needed:** npm package published instantly. GitHub repo created freely. Community adoption is organic. Market decides winners.
 
-**Contrast with XML's standardization requirement:**
-- New XML feature needs W3C approval
-- Years-long process
-- Committee consensus required
-- Implementation delayed until spec is final
+**Contrast with XML's standardization requirement:** New XML feature needs W3C approval. Years-long process. Committee consensus required. Implementation delayed until spec is final.
 
 ### 4. Replaceability Without Breakage
 
@@ -774,11 +713,7 @@ app.use(validateMiddleware(schema));
 
 **Developer mindset:** Developers in the 1990s wanted comprehensive frameworks that provided complete solutions out of the box. They valued integrated tooling and were willing to accept complexity in exchange for completeness.
 
-**Technologies that succeeded:**
-- Microsoft Visual Studio (all-in-one IDE)
-- J2EE application servers
-- Oracle database (includes everything)
-- XML (complete data ecosystem)
+**Technologies that succeeded:** Microsoft Visual Studio as all-in-one IDE. J2EE application servers. Oracle database including everything. XML as complete data ecosystem.
 
 **Why this worked:** Technology changed slowly enough that companies could invest once and use the same tools for years. The smaller ecosystem meant fewer alternatives to evaluate, and enterprise budgets supported buying complete solutions. Teams could specialize deeply—dedicating entire departments to mastering technologies like XML.
 
@@ -786,11 +721,7 @@ app.use(validateMiddleware(schema));
 
 **Developer mindset:** By the 2000s, developers wanted best-of-breed components rather than all-in-one solutions. They expected composability and valued flexibility over tight integration, willingly accepting integration work in exchange for autonomy in technology choices.
 
-**Technologies that succeeded:**
-- Ruby on Rails (opinionated but modular)
-- jQuery (small library, huge plugin ecosystem)
-- REST APIs (compose your own stack)
-- JSON (minimal core, extensible ecosystem)
+**Technologies that succeeded:** Ruby on Rails as opinionated but modular. jQuery as small library with huge plugin ecosystem. REST APIs letting you compose your own stack. JSON with minimal core and extensible ecosystem.
 
 **Why this worked:** Technology evolved faster, making component replacement a regular activity rather than a rare event. The ecosystem expanded dramatically, offering many alternatives for each need. Startup culture favored assembling cheap, modular solutions over buying expensive integrated suites. The rise of full-stack developers meant individuals could handle multiple technologies rather than requiring specialized teams.
 
@@ -798,11 +729,7 @@ app.use(validateMiddleware(schema));
 
 **Developer mindset:** Modern developers actively prefer microservices over monolithic applications. They expect containerization as standard practice and value independent deployment above almost everything else. They're willing to accept the complexity of distributed systems in exchange for service-level autonomy.
 
-**Technologies that succeeded:**
-- npm (1.5M packages, extreme modularity)
-- Docker/Kubernetes (composable infrastructure)
-- Serverless (functions as atomic units)
-- JSON ecosystem (modular solutions for every gap)
+**Technologies that succeeded:** npm with 1.5M packages representing extreme modularity. Docker/Kubernetes as composable infrastructure. Serverless with functions as atomic units. JSON ecosystem providing modular solutions for every gap.
 
 **Why this works:** Continuous deployment practices allow teams to update components independently without coordinating releases. Cloud infrastructure provides the orchestration needed for distributed services. Organizations scale by giving each team ownership of their services rather than coordinating through shared monoliths. DevOps culture and tooling have evolved to handle the operational complexity that modularity creates.
 
@@ -819,53 +746,27 @@ app.use(validateMiddleware(schema));
 
 When evaluating any technology, ask:
 
-**1. Does it match current architectural patterns?**
-- 1990s developer: "Does it provide everything I need?"
-- 2020s developer: "Can I compose it with other tools?"
+**1. Does it match current architectural patterns?** 1990s developer asks: "Does it provide everything I need?" 2020s developer asks: "Can I compose it with other tools?"
 
-**2. What's the core vs ecosystem split?**
-- Minimal core, rich ecosystem? (JSON model)
-- Comprehensive core, limited ecosystem? (XML model)
+**2. What's the core vs ecosystem split?** Minimal core with rich ecosystem (JSON model) or comprehensive core with limited ecosystem (XML model)?
 
-**3. How does it handle evolution?**
-- Coordinated updates? (monolithic)
-- Independent evolution? (modular)
+**3. How does it handle evolution?** Coordinated updates (monolithic) or independent evolution (modular)?
 
-**4. What's the adoption model?**
-- All-or-nothing? (monolithic)
-- Gradual, opt-in? (modular)
+**4. What's the adoption model?** All-or-nothing (monolithic) or gradual, opt-in (modular)?
 
 ### Examples from 2020s
 
-**Kubernetes (modular):**
-- Core: Pod scheduling, container orchestration
-- Ecosystem: Ingress controllers, storage providers, monitoring, operators
-- You choose: Which ingress? Which storage? Which monitoring?
-- **Matches current zeitgeist** (compose infrastructure)
+**Kubernetes (modular):** Core provides pod scheduling and container orchestration. Ecosystem includes ingress controllers, storage providers, monitoring, and operators. You choose which ingress, which storage, which monitoring. **Matches current zeitgeist** of composing infrastructure.
 
-**Terraform (modular):**
-- Core: State management, plan/apply workflow
-- Ecosystem: Providers for every cloud (AWS, GCP, Azure)
-- You choose: Which providers? Which modules?
-- **Matches current zeitgeist** (infrastructure as code, composable)
+**Terraform (modular):** Core provides state management and plan/apply workflow. Ecosystem includes providers for every cloud (AWS, GCP, Azure). You choose which providers and which modules. **Matches current zeitgeist** of infrastructure as code and composability.
 
-**WebAssembly (minimal):**
-- Core: Binary instruction format for the web
-- Ecosystem: Language compilers (Rust, C++, Go → WASM)
-- You choose: Which language? Which runtime?
-- **Matches current zeitgeist** (minimal standard, rich tooling)
+**WebAssembly (minimal):** Core provides binary instruction format for the web. Ecosystem includes language compilers (Rust, C++, Go to WASM). You choose which language and which runtime. **Matches current zeitgeist** of minimal standard with rich tooling.
 
 **Counterexample: Some frameworks resist modularity:**
 
-**GraphQL (comprehensive):**
-- Core includes: Query language, type system, introspection, subscriptions
-- Less modular than REST + JSON (more integrated)
-- Still successful? Yes, but for different reason (solves specific pain point)
+**GraphQL (comprehensive):** Core includes query language, type system, introspection, and subscriptions. Less modular than REST plus JSON with more integration. Still successful? Yes, but for different reason—solves specific pain point.
 
-**Why GraphQL succeeds despite being more monolithic:**
-- Pain point is severe (REST over-fetching, under-fetching)
-- Integration is the feature (type system + queries)
-- Ecosystem still modular (Apollo vs Relay vs Hasura)
+**Why GraphQL succeeds despite being more monolithic:** Pain point is severe with REST over-fetching and under-fetching. Integration is the feature combining type system with queries. Ecosystem still remains modular with Apollo vs Relay vs Hasura.
 
 **Lesson:** Modularity isn't the only path to success, but it must match the era's patterns. GraphQL succeeds because it provides integration where integration adds value (query optimization), while staying modular where modularity matters (implementation choices).
 
@@ -877,17 +778,11 @@ When evaluating any technology, ask:
 
 Understanding architectural zeitgeist helps you:
 
-**1. Evaluate new technologies more accurately**
-- Don't ask "Is this good?" 
-- Ask "Does this match how we build systems now?"
+**1. Evaluate new technologies more accurately:** Don't ask "Is this good?" Ask "Does this match how we build systems now?"
 
-**2. Predict technology adoption**
-- Technologies matching current patterns gain traction
-- Technologies fighting current patterns struggle (even if technically superior)
+**2. Predict technology adoption:** Technologies matching current patterns gain traction. Technologies fighting current patterns struggle even if technically superior.
 
-**3. Make better architectural decisions**
-- Choose patterns that align with team culture
-- Don't force monolithic approaches in modular era (or vice versa)
+**3. Make better architectural decisions:** Choose patterns that align with team culture. Don't force monolithic approaches in modular era or vice versa.
 
 **4. Understand why good technologies fail.** Technology failure is often not technical but architectural—a mismatch with prevailing patterns. XML wasn't bad; it was simply out of step with 2000s thinking about how systems should be built.
 
