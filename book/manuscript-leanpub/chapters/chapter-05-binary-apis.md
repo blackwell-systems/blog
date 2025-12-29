@@ -308,6 +308,116 @@ const decoded = msgpack.decode(encoded);  // Reconstructs Date object
 | MessagePack | 72ms | 54ms | 9.8 KB |
 | Speedup | 1.7x | 1.8x | 1.55x |
 
+---
+
+## Running Example: Optimizing User API for Mobile Clients
+
+Our User API now has validation (Chapter 3), efficient database storage (Chapter 4), and protocol structure (Chapter 6 will add). Mobile clients face a critical constraint: **bandwidth costs money and drains batteries**.
+
+**The mobile challenge:**
+
+Our typical user profile response over cellular networks:
+
+**JSON response (text):**
+```json
+{
+  "id": "user-5f9d88c",
+  "username": "alice",
+  "email": "alice@example.com",
+  "created": "2023-01-15T10:30:00Z",
+  "bio": "Software engineer specializing in distributed systems",
+  "followers": 1234,
+  "following": 567,
+  "verified": true,
+  "avatar_url": "https://cdn.example.com/avatars/alice.jpg",
+  "location": "San Francisco, CA",
+  "website": "https://alice.dev"
+}
+```
+
+**Size:** 312 bytes
+
+**Mobile app usage:**
+- 10,000 daily active users
+- Average 50 API calls per user per day
+- 500,000 requests/day × 312 bytes = 156 MB/day
+- Monthly bandwidth: 4.7 GB
+
+**MessagePack response (binary):**
+```javascript
+// Server encodes as MessagePack
+const msgpack = require('msgpack5')();
+const user = await getUserFromDB(userId);
+const encoded = msgpack.encode(user);
+
+res.type('application/msgpack');
+res.send(encoded);
+```
+
+**Size:** 198 bytes (36% smaller)
+
+**Bandwidth savings:**
+- 500,000 requests/day × 198 bytes = 99 MB/day
+- Monthly bandwidth: 3.0 GB
+- **Savings: 1.7 GB/month (36% reduction)**
+
+**Cost impact:**
+- Average cellular data cost: $10/GB
+- JSON: $47/month per 10K users
+- MessagePack: $30/month per 10K users
+- **Savings: $17/month or $204/year per 10K users**
+
+**Battery impact:**
+- Smaller payloads = less radio time
+- Faster parsing = less CPU time
+- MessagePack reduces battery drain by ~15-20% for API-heavy apps
+
+**Implementation (mobile client):**
+```javascript
+// React Native client with MessagePack
+import msgpack from 'react-native-msgpack';
+
+async function fetchUser(userId) {
+  const response = await fetch(`${API_URL}/users/${userId}`, {
+    headers: {
+      'Accept': 'application/msgpack',
+      'Authorization': `Bearer ${token}`
+    }
+  });
+  
+  const buffer = await response.arrayBuffer();
+  const user = msgpack.decode(new Uint8Array(buffer));
+  return user;
+}
+```
+
+**When to use MessagePack for our User API:**
+- ✓ Mobile apps (bandwidth and battery critical)
+- ✓ High-volume endpoints (user feed, search results)
+- ✓ Large response payloads (user profiles with posts)
+- ✗ Web browsers (JSON simpler, no MessagePack native)
+- ✗ Debug/development (JSON human-readable)
+- ✗ Third-party integrations (JSON universal)
+
+**Hybrid approach:**
+```javascript
+// Server supports both formats
+app.get('/api/users/:id', async (req, res) => {
+  const user = await getUserFromDB(req.params.id);
+  
+  if (req.accepts('application/msgpack')) {
+    res.type('application/msgpack');
+    res.send(msgpack.encode(user));
+  } else {
+    res.json(user);
+  }
+});
+```
+
+This completes the **network optimization layer** for our User API, enabling efficient mobile delivery while maintaining JSON for web clients.
+
+---
+
 ### Real-World Use Cases
 
 **1. Redis caching:**

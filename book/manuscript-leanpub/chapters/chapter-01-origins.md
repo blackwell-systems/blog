@@ -1251,16 +1251,29 @@ JSON deliberately omitted developer-friendly features to stay minimal. For machi
 
 ## Running Example: Building a User API
 
-Throughout this series, we'll follow a single use case: **a User API for a social platform**. Each part will show how that layer of the ecosystem improves this real-world scenario.
+Throughout Chapters 3-8, we'll follow a single use case: **building a production-ready User API for a social platform**. This isn't a toy example - it's a realistic system facing real problems that JSON's ecosystem solves.
 
 **The scenario:**
-- REST API for user management
-- 10 million users in PostgreSQL
-- Mobile and web clients
-- Need authentication, validation, performance, and security
 
+You're building SocialDev, a platform for developers to share projects and connect. You need a User API to manage 10 million registered users. Requirements:
 
-**Chapter 1 (this chapter):** The basic JSON structure
+**Functional requirements:**
+- CRUD operations (create, read, update, delete users)
+- Search users by username, skills, location
+- Follow/unfollow relationships
+- User profile with bio, avatar, website
+- Email and username must be unique
+
+**Non-functional requirements:**
+- Handle 500,000 API requests per day
+- Support mobile apps (iOS, Android) - bandwidth critical
+- Support web clients (React app) - simplicity critical
+- Sub-100ms response time (p95)
+- Export all users for analytics (batch processing)
+- Secure authentication (no session storage on server)
+
+**Starting point - Basic JSON structure:**
+
 ```json
 {
   "id": "user-5f9d88c",
@@ -1277,21 +1290,83 @@ Throughout this series, we'll follow a single use case: **a User API for a socia
 }
 ```
 
-**What's missing:**
-- No validation (what if email is invalid?)
-- Inefficient storage (text format repeated 10M times)
-- Can't stream user exports (arrays don't stream)
-- No authentication (how do we secure this?)
-- No protocol (how do clients call getUserById?)
+**The problems JSON doesn't solve out-of-the-box:**
 
-**The journey ahead:**
-- **Chapter 3:** Add JSON Schema validation for type safety
-- **Chapter 4:** Store users in PostgreSQL JSONB for performance
-- **Chapter 6:** Add JSON-RPC protocol for structured API calls
-- **Chapter 7:** Export users with JSON Lines for streaming
-- **Chapter 8:** Secure API with JWT authentication
+**1. Validation (Chapter 3 solves this)**
+- What prevents `"email": "not-an-email"`?
+- What prevents `"followers": -1000`?
+- How do we enforce username 3-20 characters?
+- How do we make `id`, `verified`, `created` read-only?
+- **Without validation: garbage in, runtime crashes**
 
-This single API will demonstrate how each ecosystem layer solves a real problem.
+**2. Storage efficiency (Chapter 4 solves this)**
+- 312 bytes/user × 10M users = 3.12 GB as text JSON
+- Field names ("username", "email") repeated 10 million times
+- Every query parses text format
+- No way to index into JSON structure efficiently
+- **Without binary storage: wasted disk space, slow queries**
+
+**3. Network efficiency (Chapter 5 solves this)**
+- Mobile clients pay cellular data costs
+- 312 bytes × 500K requests/day = 156 MB/day bandwidth
+- Text parsing drains mobile battery
+- Slow networks (3G) make large responses painful
+- **Without binary encoding: bandwidth costs, poor mobile UX**
+
+**4. API structure (Chapter 6 solves this)**
+- How do clients call `followUser(followerId, followeeId)`?
+- How do we batch "get user + followers + posts" in one request?
+- How do we handle errors consistently?
+- REST forces `/users/:id/follow` (action as resource)
+- **Without protocol structure: inconsistent APIs, over-fetching**
+
+**5. Large exports (Chapter 7 solves this)**
+- How do we export 10M users for analytics?
+- Loading `[{user1}, {user2}, ... {user10000000}]` requires 30+ GB RAM
+- Single corrupted user breaks entire export
+- Can't resume if process crashes
+- **Without streaming: memory explosion, fragile exports**
+
+**6. Security (Chapter 8 solves this)**
+- How do we authenticate users without server-side sessions?
+- How do we authorize API access?
+- How do we handle token expiration and refresh?
+- How do we prevent token tampering?
+- **Without security: anyone can access/modify any user**
+
+**The journey through JSON's ecosystem:**
+
+| Chapter | Layer | Technology | Problem Solved |
+|---------|-------|-----------|----------------|
+| 1 | Data Format | JSON | Human-readable baseline |
+| 3 | Validation | JSON Schema | Type safety, contracts |
+| 4 | Storage | PostgreSQL JSONB | 60% storage reduction |
+| 5 | Network | MessagePack | 36% bandwidth reduction |
+| 6 | Protocol | JSON-RPC | Structured API calls |
+| 7 | Streaming | JSON Lines | Constant-memory exports |
+| 8 | Security | JWT | Stateless authentication |
+
+**Why this example matters:**
+
+**1. It's realistic** - These aren't theoretical problems. Every production API faces validation, storage, bandwidth, protocol, streaming, and security challenges.
+
+**2. It's progressive** - Each chapter builds on previous chapters explicitly. Chapter 3 adds validation to the structure from Chapter 1. Chapter 4 optimizes storage for the validated structure from Chapter 3.
+
+**3. It demonstrates modularity** - Each solution is independent. You can use JSON Schema without MessagePack. You can use JSONB without JSON-RPC. Mix and match based on your needs.
+
+**4. It shows real trade-offs** - Binary formats are faster but harder to debug. JSON-RPC is structured but more complex than REST. Each chapter discusses when to use (and when not to use) each technology.
+
+**By Chapter 8, you'll have a complete, production-ready User API:**
+- ✓ Validated inputs (JSON Schema)
+- ✓ Efficient storage (JSONB)
+- ✓ Optimized mobile delivery (MessagePack)
+- ✓ Structured protocol (JSON-RPC)
+- ✓ Streaming exports (JSON Lines)
+- ✓ Secure authentication (JWT)
+
+**This is JSON's power** - an incomplete core (6 types, simple syntax) with a complete ecosystem (modular solutions for every gap).
+
+Let's build it.
 
 ---
 

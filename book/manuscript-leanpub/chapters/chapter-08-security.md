@@ -1905,6 +1905,215 @@ app.post('/api/auth/refresh', async (req, res) => {
 
 ---
 
+## Running Example Complete: The Full User API Stack
+
+We've built our User API layer by layer across six chapters. Let's see the complete system with all components integrated:
+
+**The complete architecture:**
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                    Mobile & Web Clients                      │
+│  (MessagePack for mobile, JSON for web - Chapter 5)         │
+└──────────────────────┬──────────────────────────────────────┘
+                       │
+                       │ HTTPS + JWT Authentication
+                       │ (Chapter 8)
+                       ▼
+┌─────────────────────────────────────────────────────────────┐
+│                      API Gateway                             │
+│  • JWT token validation                                      │
+│  • Rate limiting                                             │
+│  • Request logging                                           │
+└──────────────────────┬──────────────────────────────────────┘
+                       │
+                       ▼
+┌─────────────────────────────────────────────────────────────┐
+│                  User API Service                            │
+│  Protocol: JSON-RPC over HTTP (Chapter 6)                   │
+│  Validation: JSON Schema (Chapter 3)                         │
+│  Methods:                                                     │
+│    - getUserById(id)                                         │
+│    - updateUser(id, data)                                    │
+│    - searchUsers(query, filters)                             │
+│    - followUser(followerId, followeeId)                      │
+│    - exportUsers(format) → JSON Lines (Chapter 7)            │
+└──────────────────────┬──────────────────────────────────────┘
+                       │
+                       ▼
+┌─────────────────────────────────────────────────────────────┐
+│              PostgreSQL Database                             │
+│  Storage: JSONB binary format (Chapter 4)                    │
+│  • 60% storage reduction vs text JSON                        │
+│  • Indexed queries on JSON fields                            │
+│  • 10 million users efficiently stored                       │
+└─────────────────────────────────────────────────────────────┘
+```
+
+**A single request flow (getUserById):**
+
+**1. Client authenticates (Chapter 8):**
+```javascript
+// Mobile app login
+const response = await fetch(`${API_URL}/auth/login`, {
+  method: 'POST',
+  body: msgpack.encode({username: 'alice', password: 'secret123'})
+});
+
+const {access_token} = msgpack.decode(await response.arrayBuffer());
+```
+
+**2. Client requests user profile (Chapter 5 + 6):**
+```javascript
+// JSON-RPC request with JWT + MessagePack
+const rpcRequest = {
+  jsonrpc: '2.0',
+  method: 'getUserById',
+  params: {id: 'user-5f9d88c'},
+  id: 1
+};
+
+const response = await fetch(`${API_URL}/rpc`, {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/msgpack',
+    'Accept': 'application/msgpack',
+    'Authorization': `Bearer ${access_token}`
+  },
+  body: msgpack.encode(rpcRequest)
+});
+
+const rpcResponse = msgpack.decode(await response.arrayBuffer());
+const user = rpcResponse.result;
+```
+
+**3. Server validates JWT (Chapter 8):**
+```javascript
+// Middleware validates token
+function validateJWT(req, res, next) {
+  const token = req.headers.authorization?.split(' ')[1];
+  
+  try {
+    const payload = jwt.verify(token, JWT_SECRET);
+    req.user = payload;
+    next();
+  } catch (err) {
+    res.status(401).json({error: 'Invalid token'});
+  }
+}
+```
+
+**4. Server validates request (Chapter 3):**
+```javascript
+// JSON Schema validation
+const getUserByIdSchema = {
+  type: 'object',
+  properties: {
+    id: {type: 'string', pattern: '^user-[a-z0-9]+$'}
+  },
+  required: ['id']
+};
+
+const validate = ajv.compile(getUserByIdSchema);
+if (!validate(params)) {
+  return {error: 'Invalid parameters', details: validate.errors};
+}
+```
+
+**5. Server queries JSONB (Chapter 4):**
+```sql
+-- PostgreSQL query with JSONB indexing
+SELECT data 
+FROM users 
+WHERE data->>'id' = 'user-5f9d88c';
+```
+
+**6. Server returns MessagePack response (Chapter 5):**
+```javascript
+const rpcResponse = {
+  jsonrpc: '2.0',
+  result: user,
+  id: request.id
+};
+
+res.type('application/msgpack');
+res.send(msgpack.encode(rpcResponse));
+```
+
+**Performance characteristics of the complete stack:**
+
+| Metric | Value | Optimization |
+|--------|-------|--------------|
+| Request latency (p95) | 45ms | JSONB indexing |
+| Response size | 198 bytes | MessagePack (36% reduction) |
+| Database storage | 1.87 GB | JSONB (40% reduction vs JSON) |
+| Authentication overhead | 2ms | JWT stateless validation |
+| Validation overhead | 0.5ms | Compiled JSON Schema |
+| Mobile battery impact | -20% | Binary format + smaller payload |
+
+**Cost analysis for 10M users:**
+
+**Without optimizations (naive JSON everywhere):**
+- Database: 3.12 GB text JSON × $0.10/GB = $0.31/month
+- Bandwidth: 4.7 GB/month × $0.09/GB = $0.42/month
+- Compute: 100ms avg latency × 500K req/day × $0.0001 = $5/month
+- **Total: ~$5.73/month**
+
+**With full stack optimizations:**
+- Database: 1.87 GB JSONB × $0.10/GB = $0.19/month
+- Bandwidth: 3.0 GB/month × $0.09/GB = $0.27/month
+- Compute: 45ms avg latency × 500K req/day × $0.0001 = $2.25/month
+- **Total: ~$2.71/month**
+- **Savings: $3.02/month (53% reduction) = $36/year**
+
+**Real-world scaling (100M users):**
+- Savings scale linearly: $360/year at 100M users
+- Plus: Better mobile UX, faster load times, lower battery drain
+- Trade-off: Increased complexity, binary debugging harder
+
+**Export capability (Chapter 7):**
+```javascript
+// Stream all 10M users for analytics
+async function exportAllUsers() {
+  const writeStream = fs.createWriteStream('users-export.jsonl');
+  const cursor = db.collection('users').find().stream();
+  
+  cursor.on('data', (user) => {
+    writeStream.write(JSON.stringify(user) + '\n');
+  });
+  
+  // Memory usage: Constant 10KB regardless of user count
+  // Export time: ~5 minutes for 10M users
+  // Can resume from any line if interrupted
+}
+```
+
+**What we've built:**
+
+| Layer | Technology | Problem Solved |
+|-------|-----------|----------------|
+| Data Format | JSON | Universal, simple, human-readable baseline |
+| Validation | JSON Schema | Type safety, contract enforcement |
+| Storage | PostgreSQL JSONB | 40% storage reduction, indexed queries |
+| Network | MessagePack | 36% bandwidth reduction for mobile |
+| Protocol | JSON-RPC | Structured API calls, batch requests |
+| Streaming | JSON Lines | Export 10M users with constant memory |
+| Security | JWT | Stateless authentication, token-based auth |
+
+**From basic JSON to production system:**
+
+This is the power of JSON's modular ecosystem. Each layer solved one problem independently:
+- No layer depends on another's implementation
+- Each can be adopted incrementally
+- Each has competing alternatives
+- Each evolved separately
+
+**Chapter 1** showed basic JSON with critical gaps. **Chapters 3-8** filled each gap with modular solutions. The result: a production-ready API handling 10 million users with validation, performance, security, and scalability.
+
+This is JSON's architecture in practice - incomplete core, complete ecosystem.
+
+---
+
 ## Conclusion: Security Through Modularity
 
 We've completed our journey through the JSON ecosystem. From JSON's origins through validation, performance, protocols, streaming, and now security - each part demonstrated the same architectural principle: **incompleteness enables modularity**.
