@@ -746,7 +746,8 @@ console.log(decoded);
 | BSON | 7.8 MB | 4.1 MB | 11.8 MB |
 
 
-![Diagram 1](chapter-05-binary-apis-diagram-1-light.png){width=85%}
+![Diagram 1](chapter-05-binary-apis-diagram-1-light.png)
+{width: 85%}
 
 
 ### Key Takeaways

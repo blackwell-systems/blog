@@ -387,7 +387,8 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 - Scales horizontally
 
 
-![Diagram 1](chapter-08-security-diagram-1-light.png){width=85%}
+![Diagram 1](chapter-08-security-diagram-1-light.png)
+{width: 85%}
 
 
 ---
@@ -1813,7 +1814,8 @@ func getUserHandler(w http.ResponseWriter, r *http.Request) {
 ```
 
 
-![Diagram 2](chapter-08-security-diagram-2-light.png){width=85%}
+![Diagram 2](chapter-08-security-diagram-2-light.png)
+{width: 85%}
 
 
 ### Mobile App Authentication
