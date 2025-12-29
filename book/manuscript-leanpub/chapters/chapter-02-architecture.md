@@ -132,10 +132,7 @@ Because specs were designed together, they were tightly coupled: SOAP depended o
 
 JSON took the opposite approach: **provide the absolute minimum, let the ecosystem fill gaps.**
 
-**The JSON specification (RFC 8259):**
-- Data types: object, array, string, number, boolean, null
-- Syntax rules: how to encode these types
-- **That's it. Nothing more.**
+**The JSON specification (RFC 8259)** defines six data types (object, array, string, number, boolean, null) and the syntax rules for encoding them. **That's it. Nothing more.**
 
 No validation. No querying. No transformation. No protocols. No security. Just pure data structure.
 
@@ -217,11 +214,7 @@ cat access.log | grep "ERROR" | cut -d' ' -f1 | sort | uniq -c
 
 Each component does one thing: `cat` reads files, `grep` filters lines, `cut` extracts fields, `sort` orders lines, and `uniq` removes duplicates. **Key insight:** Compose small tools via pipes rather than building one tool that does everything.
 
-**Contrast with monolithic approach:**
-- One "log analyzer" program that does filtering, extraction, sorting, counting
-- Update one feature? Rebuild entire program
-- Want different extraction? Modify source code
-- Replace one function? Rewrite the whole tool
+**Contrast with monolithic approach:** A single "log analyzer" program handles filtering, extraction, sorting, and counting in one codebase. Updating one feature means rebuilding the entire program. Want different extraction logic? Modify the source code. Need to replace one function? Rewrite the whole tool.
 
 **Unix's modularity enabled** independent evolution of each tool. You could replace `grep` with faster alternatives like `ack` or `ripgrep`, compose new workflows without programming, and use tools from different eras together—1970s `cat` happily pipes to 2020s `jq`.
 
@@ -242,29 +235,11 @@ Each component does one thing: `cat` reads files, `grep` filters lines, `cut` ex
 }
 ```
 
-**Each package:**
-- Solves one problem
-- Maintained independently
-- Versioned separately
-- Replaced without affecting others
+**Each package** solves one problem, is maintained independently, versioned separately, and can be replaced without affecting others. This enabled true independence: Express doesn't dictate your validation library, JWT libraries don't depend on web frameworks, MessagePack works with any server, and you choose best-of-breed solutions for each layer.
 
-**This enabled:**
-- Express doesn't dictate validation library
-- JWT library doesn't depend on web framework
-- MessagePack works with any server
-- Choose best-of-breed for each layer
+**Contrast with monolithic frameworks** like Rails, Django, and .NET where validation (ActiveRecord, Django ORM), security (framework-specific auth), and serialization (framework formats) are built-in. Update the framework? You update everything at once.
 
-**Contrast with monolithic frameworks (Rails, Django, .NET):**
-- Validation built-in (ActiveRecord, Django ORM)
-- Security built-in (framework-specific auth)
-- Serialization built-in (framework formats)
-- Update framework? Update everything
-
-**The parallel to JSON:**
-- JSON is data format (like JavaScript is language)
-- JSON Schema is validation package (like `ajv`)
-- JWT is security package (like `jsonwebtoken`)
-- Compose what you need
+**The parallel to JSON:** JSON is the data format (like JavaScript is the language), JSON Schema is a validation package (like `ajv`), JWT is a security package (like `jsonwebtoken`), and you compose exactly what you need.
 
 ### Microservices: Distributed Modularity
 
