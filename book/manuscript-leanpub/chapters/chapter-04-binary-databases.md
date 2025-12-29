@@ -181,7 +181,7 @@ Database binary JSON formats share common goals but differ in implementation and
 {/blurb}
 
 
-![Diagram 1](chapter-04-binary-databases-diagram-1.png){width=85%}
+![Diagram 1](chapter-04-binary-databases-diagram-1-light.png){width=85%}
 
 
 ---
