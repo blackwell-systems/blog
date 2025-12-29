@@ -219,7 +219,7 @@ No validation. No querying. No transformation. No protocols. No security. Just p
 **The JSON "stack" (loosely coupled components):**
 
 
-![Diagram 3](chapter-02-architecture-diagram-3.png){width=70%}
+![Diagram 2](chapter-02-architecture-diagram-2.png){width=70%}
 
 
 **Every layer is specified separately, maintained separately, and adopted independently.**
@@ -386,7 +386,7 @@ cat access.log | grep "ERROR" | cut -d' ' -f1 | sort | uniq -c
 **Microservices (2010s) applied modularity to architecture:**
 
 
-![Diagram 4](chapter-02-architecture-diagram-4.png){width=85%}
+![Diagram 3](chapter-02-architecture-diagram-3.png){width=85%}
 
 
 **Each service:**
@@ -970,7 +970,7 @@ app.use(validateMiddleware(schema));
 - DevOps culture (automation handles complexity)
 
 
-![Diagram 1](chapter-02-architecture-diagram-1.png){width=85%}
+![Diagram 4](chapter-02-architecture-diagram-4.png){width=85%}
 
 
 ---
