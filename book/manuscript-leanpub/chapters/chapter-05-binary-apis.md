@@ -27,10 +27,7 @@ While database binary formats optimize storage and queries, API binary formats o
 ```
 **Size:** 400+ bytes for simple request (all ASCII text characters)
 
-**Binary encoding attempts existed but failed:**
-- **Fast Infoset** (2005): Binary XML encoding, complex spec, minimal adoption
-- **EXI** (2011): IETF standard, too late, required specialized parsers
-- None achieved widespread API usage
+**Binary encoding attempts existed but failed:** Fast Infoset (2005) offered binary XML encoding but had a complex spec with minimal adoption. EXI (2011) became an IETF standard but arrived too late and required specialized parsers. None achieved widespread API usage.
 
 **Note on embedding binary content:** Both XML and JSON equally bad - must base64 encode files/images (33% overhead):
 ```xml
@@ -45,9 +42,7 @@ While database binary formats optimize storage and queries, API binary formats o
 
 **JSON's approach:** Multiple binary encoding formats (MessagePack, CBOR) - compact byte representation
 
-**The key distinction:**
-- **Text encoding:** Data as ASCII/UTF-8 characters - `{"id":123}` = readable text
-- **Binary encoding:** Data as compact bytes - `0x82 0xa2 id 0x7b` = efficient binary
+**The key distinction:** Text encoding represents data as ASCII/UTF-8 characters like `{"id":123}` producing readable text. Binary encoding represents data as compact bytes like `0x82 0xa2 id 0x7b` for efficient binary representation.
 
 **Architecture shift:** Text-only encoding → Binary encoding options, Failed standards → Modular ecosystem success, One verbose approach → Multiple optimized formats
 {/blurb}
@@ -62,12 +57,7 @@ This chapter focuses on **MessagePack** (universal binary JSON) and **CBOR** (IE
 
 MessagePack is a language-agnostic binary serialization format. Think of it as "binary JSON" - it serializes the same data structures (objects, arrays, strings, numbers) but in efficient binary form.
 
-**Design goals:**
-- Smaller than JSON
-- Faster than JSON
-- Simple specification
-- Wide language support
-- Streaming-friendly
+**Design goals:** Smaller than JSON. Faster than JSON. Simple specification. Wide language support. Streaming-friendly.
 
 **Created:** 2010 by Sadayuki Furuhashi  
 **Specification:** [msgpack.org](https://msgpack.org/)
@@ -434,12 +424,7 @@ function log(entry) {
 
 CBOR (RFC 8949) is an IETF-standardized binary data format similar to MessagePack but with more rigorous specification and additional features.
 
-**Key differences from MessagePack:**
-- Formal IETF standard (RFC 8949)
-- Self-describing format
-- Deterministic encoding (for signatures)
-- Tagged types (extensible type system)
-- Better specification clarity
+**Key differences from MessagePack:** Formal IETF standard (RFC 8949). Self-describing format. Deterministic encoding for signatures. Tagged types with extensible type system. Better specification clarity.
 
 **Created:** 2013 (RFC 7049), updated 2020 (RFC 8949)  
 **Specification:** [RFC 8949](https://www.rfc-editor.org/rfc/rfc8949.html)
@@ -448,20 +433,11 @@ CBOR (RFC 8949) is an IETF-standardized binary data format similar to MessagePac
 
 CBOR is preferred in:
 
-**1. Security applications** (WebAuthn, COSE)
-- Deterministic encoding for signatures
-- Tagged types for security objects
-- Well-specified for cryptographic use
+**1. Security applications** (WebAuthn, COSE): Deterministic encoding for signatures. Tagged types for security objects. Well-specified for cryptographic use.
 
-**2. IoT and embedded systems**
-- Smaller than JSON
-- Simple parsing (low memory)
-- Standardized (interoperability)
+**2. IoT and embedded systems:** Smaller than JSON. Simple parsing with low memory. Standardized for interoperability.
 
-**3. Standards-based systems**
-- IETF specification ensures consistency
-- Multiple independent implementations
-- Long-term stability
+**3. Standards-based systems:** IETF specification ensures consistency. Multiple independent implementations. Long-term stability.
 
 ### CBOR vs MessagePack
 
@@ -1745,17 +1721,9 @@ class AdaptiveWebSocketEncoder {
 }
 ```
 
-**When to consider this migration:**
-- WebSocket or persistent connections (bandwidth accumulates)
-- Mobile-heavy user base (battery and performance matter)
-- High message volume (>1M messages/hour)
-- Cost threshold reached (>$5K/month bandwidth)
+**When to consider this migration:** WebSocket or persistent connections where bandwidth accumulates. Mobile-heavy user base where battery and performance matter. High message volume exceeding 1M messages per hour. Cost threshold reached above $5K per month in bandwidth.
 
-**When to skip:**
-- Low volume APIs (<100K requests/day)
-- Mostly large payloads (compression dominates)
-- Team lacks binary format experience (training overhead)
-- HTTP/2 with compression already efficient
+**When to skip:** Low volume APIs under 100K requests per day. Mostly large payloads where compression dominates. Team lacks binary format experience creating training overhead. HTTP/2 with compression already efficient.
 
 ---
 
@@ -1793,18 +1761,9 @@ Binary JSON formats solve the performance limitations of text JSON for API and d
 
 ### What We Learned
 
-**Binary formats provide:**
-- 30-40% size reduction over JSON
-- 1.5-2x faster parsing
-- Extended type systems (dates, binary data)
-- Better memory efficiency
-- Significant bandwidth cost savings
+**Binary formats provide:** 30-40% size reduction over JSON. 1.5-2x faster parsing. Extended type systems for dates and binary data. Better memory efficiency. Significant bandwidth cost savings.
 
-**Trade-offs:**
-- Loss of human-readability
-- Binary debugging tools needed
-- Schema drift without validation
-- Ecosystem smaller than JSON
+**Trade-offs:** Loss of human-readability. Binary debugging tools needed. Schema drift without validation. Ecosystem smaller than JSON.
 
 **Key insight:** Binary formats fill the gap between JSON's simplicity and Protocol Buffers' schema enforcement. They're the right choice when JSON's performance matters but schema flexibility is still needed.
 
