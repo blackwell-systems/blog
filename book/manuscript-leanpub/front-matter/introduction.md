@@ -21,7 +21,9 @@ Just a few missing bytes...but this incomplete JSON crashes their consumer. With
 
 Events accumulate in memory, the cluster exhausts resources, and six hours later, they've lost $200,000 in revenue while engineers scramble to recover from what should have been a minor parsing error.
 
-This story is real, and it illustrates the fundamental paradox of JSON in production systems: it seems simple, but building reliable systems around it requires sophisticated understanding of an entire ecosystem. 
+This story is real, and it illustrates the fundamental paradox of JSON in production systems: 
+
+it ____seems____ simple, but building reliable systems around it requires sophisticated understanding of an entire ecosystem. 
 
 You ***probably*** think you know JSON. 
 
