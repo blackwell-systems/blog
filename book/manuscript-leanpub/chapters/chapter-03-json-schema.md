@@ -390,7 +390,7 @@ Allows extra fields but validates their type.
 Validates `{"user_id": 123, "order_id": 456}` where field names match the pattern.
 
 
-![Diagram 1](chapter-03-json-schema-diagram-1.png){width=85%}
+![Diagram 1](chapter-03-json-schema-diagram-1-light.png){width=85%}
 
 
 ---
@@ -535,7 +535,7 @@ Rejects `null` values. Useful for excluding specific patterns.
 Accepts users who are not admins.
 
 
-![Diagram 2](chapter-03-json-schema-diagram-2.png){width=85%}
+![Diagram 2](chapter-03-json-schema-diagram-2-light.png){width=85%}
 
 
 ---
@@ -989,7 +989,7 @@ class User(BaseModel):
 ```
 
 
-![Diagram 3](chapter-03-json-schema-diagram-3.png){width=85%}
+![Diagram 3](chapter-03-json-schema-diagram-3-light.png){width=85%}
 
 
 ### Integrating Code Generation into Your Workflow
