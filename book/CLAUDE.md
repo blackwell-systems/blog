@@ -47,33 +47,44 @@ Background: white
 
 ## Diagram Source Locations
 
-**Total diagrams in book**: 67 unique diagrams (as of Dec 2025)
+**Total diagram files**: 67 PNG files (as of Dec 2025)  
+**Active diagrams**: 66 (1 orphaned file not used in book)  
+**Mermaid source coverage**: 66/66 active diagrams (100%)
 
-**Mermaid source available for 65/67 diagrams:**
+### Source Location Pattern
 
-| Chapters | Location | Count | Notes |
-|----------|----------|-------|-------|
-| 1-9 | `manuscript/chapters/chapter-XX-name.md` | 19 | Mermaid embedded in main chapter files |
+| Chapters | Location | Count | Format |
+|----------|----------|-------|--------|
+| 1-9 | `manuscript/chapters/chapter-XX-name.md` | 16 | Embedded `{{< mermaid >}}` blocks |
+| 2 | `manuscript/chapters/chapter-02-architecture-DIAGRAMS.md` | 3 | Separate file (ASCII conversions) |
 | 10 | N/A | 0 | No diagrams |
-| 11-14 | `manuscript/chapters/chapter-XX-name-DIAGRAMS.md` | 46 | Separate diagram source files |
+| 11-14 | `manuscript/chapters/chapter-XX-name-DIAGRAMS.md` | 46 | Separate diagram files |
 
-**Breakdown by chapter:**
-- Chapter 1: 5 diagrams (in chapter-01-origins.md)
-- Chapter 2: 4 diagrams (1 in chapter-02-architecture.md, 3 created manually)
-- Chapter 3: 3 diagrams (in chapter-03-json-schema.md)
-- Chapter 4: 1 diagram (in chapter-04-binary-databases.md)
-- Chapter 5: 1 diagram (in chapter-05-binary-apis.md)
-- Chapter 6: 3 diagrams (in chapter-06-json-rpc.md)
-- Chapter 7: 3 diagrams (in chapter-07-json-lines.md)
-- Chapter 8: 2 diagrams (in chapter-08-security.md)
-- Chapter 9: 1 diagram (in chapter-09-lessons.md)
+### Detailed Breakdown by Chapter
+
+**Chapters with embedded mermaid (in main .md file):**
+- Chapter 1: 4 diagrams (chapter-01-origins.md) + 1 orphaned file
+- Chapter 2: 1 diagram (chapter-02-architecture.md)
+- Chapter 3: 3 diagrams (chapter-03-json-schema.md)
+- Chapter 4: 1 diagram (chapter-04-binary-databases.md)
+- Chapter 5: 1 diagram (chapter-05-binary-apis.md)
+- Chapter 6: 3 diagrams (chapter-06-json-rpc.md)
+- Chapter 7: 3 diagrams (chapter-07-json-lines.md)
+- Chapter 8: 2 diagrams (chapter-08-security.md)
+- Chapter 9: 1 diagram (chapter-09-lessons.md)
+
+**Chapters with separate DIAGRAMS.md files:**
+- Chapter 2: 3 diagrams (chapter-02-architecture-DIAGRAMS.md) - ASCII conversions
 - Chapter 10: 0 diagrams
-- Chapter 11: 13 diagrams (in chapter-11-api-design-DIAGRAMS.md)
-- Chapter 12: 12 diagrams (in chapter-12-data-pipelines-DIAGRAMS.md)
-- Chapter 13: 8 diagrams (in chapter-13-testing-DIAGRAMS.md)
-- Chapter 14: 13 diagrams (in chapter-14-future-DIAGRAMS.md)
+- Chapter 11: 13 diagrams (chapter-11-api-design-DIAGRAMS.md)
+- Chapter 12: 12 diagrams (chapter-12-data-pipelines-DIAGRAMS.md)
+- Chapter 13: 8 diagrams (chapter-13-testing-DIAGRAMS.md)
+- Chapter 14: 13 diagrams (chapter-14-future-DIAGRAMS.md)
 
-**Note**: 2 diagrams may not have mermaid source (manually created or from other tools).
+**Orphaned files (not used in book):**
+- `chapter-01-origins-diagram-5.png` - No reference in Leanpub version
+
+**Total**: 16 + 3 + 46 = 65 mermaid sources = 66 active diagrams (diagram-2 in Chapter 2 already existed)
 
 ## Creating Light Diagram Variants
 
