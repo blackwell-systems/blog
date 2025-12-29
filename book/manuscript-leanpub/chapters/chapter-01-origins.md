@@ -36,23 +36,13 @@ This series explores the JSON you don't know - the one beyond basic syntax. We'l
 
 The web was growing explosively. Websites evolved from static HTML to dynamic applications. Services needed to communicate across networks, applications needed configuration files, and developers needed a way to move structured data between systems.
 
-**The requirements were clear:**
-- Human-readable (developers must debug it)
-- Machine-parseable (computers must process it)
-- Language-agnostic (works in any programming language)
-- Supports nested structures (real data has hierarchy)
-- Self-describing (data carries its own schema)
+**The requirements were clear:** Human-readable so developers could debug it. Machine-parseable so computers could process it. Language-agnostic to work in any programming language. Support for nested structures because real data has hierarchy. Self-describing so data carries its own schema.
 
 ### XML: The Heavyweight Champion
 
 XML (eXtensible Markup Language) emerged as the answer. By the early 2000s, it dominated:
 
-**XML everywhere:**
-- Configuration files (web.xml, applicationContext.xml)
-- SOAP web services (the enterprise standard)
-- Data exchange (RSS, Atom feeds)
-- Document formats (DOCX, SVG)
-- Build systems (Maven pom.xml, Ant build.xml)
+**XML everywhere:** Configuration files like web.xml and applicationContext.xml. SOAP web services as the enterprise standard. Data exchange through RSS and Atom feeds. Document formats including DOCX and SVG. Build systems like Maven pom.xml and Ant build.xml.
   
 
 **A simple person record in XML:**
@@ -76,12 +66,7 @@ XML (eXtensible Markup Language) emerged as the answer. By the early 2000s, it d
 
 Before XML dominated, the data format landscape was fragmented and painful. Understanding XML's rise requires understanding what came before.
 
-**SGML (Standard Generalized Markup Language, 1986):**
-- Incredibly powerful document markup language
-- Used for technical documentation, aerospace, defense
-- So complex it required dedicated specialists
-- Parsers were proprietary, expensive, and platform-specific
-- Learning curve measured in months
+**SGML (Standard Generalized Markup Language, 1986):** An incredibly powerful document markup language used for technical documentation, aerospace, and defense. So complex it required dedicated specialists. Parsers were proprietary, expensive, and platform-specific. The learning curve was measured in months.
 
 **Example SGML complexity:**
 ```sgml
@@ -101,25 +86,13 @@ Before XML dominated, the data format landscape was fragmented and painful. Unde
 SGML worked for specialized domains (HTML is actually an SGML application) but was far too complex for general-purpose data exchange.
   
 
-**Early alternatives (1990s):**
-- **CSV:** Great for tabular data, useless for hierarchy
-- **INI files:** Simple config format, no nesting
-- **Custom formats:** Every application invented its own (nightmare for interoperability)
-- **Binary protocols:** Fast but opaque, debugging impossible
+**Early alternatives (1990s):** CSV was great for tabular data but useless for hierarchy. INI files provided simple config format but no nesting. Custom formats meant every application invented its own, creating a nightmare for interoperability. Binary protocols were fast but opaque, making debugging impossible.
 
 **The W3C standardization effort (1996-1998):**
 
-In 1996, the World Wide Web Consortium (W3C) convened a working group to create "SGML for the web" - a simplified markup language that could:
-- Retain SGML's power for structured documents
-- Be simple enough for average programmers
-- Work across the internet without specialized tools
-- Support both documents and data
+In 1996, the World Wide Web Consortium (W3C) convened a working group to create "SGML for the web"—a simplified markup language that could retain SGML's power for structured documents, be simple enough for average programmers, work across the internet without specialized tools, and support both documents and data.
 
-**Key players:**
-- Tim Bray (co-editor, XML specification)
-- Jean Paoli (Microsoft)
-- Michael Sperberg-McQueen (University of Illinois)
-- Jon Bosak (Sun Microsystems, working group chair)
+**Key players:** Tim Bray as co-editor of the XML specification. Jean Paoli from Microsoft. Michael Sperberg-McQueen from University of Illinois. Jon Bosak from Sun Microsystems as working group chair.
 
 **XML 1.0 released: February 10, 1998**
 
@@ -127,11 +100,7 @@ The specification aimed for the sweet spot: simpler than SGML, more powerful tha
 
 **Early adoption drivers (1998-2000):**
 
-**Microsoft embraced XML aggressively:**
-- XML support in IE 5 (1999)
-- XML as configuration format in .NET (2000)
-- Office XML formats (precursor to DOCX)
-- MSXML parser bundled with Windows
+**Microsoft embraced XML aggressively:** XML support in IE 5 in 1999. XML as configuration format in .NET in 2000. Office XML formats as precursor to DOCX. MSXML parser bundled with Windows.
 
 {pagebreak}
 
@@ -186,20 +155,9 @@ XML's killer app (and eventual albatross) was SOAP - Simple Object Access Protoc
 
 **Size:** 500+ bytes to add two numbers. The backlash was inevitable.
 
-**Why enterprises loved XML (2000-2005):**
-- Complete specification (nothing undefined)
-- Schema validation (XSD) enforced contracts
-- Tool vendors sold expensive IDE plugins
-- Consultants billed months for SOAP integration
-- "Enterprise-grade" meant complex, and XML delivered
+**Why enterprises loved XML (2000-2005):** Complete specification with nothing undefined. Schema validation through XSD enforced contracts. Tool vendors sold expensive IDE plugins. Consultants billed months for SOAP integration. "Enterprise-grade" meant complex, and XML delivered.
 
-**Why developers hated XML (2003-2010):**
-- 10:1 ratio of markup to data
-- Namespace hell (xmlns confusion)
-- XSD schemas more complex than the code
-- SOAP toolkits measured in megabytes
-- Debugging massive XML payloads impossible
-- Editing XML configs required understanding the entire spec
+**Why developers hated XML (2003-2010):** 10:1 ratio of markup to data. Namespace hell with xmlns confusion. XSD schemas more complex than the code itself. SOAP toolkits measured in megabytes. Debugging massive XML payloads was impossible. Editing XML configs required understanding the entire spec.
 
 By 2005, the backlash was in full swing. Developers joked about "angle bracket tax" and "XML trauma." The stage was set for something simpler.
 
@@ -221,26 +179,13 @@ But XML's complexity became its downfall. The problem wasn't any single feature 
 
 **XML wasn't just a data format. It was an entire technology stack:**
 
-**Core XML (parsing and structure):**
-- DOM (Document Object Model) - load entire document into memory
-- SAX (Simple API for XML) - event-driven streaming parser
-- StAX (Streaming API for XML) - pull parser
-- Namespace handling (xmlns declarations)
-- Entity resolution (external references)
-- CDATA sections (unparsed character data)
+**Core XML (parsing and structure):** DOM (Document Object Model) for loading entire documents into memory. SAX (Simple API for XML) as event-driven streaming parser. StAX (Streaming API for XML) as pull parser. Namespace handling through xmlns declarations. Entity resolution for external references. CDATA sections for unparsed character data.
 
-**Validation layer (built-in):**
-- DTD (Document Type Definition) - original schema language
-- XSD (XML Schema Definition) - complex type system
-- RelaxNG - alternative schema language
-- Schematron - rule-based validation
+**Validation layer (built-in):** DTD (Document Type Definition) as the original schema language. XSD (XML Schema Definition) providing a complex type system. RelaxNG as alternative schema language. Schematron for rule-based validation.
 
 {pagebreak}
 
-**Query layer (built-in):**
-- XPath - query language for selecting nodes
-- XQuery - SQL-like language for XML
-- XSLT - transformation and templating
+**Query layer (built-in):** XPath as query language for selecting nodes. XQuery as SQL-like language for XML. XSLT for transformation and templating.
 
 **Protocol layer (built-in):**
 - SOAP (Simple Object Access Protocol)
@@ -729,23 +674,9 @@ const {id, profile: {firstName}, tags, age, verified} = user;
 
 **Learning curve measurement (time to productivity):**
 
-**XML mastery path:**
-- Week 1: Basic XML syntax, well-formedness
-- Week 2: Namespaces, attributes vs elements
-- Week 3: XSD schema basics
-- Week 4: XPath querying
-- Month 2: XSLT transformation
-- Month 3: SOAP web services
-- Month 4+: WS-Security, advanced patterns
+**XML mastery path:** Week 1 for basic XML syntax and well-formedness. Week 2 for namespaces and attributes vs elements. Week 3 for XSD schema basics. Week 4 for XPath querying. Month 2 for XSLT transformation. Month 3 for SOAP web services. Month 4+ for WS-Security and advanced patterns. **Total time to proficiency:** 3-6 months.
 
-**Total time to proficiency:** 3-6 months
-
-**JSON mastery path:**
-- Day 1: Basic syntax, nesting
-- Day 2: Use with APIs
-- Week 1: Proficient
-
-**Total time to proficiency:** 1 week
+**JSON mastery path:** Day 1 for basic syntax and nesting. Day 2 to use with APIs. Week 1 to become proficient. **Total time to proficiency:** 1 week.
 
 **When XML was actually better:**
 
@@ -804,12 +735,7 @@ XML's native comment support is genuinely useful for configuration files with do
 
 **The verdict: Context matters**
 
-JSON didn't "win" universally - it won for **data interchange** specifically:
-- APIs carrying structured data: JSON dominates
-- Configuration files: JSON/YAML (YAML adds comments JSON lacks)
-- Databases: JSON-based (MongoDB, PostgreSQL JSONB)
-- Document markup: XML still standard (EPUB, DocBook, SVG)
-- Office formats: XML (DOCX, XLSX, PPTX)
+JSON didn't "win" universally—it won for **data interchange** specifically. APIs carrying structured data see JSON dominance. Configuration files use JSON or YAML (YAML adds comments JSON lacks). Databases adopt JSON-based formats (MongoDB, PostgreSQL JSONB). Document markup remains XML standard (EPUB, DocBook, SVG). Office formats stay with XML (DOCX, XLSX, PPTX).
 
 JSON succeeded because it **matched the right use case** (data interchange) with the **right architecture** (minimal, composable) at the **right time** (AJAX revolution, REST APIs emerging).
 
@@ -932,11 +858,7 @@ console.log(9007199254740992 + 1);  // 9007199254740992
 This isn't theoretical - major APIs (Twitter, Stripe, GitHub) return large IDs as strings to prevent JavaScript corruption. If your API has >10M records with auto-increment IDs, you WILL hit this.
 {/blurb}
 
-**Problems:**
-- Large integers lose precision (database IDs, timestamps)
-- No distinction between integer and float
-- Different languages handle this differently
-- Financial calculations require special handling
+**Problems:** Large integers lose precision for database IDs and timestamps. No distinction exists between integer and float. Different languages handle this differently. Financial calculations require special handling.
 
 **Common workaround:**
 ```json
