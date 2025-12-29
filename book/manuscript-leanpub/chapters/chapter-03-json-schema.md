@@ -67,9 +67,13 @@ In Chapter 1, we introduced a User API for a social platform. We have basic JSON
   "username": "alice",
   "email": "alice@example.com",
   "created": "2023-01-15T10:30:00Z",
-  "bio": "Software engineer",
+  "bio": "Software engineer specializing in distributed systems",
   "followers": 1234,
-  "verified": true
+  "following": 567,
+  "verified": true,
+  "skills": ["Go", "Rust", "Distributed Systems"],
+  "location": "San Francisco, CA",
+  "website": "https://alice.dev"
 }
 ```
 
@@ -111,9 +115,13 @@ JSON Schema is itself a JSON document that describes other JSON documents.
   "username": "alice",
   "email": "alice@example.com",
   "created": "2023-01-15T10:30:00Z",
-  "bio": "Software engineer",
+  "bio": "Software engineer specializing in distributed systems",
   "followers": 1234,
-  "verified": true
+  "following": 567,
+  "verified": true,
+  "skills": ["Go", "Rust", "Distributed Systems"],
+  "location": "San Francisco, CA",
+  "website": "https://alice.dev"
 }
 ```
 
@@ -154,9 +162,28 @@ JSON Schema is itself a JSON document that describes other JSON documents.
       "type": "integer",
       "minimum": 0
     },
+    "following": {
+      "type": "integer",
+      "minimum": 0
+    },
     "verified": {
       "type": "boolean",
       "readOnly": true
+    },
+    "skills": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "maxItems": 10
+    },
+    "location": {
+      "type": "string",
+      "maxLength": 100
+    },
+    "website": {
+      "type": "string",
+      "format": "uri"
     }
   },
   "required": ["username", "email"],
@@ -168,7 +195,10 @@ JSON Schema is itself a JSON document that describes other JSON documents.
 - Required fields (username, email)
 - Username format (3-20 chars, lowercase alphanumeric + underscore)
 - Valid email format
-- Non-negative followers count
+- Non-negative followers and following counts
+- Skills array (max 10 items)
+- Location string (max 100 chars)
+- Website must be valid URI format
 - Read-only fields (id, created, verified) - clients can't set these
 - No additional fields allowed
 

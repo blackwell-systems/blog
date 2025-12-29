@@ -1267,9 +1267,13 @@ Throughout this series, we'll follow a single use case: **a User API for a socia
   "username": "alice",
   "email": "alice@example.com",
   "created": "2023-01-15T10:30:00Z",
-  "bio": "Software engineer",
+  "bio": "Software engineer specializing in distributed systems",
   "followers": 1234,
-  "verified": true
+  "following": 567,
+  "verified": true,
+  "skills": ["Go", "Rust", "Distributed Systems"],
+  "location": "San Francisco, CA",
+  "website": "https://alice.dev"
 }
 ```
 

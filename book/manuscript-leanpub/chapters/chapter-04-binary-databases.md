@@ -53,14 +53,18 @@ Our User API from Chapter 1 now has validation from Chapter 3. Next challenge: *
   "username": "alice",
   "email": "alice@example.com",
   "created": "2023-01-15T10:30:00Z",
-  "bio": "Software engineer",
+  "bio": "Software engineer specializing in distributed systems",
   "followers": 1234,
-  "verified": true
+  "following": 567,
+  "verified": true,
+  "skills": ["Go", "Rust", "Distributed Systems"],
+  "location": "San Francisco, CA",
+  "website": "https://alice.dev"
 }
 ```
 
-**Size:** 156 bytes per user
-**10M users:** 1.56 GB as text JSON
+**Size:** 312 bytes per user
+**10M users:** 3.12 GB as text JSON
 
 **Problems at scale in databases:** Field names get repeated 10 million times in storage, text parsing is required on every query, indexing into JSON structure demands parsing the entire document, and storage and retrieval become increasingly inefficient for database operations.
 
@@ -79,13 +83,17 @@ Database binary JSON formats solve this at the storage layer. Let's see the impa
   "username": "alice",
   "email": "alice@example.com",
   "created": "2023-01-15T10:30:00Z",
-  "bio": "Software engineer",
+  "bio": "Software engineer specializing in distributed systems",
   "followers": 1234,
-  "verified": true
+  "following": 567,
+  "verified": true,
+  "skills": ["Go", "Rust", "Distributed Systems"],
+  "location": "San Francisco, CA",
+  "website": "https://alice.dev"
 }
 ```
 
-**Size:** 156 bytes
+**Size:** 312 bytes
 
 **What happens during database queries:**
 1. Read entire string character by character from disk
@@ -1270,10 +1278,10 @@ Database binary JSON formats excel at different use cases:
 
 | Database | Format | Storage | Query Speed | Index Size |
 |----------|---------|---------|-------------|------------|
-| PostgreSQL | JSON | 1.56 GB | 2.3s (filter) | N/A |
-| PostgreSQL | JSONB | 1.67 GB | 0.45s (indexed) | +310 MB |
-| MongoDB | JSON | 1.56 GB | 1.8s (scan) | N/A |
-| MongoDB | BSON | 1.31 GB | 0.12s (indexed) | +280 MB |
+| PostgreSQL | JSON | 3.12 GB | 2.3s (filter) | N/A |
+| PostgreSQL | JSONB | 1.87 GB | 0.45s (indexed) | +310 MB |
+| MongoDB | JSON | 3.12 GB | 1.8s (scan) | N/A |
+| MongoDB | BSON | 1.56 GB | 0.12s (indexed) | +280 MB |
 
 **Key insights:**
 - Binary formats trade insert speed for query speed
