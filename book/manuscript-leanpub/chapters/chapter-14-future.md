@@ -77,11 +77,7 @@ Add a field:
 }
 ```
 
-**The risks:**
-- Old clients ignore `phoneVerified` (hope they ignore unknown fields)
-- No guarantee clients won't crash on unexpected data
-- No tooling to verify compatibility
-- Testing requires deploying to production
+**The risks:** Old clients ignore `phoneVerified` and you hope they ignore unknown fields. No guarantee clients won't crash on unexpected data. No tooling to verify compatibility. Testing requires deploying to production.
 
 **Protocol Buffers approach:**
 ```protobuf
@@ -103,12 +99,7 @@ message User {
 }
 ```
 
-**Guaranteed compatibility:**
-- Old clients ignore field 5 (language runtime handles it)
-- New clients get default `false` if field missing
-- Field numbers (1-4) never reused (permanent contract)
-- Compile-time verification of compatibility
-- Can test locally without deployment
+**Guaranteed compatibility:** Old clients ignore field 5 because the language runtime handles it. New clients get default `false` if field is missing. Field numbers (1-4) are never reused, forming a permanent contract. Compile-time verification of compatibility. Can test locally without deployment.
 
 At 1000+ clients with mixed versions deployed over months, guaranteed schema evolution isn't nice-to-have - it's essential.
 
@@ -124,11 +115,7 @@ JSON's loose typing creates ambiguity in critical domains:
 }
 ```
 
-**Problems:**
-- Is `amount` a string or number?
-- What precision? (`100` vs `100.00` vs `100.0000`)
-- Different languages parse differently
-- Floating point errors possible
+**Problems:** Is `amount` a string or number? What precision should be used—`100` vs `100.00` vs `100.0000`? Different languages parse differently. Floating point errors are possible.
 
 **Contrast with Protocol Buffers:**
 ```protobuf
@@ -140,11 +127,7 @@ message Transaction {
 }
 ```
 
-**Type safety guarantees:**
-- Compiler enforces types (no runtime surprises)
-- Code generation provides type-safe APIs
-- IDEs autocomplete fields correctly
-- Refactoring tools work reliably
+**Type safety guarantees:** Compiler enforces types preventing runtime surprises. Code generation provides type-safe APIs. IDEs autocomplete fields correctly. Refactoring tools work reliably.
 
 For financial systems, healthcare records, or any domain where data correctness is critical, compile-time type checking prevents entire classes of errors JSON can't catch.
 
@@ -228,12 +211,7 @@ Protocol Buffers (Protobuf) represents a fundamentally different philosophy from
 
 ### What Protocol Buffers Is
 
-**Core characteristics:**
-- **Schema-first:** Define `.proto` files before any code
-- **Code generation:** Compiler generates type-safe code for your language
-- **Binary format:** Compact wire format (40-50% smaller than JSON)
-- **Backwards/forwards compatible:** Built-in compatibility rules
-- **gRPC integration:** Native RPC framework support
+**Core characteristics:** Schema-first approach requiring `.proto` files before any code. Code generation where compiler creates type-safe code for your language. Binary format providing compact wire format 40-50% smaller than JSON. Backwards and forwards compatible with built-in compatibility rules. gRPC integration with native RPC framework support.
 
 **Simple schema example:**
 
@@ -362,19 +340,9 @@ message User {
 
 **Compatibility guarantees:**
 
-**Old client reads new message:**
-- Sees fields 1, 2, 3 (id, name, email)
-- Ignores fields 4, 5, 6 (doesn't understand them)
-- No crashes, no errors
-- Works perfectly
+**Old client reads new message:** Sees fields 1, 2, 3 (id, name, email). Ignores fields 4, 5, 6 that it doesn't understand. No crashes, no errors. Works perfectly.
 
-**New client reads old message:**
-- Sees fields 1, 2, 3
-- Gets default values for fields 4, 5, 6:
-  - `created_at`: 0
-  - `tags`: empty list
-  - `phone_verified`: false
-- Application code checks defaults and handles appropriately
+**New client reads old message:** Sees fields 1, 2, 3. Gets default values for fields 4, 5, 6: `created_at` becomes 0, `tags` becomes empty list, `phone_verified` becomes false. Application code checks defaults and handles appropriately.
 
 **Rules for safe evolution:**
 1. Never change field numbers (1, 2, 3 are permanent)
@@ -438,11 +406,7 @@ Same user object encoded both ways:
 ```
 **Size:** 72 bytes (49% smaller than compact JSON)
 
-**Why Protobuf is smaller:**
-- Field names not included (uses field numbers: 1, 2, 3...)
-- Efficient variable-length integer encoding
-- Binary format (no quotes, braces, commas)
-- Enums encoded as integers
+**Why Protobuf is smaller:** Field names not included—uses field numbers (1, 2, 3...) instead. Efficient variable-length integer encoding. Binary format eliminates quotes, braces, and commas. Enums encoded as integers.
 
 At millions of messages per second, this 50% reduction directly reduces bandwidth costs, memory usage, and processing time.
 
@@ -453,44 +417,19 @@ At millions of messages per second, this 50% reduction directly reduces bandwidt
 
 ### When to Use Protocol Buffers
 
-**Strong fit:**
-- High-throughput microservices (internal APIs)
-- gRPC services (Protobuf is native format)
-- Polyglot systems (generate clients in 10+ languages)
-- Schema enforcement critical (financial, healthcare)
-- Mobile apps (reduce bandwidth and battery usage)
-- Long-lived APIs with many clients (evolution guarantees)
+**Strong fit:** High-throughput microservices for internal APIs. gRPC services where Protobuf is native format. Polyglot systems generating clients in 10+ languages. Schema enforcement critical for financial and healthcare systems. Mobile apps reducing bandwidth and battery usage. Long-lived APIs with many clients needing evolution guarantees.
 
-**Poor fit:**
-- Browser-facing APIs (no native browser support)
-- Human debugging required (binary format not readable)
-- Rapid prototyping (schema overhead slows iteration)
-- External partner APIs (JSON more familiar, easier integration)
-- Configuration files (not human-editable)
+**Poor fit:** Browser-facing APIs with no native browser support. Human debugging required where binary format isn't readable. Rapid prototyping where schema overhead slows iteration. External partner APIs where JSON is more familiar and easier to integrate. Configuration files that aren't human-editable.
 
 ### Real-World Adoption
 
-**Google:**
-- Entire internal infrastructure uses Protobuf + gRPC
-- 2+ billion messages per second
-- 10,000+ .proto files
-- 15+ years of schema evolution without breaking changes
+**Google:** Entire internal infrastructure uses Protobuf plus gRPC. 2+ billion messages per second. 10,000+ .proto files. 15+ years of schema evolution without breaking changes.
 
-**Netflix:**
-- Service mesh communication
-- Inter-service APIs
-- 500+ microservices
-- Maintains JSON for external APIs
+**Netflix:** Service mesh communication. Inter-service APIs. 500+ microservices. Maintains JSON for external APIs.
 
-**Square:**
-- Internal gRPC services
-- Payment processing
-- Type safety for financial data
+**Square:** Internal gRPC services. Payment processing. Type safety for financial data.
 
-**Uber:**
-- High-throughput APIs
-- Mobile app communication
-- Reduced bandwidth costs by 40%
+**Uber:** High-throughput APIs. Mobile app communication. Reduced bandwidth costs by 40%.
 
 The pattern is clear: Protobuf dominates **internal** APIs where type safety, performance, and evolution matter. JSON dominates **external** APIs where simplicity, debuggability, and broad compatibility matter.
 
@@ -500,12 +439,7 @@ Apache Avro takes a different approach to the schema problem. Where Protocol Buf
 
 ### What Makes Avro Different
 
-**Core characteristics:**
-- **JSON schema definition:** Schemas written in JSON (more readable than Protobuf)
-- **Self-describing data:** Schema can be embedded with data
-- **Schema registry:** Central schema storage with versioning
-- **Runtime schema resolution:** Reader and writer schemas can differ
-- **Hadoop ecosystem standard:** Native support in Kafka, Spark, Hadoop
+**Core characteristics:** JSON schema definition where schemas are written in JSON (more readable than Protobuf). Self-describing data with schema embedded alongside data. Schema registry providing central schema storage with versioning. Runtime schema resolution allowing reader and writer schemas to differ. Hadoop ecosystem standard with native support in Kafka, Spark, and Hadoop.
 
 **Schema example (JSON format):**
 
@@ -556,11 +490,7 @@ Avro's power lies in separating the **writer schema** (used to encode data) from
 }
 ```
 
-**Avro resolution:**
-- Reader expects `email` field → writer didn't include it → use default `null`
-- Reader expects `phone` field → writer didn't include it → use default `null`
-- Writer sent `id` and `name` → reader receives them
-- **Result:** Consumer gets data with defaults filled in, no errors
+**Avro resolution:** Reader expects `email` field but writer didn't include it, so use default `null`. Reader expects `phone` field but writer didn't include it, so use default `null`. Writer sent `id` and `name` which reader receives. **Result:** Consumer gets data with defaults filled in, no errors.
 
 This happens at **runtime**, not compile-time like Protobuf. The flexibility enables gradual schema evolution without coordinating all services.
 
@@ -623,12 +553,7 @@ console.log(user);
 6. Consumer decodes using reader schema (v2)
 7. Avro resolves differences (v1 → v2 mapping)
 
-**Benefits:**
-- Producers and consumers evolve independently
-- Schema compatibility enforced by registry
-- Bandwidth efficient (schema not repeated in every message)
-- Full history of schema evolution
-- Can query registry for all versions
+**Benefits:** Producers and consumers evolve independently. Schema compatibility enforced by registry. Bandwidth efficient since schema isn't repeated in every message. Full history of schema evolution. Can query registry for all versions.
 
 ### Avro vs Protobuf: Different Trade-offs
 
@@ -643,30 +568,15 @@ console.log(user);
 | Best for | Kafka, streaming, Hadoop | gRPC, microservices |
 | Ecosystem | Big data (Spark, Hadoop, Kafka) | Cloud native (gRPC, K8s) |
 
-**When Avro wins:**
-- Schema registry infrastructure available (Kafka ecosystem)
-- Schema changes frequent (rapid evolution)
-- Self-describing data needed (data lakes, archives)
-- Hadoop/Spark integration required
+**When Avro wins:** Schema registry infrastructure available in Kafka ecosystem. Schema changes frequent requiring rapid evolution. Self-describing data needed for data lakes and archives. Hadoop/Spark integration required.
 
-**When Protobuf wins:**
-- Type safety critical (compile-time checks)
-- Performance paramount (slightly smaller/faster)
-- gRPC services (native support)
-- Mobile clients (code generation gives typed APIs)
+**When Protobuf wins:** Type safety critical with compile-time checks. Performance paramount as slightly smaller and faster. gRPC services with native support. Mobile clients where code generation gives typed APIs.
 
 ### Real-World Adoption
 
-**LinkedIn (Avro's origin):**
-- Created Avro for Kafka messaging
-- Hundreds of billions of messages per day
-- Schema registry with 10,000+ schemas
-- Enables independent service evolution
+**LinkedIn (Avro's origin):** Created Avro for Kafka messaging. Hundreds of billions of messages per day. Schema registry with 10,000+ schemas. Enables independent service evolution.
 
-**Uber:**
-- Kafka pipelines with Avro
-- Schema evolution without coordination
-- Petabytes of data per day
+**Uber:** Kafka pipelines with Avro. Schema evolution without coordination. Petabytes of data per day.
 
 **Netflix:**
 - Keystone data pipeline (Kafka + Avro)
