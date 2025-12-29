@@ -44,7 +44,7 @@ Database binary JSON formats solve this at the storage layer - maintaining JSON'
 
 ## Running Example: Storing 10 Million Users
 
-Our User API from [Part 1](##running-example-building-a-user-api) now has validation from [Part 2](#). Next challenge: **storing 10 million users efficiently in a database**.
+Our User API from Chapter 1 now has validation from Chapter 3. Next challenge: **storing 10 million users efficiently in a database**.
 
 **Current user object (text JSON):**
 ```json
@@ -152,7 +152,7 @@ Extract fields without requiring full document parsing. Support complex index ty
 | **JSON** | SQL Server | JSON functions/indexing | Yes (computed columns) | No |
 
 {blurb, class: warning}
-**Key Distinction:** Database binary JSON is **storage-optimized** - designed for frequent queries, indexing, and database operations. API/network binary formats (covered in Part 4) optimize for serialization speed and bandwidth.
+**Key Distinction:** Database binary JSON is **storage-optimized** - designed for frequent queries, indexing, and database operations. API/network binary formats (covered in Chapter 5) optimize for serialization speed and bandwidth.
 {/blurb}
 
 
@@ -1287,7 +1287,7 @@ Database binary JSON formats excel at different use cases:
 
 Database binary JSON solves storage and query performance within individual databases. But what about data transfer between services, mobile applications, and distributed systems?
 
-In [Part 4](#), we'll explore binary JSON formats designed for APIs and data transfer: MessagePack for universal serialization and CBOR for IoT and security protocols. These formats optimize for network bandwidth and serialization speed rather than database storage.
+In Chapter 5, we'll explore binary JSON formats designed for APIs and data transfer: MessagePack for universal serialization and CBOR for IoT and security protocols. These formats optimize for network bandwidth and serialization speed rather than database storage.
 
 **Coming up:**
 - MessagePack: The universal binary JSON

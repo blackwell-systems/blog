@@ -1069,7 +1069,7 @@ app.post('/api/users', async (req, res) => {
 // Step 4: Deprecate JSON after migration complete
 ```
 
-For more on Protocol Buffers, see: [Understanding Protocol Buffers: Part 1](#)
+For more on Protocol Buffers, see Chapter 14
 
 ---
 
@@ -1796,4 +1796,4 @@ This demonstrates the modularity pattern again: MessagePack handles efficient en
 - [Binary Serialization Comparison](https://github.com/alecthomas/go_serialization_benchmarks)
 
 **Related:**
-- [Understanding Protocol Buffers: Part 1](#)
+- Understanding Protocol Buffers (Chapter 14)
