@@ -1911,44 +1911,9 @@ We've built our User API layer by layer across six chapters. Let's see the compl
 
 **The complete architecture:**
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│                    Mobile & Web Clients                      │
-│  (MessagePack for mobile, JSON for web - Chapter 5)         │
-└──────────────────────┬──────────────────────────────────────┘
-                       │
-                       │ HTTPS + JWT Authentication
-                       │ (Chapter 8)
-                       ▼
-┌─────────────────────────────────────────────────────────────┐
-│                      API Gateway                             │
-│  • JWT token validation                                      │
-│  • Rate limiting                                             │
-│  • Request logging                                           │
-└──────────────────────┬──────────────────────────────────────┘
-                       │
-                       ▼
-┌─────────────────────────────────────────────────────────────┐
-│                  User API Service                            │
-│  Protocol: JSON-RPC over HTTP (Chapter 6)                   │
-│  Validation: JSON Schema (Chapter 3)                         │
-│  Methods:                                                     │
-│    - getUserById(id)                                         │
-│    - updateUser(id, data)                                    │
-│    - searchUsers(query, filters)                             │
-│    - followUser(followerId, followeeId)                      │
-│    - exportUsers(format) → JSON Lines (Chapter 7)            │
-└──────────────────────┬──────────────────────────────────────┘
-                       │
-                       ▼
-┌─────────────────────────────────────────────────────────────┐
-│              PostgreSQL Database                             │
-│  Storage: JSONB binary format (Chapter 4)                    │
-│  • 60% storage reduction vs text JSON                        │
-│  • Indexed queries on JSON fields                            │
-│  • 10 million users efficiently stored                       │
-└─────────────────────────────────────────────────────────────┘
-```
+
+![Diagram 3](chapter-08-security-diagram-3-light.png)
+{width: 90%}
 
 **A single request flow (getUserById):**
 
