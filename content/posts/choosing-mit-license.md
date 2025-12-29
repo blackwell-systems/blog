@@ -1,7 +1,7 @@
 ---
 title: "Why Choose the MIT License? A Comprehensive Guide to Open Source Licensing"
 date: 2025-12-29
-draft: true
+draft: false
 tags: ["open-source", "licensing", "mit-license", "software-licensing", "legal", "gpl", "apache", "bsd", "copyleft", "permissive", "intellectual-property", "oss", "github", "project-management", "software-development", "compliance", "commercial-use", "license-compatibility", "developer-tools", "software-law"]
 categories: ["open-source", "legal"]
 description: "Complete guide to choosing the MIT License: what it means, when to use it, alternatives (GPL, Apache, BSD), decision framework, and real-world examples"
