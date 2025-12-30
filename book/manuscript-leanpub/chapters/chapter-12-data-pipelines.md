@@ -2774,31 +2774,13 @@ user_features_view = FeatureView(
 
 ### Common Patterns Across Architectures
 
-**1. JSON Lines as the Universal Format**
-All pipelines use JSON Lines for data transport and storage, enabling:
-- Stream processing compatibility
-- Easy debugging and inspection
-- Tool interoperability
+**JSON Lines serves as the universal interchange format** across all these architectures. Whether aggregating logs, processing events, or loading warehouses, JSON Lines provides stream processing compatibility that enables constant-memory processing of arbitrarily large datasets. The line-delimited format makes debugging tractable—you can `grep` through gigabytes of data to find specific records, inspect individual events without parsing entire files, and chain Unix tools for quick analysis. This tool interoperability means jq, awk, grep, and custom scripts all work seamlessly together.
 
-**2. Schema Registry for Evolution**
-Production pipelines maintain schema compatibility:
-- Avro/Protobuf for high-throughput stages
-- JSON Schema for validation boundaries
-- Version management for backward compatibility
+**Schema registries provide evolutionary stability** in production pipelines. When throughput matters, pipelines use Avro or Protocol Buffers for high-volume stages—their binary efficiency and built-in schema evolution make them ideal for Kafka topics processing millions of events per second. But at validation boundaries—API ingestion points and external system interfaces—JSON Schema provides flexible, human-readable contracts that catch problems early. Version management across these schema systems ensures backward compatibility: producers can evolve message formats while consumers continue processing older versions gracefully.
 
-**3. Multi-Layer Error Handling**
-Every architecture implements:
-- Input validation at ingestion
-- Dead letter queues for poison messages
-- Circuit breakers for external dependencies
-- Comprehensive monitoring and alerting
+**Multi-layer error handling** appears consistently because each layer catches different failure modes. Input validation at ingestion rejects malformed data before it enters the pipeline, preventing cascading failures downstream. Dead letter queues preserve poison messages that crash processing logic—malformed JSON, schema violations, or business rule failures—so engineers can investigate root causes without losing data. Circuit breakers protect against external dependency failures, preventing retry storms that amplify outages. Comprehensive monitoring and alerting at each layer provides visibility into which failure mode triggered, enabling targeted debugging rather than blind troubleshooting.
 
-**4. Horizontal Scaling**
-All pipelines scale by:
-- Kafka topic partitioning
-- Parallel consumer groups
-- Stateless processing stages
-- Load balancing across instances
+**Horizontal scaling patterns** enable these pipelines to grow from thousands to millions of events per second without architectural rewrites. Kafka topic partitioning distributes load across multiple brokers, allowing producers to write and consumers to read in parallel. Parallel consumer groups let you add processing capacity by launching additional instances—each consumer in a group processes a subset of partitions, automatically rebalancing when instances join or leave. Stateless processing stages mean you can scale horizontally without coordination overhead—no shared state means no locks, no coordination protocols, just independent workers processing messages. Load balancing across instances happens naturally through Kafka's partition assignment, distributing work evenly without manual intervention.
 
 These production architectures demonstrate that successful JSON pipelines combine multiple patterns thoughtfully, creating systems that are both robust and maintainable at scale.
 
