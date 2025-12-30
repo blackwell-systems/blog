@@ -204,11 +204,6 @@ DELETE /users/123
 
 Most production APIs operate at Level 2, with some Level 3 elements for discoverability. Pure Level 3 is rare due to implementation complexity, but the principles guide good resource design.
 
-
-![Diagram 3](chapter-11-api-design-diagram-3-light.png)
-{width: 85%}
-
-
 ### Resource Relationships
 
 Model resource relationships through URL structure and links:
