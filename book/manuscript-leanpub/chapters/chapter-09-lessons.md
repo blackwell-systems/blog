@@ -14,7 +14,7 @@ This final part steps back to examine the meta-patterns: what JSON teaches us ab
 
 ## The Full Circle: JSON Recreated XML's Ecosystem
 
-Here's the remarkable pattern we've documented across this series:
+Here's the remarkable pattern we've documented across this book:
 
 | Problem | XML (1998) | JSON (2001+) | Architecture |
 |---------|-----------|--------------|--------------|
@@ -28,7 +28,7 @@ Here's the remarkable pattern we've documented across this series:
 
 ### Same Problems, Different Organization
 
-**Every gap we've explored in this series:** Chapter 3 showed validation solved by JSON Schema. Chapters 4-5 addressed the text format tax with binary formats. Chapter 6 covered protocol structure through JSON-RPC. Chapter 7 demonstrated streaming via JSON Lines. Chapter 8 explained security with JWT/JWS/JWE.
+**Every gap we've explored in this book:** Chapter 3 showed validation solved by JSON Schema. Chapters 4-5 addressed the text format tax with binary formats. Chapter 6 covered protocol structure through JSON-RPC. Chapter 7 demonstrated streaming via JSON Lines. Chapter 8 explained security with JWT/JWS/JWE.
 
 **XML solved these too:** Validation through XSD built into parsers. Protocol via SOAP integrated with XML. Security using XML Signature as part of the spec. Query through XPath standard tooling.
 
@@ -440,11 +440,11 @@ Let's be honest about modularity's costs.
 
 **Integration matters:** Show how pieces fit together. Provide complete examples. Address ecosystem fragmentation.
 
-**This series is an example:** Many developers use JSON daily but never heard of JSON Schema, JSON Lines, or MessagePack. Education bridges the modularity gap.
+**This book is an example:** Many developers use JSON daily but never heard of JSON Schema, JSON Lines, or MessagePack. Education bridges the modularity gap.
 
 ---
 
-## The Series in Retrospect
+## The Book in Retrospect
 
 ### What We Learned
 
@@ -482,7 +482,7 @@ Let's be honest about modularity's costs.
 
 ## Conclusion: Patterns Survive, Architectures Evolve
 
-We opened this series with JSON's triumph over XML. We close with a deeper understanding: **it wasn't about formats, it was about architecture.**
+We opened this book with JSON's triumph over XML. We close with a deeper understanding: **it wasn't about formats, it was about architecture.**
 
 **XML embodied 1990s thinking:** Monolithic, integrated, complete specifications, tight coupling.
 
@@ -500,9 +500,9 @@ When choosing technologies, ask: "Does this align with contemporary architectura
 When zeitgeist shifts, successful technologies shift with it. Unsuccessful ones cling to old patterns.
 {/blurb}
 
-### The Series Complete
+### Bringing It All Together
 
-**You now know JSON**—not just the syntax, but why it succeeded through architectural alignment, how ecosystem filled gaps with modular solutions, when to use what through decision frameworks, and what it teaches us about pattern survival.
+**You now know JSON**—not just the syntax, but why it succeeded through architectural alignment, how the ecosystem filled gaps with modular solutions, when to use what through decision frameworks, and what it teaches us about pattern survival.
 
 **More importantly:** You understand how technologies reflect their era's architectural thinking. This lens applies far beyond JSON.
 
@@ -511,7 +511,7 @@ When zeitgeist shifts, successful technologies shift with it. Unsuccessful ones 
 **JSON's story is really the story of how we build systems, how patterns evolve, and how good ideas survive regardless of packaging.**
 
 {blurb, class: tip}
-**Thank you for reading this series.** Whether you came for JSON specifics or stayed for architectural insights, you've journeyed from simple data format to technology philosophy.
+**Thank you for reading this book.** Whether you came for JSON specifics or stayed for architectural insights, you've journeyed from simple data format to technology philosophy.
 
 **The JSON ecosystem will keep evolving** - new formats, new patterns, new solutions to old problems. But the core lesson remains: incompleteness enables modularity, modularity enables evolution, and evolution reflects the ever-changing zeitgeist of software architecture.
 

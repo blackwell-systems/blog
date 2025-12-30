@@ -4,7 +4,7 @@ Every developer knows JSON. You've written `{"key": "value"}` thousands of times
 
 But how did we get here? Why does the world's most popular data format have such obvious limitations? And why, despite being "simple," has JSON spawned an entire ecosystem of variants, extensions, and workarounds?
 
-This series explores the JSON you don't know - the one beyond basic syntax. We'll examine binary formats, streaming protocols, validation schemas, RPC layers, and security considerations. But first, we need to understand why JSON exists and where it falls short.
+This book explores the JSON you don't know - the one beyond basic syntax. We'll examine binary formats, streaming protocols, validation schemas, RPC layers, and security considerations. But first, we need to understand why JSON exists and where it falls short.
 
 {blurb, class: information}
 **What XML Had:** Everything built-in (1998-2005)

@@ -2122,7 +2122,7 @@ We've completed our journey through the JSON ecosystem. From JSON's origins thro
 
 ### JSON Security: The Modular Approach Complete
 
-With JWT, JWS, and JWE, we've seen how JSON's security layer follows the same pattern as every other part of this series:
+With JWT, JWS, and JWE, we've seen how JSON's security layer follows the same pattern as every other part of this book:
 
 **The gap:** JSON has no authentication, encryption, or signing primitives.
 
