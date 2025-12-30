@@ -403,17 +403,20 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 
 ### Signing Algorithms
 
-**Symmetric (HMAC):**
+JWS supports two fundamental approaches to signing, each with different security properties and operational trade-offs.
+
+**HMAC (symmetric signing)** uses a shared secret key for both signing and verification. When you sign with `HS256` (HMAC + SHA-256), both the signer and verifier possess the same secret. This creates operational simplicity - one key to manage - and computational efficiency - HMAC is fast. But it requires secure key distribution, and any party that can verify signatures can also forge them:
+
 ```json
 {
   "alg": "HS256"  // HMAC + SHA-256
 }
 ```
-- Same secret for signing and verification
-- Fast
-- Requires shared secret
 
-**Asymmetric (RSA, ECDSA):**
+If you distribute your HMAC secret to ten microservices for signature verification, all ten can create valid signatures. This limits HMAC to scenarios where all parties trust each other completely or where a single service both creates and validates signatures.
+
+**Asymmetric signing (RSA, ECDSA)** separates signing and verification with public-key cryptography. The private key signs, the public key verifies. Distribute the public key freely - possession doesn't enable forgery. This matters for federated systems where signature creators and validators don't trust each other equally:
+
 ```json
 {
   "alg": "RS256"  // RSA + SHA-256
@@ -424,9 +427,8 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
   "alg": "ES256"  // ECDSA + P-256 + SHA-256
 }
 ```
-- Private key signs, public key verifies
-- No shared secret needed
-- Slower than HMAC
+
+RSA signing is computationally expensive - roughly 100x slower than HMAC for equivalent security. ECDSA provides a middle ground - asymmetric security properties with better performance than RSA and smaller keys (256-bit ECDSA ≈ 3072-bit RSA security). Modern systems increasingly prefer ECDSA unless legacy RSA compatibility is required.
 
 **Algorithm comparison:**
 
@@ -1127,7 +1129,11 @@ app.get('/api/users/:userId', (req, res) => {
 
 ## Best Practices
 
-### 1. Use Short-Lived Tokens
+Production JWT systems require discipline around token lifecycle, validation, and key management. These patterns emerge from securing systems where compromised tokens mean data breaches and business impact.
+
+### Token Lifecycle Management
+
+**Short-lived access tokens limit exposure windows.** When access tokens expire in 15 minutes, a stolen token remains valid for at most 15 minutes. Long-lived tokens (hours or days) create extended vulnerability windows where attackers exploit stolen credentials:
 
 ```javascript
 // Access token - short-lived
@@ -1141,12 +1147,9 @@ const refreshToken = jwt.sign({ sub: userId }, secret, {
 });
 ```
 
-**Pattern:**
-- Access token: 5-15 minutes
-- Refresh token: Days to weeks
-- Refresh token rotates on use
+Balance security against user experience - shorter expiration is more secure, but frequent re-authentication annoys users. The two-token pattern solves this: short-lived access tokens for API calls, long-lived refresh tokens for obtaining new access tokens. Store refresh tokens server-side where revocation is possible. Access tokens remain stateless and fast to validate.
 
-### 2. Include Audience and Issuer
+**Explicit audience and issuer claims prevent token substitution.** Without audience validation, an attacker can steal a token issued for service A and use it against service B. Without issuer validation, attackers can mint tokens using compromised keys from a different system:
 
 ```javascript
 const token = jwt.sign(payload, secret, {
@@ -1162,7 +1165,11 @@ jwt.verify(token, secret, {
 });
 ```
 
-### 3. Rotate Keys Regularly
+The verification library checks these claims automatically if you configure them. Without this check, tokens become transferable between services - a major security failure in microservice architectures.
+
+### Key Management
+
+**Regular key rotation limits damage from key compromise.** When signing keys leak (application logs, version control, compromised servers), you need the ability to invalidate all tokens signed with that key. Key rotation with key IDs enables this:
 
 ```javascript
 // Store multiple keys with key IDs
@@ -1185,9 +1192,12 @@ function verifyWithKeyRotation(token) {
 }
 ```
 
-### 4. Store Tokens Securely
+Rotate keys monthly or quarterly. During rotation, both old and new keys remain valid during the overlap period (2x token expiration time). This allows in-flight tokens to complete without invalidation. After the overlap, remove the old key - any remaining tokens become invalid.
 
-**Browser:**
+### Secure Token Storage
+
+**Browser storage location determines attack surface.** LocalStorage is accessible to any JavaScript running on your page - including XSS attacks from compromised dependencies or injection vectors. Once an attacker executes JavaScript in your page, they read localStorage and exfiltrate tokens:
+
 ```javascript
 // AVOID: localStorage (vulnerable to XSS)
 localStorage.setItem('token', token);  // DON'T
@@ -1201,18 +1211,16 @@ res.cookie('token', token, {
 });
 ```
 
-**Mobile apps:**
-- iOS: Keychain
-- Android: Keystore
-- Never store in SharedPreferences/UserDefaults
+HttpOnly cookies can't be accessed by JavaScript - even successful XSS attacks can't steal them. The browser includes them automatically in requests. The `secure` flag ensures cookies only transmit over HTTPS. The `sameSite` attribute prevents cross-site request forgery. This combination provides defense in depth.
 
-### 5. Implement Token Revocation
+**Mobile platforms provide dedicated secure storage.** iOS Keychain and Android Keystore use hardware-backed encryption where available. Tokens stored here remain protected even if the device is compromised. Never use SharedPreferences (Android) or UserDefaults (iOS) - these are plaintext storage equivalent to localStorage. The platform APIs exist specifically for credentials - use them.
 
-**Problem:** JWTs are stateless - can't revoke before expiration.
+### Token Revocation Strategies
 
-**Solutions:**
+**Stateless JWT creates revocation complexity.** Once issued, a JWT remains valid until expiration. You can't revoke it without adding state back in. Three patterns address this, each with trade-offs:
 
-**A. Token blocklist:**
+**Token blocklists** maintain a set of revoked token IDs. Every verification checks the blocklist. Simple conceptually but requires fast shared storage (Redis) and the list grows continuously until tokens expire:
+
 ```javascript
 const blocklist = new Set();
 
@@ -1231,12 +1239,12 @@ function verifyToken(token) {
 }
 ```
 
-**B. Short expiration + refresh tokens:**
-- Access tokens expire quickly (15 min)
-- Revoke refresh tokens in database
-- Access tokens become invalid after 15 min
+Use TTL on blocklist entries matching token expiration. The storage requirement equals (tokens issued per hour) × (token lifetime in hours).
 
-**C. Token versioning:**
+**Short expiration with server-side refresh tokens** sidesteps the problem - access tokens expire before revocation matters, refresh tokens live in the database where revocation is trivial. Compromise an access token? It's useless in 15 minutes. Compromise a refresh token? Revoke it in the database. This pattern is most common in production.
+
+**Token versioning** stores a version number per user. Increment it to invalidate all user tokens:
+
 ```javascript
 // Store user's token version
 const user = {
@@ -1268,7 +1276,11 @@ function revokeAllUserTokens(userId) {
 }
 ```
 
-### 6. Use Refresh Token Rotation
+This requires a database lookup per verification, sacrificing stateless performance. But it enables instant user-level revocation for security events (password changes, account compromises).
+
+### Refresh Token Rotation
+
+**Single-use refresh tokens detect theft.** When refresh tokens are reusable, stealing one grants indefinite access through repeated refresh. Token rotation makes refresh tokens single-use - after refreshing, the old token becomes invalid. If an attacker attempts to use a token that was already consumed, you detect the theft:
 
 ```javascript
 app.post('/refresh', async (req, res) => {
@@ -1316,7 +1328,9 @@ app.post('/refresh', async (req, res) => {
 });
 ```
 
-### 7. Validate All Claims
+When reuse is detected, revoke all tokens for that user - the legitimate user re-authenticates, the attacker loses access. This pattern catches token theft even if the attacker acts before the victim.
+
+### Comprehensive Validation
 
 ```javascript
 function validateToken(token) {
