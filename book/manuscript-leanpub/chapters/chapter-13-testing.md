@@ -37,7 +37,7 @@ The goal is building JSON systems that fail fast, fail safely, and provide clear
 
 ## 1. Schema-Based Testing
 
-JSON Schema provides the foundation for systematic testing by defining data contracts that can generate both valid test data and invalid edge cases automatically. This approach scales testing beyond manual examples to comprehensive property-based validation.
+JSON Schema (introduced in Chapter 3) provides the foundation for systematic testing by defining data contracts that can generate both valid test data and invalid edge cases automatically. This approach scales testing beyond manual examples to comprehensive property-based validation. Where Chapter 3 showed how schemas validate runtime data, this section demonstrates how those same schemas can generate comprehensive test suites automatically.
 
 ### Generating Test Data from Schemas
 
@@ -859,7 +859,7 @@ Contract testing bridges the gap between unit tests and full integration tests, 
 
 ## 3. API Testing Strategies
 
-While schema-based testing validates data structures and contract testing ensures service compatibility, API testing focuses on the behavior of individual endpoints under various conditions. Effective API testing covers the full spectrum from unit-level endpoint testing to comprehensive integration scenarios.
+While schema-based testing validates data structures and contract testing ensures service compatibility, API testing focuses on the behavior of individual endpoints under various conditions. This section applies the API design patterns from Chapter 11—pagination, error handling, versioning, rate limiting—showing how to test that these production patterns work correctly under stress and edge cases. Effective API testing covers the full spectrum from unit-level endpoint testing to comprehensive integration scenarios.
 
 
 ![Diagram 4](chapter-13-testing-diagram-4-light.png)
@@ -1406,7 +1406,7 @@ API testing strategies provide comprehensive validation of endpoint behavior, fr
 
 ## 4. Security Testing
 
-JSON systems face unique security challenges that require systematic testing to prevent vulnerabilities. Unlike traditional applications where security testing might focus on buffer overflows or memory corruption, JSON systems must defend against injection attacks, authentication bypass, authorization failures, and denial-of-service attacks through malformed data.
+JSON systems face unique security challenges that require systematic testing to prevent vulnerabilities. Chapter 8 covered the security patterns—JWT signing and verification, input validation, rate limiting, secure headers. This section shows how to test that those defenses actually work, preventing the none-algorithm attack, injection vulnerabilities, and DoS scenarios discussed there. Unlike traditional applications where security testing might focus on buffer overflows or memory corruption, JSON systems must defend against injection attacks, authentication bypass, authorization failures, and denial-of-service attacks through malformed data.
 
 
 ![Diagram 5](chapter-13-testing-diagram-5-light.png)
@@ -1984,7 +1984,7 @@ Security testing for JSON systems requires systematic verification of authentica
 
 ## 5. Performance and Load Testing
 
-JSON systems face unique performance challenges related to parsing overhead, serialization costs, and memory usage patterns. Unlike binary formats, JSON's text-based nature creates CPU-intensive operations that scale poorly without careful optimization. Performance testing must verify that systems maintain acceptable response times and throughput under realistic load conditions.
+JSON systems face unique performance challenges related to parsing overhead, serialization costs, and memory usage patterns. Chapters 4 and 5 introduced binary alternatives (MessagePack, CBOR, Protocol Buffers) specifically to address these performance limitations. This section shows how to measure JSON performance problems quantitatively—identifying when payload sizes, parsing times, or throughput become bottlenecks that justify switching to binary formats. Performance testing must verify that systems maintain acceptable response times and throughput under realistic load conditions, providing the data needed to make informed architectural decisions about format trade-offs.
 
 
 ![Diagram 6](chapter-13-testing-diagram-6-light.png)
@@ -3291,7 +3291,7 @@ groups:
 
 Fuzz testing and CI/CD integration complete the comprehensive testing strategy for JSON systems. By systematically generating malformed inputs and edge cases, fuzzing discovers vulnerabilities that traditional testing misses. When combined with automated pipelines that run schema validation, contract tests, security scans, and performance benchmarks on every change, teams can deploy JSON systems with confidence that they will handle real-world conditions reliably and securely.
 
-**Testing brings the JSON ecosystem full circle** - validating that all the modular pieces (schemas, binary formats, protocols, streaming, security) work correctly in combination. Comprehensive testing transforms JSON's flexibility from a liability (anything parses) into an asset (validated, reliable systems).
+**Testing brings the JSON ecosystem full circle** - validating that all the modular pieces (schemas from Chapter 3, binary formats from Chapters 4-5, protocols from Chapter 6, streaming from Chapter 7, security from Chapter 8, API patterns from Chapter 11, and data pipelines from Chapter 12) work correctly in combination. Comprehensive testing transforms JSON's flexibility from a liability (anything parses) into an asset (validated, reliable systems).
 
 We've now covered the complete JSON ecosystem: its architecture, all major technical layers, practical application patterns, and testing strategies. One question remains: **where is JSON going?** Chapter 14 looks forward - emerging patterns, JSON's limitations that still lack solutions, and the technologies that may eventually succeed it.
 
