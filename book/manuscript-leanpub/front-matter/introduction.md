@@ -41,7 +41,7 @@ Most developers know enough JSON to be dangerous: basic syntax, `JSON.parse()`, 
 
 The cost of this incomplete knowledge is real. JWT none-algorithm attacks compromise authentication systems. Poorly designed pagination brings APIs to their knees at scale. Data pipelines crash on edge cases. Configuration systems become maintenance nightmares. APIs break clients silently when they evolve without proper versioning.
 
-These aren't theoretical problemsΓÇöthey're the daily reality of systems built without understanding JSON's broader ecosystem. This book fills that knowledge gap.
+These aren't theoretical problems, they're the daily reality of systems built without understanding JSON's broader ecosystem. This book fills that knowledge gap.
 
 ## What You'll Learn
 

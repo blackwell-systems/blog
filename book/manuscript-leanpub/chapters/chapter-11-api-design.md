@@ -37,7 +37,7 @@ The difference isn't just stylistic—the REST approach leverages HTTP semantics
 This chapter examines seven critical areas where conventions transform basic JSON-over-HTTP into production-ready APIs: resource modeling, pagination strategies, error handling, versioning approaches, rate limiting, content negotiation, and security patterns.
 
 
-![Diagram 1](chapter-11-api-design-diagram-1-light.png)
+![Diagram 1](chapter-11-api-design-diagram-4-light.png)
 {width: 85%}
 
 
@@ -161,7 +161,7 @@ if (response.status === 422) {
 ### Richardson Maturity Model
 
 
-![Diagram 2](chapter-11-api-design-diagram-2-light.png)
+![Diagram 2](chapter-11-api-design-diagram-1-light.png)
 {width: 85%}
 
 
@@ -248,9 +248,6 @@ This resource-oriented approach scales naturally as APIs grow, provides intuitiv
 
 When your API returns collections of resources, you face an immediate scalability problem: you can't return a million users in a single response. Pagination solves this by breaking large result sets into manageable chunks, but the pagination strategy you choose has profound implications for performance, consistency, and client complexity.
 
-
-![Diagram 4](chapter-11-api-design-diagram-4-light.png)
-{width: 85%}
 
 
 ### The Pagination Problem
@@ -531,17 +528,11 @@ GET /messages?after=cursor123&limit=20   // Next messages
 Choose your pagination strategy based on your specific requirements: offset for simplicity in admin tools, cursor for performance in public APIs, and keyset for the best balance of simplicity and efficiency.
 
 
-![Diagram 5](chapter-11-api-design-diagram-5-light.png)
-{width: 85%}
-
 
 ## 3. Error Response Formats
 
 Nothing frustrates developers more than inconsistent error responses. When your API returns errors in different formats across endpoints, clients must implement custom error handling for every operation. Standardized error formats make APIs predictable and enable generic error handling code.
 
-
-![Diagram 6](chapter-11-api-design-diagram-6-light.png)
-{width: 85%}
 
 
 ### The Inconsistency Problem
@@ -599,7 +590,7 @@ RFC 7807 defines a standard format for HTTP error responses that has gained wide
 - Custom fields for additional context
 
 
-![Diagram 7](chapter-11-api-design-diagram-7-light.png)
+![Diagram 3](chapter-11-api-design-diagram-5-light.png)
 {width: 85%}
 
 
@@ -916,9 +907,6 @@ This rich error context enables sophisticated client behavior: automatic retries
 
 Consistent error formats transform error handling from a tedious per-endpoint task into a standardized system that scales across your entire API.
 
-
-![Diagram 8](chapter-11-api-design-diagram-8-light.png)
-{width: 85%}
 
 
 ## 4. API Versioning Strategies
@@ -1283,7 +1271,7 @@ GET /v2/users/123?version=2.3
 The key is consistency: pick one primary strategy and stick to it across your entire API surface.
 
 
-![Diagram 9](chapter-11-api-design-diagram-9-light.png)
+![Diagram 4](chapter-11-api-design-diagram-6-light.png)
 {width: 85%}
 
 
@@ -1619,7 +1607,7 @@ function adaptiveRateLimit(req, res, next) {
 Rate limiting is essential infrastructure that protects your API while providing clear feedback to clients about usage boundaries. Choose algorithms and implementation strategies that match your traffic patterns and infrastructure capabilities.
 
 
-![Diagram 11](chapter-11-api-design-diagram-11-light.png)
+![Diagram 5](chapter-11-api-design-diagram-7-light.png)
 {width: 85%}
 
 
@@ -1967,7 +1955,7 @@ function generateCacheKey(req) {
 Content negotiation enables APIs to serve optimal representations while maintaining a single endpoint. Balance format support with implementation complexity, focusing on the formats that provide the most value for your specific use case.
 
 
-![Diagram 12](chapter-11-api-design-diagram-12-light.png)
+![Diagram 6](chapter-11-api-design-diagram-9-light.png)
 {width: 85%}
 
 
@@ -2402,7 +2390,7 @@ app.use('/auth/', securityRateLimit);
 These security patterns create multiple layers of protection that work together to secure your API. Remember that security is an ongoing process—regularly audit your code, update dependencies, and stay informed about new vulnerabilities and best practices.
 
 
-![Diagram 13](chapter-11-api-design-diagram-13-light.png)
+![Diagram 7](chapter-11-api-design-diagram-13-light.png)
 {width: 85%}
 
 
