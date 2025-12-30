@@ -365,26 +365,19 @@ except jwt.InvalidTokenError:
 
 ### JWT Use Cases
 
-**1. API Authentication:**
+JWT's design enables several common authentication patterns. **API authentication** is the most prevalent - clients include JWTs in the `Authorization` header, servers validate signatures and extract claims:
+
 ```http
 GET /api/users/me HTTP/1.1
 Host: api.example.com
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 ```
 
-**2. Single Sign-On (SSO):**
-- User logs in once
-- Receives JWT from auth server
-- Uses JWT across multiple services
+**Single sign-on (SSO)** leverages JWT's portability. Users authenticate once with a central auth server, receive a JWT, then present that token to multiple services. Each service validates the token independently without contacting the auth server - the signature proves authenticity. This enables federation without runtime dependencies between services.
 
-**3. Information Exchange:**
-- Sign data to prove it came from trusted source
-- Include expiration to limit validity window
+**Information exchange** treats JWTs as signed messages rather than authentication tokens. When service A sends data to service B, signing the payload with JWS proves it came from A and hasn't been tampered with. The expiration claim limits replay window. This matters for inter-service communication where proving message origin matters more than user identity.
 
-**4. Stateless Sessions:**
-- No server-side session storage
-- All session data in JWT
-- Scales horizontally
+**Stateless sessions** eliminate server-side session storage by embedding all session data in the JWT. The server becomes stateless - any instance can handle any request by validating the token and extracting claims. This enables horizontal scaling without session affinity. The trade-off is immutable session data - updating requires issuing new tokens.
 
 
 ![Diagram 1](chapter-08-security-diagram-1-light.png)
@@ -597,18 +590,11 @@ BASE64URL(Authentication Tag)
 
 ### JWE Algorithms
 
-**Key encryption algorithms:**
-- `RSA-OAEP` - RSA with OAEP padding
-- `RSA-OAEP-256` - RSA with SHA-256
-- `A128KW` - AES Key Wrap with 128-bit key
-- `A256KW` - AES Key Wrap with 256-bit key
-- `dir` - Direct use of shared symmetric key
-- `ECDH-ES` - Elliptic Curve Diffie-Hellman
+JWE uses two-layer encryption: a random content encryption key (CEK) encrypts the payload, then key encryption wraps the CEK itself. This enables asymmetric encryption where the recipient's public key encrypts the CEK.
 
-**Content encryption algorithms:**
-- `A128GCM` - AES-GCM with 128-bit key
-- `A256GCM` - AES-GCM with 256-bit key
-- `A128CBC-HS256` - AES-CBC + HMAC-SHA256
+**Key encryption algorithms** wrap the content encryption key. `RSA-OAEP` and `RSA-OAEP-256` use RSA with optimal asymmetric encryption padding - slower but enables public-key encryption. `A128KW` and `A256KW` use AES Key Wrap for symmetric scenarios where both parties share a key - faster but requires secure key distribution. The `dir` algorithm skips key wrapping entirely and uses a shared symmetric key directly - simplest but least flexible. `ECDH-ES` uses Elliptic Curve Diffie-Hellman for key agreement - modern, efficient, and enables ephemeral keys.
+
+**Content encryption algorithms** encrypt the actual payload. `A128GCM` and `A256GCM` use AES in Galois/Counter Mode - authenticated encryption that provides both confidentiality and integrity. GCM is the modern choice - fast, secure, and widely supported. `A128CBC-HS256` combines AES-CBC with HMAC-SHA256 for authenticated encryption in older systems without GCM support - functional but slower and more complex than GCM.
 
 ### Creating JWE
 
@@ -677,16 +663,9 @@ decrypted_payload = json.loads(decrypted_bytes)
 
 ### When to Use JWE
 
-**Use JWE when:**
-- Payload contains sensitive data (PII, credentials)
-- Data crosses untrusted networks
-- Compliance requires encryption at rest/transit
-- Need end-to-end encryption
+**Use JWE when** the payload contains sensitive data like personally identifiable information (PII) or credentials that regulations require encrypting end-to-end, data crosses networks where intermediaries shouldn't access content, compliance mandates (HIPAA, GDPR, PCI-DSS) require encryption at rest and in transit, or you need protection beyond transport layer security where TLS endpoints might log or inspect traffic.
 
-**Don't use JWE when:**
-- JWT signature is sufficient (data not sensitive)
-- TLS already provides transport encryption
-- Performance critical (JWE is slower than JWS)
+**Don't use JWE when** JWT signatures provide sufficient integrity protection for non-sensitive data, TLS already encrypts the transport channel adequately for your threat model, or performance requirements are critical since JWE's encryption/decryption overhead significantly exceeds JWS signing/verification.
 
 {blurb, class: warning}
 **JWE vs TLS:** JWE provides end-to-end encryption (only sender and recipient can decrypt). TLS provides transport encryption (protected in transit, but visible to intermediaries with TLS access). For most APIs, TLS is sufficient. Use JWE when you need protection beyond transport layer.
@@ -1332,6 +1311,8 @@ When reuse is detected, revoke all tokens for that user - the legitimate user re
 
 ### Comprehensive Validation
 
+**Validate beyond signature verification.** Cryptographic validity doesn't guarantee business logic validity. A properly signed token might contain expired roles, inactive accounts, or malformed claims. Layer validation checks:
+
 ```javascript
 function validateToken(token) {
   const decoded = jwt.verify(token, secret, {
@@ -1358,7 +1339,11 @@ function validateToken(token) {
 }
 ```
 
-### 8. Monitor and Log
+The `jwt.verify()` call validates signature, expiration, issuer, and audience - cryptographic properties. Additional checks validate application-specific invariants. Reject tokens early if they violate business rules, even if cryptographically valid.
+
+### Security Monitoring
+
+**Observability enables threat detection.** Log token verification outcomes - successful validations reveal usage patterns, failures reveal attack attempts. Track token IDs (`jti`) to correlate events across systems:
 
 ```javascript
 function verifyToken(token) {
@@ -1385,121 +1370,14 @@ function verifyToken(token) {
 }
 ```
 
----
+Never log complete tokens - they're credentials. Hash them for correlation without exposure. Alert on verification failure rate spikes - these indicate attacks or configuration issues. Track token age distribution - old tokens still in use might indicate leakage.
 
-### Advanced Security Hardening
+### Rate Limiting and Abuse Prevention
 
-Beyond the basics, production JWT implementations need defense-in-depth strategies.
-
-**1. Token revocation strategies**
-
-JWTs are stateless - once signed, they're valid until expiry. But what if a token is compromised?
-
-**Revocation via blacklist (Redis):**
-
-```javascript
-const redis = require('redis');
-const client = redis.createClient();
-
-// Revoke token
-async function revokeToken(jti, expiresAt) {
-  const ttl = Math.floor((expiresAt - Date.now()) / 1000);
-  await client.setEx(`revoked:${jti}`, ttl, '1');
-}
-
-// Check if revoked before processing
-async function verifyToken(token, secret) {
-  const decoded = jwt.verify(token, secret);
-  
-  // Check blacklist
-  const isRevoked = await client.exists(`revoked:${decoded.jti}`);
-  if (isRevoked) {
-    throw new Error('Token has been revoked');
-  }
-  
-  return decoded;
-}
-
-// Revoke on logout or password change
-app.post('/logout', async (req, res) => {
-  const token = extractToken(req);
-  const decoded = jwt.decode(token);
-  
-  await revokeToken(decoded.jti, decoded.exp * 1000);
-  res.json({success: true});
-});
-```
-
-**Why this works:**
-- Redis TTL matches token expiry (auto-cleanup)
-- Only revoked tokens stored (not all valid tokens)
-- Fast lookup (O(1) Redis check)
-
-**Cost:** One Redis call per request (adds ~2ms latency)
-
-**Alternative: Short-lived tokens + refresh rotation**
-
-```javascript
-// Issue very short access tokens (5 minutes)
-const accessToken = jwt.sign(payload, secret, {expiresIn: '5m'});
-
-// Separate refresh token (stored in database)
-const refreshToken = crypto.randomBytes(32).toString('hex');
-await db.refreshTokens.insert({
-  token: refreshToken,
-  userId: user.id,
-  expiresAt: Date.now() + 7 * 24 * 60 * 60 * 1000,
-  createdAt: Date.now()
-});
-
-// Rotate refresh token on each use
-app.post('/token/refresh', async (req, res) => {
-  const {refreshToken} = req.body;
-  
-  // Validate refresh token
-  const tokenRecord = await db.refreshTokens.findOne({token: refreshToken});
-  if (!tokenRecord || tokenRecord.expiresAt < Date.now()) {
-    return res.status(401).json({error: 'Invalid refresh token'});
-  }
-  
-  // Delete old refresh token
-  await db.refreshTokens.delete({token: refreshToken});
-  
-  // Issue new tokens
-  const newAccessToken = jwt.sign({sub: tokenRecord.userId}, secret, {expiresIn: '5m'});
-  const newRefreshToken = crypto.randomBytes(32).toString('hex');
-  
-  await db.refreshTokens.insert({
-    token: newRefreshToken,
-    userId: tokenRecord.userId,
-    expiresAt: Date.now() + 7 * 24 * 60 * 60 * 1000
-  });
-  
-  res.json({
-    accessToken: newAccessToken,
-    refreshToken: newRefreshToken
-  });
-});
-```
-
-**Benefits:**
-- Compromised access token only valid 5 minutes
-- Refresh token rotation detects theft (one use per token)
-- Database check only on refresh (not every request)
-
-**2. Rate limiting per user**
-
-Prevent brute-force attacks on JWT endpoints:
+**Rate limiting prevents brute-force attacks on authentication endpoints.** Without limits, attackers try thousands of passwords per minute. Apply aggressive limits to authentication endpoints while allowing generous limits for normal API operations:
 
 ```javascript
 const rateLimit = require('express-rate-limit');
-
-// Global rate limit
-const globalLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // 100 requests per window
-  message: 'Too many requests'
-});
 
 // Stricter limit for auth endpoints
 const authLimiter = rateLimit({
@@ -1524,50 +1402,11 @@ app.post('/token/refresh', rateLimit({
 });
 ```
 
-**3. Secure token storage (client-side)**
+The auth limiter counts only failures - successful logins don't count against the limit. This prevents legitimate users with typos from getting locked out while blocking automated attacks. Rate limit by username when available, falling back to IP - this prevents attackers from distributing attempts across IPs while protecting users on shared networks.
 
-Never store JWTs in localStorage (vulnerable to XSS):
+### Advanced: Token Binding
 
-```javascript
-// BAD - localStorage accessible to any script
-localStorage.setItem('token', accessToken);
-
-// GOOD - HttpOnly cookie (inaccessible to JavaScript)
-res.cookie('accessToken', accessToken, {
-  httpOnly: true,      // No JavaScript access
-  secure: true,        // HTTPS only
-  sameSite: 'strict',  // CSRF protection
-  maxAge: 15 * 60 * 1000  // 15 minutes
-});
-
-// Refresh token in separate HttpOnly cookie
-res.cookie('refreshToken', refreshToken, {
-  httpOnly: true,
-  secure: true,
-  sameSite: 'strict',
-  path: '/token/refresh',  // Only sent to refresh endpoint
-  maxAge: 7 * 24 * 60 * 60 * 1000  // 7 days
-});
-```
-
-**Why HttpOnly cookies:**
-- XSS attacks can't steal tokens (JavaScript can't access)
-- Browser handles token sending automatically
-- SameSite prevents CSRF attacks
-- Path restriction limits exposure
-
-**Trade-off:** Harder for SPAs (can't read token for API calls). Solution: Use credentials mode:
-
-```javascript
-// Client-side fetch with credentials
-fetch('/api/users', {
-  credentials: 'include'  // Send cookies automatically
-});
-```
-
-**4. Token binding (advanced)**
-
-Bind token to client characteristics:
+**Token binding ties tokens to specific clients.** If an attacker steals a token through network interception or server compromise, the token won't work from their device because the fingerprint won't match:
 
 ```javascript
 const fingerprint = crypto.createHash('sha256')
