@@ -6,16 +6,9 @@
 
 JSON's success in APIs naturally extended to data engineering. When every microservice logs JSON, every API returns JSON, and every event system streams JSON, data pipelines become JSON-processing systems by necessity. But while JSON provides the syntax, building reliable data pipelines requires a sophisticated ecosystem of tools and patterns.
 
-Consider this real-world scenario: An e-commerce company processes 1 million order events per day through their data pipeline. Each order is a JSON document flowing from checkout APIs through message queues to analytics databases. Everything works perfectly until one day:
+Remember the pipeline disaster from the introduction—the e-commerce company that lost $200,000 when a single malformed JSON record crashed their entire consumer? That failure wasn't inevitable. It resulted from missing the production patterns this chapter covers: proper error handling, dead letter queues, circuit breakers, monitoring, and resilient architectures.
 
-```json
-{"orderId": "12345", "amount": 99.99, "userId": "user123", "items": [
-  {"productId": "prod-
-```
-
-A single malformed JSON record—network truncated during transmission—crashes their consumer. Without proper error handling, the entire pipeline backs up. Events pile in memory, the cluster exhausts resources, and six hours later they've lost $200,000 in revenue while engineers scramble to recover.
-
-This chapter examines how to build production-grade JSON data pipelines that handle millions of events reliably. We'll cover the complete ecosystem: ETL patterns with JSON Lines, streaming with Kafka, validation strategies, error handling, monitoring, and real-world architectures that process JSON at scale.
+This chapter examines how to build production-grade JSON data pipelines that handle millions of events reliably without catastrophic failures. We'll cover the complete ecosystem: ETL patterns with JSON Lines, streaming with Kafka, validation strategies that catch malformed data early, error handling that isolates failures, monitoring that detects problems before they cascade, and real-world architectures that process JSON at scale while failing gracefully.
 
 
 ![Diagram 1](chapter-12-data-pipelines-diagram-1-light.png)
