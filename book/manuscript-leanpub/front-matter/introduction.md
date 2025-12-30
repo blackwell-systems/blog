@@ -131,6 +131,8 @@ Chapter 13 provides comprehensive testing approachesΓÇöproperty-based testing
 
 By the end of this book, you'll have practical code you can adapt for your own systems, plus the architectural understanding to make informed decisions about JSON in production environments.
 
+{pagebreak}
+
 ## A Note on Evolution
 
 JSON won the data format wars, but technology never stands still. This book teaches you to think architecturally about data formats, understanding not just JSON but the principles that make any format successful in production systems.

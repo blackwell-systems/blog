@@ -129,6 +129,7 @@ XML's killer app (and eventual albatross) was SOAP - Simple Object Access Protoc
 - 50+ WS-* specifications (WS-Security, WS-ReliableMessaging, etc.)
 - Interoperability nightmares despite "standard" protocols
 
+{pagebreak}
 
 **Example SOAP call to add two numbers:**
 ```xml
