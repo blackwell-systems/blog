@@ -361,7 +361,7 @@ File-based pipelines lose data when processes crash. Kafka persists JSON events 
 Single-machine ETL hits CPU and I/O limits. Kafka enables horizontal scaling by partitioning JSON streams across multiple consumer instances.
 
 
-![Diagram 4](chapter-12-data-pipelines-diagram-4-light.png)
+![Diagram 4](chapter-12-data-pipelines-diagram-4-new-light.png)
 {width: 85%}
 
 
