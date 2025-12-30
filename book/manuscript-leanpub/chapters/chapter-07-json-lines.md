@@ -261,14 +261,17 @@ stream.on('line', (line) => {
 
 ### Benefits
 
-**+ Streaming-friendly** - Process one line at a time  
-**+ Constant memory** - Only one object in memory  
-**+ Append-only** - Add new records without reparsing  
-**+ Fault-tolerant** - One corrupt line doesn't break the file  
-**+ Unix-compatible** - Works with grep, awk, sed, head, tail  
-**+ Simple** - No special format, just newlines between JSON  
-**+ Resumable** - Stop and restart processing at any line  
-**+ Parallel-friendly** - Multiple workers process different chunks
+The JSON Lines format succeeds by solving multiple problems with a single convention. **Streaming becomes natural** - your program reads one line, parses one JSON object, processes it, and discards it. Memory usage remains constant whether processing 100 records or 100 million. This fundamentally changes what's possible with JSON - datasets that would crash programs as arrays become tractable as JSONL streams.
+
+**Append-only writes simplify concurrent systems.** Adding new records to a JSON array requires parsing the entire file, modifying the array structure, and rewriting everything. With JSONL, appending means opening the file and writing a new line. No parsing, no locking, no coordination. Multiple processes can append simultaneously without corruption (though OS-level file locking still applies for safety).
+
+**Fault tolerance emerges from independence.** In a JSON array, a single syntax error invalidates the entire document - a missing comma at position 50MB means you lose everything. JSONL isolates failures - a corrupted line affects only that record. The parser logs the error and continues processing. This matters for long-running data pipelines where perfect data is impossible but stopping on first error is unacceptable.
+
+**Unix pipeline integration works automatically.** Tools like `grep`, `awk`, and `sed` operate line-by-line, which aligns perfectly with JSONL's structure. Filter error logs with `grep '"level":"error"'`. Count records with `wc -l`. Split files with `split -l 10000`. The decades of Unix text processing tools become JSON processing tools without modification.
+
+**Parallel processing becomes trivial.** Split a JSONL file into chunks at any line boundary and process each chunk independently. No coordination needed, no shared state, perfect for MapReduce patterns. The format's simplicity enables distributed processing without distributed complexity.
+
+**Resumability solves long-running jobs.** When processing 10 million records takes 3 hours and the server crashes at record 8 million, JSON arrays force restart from scratch. JSONL allows checkpointing - record the last processed line number, resume from there. The file itself acts as a durable queue.
 
 ### Comparison
 
@@ -1739,15 +1742,18 @@ setInterval(() => {
 
 ## Best Practices
 
-### 1. One Object Per Line
+Production JSONL systems require discipline around format conventions and error handling. These patterns emerge from operating streaming pipelines at scale.
 
-**Good:**
+### Format Conventions
+
+**Write one complete JSON object per line, no exceptions.** Multiline pretty-printed JSON breaks every line-based tool - `grep` returns incomplete objects, `wc -l` counts wrong, `split` produces invalid fragments. The line is the atomic unit:
+
 ```jsonl
 {"id": 1, "name": "Alice"}
 {"id": 2, "name": "Bob"}
 ```
 
-**Bad (multiline):**
+Not this (multiline breaks atomicity):
 ```json
 {
   "id": 1,
@@ -1759,22 +1765,17 @@ setInterval(() => {
 }
 ```
 
-Multiline breaks line-based processing tools (grep, wc, split).
-
-### 2. Compact JSON (No Whitespace)
+**Use compact JSON without whitespace.** Pretty-printing wastes disk space and network bandwidth. When processing millions of records, unnecessary spaces compound:
 
 ```jsonl
 {"id":1,"name":"Alice","tags":["go","rust"]}
 ```
 
-Not:
-```jsonl
-{ "id": 1, "name": "Alice", "tags": [ "go", "rust" ] }
-```
+The difference seems trivial per record, but across 10 million records those spaces add gigabytes. Storage costs real money in cloud systems.
 
-Whitespace wastes space. Each record should be compact.
+### Error Handling and Resilience
 
-### 3. Handle Parse Errors Gracefully
+**Graceful degradation beats stopping on first error.** Production data streams contain corrupt records - network glitches, encoding errors, application bugs. Stopping the entire pipeline on first failure makes systems brittle. Log failures and continue:
 
 ```javascript
 for await (const line of rl) {
@@ -1794,35 +1795,40 @@ for await (const line of rl) {
 console.log(`Processed: ${successful}, Failed: ${failed}`);
 ```
 
-### 4. Use Newline as Separator Only
+Track success/failure rates. Alert when failure rate spikes. Investigate patterns in failed records. But keep the pipeline running - 99.9% success is better than 0% because the pipeline stopped at record 1,000.
 
-**Correct:**
+**Understand newline semantics.** Only unescaped newlines separate records. JSON strings can contain escaped newlines (`\n`) without breaking record boundaries:
+
 ```jsonl
 {"text": "Line 1\nLine 2"}
 {"text": "Single line"}
 ```
 
-**Note:** Newlines inside JSON strings are escaped (`\n`). Only unescaped newlines separate records.
+Your JSON parser handles the escaping automatically. Just ensure you're reading complete lines, not splitting on every `\n` byte.
 
-### 5. Add Timestamps for Time-Series
+### Data Organization
+
+**Include timestamps for time-series data.** Without timestamps, reconstructing event sequences becomes impossible. Make them explicit and use ISO 8601 format for unambiguous parsing:
 
 ```jsonl
 {"timestamp": "2023-01-15T10:00:00Z", "event": "user_login", "user_id": 123}
 {"timestamp": "2023-01-15T10:00:01Z", "event": "page_view", "page": "/home"}
 ```
 
-Makes time-based queries and sorting possible.
+This enables time-range queries (`grep '2023-01-15T10'`), chronological sorting, and correlation across log sources.
 
-### 6. Include Record Version
+**Version your record schemas.** As systems evolve, record structures change. Version numbers enable migration tools and backward compatibility:
 
 ```jsonl
 {"_version": 1, "id": 1, "name": "Alice"}
 {"_version": 2, "id": 1, "name": "Alice", "email": "alice@example.com"}
 ```
 
-Enables schema evolution tracking and migration.
+Processors can handle both old and new formats. Migration scripts can target specific versions. Monitoring can track version distribution across datasets.
 
-### 7. Compress Large Files
+### Storage and Performance
+
+**Compress aggressively for storage.** Text compresses extremely well. JSONL files typically achieve 80-90% compression with gzip, dramatically reducing storage costs and transfer times:
 
 ```bash
 # Write compressed JSONL
@@ -1835,23 +1841,19 @@ zcat data.jsonl.gz | jq 'select(.status == "active")'
 gunzip -c logs.jsonl.gz | grep error
 ```
 
-**Storage savings:**
-- JSONL: 500 MB
-- JSONL + gzip: 85 MB (83% compression)
+A 500MB JSONL file compresses to 85MB - same data, 6x less storage cost. The streaming decompression tools (`zcat`, `gunzip -c`) maintain constant memory usage. Store compressed, decompress on read.
 
-### 8. Use Line Buffering
+**Configure buffering for write performance.** Unbuffered writes kill throughput when generating millions of records. Buffer writes to batch disk I/O:
 
 ```javascript
-// Enable line buffering for real-time streaming
-process.stdout._handle.setBlocking(true);
-
-// Or use proper stream wrapper
 const stream = fs.createWriteStream('output.jsonl', {
   highWaterMark: 64 * 1024 // 64KB buffer
 });
 ```
 
-### 9. Validate Objects (Optional)
+Balance buffer size against memory usage and latency requirements. Larger buffers improve throughput but delay visibility of new records and increase data loss risk on crashes.
+
+**Validate selectively, not universally.** JSON Schema validation for every record in a 100GB file wastes CPU cycles. Validate at boundaries - when data enters your system (API ingestion), not during internal processing:
 
 ```javascript
 const Ajv = require('ajv');
@@ -1870,10 +1872,13 @@ for await (const line of rl) {
 }
 ```
 
-### 10. File Rotation for Logs
+Once data passes validation, trust it during transformations. Re-validate only if corruption is suspected.
+
+### Log Management
+
+**Rotate log files automatically.** Unbounded log files eventually fill disks. Rotation by size or time keeps files manageable:
 
 ```javascript
-// Rotate logs by size or time
 const rfs = require('rotating-file-stream');
 
 const stream = rfs.createStream('app.jsonl', {
@@ -1885,6 +1890,8 @@ const stream = rfs.createStream('app.jsonl', {
 
 logger.stream(stream);
 ```
+
+Rotated files get compressed and archived. Old archives get deleted per retention policy. The pattern prevents disk space emergencies at 3 AM.
 
 {blurb, class: tip}
 **Production Checklist:**
@@ -2105,35 +2112,15 @@ JSON Lines is the pragmatic solution to JSON's streaming problem. It's not a new
 
 ### Core Benefits
 
-**JSON Lines provides:**
-- Streaming processing (constant memory)
-- Fault tolerance (corrupt lines isolated)
-- Unix pipeline compatibility (grep, awk, sed, jq)
-- Append-only writes (no file locking)
-- Resumable processing (checkpoint at any line)
-- Parallel processing (split into chunks)
+JSON Lines succeeds by solving streaming, fault tolerance, and Unix integration simultaneously with a single convention. **Streaming processing with constant memory** makes datasets of arbitrary size tractable - process 100GB files with megabytes of RAM. **Fault isolation** means corrupted records don't cascade - one bad line, one logged error, pipeline continues. **Unix pipeline compatibility** leverages decades of text processing tools - `grep`, `awk`, `sed`, `jq` all work naturally because the format aligns with Unix assumptions about text structure.
 
-**Key patterns:**
-- One compact JSON object per line
-- Use streaming parsers (don't load entire file)
-- Handle parse errors gracefully
-- Checkpoint progress for long-running jobs
-- Compress for storage (gzip, zstd)
-- Rotate log files by size or time
+The format enables **append-only writes** without locking or coordination, **resumable processing** through simple checkpoints, and **parallel processing** by splitting at any line boundary. These properties compound - streaming enables large datasets, append-only enables high write throughput, resumability enables long-running jobs, parallelism enables horizontal scale.
 
-**When to use JSON Lines:**
-+ Log files (application logs, access logs)
-+ Large datasets (analytics, ML training data)
-+ Data pipelines (ETL, stream processing)
-+ Database exports (MongoDB, PostgreSQL)
-+ Message streams (Kafka, queues)
-+ API streaming responses
+**Implementation patterns** are consistent across languages and tools. One compact JSON object per line, no exceptions. Use streaming parsers that don't load entire files. Handle parse errors gracefully and continue processing. Checkpoint progress for resumability. Compress for storage efficiency. Rotate logs automatically.
 
-**When to avoid:**
-- Small datasets that fit in memory
-- Human-edited configuration
-- Complex nested relationships
-- Need whole-file JSON Schema validation
+**The format fits naturally** for application logs capturing structured events, large datasets for analytics and machine learning, ETL data pipelines moving data between systems, database exports for backup and migration, message streams from Kafka and queues, and API streaming responses for real-time data delivery.
+
+**Know when not to use JSONL** - small datasets that fit comfortably in memory gain nothing from streaming and lose the convenience of JSON array syntax. Human-edited configuration benefits from JSON's familiarity and validation tools. Complex nested relationships spanning multiple records work better as structured documents. Scenarios requiring whole-file JSON Schema validation against a document structure can't leverage JSONL's line independence.
 
 
 **The pattern continues:** JSON Lines demonstrates modularity again - it's a convention, not a new format. Works with any JSON parser, any transport, any processing tool. The ecosystem solved streaming without changing JSON itself.
