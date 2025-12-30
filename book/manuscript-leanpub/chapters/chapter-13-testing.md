@@ -158,7 +158,7 @@ function generateInvalidTestData(schema) {
 Property-based testing goes beyond examples to test invariants across generated data:
 
 
-![Diagram 2](chapter-13-testing-diagram-2-light.png)
+![Diagram 2](chapter-13-testing-diagram-3-light.png)
 {width: 85%}
 
 
@@ -416,7 +416,7 @@ Contract testing ensures that services can communicate reliably by defining and 
 Consider a typical microservice interaction where a frontend consumes user data from a backend API:
 
 
-![Diagram 3](chapter-13-testing-diagram-3-light.png)
+![Diagram 3](chapter-13-testing-diagram-2-light.png)
 {width: 85%}
 
 
