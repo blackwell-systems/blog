@@ -1413,11 +1413,6 @@ if (result.allowed) {
 }
 ```
 
-
-![Diagram 10](chapter-11-api-design-diagram-10-light.png)
-{width: 85%}
-
-
 ### Redis-Based Distributed Rate Limiting
 
 For multi-server deployments, use Redis for shared rate limiting state:

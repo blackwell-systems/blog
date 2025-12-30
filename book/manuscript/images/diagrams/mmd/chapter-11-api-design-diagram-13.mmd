@@ -1,0 +1,40 @@
+flowchart TB
+    subgraph transport["Transport Security"]
+        https[HTTPS/TLS<br/>Encrypted connection]
+        hsts[HSTS Header<br/>Force HTTPS]
+    end
+    
+    subgraph auth["Authentication"]
+        jwt[JWT Tokens<br/>Signed claims]
+        oauth[OAuth 2.0<br/>Delegated auth]
+        apikey[API Keys<br/>Simple auth]
+    end
+    
+    subgraph authz["Authorization"]
+        rbac[RBAC<br/>Role-based]
+        scope[Scopes<br/>Permission sets]
+        claims[JWT Claims<br/>Embedded permissions]
+    end
+    
+    subgraph input["Input Security"]
+        validate[JSON Schema<br/>Validation]
+        sanitize[Sanitization<br/>SQL/XSS prevention]
+        ratelimit[Rate Limiting<br/>Abuse prevention]
+    end
+    
+    subgraph response["Response Security"]
+        cors[CORS<br/>Origin control]
+        headers[Security Headers<br/>CSP, X-Frame-Options]
+        escape[Output Escaping<br/>XSS prevention]
+    end
+    
+    transport --> auth
+    auth --> authz
+    authz --> input
+    input --> response
+    
+    style transport fill:#3A4A5C,stroke:#6b7280,color:#f0f0f0
+    style auth fill:#3A4C43,stroke:#6b7280,color:#f0f0f0
+    style authz fill:#4C4538,stroke:#6b7280,color:#f0f0f0
+    style input fill:#4C3A3C,stroke:#6b7280,color:#f0f0f0
+    style response fill:#3A4A5C,stroke:#6b7280,color:#f0f0f0
