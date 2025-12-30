@@ -755,44 +755,21 @@ console.log(decoded);
 | CBOR | 6.4 MB | 3.4 MB | 9.5 MB |
 | BSON | 7.8 MB | 4.1 MB | 11.8 MB |
 
-{{< mermaid >}}
-flowchart TB
-    subgraph perf["Performance Characteristics"]
-        size[Size Efficiency<br/>36% smaller than JSON]
-        speed[Parse Speed<br/>1.7x faster]
-        memory[Memory Usage<br/>25% less memory]
-    end
-    
-    subgraph formats["Binary Format Rankings"]
-        msgpack[MessagePack<br/>Best Overall Balance]
-        cbor[CBOR<br/>Standards Compliant]
-        bson[BSON<br/>MongoDB Extended Types]
-    end
-    
-    perf --> formats
-    
-    style msgpack fill:#3A4C43,stroke:#6b7280,color:#f0f0f0
-    style cbor fill:#3A4A5C,stroke:#6b7280,color:#f0f0f0
-    style bson fill:#4C4538,stroke:#6b7280,color:#f0f0f0
-    style perf fill:#3A4A5C,stroke:#6b7280,color:#f0f0f0
-    style formats fill:#3A4C43,stroke:#6b7280,color:#f0f0f0
-{{< /mermaid >}}
+### Performance Characteristics Summary
 
-### Key Takeaways
+| Metric | Improvement Over JSON | Details |
+|--------|----------------------|---------|
+| **Size Efficiency** | 28-36% smaller | MessagePack/CBOR most efficient; BSON less efficient (extended type overhead) |
+| **Parse Speed** | 1.5-1.7x faster | Go implementations fastest; Python benefits most from binary formats |
+| **Memory Usage** | 20-30% less memory | Streaming parsers reduce memory usage further |
 
-**Size savings:**
-- Binary formats: 28-36% smaller than JSON
-- MessagePack/CBOR most efficient
-- BSON less efficient (extended type overhead)
+### Binary Format Rankings
 
-**Speed improvements:**
-- 1.5-1.7x faster encoding/decoding
-- Go implementations fastest
-- Python benefits most from binary formats
-
-**Memory efficiency:**
-- 20-30% less memory than JSON
-- Streaming parsers reduce memory further
+| Format | Best For | Key Characteristics |
+|--------|----------|-------------------|
+| **MessagePack** | General use | Best overall balance of size, speed, and compatibility |
+| **CBOR** | Standards compliance | IETF standard (RFC 8949), extensible type system |
+| **BSON** | MongoDB integration | Extended types (ObjectId, Date, Binary), database-native |
 
 {{< callout type="warning" >}}
 **Benchmark Caveats:**
