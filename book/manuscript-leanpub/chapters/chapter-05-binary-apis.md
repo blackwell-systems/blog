@@ -832,25 +832,21 @@ console.log(decoded);
 | BSON | 7.8 MB | 4.1 MB | 11.8 MB |
 
 
-![Diagram 1](chapter-05-binary-apis-diagram-1-light.png)
-{width: 85%}
+### Performance Characteristics Summary
 
+| Metric | Improvement Over JSON | Details |
+|--------|----------------------|---------|
+| **Size Efficiency** | 28-36% smaller | MessagePack/CBOR most efficient; BSON less efficient (extended type overhead) |
+| **Parse Speed** | 1.5-1.7x faster | Go implementations fastest; Python benefits most from binary formats |
+| **Memory Usage** | 20-30% less memory | Streaming parsers reduce memory usage further |
 
-### Key Takeaways
+### Binary Format Rankings
 
-**Size savings:**
-- Binary formats: 28-36% smaller than JSON
-- MessagePack/CBOR most efficient
-- BSON less efficient (extended type overhead)
-
-**Speed improvements:**
-- 1.5-1.7x faster encoding/decoding
-- Go implementations fastest
-- Python benefits most from binary formats
-
-**Memory efficiency:**
-- 20-30% less memory than JSON
-- Streaming parsers reduce memory further
+| Format | Best For | Key Characteristics |
+|--------|----------|-------------------|
+| **MessagePack** | General use | Best overall balance of size, speed, and compatibility |
+| **CBOR** | Standards compliance | IETF standard (RFC 8949), extensible type system |
+| **BSON** | MongoDB integration | Extended types (ObjectId, Date, Binary), database-native |
 
 {blurb, class: warning}
 **Benchmark Caveats:**
