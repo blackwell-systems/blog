@@ -65,7 +65,7 @@ This book takes you deep into JSON's ecosystem, teaching not just syntax but the
 
 **Chapter 7: JSON Lines** introduces the streaming format that powers big data systems, showing how to process millions of JSON events reliably with proper error handling and monitoring.
 
-**Chapter 8: Security** exposes the vulnerabilities specific to JSON systemsΓÇöJWT attacks, injection vulnerabilities, DoS through malformed inputΓÇöand provides concrete mitigation strategies.
+**Chapter 8: Security** exposes the vulnerabilities specific to JSON systems, JWT attacks, injection vulnerabilities, DoS through malformed input and provides concrete mitigation strategies.
 
 **Chapter 9: Lessons** synthesizes the architectural principles learned throughout the book, giving you frameworks for making technology decisions that extend far beyond JSON.
 
@@ -127,7 +127,7 @@ Chapter 11 guides you through implementing a production API with pagination, err
 
 In Chapter 12, you'll build an event processing system using Kafka to handle millions of JSON events with schema registry integration, monitoring, and alerting for data quality issues.
 
-Chapter 13 provides comprehensive testing approachesΓÇöproperty-based testing for validation, contract testing with Pact, security testing for JWT vulnerabilities, and performance testing with k6 that finds bottlenecks before they reach production.
+Chapter 13 provides comprehensive testing approaches, property-based testing for validation, contract testing with Pact, security testing for JWT vulnerabilities, and performance testing with k6 that finds bottlenecks before they reach production.
 
 By the end of this book, you'll have practical code you can adapt for your own systems, plus the architectural understanding to make informed decisions about JSON in production environments.
 
@@ -143,6 +143,6 @@ When the next data format emerges--and it will--you'll understand how to evaluat
 
 Most importantly, this book will change how you think about building reliable systems. You'll approach data formats, API design, testing strategies, and system architecture with a deeper understanding of the trade-offs and patterns that separate robust production systems from fragile prototypes.
 
-JSON became successful not because it was perfect, but because it aligned with the architectural principles that define modern software systems. Understanding those principlesΓÇöand how to apply themΓÇöwill make you a better engineer regardless of what technologies you use.
+JSON became successful not because it was perfect, but because it aligned with the architectural principles that define modern software systems. Understanding those principles and how to apply them will make you a better engineer regardless of what technologies you use.
 
 Let's begin.
