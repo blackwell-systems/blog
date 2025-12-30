@@ -256,28 +256,15 @@ This distinction matters: protocols give clarity, architectural styles give flex
 
 ### Core Concepts
 
-**1. Transport-agnostic**
-- HTTP (most common)
-- WebSockets (bidirectional)
-- Unix sockets (local IPC)
-- TCP sockets
-- Message queues
-- Any byte stream
+JSON-RPC's power comes from its deliberate simplicity. Unlike heavyweight protocols that lock you into specific transports or languages, JSON-RPC treats these as implementation details.
 
-**2. Stateless**
-- Each request is independent
-- No session management required
-- Easy to load balance
+**Transport independence** means you choose the right communication channel for your needs. Most implementations use HTTP for its ubiquity and tooling support, but JSON-RPC works equally well over WebSockets when you need bidirectional communication, Unix sockets for efficient local inter-process communication, raw TCP sockets for custom network protocols, or even message queues for asynchronous processing. The protocol itself doesn't care - it's just JSON messages flowing over bytes.
 
-**3. Simple specification**
-- Three message types: request, response, notification
-- Standard error codes
-- Batch request support
+**Statelessness** makes JSON-RPC servers easy to scale. Each request contains everything needed to process it, with no session management or state synchronization between requests. This means you can distribute load across multiple servers without sticky sessions, restart servers without losing state, or even process requests out of order. If your application needs state, manage it explicitly in your data layer - don't hide it in protocol semantics.
 
-**4. Language-agnostic**
-- Works in any language with JSON support
-- No code generation required
-- Libraries available for all major languages
+The **specification itself** fits on eight pages because it defines only what matters: three message types (request, response, notification), a small set of standard error codes, and batch request support. This minimalism is intentional - everything else is application-specific. No authentication scheme, no transport binding, no encoding rules beyond JSON. The specification tells you how to structure messages, not how to build systems.
+
+**Language agnosticism** follows naturally from the JSON foundation. Any language with JSON support can implement JSON-RPC - no special parsers, no code generation, no IDL compilers. Libraries exist for every major language, but you don't need them. The entire protocol can be implemented in 50 lines of code if needed. This matters for polyglot systems where different services use different languages based on their requirements, not protocol constraints.
 
 ### JSON-RPC Request
 
@@ -1499,26 +1486,15 @@ const [user, orders, preferences] = await userService.batch([
 
 ### When to Use Each
 
-**Use JSON-RPC when:**
-+ Action-oriented domain (calculations, operations)
-+ Internal microservices (simplicity matters)
-+ Batch operations needed
-+ WebSocket support required
-+ Rapid prototyping (no schema needed)
+The choice between JSON-RPC, REST, and gRPC isn't ideological - it's practical. Each protocol optimizes for different constraints.
 
-**Use REST when:**
-+ Resource-oriented domain (CRUD operations)
-+ Public APIs (standardization matters)
-+ HTTP caching benefits your use case
-+ Stateless operations
-+ Wide client compatibility needed
+**JSON-RPC shines in action-oriented domains** where operations don't map naturally to resources. If your API surface consists primarily of calculations, transformations, or commands rather than CRUD operations, JSON-RPC's function-call model matches the problem naturally. Internal microservices particularly benefit from this simplicity - when you control both client and server, JSON-RPC's minimal ceremony accelerates development. The protocol's native batch request support eliminates the latency compounding that plagues REST APIs making multiple dependent calls. WebSocket deployments get bidirectional communication without protocol impedance, and rapid prototyping proceeds without schema definition overhead.
 
-**Use gRPC when:**
-+ Performance critical (high throughput)
-+ Strong typing required
-+ Schema evolution important
-+ Microservices with complex contracts
-+ Language-agnostic code generation needed
+**REST remains the right choice for resource-oriented domains** where your API models entities with clear lifecycle operations. Public APIs benefit from REST's ubiquity - developers understand GET/POST/PUT/DELETE without documentation, and the ecosystem of HTTP tooling (caching proxies, CDNs, browser DevTools) works automatically. If your access patterns benefit from HTTP caching semantics, REST gives you this for free. The stateless request/response model aligns perfectly with HTTP's design, and wide client compatibility (including browsers, curl, and every HTTP library ever written) comes standard.
+
+**gRPC targets performance-critical systems** where binary efficiency matters more than human readability. The required Protocol Buffers schemas provide strong typing that catches errors at compile time, not runtime. Schema evolution features enable backward-compatible API changes without versioning gymnastics. Microservice architectures with complex contracts benefit from the generated client libraries that provide type-safe APIs in every language. When throughput, latency, or bandwidth become bottlenecks, gRPC's HTTP/2 streaming and efficient binary encoding deliver measurable improvements.
+
+The protocols aren't mutually exclusive. Production systems routinely combine them based on each API's characteristics.
 
 
 ![Diagram 3](chapter-06-json-rpc-diagram-3-light.png)
@@ -1551,13 +1527,13 @@ Don't feel locked into one protocol. Choose based on each API's characteristics.
 
 ## Best Practices
 
-### 1. Use Named Parameters
+Building production JSON-RPC systems requires patterns that go beyond the basic specification. These practices emerge from real-world deployments where simplicity, maintainability, and reliability matter.
+
+### API Design Decisions
+
+**Choose named parameters over positional arrays.** When you write `{"method": "createUser", "params": ["alice", "alice@example.com", 30, true]}`, the next developer reading this code has no idea what `30` and `true` represent without checking documentation. Six months later when you add an optional `verified` parameter, every client needs updates to handle the new positional ordering. Named parameters solve both problems:
 
 ```json
-// Bad: Positional parameters
-{"method": "createUser", "params": ["alice", "alice@example.com", 30, true]}
-
-// Good: Named parameters
 {"method": "createUser", "params": {
   "username": "alice",
   "email": "alice@example.com",
@@ -1566,21 +1542,13 @@ Don't feel locked into one protocol. Choose based on each API's characteristics.
 }}
 ```
 
-Named parameters are self-documenting and make optional parameters easier.
+The call documents itself. Optional parameters can be added without breaking existing clients. Parameter order becomes irrelevant. The small verbosity cost pays dividends in maintainability.
 
-### 2. Version Your Methods
+**Version your methods from day one.** When your `getUser` method needs breaking changes, you face a dilemma: break existing clients or maintain two code paths. Method versioning solves this by making the version explicit. Embed it in the method name (`v2.getUser`) or pass it as a parameter (`getUser` with `{version: 2, id: 123}`). Both approaches work, but method name versioning makes the version visible in logs and monitoring without parsing parameters. Version early - retrofitting versioning into production APIs with angry clients is unpleasant.
 
-```javascript
-// Version in method name
-client.call('v2.getUser', {id: 123});
+### Error Handling and Resilience
 
-// Or use a parameter
-client.call('getUser', {version: 2, id: 123});
-```
-
-Allows gradual migration without breaking existing clients.
-
-### 3. Use Standard Error Codes
+**Establish consistent error codes early.** JSON-RPC reserves the range -32768 to -32000 for standard protocol errors (parse errors, invalid requests, method not found). Your application errors should use either the -32000 to -32099 range or positive integers. The key is consistency - clients can only handle errors programmatically if the codes are predictable:
 
 ```javascript
 const ErrorCodes = {
@@ -1600,9 +1568,9 @@ const ErrorCodes = {
 };
 ```
 
-Consistent error codes make client error handling easier.
+When clients receive `RATE_LIMIT`, they can back off automatically. When they see `UNAUTHORIZED`, they can refresh tokens. Inconsistent error codes force clients to parse error messages as strings - fragile and language-dependent.
 
-### 4. Add Request Timeouts
+**Implement timeouts on both sides.** Long-running operations will eventually hang. Without timeouts, hanging requests accumulate until your connection pool exhausts and the entire service deadlocks. Client-side timeouts prevent cascading failures - if the RPC server is slow, the client fails fast rather than blocking its own request handling. Server-side timeouts protect against runaway operations consuming resources:
 
 ```javascript
 // Client-side timeout
@@ -1612,9 +1580,9 @@ const result = await client.call('longOperation', {}, {timeout: 60000});
 app.post('/rpc', timeout('30s'), handleRPC);
 ```
 
-Prevents hanging requests from exhausting resources.
+Choose timeout values based on realistic operation duration plus network latency. Too short and legitimate requests fail; too long and resource exhaustion isn't prevented.
 
-### 5. Implement Request Logging
+**Structured logging makes debugging tractable.** When a client reports an error with a specific request, you need to find the corresponding server-side execution quickly. Request IDs tie client and server logs together. Logging method names and durations reveals performance regressions and usage patterns:
 
 ```javascript
 app.use((req, res, next) => {
@@ -1640,17 +1608,19 @@ app.use((req, res, next) => {
 });
 ```
 
-Essential for debugging and monitoring.
+Resist the temptation to skip logging parameter values for security - instead sanitize sensitive fields (passwords, tokens) before logging. Debugging production issues without parameter context is needlessly difficult.
 
-### 6. Use Batch Requests for Efficiency
+### Performance and Efficiency
+
+**Batch requests eliminate latency compounding.** When a client needs data from multiple calls, sequential requests pay the network latency penalty for each one. Three calls with 50ms latency each take 150ms plus processing time. Batch requests collapse this into a single round trip:
 
 ```javascript
-// Instead of 100 separate requests
+// Instead of 100 separate requests paying latency penalty each time
 for (const id of userIds) {
   await client.call('getUser', {id});
 }
 
-// Single batch request
+// Single batch request - one round trip
 const calls = userIds.map(id => ({
   method: 'getUser',
   params: {id}
@@ -1658,9 +1628,24 @@ const calls = userIds.map(id => ({
 const users = await client.batch(calls);
 ```
 
-Dramatically reduces latency and connection overhead.
+The server processes requests in parallel and returns all results together. This matters for mobile clients on slow networks where latency dominates, and for high-load services where connection overhead becomes measurable.
 
-### 7. Validate Parameters Early
+**Connection pooling prevents resource exhaustion.** Every HTTP request creates a TCP connection - three-way handshake, TLS negotiation, four-way teardown. For a service making frequent RPC calls, this overhead dominates actual request processing. Connection pooling reuses established connections:
+
+```javascript
+const client = new JSONRPCClient('http://api/rpc', {
+  agent: new http.Agent({
+    keepAlive: true,
+    maxSockets: 50
+  })
+});
+```
+
+The `maxSockets` limit prevents a single client from exhausting server connection limits. Keep-alive connections skip the handshake overhead and improve throughput measurably.
+
+### Input Validation and Security
+
+**Validate parameters before executing methods.** Passing invalid data to business logic causes unpredictable failures. Validate early and return the standard `-32602` (Invalid params) error so clients know the problem is their input, not server failure:
 
 ```javascript
 const schemas = {
@@ -1679,9 +1664,9 @@ function validateParams(method, params) {
 }
 ```
 
-Return `-32602` (Invalid params) early if validation fails.
+Validation happens before authentication checks, before database queries, before any expensive operations. Fast failure with clear error codes improves both client experience and server efficiency.
 
-### 8. Implement Rate Limiting
+**Rate limiting protects against abuse.** Without limits, a malicious or buggy client can overwhelm your service with requests. Rate limiting per client (by IP or API key) provides defense against both accidents and attacks:
 
 ```javascript
 const rateLimit = require('express-rate-limit');
@@ -1702,23 +1687,11 @@ app.use('/rpc', rateLimit({
 }));
 ```
 
-Protect against abuse and DoS attacks.
+The custom handler returns a proper JSON-RPC error instead of a generic HTTP 429 response. Set limits based on legitimate usage patterns with headroom for bursts - too restrictive and you anger users, too permissive and limits don't protect.
 
-### 9. Use Connection Pooling
+### Documentation
 
-```javascript
-// HTTP client with connection pooling
-const client = new JSONRPCClient('http://api/rpc', {
-  agent: new http.Agent({
-    keepAlive: true,
-    maxSockets: 50
-  })
-});
-```
-
-Reuse TCP connections for better performance.
-
-### 10. Document Your Methods
+**Document your methods as you would document functions.** Unlike REST where HTTP semantics provide implicit documentation (`GET` means read, `POST` means create), RPC method names are arbitrary. Clear documentation becomes essential:
 
 ```javascript
 /**
@@ -1739,7 +1712,7 @@ methods['getUser'] = async ({id}) => {
 };
 ```
 
-Clear documentation is essential for API consumers.
+Document parameter types, return values, and error codes. Tools can generate client libraries from this documentation. Future maintainers (including yourself) will appreciate knowing what error code -32003 means without grepping the codebase.
 
 {blurb, class: tip}
 **Production Checklist:**
