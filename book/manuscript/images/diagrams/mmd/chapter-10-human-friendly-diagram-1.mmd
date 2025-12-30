@@ -1,0 +1,23 @@
+flowchart LR
+    subgraph minimal["Minimal Syntax"]
+        hjson[HJSON<br/>Quotes optional<br/>Commas optional<br/>Minimal punctuation]
+    end
+    
+    subgraph moderate["Moderate Syntax"]
+        yaml[YAML<br/>Indentation-based<br/>Clean structure<br/>Some gotchas]
+        json5[JSON5<br/>ES5 features<br/>Comments + commas<br/>JSON-like]
+    end
+    
+    subgraph explicit["Explicit Syntax"]
+        toml[TOML<br/>Clear sections<br/>Quoted strings<br/>Unambiguous]
+        json[JSON<br/>Strict syntax<br/>All quoted<br/>No comments]
+    end
+    
+    hjson --> yaml
+    yaml --> json5
+    json5 --> toml
+    toml --> json
+    
+    style minimal fill:#3A4C43,stroke:#6b7280,color:#f0f0f0
+    style moderate fill:#3A4A5C,stroke:#6b7280,color:#f0f0f0
+    style explicit fill:#4C4538,stroke:#6b7280,color:#f0f0f0

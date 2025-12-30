@@ -1,0 +1,25 @@
+flowchart LR
+    subgraph step1["Step 1: Rename"]
+        json[config.json]
+        json5[config.json5]
+        json --> json5
+    end
+    
+    subgraph step2["Step 2: Add Comments"]
+        comments[Add inline comments<br/>Document decisions]
+    end
+    
+    subgraph step3["Step 3: Simplify"]
+        unquote[Remove quotes from keys<br/>Add trailing commas<br/>Use single quotes]
+    end
+    
+    subgraph step4["Step 4: Update Tooling"]
+        tools[Update parsers<br/>ESLint config<br/>Build tools]
+    end
+    
+    step1 --> step2 --> step3 --> step4
+    
+    style step1 fill:#3A4A5C,stroke:#6b7280,color:#f0f0f0
+    style step2 fill:#3A4C43,stroke:#6b7280,color:#f0f0f0
+    style step3 fill:#4C4538,stroke:#6b7280,color:#f0f0f0
+    style step4 fill:#4C3A3C,stroke:#6b7280,color:#f0f0f0

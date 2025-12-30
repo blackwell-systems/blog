@@ -1,0 +1,59 @@
+flowchart TB
+    subgraph devops["DevOps & Infrastructure"]
+        yaml1[YAML]
+        docker[Docker Compose]
+        k8s[Kubernetes]
+        ansible[Ansible]
+        github[GitHub Actions]
+        
+        yaml1 --> docker
+        yaml1 --> k8s
+        yaml1 --> ansible
+        yaml1 --> github
+    end
+    
+    subgraph rust["Rust Ecosystem"]
+        toml1[TOML]
+        cargo[Cargo.toml]
+        config[Config files]
+        
+        toml1 --> cargo
+        toml1 --> config
+    end
+    
+    subgraph js["JavaScript/TypeScript"]
+        json51[JSON5]
+        vscode[VSCode settings]
+        babel[Babel config]
+        tsconfig[tsconfig.json]
+        
+        json51 --> vscode
+        json51 --> babel
+        json51 --> tsconfig
+    end
+    
+    subgraph python["Python Ecosystem"]
+        toml2[TOML]
+        pyproject[pyproject.toml]
+        poetry[Poetry config]
+        
+        toml2 --> pyproject
+        toml2 --> poetry
+    end
+    
+    subgraph apis["APIs & Data"]
+        json1[JSON]
+        rest[REST APIs]
+        jsonapi[JSON API]
+        browser[Browser native]
+        
+        json1 --> rest
+        json1 --> jsonapi
+        json1 --> browser
+    end
+    
+    style devops fill:#3A4A5C,stroke:#6b7280,color:#f0f0f0
+    style rust fill:#4C3A3C,stroke:#6b7280,color:#f0f0f0
+    style js fill:#3A4C43,stroke:#6b7280,color:#f0f0f0
+    style python fill:#4C4538,stroke:#6b7280,color:#f0f0f0
+    style apis fill:#3A4A5C,stroke:#6b7280,color:#f0f0f0

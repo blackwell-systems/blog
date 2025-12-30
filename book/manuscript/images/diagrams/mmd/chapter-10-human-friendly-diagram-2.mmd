@@ -1,0 +1,30 @@
+flowchart TB
+    yaml[YAML Config]
+    
+    subgraph gotchas["Common Pitfalls"]
+        norway["Norway Problem<br/>no: Norway → false"]
+        version["Version Coercion<br/>1.20 → 1.2"]
+        octal["Octal Numbers<br/>0755 → 493"]
+        indent["Indentation Errors<br/>Spaces matter"]
+        bool["Boolean Coercion<br/>yes/no/on/off"]
+    end
+    
+    subgraph fixes["Solutions"]
+        quote["Quote strings<br/>'no': Norway"]
+        quote2["Quote versions<br/>'1.20'"]
+        quote3["Quote octals<br/>'0755'"]
+        consistent["Consistent spacing<br/>2 or 4 spaces"]
+        explicit["Explicit booleans<br/>true/false"]
+    end
+    
+    yaml --> gotchas
+    gotchas --> fixes
+    
+    norway --> quote
+    version --> quote2
+    octal --> quote3
+    indent --> consistent
+    bool --> explicit
+    
+    style gotchas fill:#4C3A3C,stroke:#6b7280,color:#f0f0f0
+    style fixes fill:#3A4C43,stroke:#6b7280,color:#f0f0f0

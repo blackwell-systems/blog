@@ -4,11 +4,11 @@ An e-commerce company processes one million order events per day through their J
 
 Everything runs smoothly:
 
->APIs return JSON responses, microservices log JSON events, Kafka streams JSON >messages to analytics databases. 
->
->The architecture is elegant, the data flows seamlessly, and the business grows.
->
->Then one Tuesday morning, a single malformed record arrives:
+APIs return JSON responses, microservices log JSON events, Kafka streams JSON messages to analytics databases. 
+
+The architecture is elegant, the data flows seamlessly, and the business grows.
+
+Then one Tuesday morning, a single malformed record arrives:
 
 ```json
 {"orderId": "12345", "amount": 99.99, "userId": "user123", "items": [

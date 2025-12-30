@@ -103,34 +103,42 @@ When user requests light versions for PDF A/B testing:
    - Use darker borders for visibility on white
    - Keep same layout/structure EXACTLY
 
-3. **Generate with white background**:
+3. **Generate both themes**:
    ```bash
+   # Dark theme (transparent background)
+   mmdc -i diagram-dark.mmd -o diagram-name.png -b transparent -w 1300
+   
+   # Light theme (white background)
    mmdc -i diagram-light.mmd -o diagram-name-light.png -b white -w 1300
    ```
 
-4. **Save with `-light` suffix**:
-   - `chapter-XX-name-diagram-N-light.png`
-   - Keep in same directories as originals
-   - Don't replace originals - user swaps manually on Leanpub
+4. **Save to organized locations**:
+   - Light versions: `manuscript/images/diagrams/chapter-XX-name-diagram-N-light.png`
+   - Dark versions: `manuscript/images/diagrams/dark/chapter-XX-name-diagram-N.png`
+   - Copy light versions to: `manuscript-leanpub/resources/mermaid-diagrams/` (gitignored, for local builds)
 
 ## Diagram File Locations
 
-**Source of truth (git tracked):**
+**Git-tracked source of truth:**
 ```
 manuscript/images/diagrams/
-├── chapter-01-origins-diagram-1.png (dark)
-├── chapter-01-origins-diagram-1-light.png (light variant)
+├── chapter-01-origins-diagram-1-light.png  (for Leanpub PDF/ebook)
+├── chapter-01-origins-diagram-2-light.png
+├── dark/
+│   ├── chapter-01-origins-diagram-1.png  (for web/blog)
+│   ├── chapter-01-origins-diagram-2.png
+│   └── ...
 └── ...
 ```
 
 **Leanpub build location (gitignored):**
 ```
 manuscript-leanpub/resources/mermaid-diagrams/
-├── chapter-01-origins-diagram-1.png
-└── ... (copy here for Leanpub to find)
+├── chapter-01-origins-diagram-1-light.png
+└── ... (copy light versions here for Leanpub preview builds)
 ```
 
-**Note**: User uploads images to Leanpub manually, so ensure both locations have updated files.
+**Upload to Leanpub:** User manually uploads light versions from `manuscript/images/diagrams/` (not from dark/ subdirectory)
 
 ## Converting ASCII Diagrams to Mermaid
 
