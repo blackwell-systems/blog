@@ -1804,7 +1804,7 @@ async function callExternalService(data) {
 ```
 
 
-![Diagram 9](chapter-12-data-pipelines-diagram-9-light.png)
+![Diagram 9](chapter-12-data-pipelines-diagram-4-light.png)
 {width: 85%}
 
 
@@ -2307,7 +2307,7 @@ Microservices → Filebeat → Kafka → Logstash → Elasticsearch → Kibana
 ```
 
 
-![Diagram 11](chapter-12-data-pipelines-diagram-11-light.png)
+![Diagram 11](chapter-12-data-pipelines-diagram-7-light.png)
 {width: 85%}
 
 
@@ -2506,7 +2506,7 @@ public class UserEventProcessor extends DataStream<UserEvent> {
 ```
 
 
-![Diagram 12](chapter-12-data-pipelines-diagram-12-light.png)
+![Diagram 12](chapter-12-data-pipelines-diagram-5-light.png)
 {width: 85%}
 
 
