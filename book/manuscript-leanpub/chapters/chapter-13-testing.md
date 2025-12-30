@@ -1398,9 +1398,9 @@ describe('Error handling', () => {
 });
 ```
 
-`★ Insight ─────────────────────────────────────`
-API testing strategies form a pyramid: fast unit tests for individual endpoints at the base, integration tests with real dependencies in the middle, and end-to-end tests at the top. Each layer serves different purposes - unit tests catch logic errors quickly, integration tests verify component interactions, and E2E tests validate complete user flows. The key is maintaining the right balance where most tests are fast and isolated, with fewer but more comprehensive integration tests.
-`─────────────────────────────────────────────────`
+{blurb, class: tip}
+**The Testing Pyramid:** API testing strategies form a pyramid: fast unit tests for individual endpoints at the base, integration tests with real dependencies in the middle, and end-to-end tests at the top. Each layer serves different purposes - unit tests catch logic errors quickly, integration tests verify component interactions, and E2E tests validate complete user flows. The key is maintaining the right balance where most tests are fast and isolated, with fewer but more comprehensive integration tests.
+{/blurb}
 
 API testing strategies provide comprehensive validation of endpoint behavior, from isolated unit tests that verify business logic to integration tests that confirm system interactions. By combining mocking for external dependencies, snapshot testing for response structure stability, and real database integration testing, teams can build confidence in API reliability while maintaining fast feedback cycles.
 
@@ -1976,9 +1976,9 @@ func TestInputSanitizationGo(t *testing.T) {
 }
 ```
 
-`★ Insight ─────────────────────────────────────`
-Security testing for JSON systems requires a layered approach that mirrors the OWASP Top 10 but adapted for JSON-specific vulnerabilities. The key insight is that JSON's flexibility becomes a security weakness without proper validation - what makes JSON easy to work with (loose typing, nested structures, dynamic content) also makes it vulnerable to injection, DoS, and privilege escalation attacks. Comprehensive security testing must validate every input boundary, authenticate every request properly, and limit resource consumption to prevent abuse.
-`─────────────────────────────────────────────────`
+{blurb, class: warning}
+**Security Testing Imperative:** JSON's flexibility becomes a security weakness without proper validation - what makes JSON easy to work with (loose typing, nested structures, dynamic content) also makes it vulnerable to injection, DoS, and privilege escalation attacks. Security testing for JSON systems requires a layered approach adapted from OWASP Top 10, validating every input boundary, authenticating every request properly, and limiting resource consumption to prevent abuse.
+{/blurb}
 
 Security testing for JSON systems requires systematic verification of authentication, authorization, input validation, and resource protection. By testing for JWT vulnerabilities, injection attacks, DoS prevention, and proper security headers, teams can build robust defenses against the unique attack vectors that target JSON APIs and data processing systems.
 
@@ -2621,9 +2621,9 @@ services:
     command: run --out statsd /scripts/api-load-test.js
 ```
 
-`★ Insight ─────────────────────────────────────`
-Performance testing for JSON systems reveals that the text-based nature of JSON creates CPU bottlenecks that don't exist with binary formats. The key insight is that JSON performance degrades non-linearly with payload size and nesting depth - a 10x increase in data size might result in 50x slower parsing. This means performance testing must include realistic data volumes and structures, not just synthetic small payloads. Load testing tools like k6 excel at JSON testing because they provide JavaScript runtime for complex payload generation and response validation.
-`─────────────────────────────────────────────────`
+{blurb, class: information}
+**Performance Characteristics:** The text-based nature of JSON creates CPU bottlenecks that don't exist with binary formats. JSON performance degrades non-linearly with payload size and nesting depth - a 10x increase in data size might result in 50x slower parsing. Performance testing must include realistic data volumes and structures, not just synthetic small payloads. Load testing tools like k6 excel at JSON testing because they provide JavaScript runtime for complex payload generation and response validation.
+{/blurb}
 
 Performance and load testing for JSON systems requires understanding the unique characteristics of text-based serialization and the performance implications of parsing, validation, and database operations. By combining load testing tools, benchmarking frameworks, and continuous monitoring, teams can ensure their JSON APIs maintain acceptable performance under real-world conditions and identify bottlenecks before they impact users.
 
@@ -3285,9 +3285,9 @@ groups:
           description: "95th percentile JSON payload size exceeds 1MB"
 ```
 
-`★ Insight ─────────────────────────────────────`
-Fuzz testing and CI/CD integration represent the final layer of a comprehensive JSON testing strategy. The key insight is that JSON systems fail in unexpected ways - parsers can crash on malformed input, validators can be bypassed with edge cases, and performance can degrade catastrophically with pathological inputs. Fuzzing discovers these edge cases automatically by generating millions of test cases that human testers would never think to create. When integrated into CI/CD pipelines, this testing becomes a safety net that catches regressions before they reach production, ensuring that JSON systems remain robust as they evolve.
-`─────────────────────────────────────────────────`
+{blurb, class: tip}
+**Fuzz Testing and CI/CD:** JSON systems fail in unexpected ways - parsers can crash on malformed input, validators can be bypassed with edge cases, and performance can degrade catastrophically with pathological inputs. Fuzzing discovers these edge cases automatically by generating millions of test cases that human testers would never think to create. When integrated into CI/CD pipelines, this testing becomes a safety net that catches regressions before they reach production, ensuring that JSON systems remain robust as they evolve.
+{/blurb}
 
 Fuzz testing and CI/CD integration complete the comprehensive testing strategy for JSON systems. By systematically generating malformed inputs and edge cases, fuzzing discovers vulnerabilities that traditional testing misses. When combined with automated pipelines that run schema validation, contract tests, security scans, and performance benchmarks on every change, teams can deploy JSON systems with confidence that they will handle real-world conditions reliably and securely.
 
