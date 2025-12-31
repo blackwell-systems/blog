@@ -164,7 +164,7 @@ Extract fields without requiring full document parsing. Support complex index ty
 {/blurb}
 
 
-![Diagram 1](chapter-04-binary-databases-diagram-1-light.png)
+![JSON Storage Format Decision Tree](chapter-04-binary-databases-diagram-1-light.png)
 {width: 85%}
 
 

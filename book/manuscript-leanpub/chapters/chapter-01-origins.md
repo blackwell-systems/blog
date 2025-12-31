@@ -255,7 +255,7 @@ vs JSON Schema:
 **The real killer:** Developer experience. Writing XML by hand was tedious. Reading XML logs was painful. Debugging SOAP requests required specialized tools. The monolithic architecture meant you couldn't use just the parts you needed - it was all or nothing.
 
 
-![Diagram 1](chapter-01-origins-diagram-1-light.png)
+![XML vs JSON Parsing Complexity](chapter-01-origins-diagram-1-light.png)
 {width: 85%}
 
 
@@ -771,7 +771,7 @@ Person person = mapper.readValue(json, Person.class);  // decode
 {/blurb}
 
 
-![Diagram 2](chapter-01-origins-diagram-2-light.png)
+![Data Format Comparison](chapter-01-origins-diagram-2-light.png)
 {width: 85%}
 
 
@@ -987,7 +987,7 @@ Let's compare JSON to its alternatives across key dimensions:
 *JSON Schema provides validation but isn't part of JSON itself.
 
 
-![Diagram 3](chapter-01-origins-diagram-3-light.png)
+![Choose Your Format](chapter-01-origins-diagram-3-light.png)
 {width: 85%}
 
 
@@ -1244,7 +1244,7 @@ JSON deliberately omitted developer-friendly features to stay minimal. For machi
 **Solution:** JSON Web Signatures and Encryption standards
 
 
-![Diagram 4](chapter-01-origins-diagram-4-light.png)
+![JSON Specification](chapter-01-origins-diagram-4-light.png)
 {width: 85%}
 
 
@@ -1395,18 +1395,20 @@ The JSON ecosystem evolved to patch these gaps while preserving the core simplic
 {blurb, class: information}
 **Book Roadmap:** This book explores the JSON ecosystem:
 - **Chapter 1** (this chapter): Origins and fundamental weaknesses
+- **Chapter 2**: JSON's architectural layers and ecosystem map
 - **Chapter 3**: JSON Schema - validation, types, and contracts
 - **Chapters 4-5**: Binary JSON formats - JSONB, BSON, MessagePack, CBOR
-- **Chapter 7**: Streaming JSON - JSON Lines and large datasets
 - **Chapter 6**: JSON-RPC and protocol layers
+- **Chapter 7**: Streaming JSON - JSON Lines and large datasets
 - **Chapter 8**: Security - JWT, canonicalization, and attacks
+- **Chapters 9-14**: Real-world patterns, testing, and future evolution
 {/blurb}
 
-In Chapter 3, we'll solve JSON's most critical weakness: the lack of validation. JSON Schema transforms JSON from "untyped text" into "strongly validated contracts" without sacrificing simplicity. We'll explore how to define schemas, validate data at runtime, generate code from schemas, and integrate validation into your entire stack.
+In Chapter 2, we'll map the entire JSON ecosystem - understanding how JSON Schema, binary formats, streaming protocols, and RPC layers build on top of the core specification. This architectural view shows you where each tool fits and when to reach for it.
 
-**The core problem JSON Schema solves:** How do you maintain the simplicity of JSON while gaining the safety of typed, validated data?
+**The core question Chapter 2 answers:** How does the fragmented JSON ecosystem fit together into a coherent whole?
 
-**Next:** Chapter 3 - JSON Schema and the Art of Validation
+**Next:** Chapter 2 - JSON Architecture and the Ecosystem Map
 
 ---
 

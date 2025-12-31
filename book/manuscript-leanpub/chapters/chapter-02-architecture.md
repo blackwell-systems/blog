@@ -65,7 +65,7 @@ XML wasn't designed as just a data format. It was designed as a **complete solut
 **The XML stack (all standardized together):**
 
 
-![Diagram 1](chapter-02-architecture-diagram-1-light.png)
+![The XML stack](chapter-02-architecture-diagram-1-light.png)
 {width: 70%}
 
 
@@ -139,7 +139,7 @@ No validation. No querying. No transformation. No protocols. No security. Just p
 **The JSON "stack" (loosely coupled components):**
 
 
-![Diagram 2](chapter-02-architecture-diagram-2-light.png)
+![The JSON Stack](chapter-02-architecture-diagram-2-light.png)
 {width: 70%}
 
 
@@ -246,7 +246,7 @@ Each component does one thing: `cat` reads files, `grep` filters lines, `cut` ex
 **Microservices (2010s) applied modularity to architecture:**
 
 
-![Diagram 3](chapter-02-architecture-diagram-3-light.png)
+![Microservices](chapter-02-architecture-diagram-3-light.png)
 {width: 85%}
 
 
@@ -734,7 +734,7 @@ app.use(validateMiddleware(schema));
 **Why this works:** Continuous deployment practices allow teams to update components independently without coordinating releases. Cloud infrastructure provides the orchestration needed for distributed services. Organizations scale by giving each team ownership of their services rather than coordinating through shared monoliths. DevOps culture and tooling have evolved to handle the operational complexity that modularity creates.
 
 
-![Diagram 4](chapter-02-architecture-diagram-4-light.png)
+![Evolution from Monolithic to Modular Architectures (1990s-2010s)](chapter-02-architecture-diagram-4-light.png)
 {width: 85%}
 
 

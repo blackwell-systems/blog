@@ -26,6 +26,7 @@ While database binary formats optimize storage and queries, API binary formats o
 </soap:Envelope>
 ```
 **Size:** 400+ bytes for simple request (all ASCII text characters)
+{/blurb}
 
 **Binary encoding attempts existed but failed:** Fast Infoset (2005) offered binary XML encoding but had a complex spec with minimal adoption. EXI (2011) became an IETF standard but arrived too late and required specialized parsers. None achieved widespread API usage.
 
@@ -45,7 +46,6 @@ While database binary formats optimize storage and queries, API binary formats o
 **The key distinction:** Text encoding represents data as ASCII/UTF-8 characters like `{"id":123}` producing readable text. Binary encoding represents data as compact bytes like `0x82 0xa2 id 0x7b` for efficient binary representation.
 
 **Architecture shift:** Text-only encoding → Binary encoding options, Failed standards → Modular ecosystem success, One verbose approach → Multiple optimized formats
-{/blurb}
 
 This chapter focuses on **MessagePack** (universal binary JSON) and **CBOR** (IETF-standardized format), comparing them with Protocol Buffers and analyzing real bandwidth cost savings.
 
