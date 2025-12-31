@@ -8,7 +8,11 @@ description: "Complete guide to choosing the MIT License: what it means, when to
 summary: "Why MIT became the most popular open-source license, when to choose it over GPL/Apache/BSD, and a decision framework for selecting the right license for your project"
 ---
 
-The MIT License appears on over 50% of open-source projects on GitHub, making it the most popular software license in existence. But popularity doesn't mean it's always the right choice. This guide explores when MIT makes sense, what alternatives exist, and how to choose the right license for your project.
+The MIT License is one of the most widely used permissive licenses in open source. It's popular because it's short, easy to understand, and broadly compatible—and GitHub's recent license metrics continue to show MIT as the most common license among repositories that declare one. But popularity doesn't mean it's always the right choice. This guide explains what MIT permits, what it doesn't cover (notably patents and trademarks), and how to choose between MIT, Apache 2.0, GPL-family licenses, and source-available alternatives based on your goals.
+
+{{< callout type="warning" >}}
+**Disclaimer:** This article provides general information about software licenses and is not legal advice. Consult a qualified attorney for specific legal questions about licensing.
+{{< /callout >}}
 
 {{< callout type="info" >}}
 **Key Question:** If you're releasing open-source software, should you choose MIT, GPL, Apache, BSD, or something else? This article provides a decision framework based on your goals.
@@ -541,14 +545,14 @@ What users CAN do:
 
 ### Misconception 3: "MIT has no patent protection"
 
-**Partially true.** MIT has *implied* patent license but no *explicit* grant.
+**True.** MIT does not include an explicit patent grant (unlike Apache 2.0).
 
-**Legal interpretation:**
-- Granting "rights to use, copy, modify" likely implies patent license
-- But not explicitly stated (unlike Apache 2.0)
-- No patent retaliation clause
+**Legal discussion:**
+- Some legal experts interpret permissive language ("rights to use, copy, modify") as implying patent rights
+- However, this interpretation is not universally agreed upon and not explicitly stated in the license text
+- MIT has no patent retaliation clause
 
-**If patents matter:** Use Apache 2.0 instead.
+**If patents matter:** Use Apache 2.0 for explicit patent grant and retaliation protection.
 
 ### Misconception 4: "I can change license later"
 
@@ -607,13 +611,14 @@ The biggest misconception about MIT is that it prevents monetization. In reality
 - **Why it works:** Developers adopt free version, enterprises upgrade for compliance features
 
 **Sentry**
-- **MIT Core:** Error tracking and monitoring
+- **FSL + Apache 2.0 (mixed licensing):** Error tracking and monitoring
 - **Paid Tiers:** Team collaboration, SSO, advanced analytics, 24/7 support
 - **Valuation:** $3.8B (2021 Series D), $217M raised
+- **Note:** Uses Functional Source License (FSL) for newer versions, Apache 2.0 for older
 - **Why it works:** Individual developers use free tier, companies pay for scale and support
 
 **Grafana Labs**
-- **AGPL/Apache Core:** Visualization and dashboards
+- **AGPLv3 (since 2021, previously Apache 2.0):** Visualization and dashboards
 - **Paid Enterprise:** Enterprise plugins, support, authentication
 - **Valuation:** $3B (2023 funding round), $720M total raised
 - **Why it works:** Community builds integrations, enterprises pay for operational certainty
