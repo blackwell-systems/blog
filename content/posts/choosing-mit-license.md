@@ -4,6 +4,7 @@ date: 2025-12-29
 draft: false
 tags: ["open-source", "licensing", "mit-license", "software-licensing", "legal", "gpl", "apache", "bsd", "copyleft", "permissive", "intellectual-property", "oss", "github", "project-management", "software-development", "compliance", "commercial-use", "license-compatibility", "developer-tools", "software-law"]
 categories: ["open-source", "legal"]
+series: ["Open Source Licensing"]
 description: "Complete guide to choosing the MIT License: what it means, when to use it, alternatives (GPL, Apache, BSD), decision framework, and real-world examples"
 summary: "Why MIT became the most popular open-source license, when to choose it over GPL/Apache/BSD, and a decision framework for selecting the right license for your project"
 ---
@@ -1159,6 +1160,10 @@ license = "MIT OR Apache-2.0"
 {{< /callout >}}
 
 The MIT License's popularity isn't accidental - it strikes the right balance between protecting contributors and enabling users. Choose it when simplicity and adoption matter more than enforcement.
+
+{{< callout type="info" >}}
+**Next in Series:** Want explicit patent protection? Read [Apache License 2.0: When Patent Protection Matters](../apache-2-license-guide/) to understand when Apache 2.0's explicit patent grants are worth the added complexity.
+{{< /callout >}}
 
 ---
 
