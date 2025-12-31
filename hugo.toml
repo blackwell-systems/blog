@@ -3,6 +3,7 @@ languageCode = 'en-us'
 title = 'Blackwell Systems Blog'
 theme = 'nightfall'
 enableRobotsTXT = true
+paginate = 30
 
 [taxonomies]
   tag = "tags"
