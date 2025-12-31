@@ -964,12 +964,11 @@ The zeitgeist lesson applies to all technology choices: understand the architect
 | Phase 4 | Protobuf | Migrate critical services, schema enforcement | 1M requests/sec |
 | Phase 5 | Polyglot | JSON (web), Protobuf (services), GraphQL (mobile) | Optimized per use case |
 
-
-
-
 ![Diagram 11](chapter-14-future-diagram-10-light.png)
 {width: 85%}
 
+![Diagram 12](chapter-14-future-diagram-11-light.png)
+{width: 85%}
 
 JSON thrived by embracing incompleteness and matching its era's architectural patterns. The future belongs to formats that understand their niche, enable ecosystems, and align with how we build software.
 
