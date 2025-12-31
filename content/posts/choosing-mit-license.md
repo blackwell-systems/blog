@@ -950,7 +950,68 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - Automated compliance scanning
 - Clear per-file licensing
 
-### 4. GitHub automation
+### 4. Dual Licensing Option (Advanced)
+
+If you want to provide flexibility for users with different needs, you can dual-license under both MIT and Apache 2.0:
+
+**Project structure:**
+```
+your-project/
+├── LICENSE-MIT
+├── LICENSE-APACHE
+└── README.md
+```
+
+**README.md:**
+```markdown
+## License
+
+Licensed under either of:
+
+- Apache License, Version 2.0 ([LICENSE-APACHE](LICENSE-APACHE))
+- MIT License ([LICENSE-MIT](LICENSE-MIT))
+
+at your option.
+```
+
+**Package manager format (Cargo.toml for Rust):**
+```toml
+[package]
+name = "your-project"
+version = "1.0.0"
+license = "MIT OR Apache-2.0"
+```
+
+**Why dual-license MIT OR Apache 2.0:**
+- **MIT**: For users who want simplicity and maximum compatibility
+- **Apache 2.0**: For users who need explicit patent protection
+- **Users choose**: They pick whichever license fits their needs
+- **Common in Rust ecosystem**: Rust language itself and most Rust crates use this pattern
+
+**Real-world examples:**
+- Rust language: MIT OR Apache 2.0
+- Tokio (async runtime): MIT OR Apache 2.0
+- Serde (serialization): MIT OR Apache 2.0
+- Most Rust crates follow this pattern
+
+**Benefits:**
+- Accommodates corporate legal departments that require patent grants
+- Maintains simplicity for users who prefer MIT
+- No version bumps needed if someone has license concerns
+- Broader adoption potential
+
+**Requirements:**
+- You must own all copyright
+- Contributors must agree to dual licensing (use Contributor License Agreement if needed)
+- Both licenses must be included in distributions
+
+**Note on license changes:**
+
+You cannot retroactively change licenses for already-released versions. If you release v1.0 under MIT, that version remains MIT forever (anyone can fork and continue using it under MIT). You can release v2.0 under a different license, but users can choose to stay on v1.0.
+
+Dual licensing from the start prevents this problem - users pick their preferred license without you needing version changes.
+
+### 5. GitHub automation
 
 **GitHub automatically detects** `LICENSE` file and shows license badge.
 
@@ -966,6 +1027,12 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
   "version": "1.0.0",
   "license": "MIT"
 }
+```
+
+**Example for dual licensing (Cargo.toml):**
+```toml
+[package]
+license = "MIT OR Apache-2.0"
 ```
 
 ---
