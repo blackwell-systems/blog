@@ -585,6 +585,304 @@ IN NO EVENT SHALL THE AUTHORS BE LIABLE FOR ANY CLAIM, DAMAGES...
 
 ---
 
+## How to Make Money with MIT-Licensed Software
+
+The biggest misconception about MIT is that it prevents monetization. In reality, MIT enables multiple revenue models while maintaining open-source credibility. Many successful companies have built sustainable businesses around MIT-licensed software.
+
+### Strategy 1: Open Core Model
+
+**Concept:** Core functionality is MIT-licensed, premium features are proprietary.
+
+**How it works:**
+- Base product: MIT (attracts users, builds community)
+- Advanced features: Proprietary (generates revenue)
+- Clear value separation: free tier solves 80% of needs, paid tier adds enterprise capabilities
+
+**Real-world examples:**
+
+**GitLab**
+- **MIT Core:** Git repository hosting, CI/CD basics, issue tracking
+- **Paid Tiers:** Advanced security, compliance, portfolio management
+- **Revenue:** $150M+ ARR (2022)
+- **Why it works:** Developers adopt free version, enterprises upgrade for compliance features
+
+**Sentry**
+- **MIT Core:** Error tracking and monitoring
+- **Paid Tiers:** Team collaboration, SSO, advanced analytics, 24/7 support
+- **Revenue:** $100M+ ARR
+- **Why it works:** Individual developers use free tier, companies pay for scale and support
+
+**Grafana**
+- **MIT/Apache Core:** Visualization and dashboards
+- **Paid Enterprise:** Enterprise plugins, support, authentication
+- **Revenue:** Acquired by private equity for $3B+ valuation
+- **Why it works:** Community builds integrations, enterprises pay for operational certainty
+
+**When open core works best:**
++ Clear distinction between community and enterprise features
++ Enterprise features don't alienate community (compliance, not core functionality)
++ Free tier solves real problems (attracts users)
++ Network effects (more users = more value)
+
+**When open core fails:**
+- Core is too limited (users feel bait-and-switched)
+- Premium features should be in core (community frustration)
+- Trying to "reclaim" features after making them free
+
+### Strategy 2: Dual Licensing
+
+**Concept:** Offer both MIT (free) and commercial license (paid).
+
+**How it works:**
+- MIT license: For open-source projects and compatible uses
+- Commercial license: For customers who need proprietary integration or want to avoid MIT terms
+- Same codebase, different license terms
+
+**Real-world examples:**
+
+**MySQL (historically)**
+- **GPL:** Free for open-source projects
+- **Commercial:** Paid for proprietary applications that can't comply with GPL
+- **Revenue:** Billions (Oracle acquisition)
+- **Why it worked:** Companies paid to avoid GPL obligations
+
+**Qt Framework**
+- **LGPL:** Free for most uses
+- **Commercial:** Paid for static linking or proprietary modifications
+- **Revenue:** Sustainable business for decades
+- **Why it works:** Enterprise prefers paying over legal uncertainty
+
+**Ghostwriter (markdown editor)**
+- **GPL:** Free for personal use
+- **Commercial:** Paid for closed-source distribution
+- **Why it works:** Developers pay to include in proprietary apps
+
+**When dual licensing works best:**
++ Your MIT code has integration constraints (GPL-incompatible dependencies)
++ Customers want legal certainty (pay to avoid open-source obligations)
++ You own all copyright (no external contributors, or CLA in place)
++ Enterprise customers value vendor relationship over license
+
+**Gotcha:** Dual licensing MIT is unusual (MIT is already permissive). More common with copyleft licenses (GPL → commercial). For MIT, consider open core instead.
+
+### Strategy 3: Software-as-a-Service (SaaS)
+
+**Concept:** Software is MIT, but hosted service is paid.
+
+**How it works:**
+- Anyone can self-host for free (MIT)
+- You charge for convenience of hosted service
+- Revenue from hosting, not software itself
+
+**Real-world examples:**
+
+**GitHub**
+- **MIT:** Git is open-source (git-scm.com)
+- **Paid Service:** GitHub.com hosting, Actions, advanced features
+- **Revenue:** $1B+ ARR (Microsoft acquisition $7.5B)
+- **Why it works:** Self-hosting Git is possible but GitHub is easier
+
+**Vercel**
+- **MIT:** Next.js framework
+- **Paid Service:** Deployment platform, edge functions, analytics
+- **Revenue:** $150M+ raised, unicorn valuation
+- **Why it works:** Framework adoption drives platform usage
+
+**Supabase**
+- **MIT/Apache:** Database, auth, storage libraries
+- **Paid Service:** Managed PostgreSQL, hosting, backups
+- **Revenue:** $116M raised
+- **Why it works:** Open-source reduces lock-in fear, hosting generates revenue
+
+**PlanetScale**
+- **MIT:** Vitess database (donated to CNCF)
+- **Paid Service:** Managed MySQL-compatible database
+- **Revenue:** $105M raised
+- **Why it works:** Complex infrastructure, customers pay for management
+
+**When SaaS works best:**
++ Software is complex to deploy/maintain
++ Hosted version adds significant value (uptime, scaling, backups)
++ You have infrastructure expertise
++ Usage-based pricing aligns with customer value
+
+**Advantages:**
+- MIT license builds trust (no lock-in)
+- Community contributes improvements
+- Self-hosters become advocates
+- Enterprises pay for support and SLA
+
+### Strategy 4: Support and Consulting
+
+**Concept:** Software is free, expertise is paid.
+
+**How it works:**
+- MIT-licensed software available to everyone
+- Charge for training, implementation, customization, support
+- Revenue from services, not software
+
+**Real-world examples:**
+
+**Redis Labs**
+- **MIT/BSD:** Redis database
+- **Paid Services:** Redis Enterprise (hosted), support contracts, training
+- **Revenue:** $100M+ ARR before acquisition
+- **Why it works:** Redis is complex, enterprises pay for operational certainty
+
+**Elastic (before license change)**
+- **Apache:** Elasticsearch, Kibana
+- **Paid Services:** Elastic Cloud, support, training
+- **Revenue:** $1B+ revenue (before switching to SSPL)
+- **Why it worked:** Search infrastructure is mission-critical
+
+**Automattic (WordPress)**
+- **GPL:** WordPress core
+- **Paid Services:** WordPress.com hosting, WooCommerce support, enterprise features
+- **Revenue:** $850M+ valuation
+- **Why it works:** WordPress powers 43% of websites, support market is huge
+
+**Canonical (Ubuntu)**
+- **Open-source:** Ubuntu Linux
+- **Paid Services:** Ubuntu Pro, enterprise support, consulting
+- **Revenue:** Sustainable business for 20+ years
+- **Why it works:** Enterprises pay for support on mission-critical infrastructure
+
+**When support/consulting works best:**
++ Software is complex (databases, infrastructure, frameworks)
++ Target market is enterprises (value support contracts)
++ You're the original author/expert (credibility)
++ Software requires customization for enterprise use
+
+**Service models:**
+- **Support tiers:** Email → Phone → 24/7 → Dedicated engineer
+- **Training:** Workshops, certifications, documentation
+- **Consulting:** Implementation, architecture review, optimization
+- **Managed services:** You run it for them
+
+### Strategy 5: Sponsorships and Donations
+
+**Concept:** Software is free, community supports financially.
+
+**How it works:**
+- MIT-licensed software, no paid features
+- Users/companies sponsor development through GitHub Sponsors, Patreon, OpenCollective
+- Transparency: public roadmap, spending reports
+
+**Real-world examples:**
+
+**Evan You (Vue.js)**
+- **MIT:** Vue.js framework
+- **Revenue:** $300K+/year via Patreon and GitHub Sponsors
+- **Why it works:** Large community, clear roadmap, trusted maintainer
+
+**Sindre Sorhus (open-source maintainer)**
+- **MIT:** 1000+ npm packages
+- **Revenue:** $50K+/year via GitHub Sponsors
+- **Why it works:** Packages used by millions, community values his work
+
+**Babel (JavaScript compiler)**
+- **MIT:** Babel transpiler
+- **Revenue:** $200K+/year via OpenCollective
+- **Sponsors:** Facebook, Airbnb, other companies that depend on it
+- **Why it works:** Critical infrastructure, corporate sponsors
+
+**curl (Daniel Stenberg)**
+- **MIT:** curl and libcurl
+- **Revenue:** Part-time salary via sponsors (Microsoft, Facebook, others)
+- **Why it works:** Used by billions of devices, critical infrastructure
+
+**When sponsorship works best:**
++ You're a recognized maintainer (credibility)
++ Your project is widely used (dependency for popular projects)
++ You're transparent about goals and spending
++ You provide value beyond code (education, community building)
+
+**Platforms:**
+- **GitHub Sponsors:** Built into GitHub, no fees
+- **Patreon:** Monthly subscriptions, community features
+- **OpenCollective:** Transparent finances, tax-exempt options
+- **Ko-fi:** One-time donations, simple setup
+
+**Sponsorship tiers:**
++ $5-10/month: Individual supporters (recognition)
++ $50-100/month: Small companies (logo in README)
++ $500-1000/month: Medium companies (logo on website)
++ $5000+/month: Enterprise sponsors (dedicated support, roadmap input)
+
+### Strategy 6: Delayed Open Source
+
+**Concept:** New versions are proprietary initially, become MIT later.
+
+**How it works:**
+- Latest version (v2.0): Proprietary, paid
+- Previous version (v1.0): MIT, free after 6-12 months
+- Customers pay for cutting-edge features
+
+**Real-world examples:**
+
+**Sidekiq Pro/Enterprise**
+- **MIT:** Sidekiq (background jobs)
+- **Paid:** Pro/Enterprise features
+- **Delayed open-source:** Some features become free in later versions
+- **Revenue:** $1M+/year
+- **Why it works:** Enterprises pay for latest features, individuals use older free versions
+
+**Plausible Analytics**
+- **Source-available:** Self-hosted version (delayed release)
+- **Paid:** Latest version hosted + support
+- **Why it works:** Balances open-source ethos with sustainability
+
+**When delayed open source works best:**
++ Rapid development cycle (new features regularly)
++ Enterprise customers value cutting-edge (pay for early access)
++ You're comfortable with version fragmentation
++ Older versions still provide value (don't become obsolete)
+
+### Hybrid Models: Combining Strategies
+
+Most successful companies combine multiple strategies:
+
+**Vercel (SaaS + Open Core + Consulting)**
+- MIT: Next.js framework
+- Paid: Vercel hosting platform
+- Enterprise: Custom contracts, consulting
+
+**GitLab (Open Core + Support + Training)**
+- MIT: Core features
+- Paid: Premium tiers, support contracts
+- Services: Training, professional services
+
+**Sentry (Open Core + SaaS + Support)**
+- MIT: Core error tracking
+- Paid: Hosted service, team features
+- Enterprise: Support, on-premise deployment
+
+### Key Success Factors
+
+Regardless of model, successful MIT-licensed businesses share:
+
+1. **Clear value proposition:** Free tier solves real problems
+2. **Natural upgrade path:** Paid tier is obvious next step for growth
+3. **Community trust:** Transparent about business model
+4. **Product-led growth:** Software sells itself
+5. **Align incentives:** Revenue comes from those who get most value
+
+### Common Pitfalls
+
+**Don't:**
+- Bait-and-switch (making popular features paid later)
+- Alienate community (taking without giving back)
+- Compete with your users (offering same paid services)
+- Neglect free tier (users become advocates)
+
+**Do:**
+- Be transparent about business model from start
+- Invest in community (documentation, support)
+- Maintain clear boundaries (free vs paid)
+- Respect the license (don't try to claw back rights)
+
+---
+
 ## How to Apply MIT License
 
 ### 1. Create LICENSE file
