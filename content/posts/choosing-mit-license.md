@@ -603,19 +603,19 @@ The biggest misconception about MIT is that it prevents monetization. In reality
 **GitLab**
 - **MIT Core:** Git repository hosting, CI/CD basics, issue tracking
 - **Paid Tiers:** Advanced security, compliance, portfolio management
-- **Revenue:** $150M+ ARR (2022)
+- **Revenue:** $583M annual revenue (FY2024), publicly traded (NASDAQ: GTLB)
 - **Why it works:** Developers adopt free version, enterprises upgrade for compliance features
 
 **Sentry**
 - **MIT Core:** Error tracking and monitoring
 - **Paid Tiers:** Team collaboration, SSO, advanced analytics, 24/7 support
-- **Revenue:** $100M+ ARR
+- **Valuation:** $3.8B (2021 Series D), $217M raised
 - **Why it works:** Individual developers use free tier, companies pay for scale and support
 
-**Grafana**
-- **MIT/Apache Core:** Visualization and dashboards
+**Grafana Labs**
+- **AGPL/Apache Core:** Visualization and dashboards
 - **Paid Enterprise:** Enterprise plugins, support, authentication
-- **Revenue:** Acquired by private equity for $3B+ valuation
+- **Valuation:** $3B (2023 funding round), $720M total raised
 - **Why it works:** Community builds integrations, enterprises pay for operational certainty
 
 **When open core works best:**
@@ -685,19 +685,19 @@ The biggest misconception about MIT is that it prevents monetization. In reality
 **Vercel**
 - **MIT:** Next.js framework
 - **Paid Service:** Deployment platform, edge functions, analytics
-- **Revenue:** $150M+ raised, unicorn valuation
+- **Funding:** $313M raised, $2.5B valuation (2021)
 - **Why it works:** Framework adoption drives platform usage
 
 **Supabase**
-- **MIT/Apache:** Database, auth, storage libraries
+- **Apache 2.0:** Database, auth, storage libraries
 - **Paid Service:** Managed PostgreSQL, hosting, backups
-- **Revenue:** $116M raised
+- **Funding:** $116M raised (as of 2023)
 - **Why it works:** Open-source reduces lock-in fear, hosting generates revenue
 
 **PlanetScale**
-- **MIT:** Vitess database (donated to CNCF)
+- **Apache 2.0:** Vitess database (donated to CNCF)
 - **Paid Service:** Managed MySQL-compatible database
-- **Revenue:** $105M raised
+- **Funding:** $105M raised (as of 2023)
 - **Why it works:** Complex infrastructure, customers pay for management
 
 **When SaaS works best:**
@@ -723,17 +723,17 @@ The biggest misconception about MIT is that it prevents monetization. In reality
 
 **Real-world examples:**
 
-**Redis Labs**
-- **MIT/BSD:** Redis database
+**Redis Labs (now Redis Inc.)**
+- **BSD 3-Clause (historically):** Redis database (license changed to SSPL in 2024)
 - **Paid Services:** Redis Enterprise (hosted), support contracts, training
-- **Revenue:** $100M+ ARR before acquisition
-- **Why it works:** Redis is complex, enterprises pay for operational certainty
+- **Note:** Redis changed from BSD to SSPL in 2024, no longer fully open-source
+- **Why it worked:** Redis is complex, enterprises pay for operational certainty
 
 **Elastic (before license change)**
-- **Apache:** Elasticsearch, Kibana
+- **Apache 2.0 (until 2021):** Elasticsearch, Kibana
 - **Paid Services:** Elastic Cloud, support, training
-- **Revenue:** $1B+ revenue (before switching to SSPL)
-- **Why it worked:** Search infrastructure is mission-critical
+- **Note:** Switched to Elastic License 2.0 (proprietary) in 2021
+- **Why it worked:** Search infrastructure is mission-critical, enterprises pay for hosted service
 
 **Automattic (WordPress)**
 - **GPL:** WordPress core
@@ -772,18 +772,18 @@ The biggest misconception about MIT is that it prevents monetization. In reality
 
 **Evan You (Vue.js)**
 - **MIT:** Vue.js framework
-- **Revenue:** $300K+/year via Patreon and GitHub Sponsors
+- **Funding:** Sustainable full-time income via GitHub Sponsors and Patreon
 - **Why it works:** Large community, clear roadmap, trusted maintainer
 
 **Sindre Sorhus (open-source maintainer)**
 - **MIT:** 1000+ npm packages
-- **Revenue:** $50K+/year via GitHub Sponsors
+- **Funding:** Full-time income via GitHub Sponsors (specific amount private)
 - **Why it works:** Packages used by millions, community values his work
 
 **Babel (JavaScript compiler)**
 - **MIT:** Babel transpiler
-- **Revenue:** $200K+/year via OpenCollective
-- **Sponsors:** Facebook, Airbnb, other companies that depend on it
+- **Funding:** Sustained by OpenCollective with corporate sponsors
+- **Sponsors:** Companies that depend on it (historically Facebook, Airbnb, others)
 - **Why it works:** Critical infrastructure, corporate sponsors
 
 **curl (Daniel Stenberg)**
@@ -821,11 +821,10 @@ The biggest misconception about MIT is that it prevents monetization. In reality
 **Real-world examples:**
 
 **Sidekiq Pro/Enterprise**
-- **MIT:** Sidekiq (background jobs)
-- **Paid:** Pro/Enterprise features
-- **Delayed open-source:** Some features become free in later versions
-- **Revenue:** $1M+/year
-- **Why it works:** Enterprises pay for latest features, individuals use older free versions
+- **LGPL:** Sidekiq (background jobs)
+- **Paid:** Pro/Enterprise features as commercial licenses
+- **Business Model:** Sustainable solo-developer business
+- **Why it works:** Enterprises pay for latest features, individuals use free version
 
 **Plausible Analytics**
 - **Source-available:** Self-hosted version (delayed release)
