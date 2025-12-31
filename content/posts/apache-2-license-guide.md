@@ -162,9 +162,11 @@ The Apache Software Foundation (http://www.apache.org/).
 | **Patent Retaliation** | No | Yes (terminates license) |
 | **Trademark Protection** | No explicit provision | Explicit exclusion |
 | **Attribution** | Copyright notice | Copyright notice + NOTICE file + change documentation |
+| **Modification Documentation** | None required | **Must mark every changed file** |
 | **Contribution Terms** | Implicit | Explicit (Section 5) |
 | **GPL Compatibility** | Yes (all versions) | Yes (GPLv3 only, not GPLv2) |
 | **Corporate Acceptance** | Universal | High (some avoid patent clause) |
+| **Compliance Overhead** | Minimal | Moderate to high |
 | **Simplicity** | Very simple | Complex |
 
 ### When to Choose Apache 2.0 Over MIT
@@ -291,6 +293,36 @@ When you distribute Apache 2.0 code, you must:
 **Source form distributions:** Include all above
 
 **Object form (binaries) distributions:** Include in documentation or display in standard location
+
+{{< callout type="warning" >}}
+**The Modification Documentation Burden**
+
+Requirement #3 is often overlooked but significant: **"You must cause any modified files to carry prominent notices stating that You changed the files."**
+
+This means:
+- Every file you modify must be marked with change notice
+- Must indicate what changed and when
+- Creates maintenance overhead for derivative works
+- Much more burdensome than MIT (which has no modification notice requirement)
+
+**Example required notice:**
+```java
+/*
+ * Modified by Your Company, 2025
+ * Changes: Added caching layer, refactored authentication
+ */
+```
+
+**This requirement:**
++ Provides clear change history
++ Helps downstream users understand modifications
++ Creates legal clarity about what's original vs modified
+- Adds overhead for every modification
+- Can be tedious for large-scale modifications
+- Often forgotten (leading to license violations)
+
+**MIT has no such requirement** - you can modify freely without documentation obligations.
+{{< /callout >}}
 
 ### Section 5: Contribution Submission
 
@@ -704,13 +736,21 @@ license = {text = "Apache-2.0"}
 
 ## When NOT to Use Apache 2.0
 
-### 1. You Want Simplicity Above All
+### 1. You Want Simplicity and Low Maintenance Overhead
 
-**Problem:** 10,579 words is intimidating for small projects
+**Problem:** Apache 2.0 creates significant compliance overhead
 
-**Example:** Simple npm utility with 100 lines of code doesn't need Apache 2.0 complexity
+**The modification documentation burden:**
+- Must mark every modified file with prominent change notices
+- Must document what changed and when
+- Applies to every distribution of modified code
+- Creates maintenance overhead for derivative works
 
-**Solution:** Use MIT for simplicity
+**Example:** Fork Apache 2.0 project, modify 50 files → must add modification notices to all 50 files and maintain them
+
+**MIT alternative:** No modification documentation requirement - modify freely
+
+**Real-world impact:** Companies sometimes avoid Apache 2.0 for rapid prototyping or extensive modifications due to this overhead
 
 ### 2. You Need GPLv2 Compatibility
 
