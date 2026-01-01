@@ -1,0 +1,35 @@
+flowchart TB
+    request[Incoming Request]
+    identify{Identify<br/>Client}
+    check{Check<br/>Rate Limit}
+    allowed[Process Request]
+    blocked[Return 429<br/>Too Many Requests]
+    
+    request --> identify
+    identify -->|API key/Token| check
+    check -->|Under limit| allowed
+    check -->|Over limit| blocked
+    
+    allowed --> headers
+    blocked --> headers
+    check -.Uses.-> implementation
+    
+    subgraph details[" "]
+        direction LR
+        subgraph headers["Response Headers"]
+            limit["RateLimit-Limit: 100"]
+            remaining["RateLimit-Remaining: 42"]
+            reset["RateLimit-Reset: 1642089600"]
+        end
+        
+        subgraph implementation["Implementation"]
+            token["Token Bucket<br/>Refill at rate"]
+            sliding["Sliding Window<br/>Recent requests"]
+            fixed["Fixed Window<br/>Reset period"]
+        end
+    end
+    
+    style blocked fill:#E8C8C8,stroke:#5a4a3a,color:#2c2c2c
+    style allowed fill:#D4E8D4,stroke:#3a5a3a,color:#2c2c2c
+    style headers fill:#C8D8E8,stroke:#3a4a5a,color:#2c2c2c
+    style implementation fill:#E8D4C0,stroke:#5a4a3a,color:#2c2c2c
