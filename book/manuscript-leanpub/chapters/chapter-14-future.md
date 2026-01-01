@@ -967,8 +967,11 @@ The zeitgeist lesson applies to all technology choices: understand the architect
 ![Diagram 11](chapter-14-future-diagram-10-light.png)
 {width: 85%}
 
-![Diagram 12](chapter-14-future-diagram-11-light.png)
-{width: 85%}
+| Era | Technologies | Key Trends |
+|-----|--------------|------------|
+| **Current (2025)** | JSON: Universal default<br/><br/>Protobuf: Internal APIs<br/><br/>GraphQL: Mobile/SPA<br/><br/>REST: External APIs | JSON dominates across all use cases |
+| **Near Future<br/>(2026-2028)** | JSON: Still dominant<br/><br/>Edge computing growth<br/><br/>gRPC-Web: Browser adoption<br/><br/>AsyncAPI: Event docs standard<br/><br/>WASM: Better JSON integration | JSON expands<br/><br/>Specialized tools mature |
+| **Far Future<br/>(2029+)** | JSON: Core protocol remains<br/><br/>Schema-based: Internal<br/><br/>Hybrid: Mix per use case<br/><br/>New format?: Must match architectural zeitgeist | JSON as foundation<br/><br/>Ecosystem diversifies |
 
 JSON thrived by embracing incompleteness and matching its era's architectural patterns. The future belongs to formats that understand their niche, enable ecosystems, and align with how we build software.
 
