@@ -1,14 +1,18 @@
-flowchart TB
-    client[Client: Build & Send Request]
+flowchart LR
+    client["**Client:**<br/>Build & send<br/>HTTP POST"]
     
     subgraph server["Server Processing"]
-        receive[Receive & Validate] --> dispatch[Dispatch Method]
-        dispatch --> execute[Execute] --> respond[Build Response]
+        receive["**Receive &<br/>Validate:**<br/>Check JSON"]
+        dispatch["**Dispatch:**<br/>Route to<br/>handler"]
+        execute["**Execute:**<br/>Run logic"]
+        respond["**Build<br/>Response:**<br/>Format result"]
+        
+        receive --> dispatch --> execute --> respond
     end
     
     client --> receive
-    respond --> result{Valid Response?}
-    result -->|Yes| success[Return Result]
-    result -->|No| error[Throw Error]
+    respond --> result{Valid?}
+    result -->|Yes| success[Return<br/>Result]
+    result -->|No| error[Throw<br/>Error]
     
     style server fill:#D4E8D4,stroke:#3a5a3a,color:#2c2c2c
