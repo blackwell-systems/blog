@@ -1,0 +1,11 @@
+flowchart LR
+    subgraph unix["Unix Pipeline"]
+        input[logs.jsonl]
+        filter["grep error → jq extract"]
+        process["sort → uniq -c"]
+        output[error-summary.txt]
+    end
+    
+    input --> filter --> process --> output
+    
+    style unix fill:#C8D8E8,stroke:#3a4a5a,color:#2c2c2c
