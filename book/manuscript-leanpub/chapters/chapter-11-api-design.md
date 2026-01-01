@@ -1609,7 +1609,7 @@ function adaptiveRateLimit(req, res, next) {
 Rate limiting is essential infrastructure that protects your API while providing clear feedback to clients about usage boundaries. Choose algorithms and implementation strategies that match your traffic patterns and infrastructure capabilities.
 
 
-![Diagram 5](chapter-11-api-design-diagram-7-light.png)
+![Diagram 4](chapter-11-api-design-diagram-7-light.png)
 {width: 85%}
 
 
@@ -1957,7 +1957,7 @@ function generateCacheKey(req) {
 Content negotiation enables APIs to serve optimal representations while maintaining a single endpoint. Balance format support with implementation complexity, focusing on the formats that provide the most value for your specific use case.
 
 
-![Diagram 6](chapter-11-api-design-diagram-9-light.png)
+![Diagram 5](chapter-11-api-design-diagram-9-light.png)
 {width: 85%}
 
 
@@ -2392,7 +2392,7 @@ app.use('/auth/', securityRateLimit);
 These security patterns create multiple layers of protection that work together to secure your API. Remember that security is an ongoing process—regularly audit your code, update dependencies, and stay informed about new vulnerabilities and best practices.
 
 
-![Diagram 7](chapter-11-api-design-diagram-13-light.png)
+![Diagram 6](chapter-11-api-design-diagram-13-light.png)
 {width: 85%}
 
 
