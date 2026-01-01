@@ -1270,9 +1270,11 @@ GET /v2/users/123?version=2.3
 
 The key is consistency: pick one primary strategy and stick to it across your entire API surface.
 
-
-![Diagram 4](chapter-11-api-design-diagram-6-light.png)
-{width: 85%}
+| Strategy | Example | Pros | Cons |
+|----------|---------|------|------|
+| **URL Versioning** | `/v1/users/123`<br/>`/v2/users/123` | Explicit<br/>Cache-friendly<br/>Easy routing | URL clutter<br/>Multiple codebases |
+| **Header Versioning** | `GET /users/123`<br/>`Accept: application/vnd.api+json;version=2` | Clean URLs<br/>HTTP semantics | Less discoverable<br/>Cache complexity |
+| **Query Parameter** | `GET /users/123?version=2` | Easy to test<br/>Visible | Pollutes params<br/>Non-standard |
 
 
 ## 5. Rate Limiting
