@@ -759,10 +759,8 @@ components:
 
 **Adoption:** Still growing, but gaining traction in Kafka-heavy organizations.
 
-
+{height: 100%}
 ![Diagram 7](chapter-14-future-diagram-3-light.png)
-{width: 85%}
-
 
 ## JSON in New Contexts
 
@@ -863,7 +861,7 @@ const balance = await connection.getBalance(publicKey);
 - Universal tooling (Postman, curl work immediately)
 - Debug-friendly (readable requests/responses)
 
-
+{height: "70%"}
 ![Diagram 8](chapter-14-future-diagram-5-light.png)
 {width: 85%}
 
@@ -933,8 +931,8 @@ JSON didn't succeed by being "the best" format. It succeeded by:
 
 Future formats that succeed will follow the same principles: match contemporary architecture, stay focused, enable ecosystem growth.
 
-
-![Diagram 9](chapter-14-future-diagram-12-light.png)
+{height: 85%}
+![Lessons from JSON Success](chapter-14-future-diagram-12-light.png)
 {width: 85%}
 
 

@@ -17,7 +17,7 @@ That $200,000 failure wasn't inevitable. It resulted from missing the production
 
 This chapter examines how to build production-grade JSON data pipelines that handle millions of events reliably without catastrophic failures. We'll cover the complete ecosystem: ETL patterns with JSON Lines, streaming with Kafka, validation strategies that catch malformed data early, error handling that isolates failures, monitoring that detects problems before they cascade, and real-world architectures that process JSON at scale while failing gracefully.
 
-![Diagram 1](chapter-12-data-pipelines-diagram-2-light.png)
+![Complete Data Pipeline Architecture](chapter-12-data-pipelines-diagram-2-light.png)
 {width: 85%}
 
 ## 1. ETL Fundamentals with JSON Lines
@@ -330,7 +330,7 @@ df.to_sql('users', engine, if_exists='append', index=False)
 - Event-driven architectures
 
 
-![Diagram 2](chapter-12-data-pipelines-diagram-3-light.png)
+![Extract, Transform, Load](chapter-12-data-pipelines-diagram-3-light.png)
 {width: 85%}
 
 
@@ -353,7 +353,7 @@ File-based pipelines lose data when processes crash. Kafka persists JSON events 
 **3. Horizontal Scaling**
 Single-machine ETL hits CPU and I/O limits. Kafka enables horizontal scaling by partitioning JSON streams across multiple consumer instances.
 
-![Diagram 3](chapter-12-data-pipelines-diagram-4-new-light.png)
+![Kafka Message Flow](chapter-12-data-pipelines-diagram-4-new-light.png)
 {width: 85%}
 
 ### JSON Message Production
@@ -694,7 +694,7 @@ class SchemaAwareProducer {
 }
 ```
 
-![Diagram 4](chapter-12-data-pipelines-diagram-6-light.png)
+![Schema Evolution Strategy](chapter-12-data-pipelines-diagram-6-light.png)
 {width: 85%}
 
 ### Monitoring Kafka JSON Pipelines
@@ -1348,7 +1348,7 @@ function classifyError(error, context = {}) {
 }
 ```
 
-![Diagram 5](chapter-12-data-pipelines-diagram-4-light.png)
+![Error Handling Flow](chapter-12-data-pipelines-diagram-4-light.png)
 {width: 85%}
 
 ### Exponential Backoff with Jitter
@@ -1574,7 +1574,7 @@ class DeadLetterQueue {
 Processing the same message multiple times should be safe:
 
 
-![Diagram 6](chapter-12-data-pipelines-diagram-8-light.png)
+![Idempotent Processing](chapter-12-data-pipelines-diagram-8-light.png)
 {width: 85%}
 
 
@@ -2264,7 +2264,7 @@ groups:
           description: "Data quality is {{ $value }}%"
 ```
 
-![Diagram 7](chapter-12-data-pipelines-diagram-10-light.png)
+![Monitoring Dashboard Metrics](chapter-12-data-pipelines-diagram-10-light.png)
 {width: 85%}
 
 This observability foundation enables proactive monitoring, rapid debugging, and continuous optimization of JSON data pipelines at scale.
@@ -2283,9 +2283,9 @@ Microservices → Filebeat → Kafka → Logstash → Elasticsearch → Kibana
                   ↓
               JSON Lines logs
 ```
-
-![Diagram 8](chapter-12-data-pipelines-diagram-7-light.png)
-{width: 85%}
+{height: "100%"}
+![Log Aggregation Pipeline](chapter-12-data-pipelines-diagram-7-light.png)
+{width: 100%}
 
 **Implementation:**
 
@@ -2481,10 +2481,8 @@ public class UserEventProcessor extends DataStream<UserEvent> {
 }
 ```
 
-
-![Diagram 9](chapter-12-data-pipelines-diagram-5-light.png)
+![Stream Processing Window](chapter-12-data-pipelines-diagram-5-light.png)
 {width: 85%}
-
 
 ### Architecture 3: Data Warehouse ETL
 

@@ -31,7 +31,7 @@ This chapter explores comprehensive testing strategies for JSON systems: schema-
 The goal is building JSON systems that fail fast, fail safely, and provide clear feedback when things go wrong.
 
 
-![Diagram 1](chapter-13-testing-diagram-1-light.png)
+![Test Pyramid for JSON APIs](chapter-13-testing-diagram-1-light.png)
 {width: 85%}
 
 
@@ -158,7 +158,7 @@ function generateInvalidTestData(schema) {
 Property-based testing goes beyond examples to test invariants across generated data:
 
 
-![Diagram 2](chapter-13-testing-diagram-3-light.png)
+![Property-Based Testing](chapter-13-testing-diagram-3-light.png)
 {width: 85%}
 
 
@@ -416,7 +416,7 @@ Contract testing ensures that services can communicate reliably by defining and 
 Consider a typical microservice interaction where a frontend consumes user data from a backend API:
 
 
-![Diagram 3](chapter-13-testing-diagram-2-light.png)
+![Contract Testing Flow](chapter-13-testing-diagram-2-light.png)
 {width: 85%}
 
 
@@ -862,7 +862,7 @@ Contract testing bridges the gap between unit tests and full integration tests, 
 While schema-based testing validates data structures and contract testing ensures service compatibility, API testing focuses on the behavior of individual endpoints under various conditions. This section applies the API design patterns from Chapter 11—pagination, error handling, versioning, rate limiting—showing how to test that these production patterns work correctly under stress and edge cases. Effective API testing covers the full spectrum from unit-level endpoint testing to comprehensive integration scenarios.
 
 
-![Diagram 4](chapter-13-testing-diagram-4-light.png)
+![API Testing Strategy](chapter-13-testing-diagram-4-light.png)
 {width: 85%}
 
 
@@ -1409,7 +1409,7 @@ API testing strategies provide comprehensive validation of endpoint behavior, fr
 JSON systems face unique security challenges that require systematic testing to prevent vulnerabilities. Chapter 8 covered the security patterns—JWT signing and verification, input validation, rate limiting, secure headers. This section shows how to test that those defenses actually work, preventing the none-algorithm attack, injection vulnerabilities, and DoS scenarios discussed there. Unlike traditional applications where security testing might focus on buffer overflows or memory corruption, JSON systems must defend against injection attacks, authentication bypass, authorization failures, and denial-of-service attacks through malformed data.
 
 
-![Diagram 5](chapter-13-testing-diagram-5-light.png)
+![Security Testing Flow](chapter-13-testing-diagram-5-light.png)
 {width: 85%}
 
 
@@ -1987,7 +1987,7 @@ Security testing for JSON systems requires systematic verification of authentica
 JSON systems face unique performance challenges related to parsing overhead, serialization costs, and memory usage patterns. Chapters 4 and 5 introduced binary alternatives (MessagePack, CBOR, Protocol Buffers) specifically to address these performance limitations. This section shows how to measure JSON performance problems quantitatively—identifying when payload sizes, parsing times, or throughput become bottlenecks that justify switching to binary formats. Performance testing must verify that systems maintain acceptable response times and throughput under realistic load conditions, providing the data needed to make informed architectural decisions about format trade-offs.
 
 
-![Diagram 6](chapter-13-testing-diagram-6-light.png)
+![Performance Testing Workflow](chapter-13-testing-diagram-6-light.png)
 {width: 85%}
 
 
@@ -2636,7 +2636,7 @@ Fuzz testing discovers edge cases and vulnerabilities by feeding systems unexpec
 Modern fuzzing tools can generate vast amounts of test cases to explore unexpected code paths:
 
 
-![Diagram 7](chapter-13-testing-diagram-7-light.png)
+![Fuzz Testing Strategy](chapter-13-testing-diagram-7-light.png)
 {width: 85%}
 
 
@@ -2960,7 +2960,7 @@ describe('Malformed JSON handling', () => {
 Comprehensive testing automation ensures consistent quality across all changes:
 
 
-![Diagram 8](chapter-13-testing-diagram-8-light.png)
+![CI/CD Testing Pipeline](chapter-13-testing-diagram-8-light.png)
 {width: 85%}
 
 

@@ -1,30 +1,30 @@
 flowchart TB
     subgraph top["Foundation"]
         direction LR
-        subgraph transport["Transport Security"]
-            https[HTTPS/TLS<br/>Encrypted connection]
-            hsts[HSTS Header<br/>Force HTTPS]
-        end
-        
         subgraph auth["Authentication"]
             jwt[JWT Tokens<br/>Signed claims]
             oauth[OAuth 2.0<br/>Delegated auth]
             apikey[API Keys<br/>Simple auth]
         end
+        
+        subgraph transport["Transport Security"]
+            https[HTTPS/TLS<br/>Encrypted connection]
+            hsts[HSTS Header<br/>Force HTTPS]
+        end
     end
     
     subgraph middle["Access Control"]
         direction LR
-        subgraph authz["Authorization"]
-            rbac[RBAC<br/>Role-based]
-            scope[Scopes<br/>Permission sets]
-            claims[JWT Claims<br/>Embedded permissions]
-        end
-        
         subgraph input["Input Security"]
             validate[JSON Schema<br/>Validation]
             sanitize[Sanitization<br/>SQL/XSS prevention]
             ratelimit[Rate Limiting<br/>Abuse prevention]
+        end
+        
+        subgraph authz["Authorization"]
+            rbac[RBAC<br/>Role-based]
+            scope[Scopes<br/>Permission sets]
+            claims[JWT Claims<br/>Embedded permissions]
         end
     end
     
