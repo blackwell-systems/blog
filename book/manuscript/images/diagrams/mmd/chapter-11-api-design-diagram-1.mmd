@@ -1,12 +1,10 @@
-flowchart TB
-    level0["Level 0: The Swamp of POX<br/>Single endpoint POST /api with action in body"]
-    level1["Level 1: Resources<br/>Multiple endpoints: /users, /orders"]
-    level2["Level 2: HTTP Verbs<br/>GET /users, POST /users, DELETE /users/123"]
-    level3["Level 3: Hypermedia (HATEOAS)<br/>Self-describing API with links"]
+flowchart LR
+    level0["**Level 0:**<br/>POX<br/>Single endpoint<br/>POST /api"]
+    level1["**Level 1:**<br/>Resources<br/>Multiple endpoints<br/>/users, /orders"]
+    level2["**Level 2:**<br/>HTTP Verbs<br/>GET, POST, DELETE<br/>/users/123"]
+    level3["**Level 3:**<br/>HATEOAS<br/>Self-describing API<br/>Links in responses"]
     
-    level0 --> level1
-    level1 --> level2
-    level2 --> level3
+    level0 --> level1 --> level2 --> level3
     
     style level0 fill:#E8C8C8,stroke:#5a4a3a,color:#2c2c2c
     style level1 fill:#E8D4C0,stroke:#5a4a3a,color:#2c2c2c
