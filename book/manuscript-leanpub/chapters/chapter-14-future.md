@@ -9,7 +9,7 @@ But JSON isn't the solution to every problem. Understanding when JSON works and 
 In this chapter, we'll examine the formats and patterns emerging alongside JSON, understand their niches, and apply the lessons from JSON's evolution to predict what succeeds next.
 
 
-![Diagram 1](chapter-14-future-diagram-2-light.png)
+![Format Comparison](chapter-14-future-diagram-2-light.png)
 {width: 85%}
 
 
@@ -201,7 +201,7 @@ Not every project needs to move beyond JSON. Use this matrix to identify when al
 **Key principle:** JSON is the default for good reasons (simplicity, debuggability, universal support). Move to alternatives only when you have specific problems JSON can't solve.
 
 
-![Diagram 2](chapter-14-future-diagram-1-light.png)
+![Format Selection Decision Tree](chapter-14-future-diagram-1-light.png)
 {width: 85%}
 
 
@@ -367,8 +367,8 @@ message User {
 This system provides what JSON can't: **compile-time verification of compatibility**. Before deploying, run your tests against old message formats. If they compile and pass, compatibility is guaranteed.
 
 
-![Diagram 3](chapter-14-future-diagram-6-light.png)
-{width: 85%}
+![Protobuf Schema Example](chapter-14-future-diagram-protobuf-schema-example-light.png)
+{height: 85%}
 
 
 ### Size Comparison: JSON vs Protobuf
@@ -411,7 +411,7 @@ Same user object encoded both ways:
 At millions of messages per second, this 50% reduction directly reduces bandwidth costs, memory usage, and processing time.
 
 
-![Diagram 4](chapter-14-future-diagram-8-light.png)
+![Schema Evolution Comparison](chapter-14-future-diagram-schema-evolution-comparison-light.png)
 {width: 85%}
 
 
@@ -591,7 +591,7 @@ console.log(user);
 The pattern: Avro dominates **streaming data pipelines** where schema evolution is frequent and services evolve independently. Protobuf dominates **request/response APIs** where type safety and performance are critical.
 
 
-![Diagram 5](chapter-14-future-diagram-4-light.png)
+![Schema Evolution Comparison](chapter-14-future-diagram-schema-evolution-comparison.png)
 {width: 85%}
 
 
@@ -667,7 +667,7 @@ query {
 **Real adoption:** GitHub API v4, Shopify Admin API, Netflix internal tools, Facebook (created GraphQL).
 
 
-![Diagram 6](chapter-14-future-diagram-7-light.png)
+![GraphQL Query Flow](chapter-14-future-diagram-7-light.png)
 {width: 85%}
 
 
@@ -760,7 +760,7 @@ components:
 **Adoption:** Still growing, but gaining traction in Kafka-heavy organizations.
 
 {height: 100%}
-![Diagram 7](chapter-14-future-diagram-3-light.png)
+![REST vs GraphQL vs gRPC](chapter-14-future-diagram-3-light.png)
 
 ## JSON in New Contexts
 
@@ -861,8 +861,8 @@ const balance = await connection.getBalance(publicKey);
 - Universal tooling (Postman, curl work immediately)
 - Debug-friendly (readable requests/responses)
 
-{height: "70%"}
-![Diagram 8](chapter-14-future-diagram-5-light.png)
+{height: 85%}
+![Lessons Applied to Future Formats](chapter-14-future-diagram-5-light.png)
 {width: 85%}
 
 
@@ -962,7 +962,7 @@ The zeitgeist lesson applies to all technology choices: understand the architect
 | Phase 4 | Protobuf | Migrate critical services, schema enforcement | 1M requests/sec |
 | Phase 5 | Polyglot | JSON (web), Protobuf (services), GraphQL (mobile) | Optimized per use case |
 
-![Diagram 10](chapter-14-future-diagram-10-light.png)
+![When to Migrate from JSON](chapter-14-future-diagram-10-light.png)
 {width: 85%}
 
 | Era | Technologies | Key Trends |

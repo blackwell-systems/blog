@@ -1,0 +1,25 @@
+flowchart TB
+    subgraph schema["user.proto"]
+        proto["syntax = 'proto3';<br/>message User {<br/>  string id = 1;<br/>  string name = 2;<br/>  string email = 3;<br/>}"]
+    end
+    
+    schema -.-> gen
+    
+    subgraph gen["Code Generation"]
+        go["**Go:** user.pb.go"]
+        js["**JavaScript:** user_pb.js"]
+        py["**Python:** user_pb2.py"]
+        rs["**Rust:** user.rs"]
+    end
+    
+    gen -.-> usage
+    
+    subgraph usage["Type-Safe Usage"]
+        create["user := &User{<br/>  Id: 'user-123',<br/>  Name: 'Alice'<br/>}"]
+        serialize["data := proto.Marshal(user)"]
+        deserialize["proto.Unmarshal(data, &user)"]
+    end
+    
+    style schema fill:#C8D8E8,stroke:#3a4a5a,color:#2c2c2c
+    style gen fill:#D4E8D4,stroke:#3a5a3a,color:#2c2c2c
+    style usage fill:#E8D4C0,stroke:#5a4a3a,color:#2c2c2c

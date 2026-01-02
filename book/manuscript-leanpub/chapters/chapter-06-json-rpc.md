@@ -332,7 +332,7 @@ A request without `id` - fire-and-forget:
 No response expected or sent. Useful for logging, metrics, non-critical updates.
 
 
-![Diagram 1](chapter-06-json-rpc-diagram-1-light.png)
+![JSON-RPC Request Types](chapter-06-json-rpc-diagram-1-light--depreciated.png)
 {width: 85%}
 
 
@@ -1031,10 +1031,9 @@ func main() {
 
 **Python client:** Similar pattern using `requests` library. See [example repository](https://github.com/blackwell-systems/json-examples) for complete implementation.
 
-
-![Diagram 2](chapter-06-json-rpc-diagram-2-light.png)
+{height: 85%}
+![JSON-RPC Request/Response Lifecycle](chapter-06-json-rpc-diagram-2-light--depreciated.png)
 {width: 85%}
-
 
 ---
 
@@ -1497,7 +1496,7 @@ The choice between JSON-RPC, REST, and gRPC isn't ideological - it's practical. 
 The protocols aren't mutually exclusive. Production systems routinely combine them based on each API's characteristics.
 
 
-![Diagram 3](chapter-06-json-rpc-diagram-3-light.png)
+![API Protocol Selection Decision Tree](chapter-06-json-rpc-diagram-3-light.png)
 {width: 85%}
 
 
