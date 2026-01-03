@@ -138,3 +138,7 @@ JSON became successful not because it was perfect, but because it aligned with t
 
 The next time you encounter a $200,000 error in a production system, you'll have the knowledge to prevent it and the architectural thinking to build systems that fail gracefully when the unexpected inevitably happens.
 
+{pagebreak}
+
+{fullbleed: true}
+![](back_cover.png)
