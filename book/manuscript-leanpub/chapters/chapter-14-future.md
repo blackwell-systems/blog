@@ -410,10 +410,12 @@ Same user object encoded both ways:
 
 At millions of messages per second, this 50% reduction directly reduces bandwidth costs, memory usage, and processing time.
 
-
-![Schema Evolution Comparison](chapter-14-future-diagram-schema-evolution-comparison-light.png)
-{width: 85%}
-
+| Operation    | JSON (No Schema) | Protocol Buffers (Schema-Based) | Apache Avro (Schema Evolution) |
+|--------------|------------------|---------------------------------|--------------------------------|
+| Add field    | Just send it     | New field number                | Provide default value          |
+| Remove field | Stop sending     | Mark deprecated                 | Schema registry tracks         |
+| Change type  | Hope for best    | Not allowed                     | Use aliases                    |
+| Safety       | Runtime errors   | Compile-time checks             | Runtime resolution             |
 
 ### When to Use Protocol Buffers
 
@@ -589,11 +591,6 @@ console.log(user);
 - Compatibility checking enforced
 
 The pattern: Avro dominates **streaming data pipelines** where schema evolution is frequent and services evolve independently. Protobuf dominates **request/response APIs** where type safety and performance are critical.
-
-
-![Schema Evolution Comparison](chapter-14-future-diagram-schema-evolution-comparison.png)
-{width: 85%}
-
 
 ## Emerging Patterns: Beyond Binary vs Text
 
