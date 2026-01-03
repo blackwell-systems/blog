@@ -365,9 +365,8 @@ Let's be honest about modularity's costs.
 **These are solved problems.** The solutions exist, documented, tested. But modularity means they're optional, and optional means many never discover them.
 
 
-![Diagram 1](chapter-09-lessons-diagram-1-light.png)
+!["The discovery problem - XML forced you to learn the whole stack upfront, JSON lets you stay ignorant of solutions until you hit the problem they solve](chapter-09-lessons-diagram-1-light.png)
 {width: 85%}
-
 
 ---
 
