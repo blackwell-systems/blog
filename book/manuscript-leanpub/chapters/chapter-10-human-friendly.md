@@ -80,7 +80,7 @@ The visual noise of quotes everywhere reduces readability. Compare to a format w
 The configuration problem is real, widespread, and expensive. The ecosystem responded with four modular solutions, each optimizing different trade-offs.
 
 
-![Diagram 1](chapter-10-human-friendly-diagram-1-light.png)
+![Configuration Format Spectrum - From Minimal to Explicit Syntax](chapter-10-human-friendly-diagram-1-light.png)
 {width: 85%}
 
 
@@ -312,7 +312,7 @@ staging:
 YAML's power comes with complexity. Several gotchas trip up developers:
 
 
-![Diagram 2](chapter-10-human-friendly-diagram-2-light.png)
+!["YAML Gotchas - Type Coercion and Implicit Conversion Pitfalls](chapter-10-human-friendly-diagram-2-light.png)
 {width: 85%}
 
 
@@ -576,7 +576,7 @@ Each format occupies a different niche. The right choice depends on your team, t
 ### Comparison Matrix
 
 
-![Diagram 3](chapter-10-human-friendly-diagram-3-light.png)
+![Configuration Format Adoption by Ecosystem - YAML, TOML, JSON5, and JSON in Practice](chapter-10-human-friendly-diagram-3-light.png)
 {width: 85%}
 
 
@@ -597,7 +597,7 @@ Each format occupies a different niche. The right choice depends on your team, t
 ### Decision Framework
 
 
-![Diagram 4](chapter-10-human-friendly-diagram-4-light.png)
+![Choosing JSON vs YAML vs TOML vs JSON5 - Follow your constraints, not preferences](chapter-10-human-friendly-diagram-4-light.png)
 {width: 85%}
 
 
@@ -640,7 +640,7 @@ Switching configuration formats mid-project requires planning. Here's how to mig
 ### JSON → JSON5 (Easiest)
 
 
-![Diagram 5](chapter-10-human-friendly-diagram-5-light.png)
+![Four Steps to Add Comments and Trailing Commas to Your JSON Config](chapter-10-human-friendly-diagram-5-light.png)
 {width: 85%}
 
 
