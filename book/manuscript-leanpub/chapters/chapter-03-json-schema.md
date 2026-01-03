@@ -566,7 +566,7 @@ Rejects `null` values. Useful for excluding specific patterns.
 Accepts users who are not admins.
 
 
-![JSON Schema Boolean Composition - Set operations for schema validation](chapter-03-json-schema-diagram-2-light.png)
+![JSON Schema Boolean Composition](chapter-03-json-schema-diagram-2-light.png)
 {width: 85%}
 
 
