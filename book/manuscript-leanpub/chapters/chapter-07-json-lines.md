@@ -286,7 +286,7 @@ The JSON Lines format succeeds by solving multiple problems with a single conven
 | **Random access** | Must parse to position | Seek to line |
 
 
-![Memory Consumption Comparison - Batch (JSON Array) vs Streaming (JSON Lines)](chapter-07-json-lines-diagram-1-light.png)
+![Memory Consumption Comparison](chapter-07-json-lines-diagram-1-light.png)
 {width: 85%}
 
 
@@ -739,7 +739,7 @@ split -l 10000 data.jsonl chunk_
 ```
 
 
-![ JSON Lines Unix Integration - Chaining grep, jq, sort, and uniq for log analysis](chapter-07-json-lines-diagram-2-light.png)
+![JSON Lines Unix Integration](chapter-07-json-lines-diagram-2-light.png)
 {width: 85%}
 
 
@@ -1460,7 +1460,7 @@ for await (const line of rl) {
 | **Resumable** | No | Yes |
 
 
-![Why streaming matters - batch processing loads entire files into memory (risking OOM), while JSON Lines processes one record at a time with constant memory usage](chapter-07-json-lines-diagram-3-light.png)
+![Why Streaming Matters - Batch Processing vs JSON Lines](chapter-07-json-lines-diagram-3-light.png)
 {width: 85%}
 
 
