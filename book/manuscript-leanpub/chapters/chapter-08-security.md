@@ -380,7 +380,7 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 **Stateless sessions** eliminate server-side session storage by embedding all session data in the JWT. The server becomes stateless - any instance can handle any request by validating the token and extracting claims. This enables horizontal scaling without session affinity. The trade-off is immutable session data - updating requires issuing new tokens.
 
 
-![Diagram 1](chapter-08-security-diagram-1-light.png)
+![JWT Authentication Flow - Stateless Token Verification](chapter-08-security-diagram-1-light.png)
 {width: 85%}
 
 
@@ -1667,7 +1667,7 @@ func getUserHandler(w http.ResponseWriter, r *http.Request) {
 ```
 
 
-![Diagram 2](chapter-08-security-diagram-2-light.png)
+![API Gateway Pattern - JWT Verification at Edge](chapter-08-security-diagram-2-light.png)
 {width: 85%}
 
 
@@ -1764,9 +1764,9 @@ We've built our User API layer by layer across six chapters. Let's see the compl
 
 **The complete architecture:**
 
-
-![Diagram 3](chapter-08-security-diagram-3-light.png)
-{width: 90%}
+{height: 85%}
+![The Complete User API Stack - How Validation (Ch3), Storage (Ch4), Binary Formats (Ch5), RPC Protocol (Ch6), and Security (Ch8) Work Together](chapter-08-security-diagram-3-complete-user-api-stack-light.png)
+{width: 85%}
 
 **A single request flow (getUserById):**
 
