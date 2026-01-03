@@ -64,8 +64,8 @@ XML wasn't designed as just a data format. It was designed as a **complete solut
 
 **The XML stack (all standardized together):**
 
-![The Monolithic XML stack](chapter-02-architecture-diagram-Monolithic-XML-stack-light.png)
-{height: 85%}
+![The Monolithic XML stack](chapter-02-architecture-diagram-monolithic-xml-block-light.png)
+{height: 10%}
 
 **Every layer was specified by the same body (W3C) and designed to work together.**
 
@@ -136,10 +136,7 @@ No validation. No querying. No transformation. No protocols. No security. Just p
 
 **The JSON "stack" (loosely coupled components):**
 
-
-![The JSON Stack](chapter-02-architecture-diagram-json-stack-light.png)
-{height: 85%}
-
+![The JSON Stack](chapter-02-architecture-diagram-json-stack-hub-spoke-light.png)
 
 **Every layer is specified separately, maintained separately, and adopted independently.**
 
