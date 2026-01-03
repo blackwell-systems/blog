@@ -25,7 +25,7 @@ This book explores the JSON you don't know - the one beyond basic syntax. We'll 
 
 **JSON's approach:** Minimal core with separate standards for each need
 
-**Architecture shift:** Integrated → Modular, Everything built-in → Composable solutions, Monolithic → Ecosystem-driven
+**Architecture shift:** Integrated -> Modular, Everything built-in -> Composable solutions, Monolithic -> Ecosystem-driven
 {/blurb}
 
 ---
@@ -90,7 +90,7 @@ SGML worked for specialized domains (HTML is actually an SGML application) but w
 
 **The W3C standardization effort (1996-1998):**
 
-In 1996, the World Wide Web Consortium (W3C) convened a working group to create "SGML for the web"—a simplified markup language that could retain SGML's power for structured documents, be simple enough for average programmers, work across the internet without specialized tools, and support both documents and data.
+In 1996, the World Wide Web Consortium (W3C) convened a working group to create "SGML for the web"ΓÇöa simplified markup language that could retain SGML's power for structured documents, be simple enough for average programmers, work across the internet without specialized tools, and support both documents and data.
 
 **Key players:** Tim Bray as co-editor of the XML specification. Jean Paoli from Microsoft. Michael Sperberg-McQueen from University of Illinois. Jon Bosak from Sun Microsystems as working group chair.
 
@@ -725,7 +725,7 @@ XML's native comment support is genuinely useful for configuration files with do
 
 **The verdict: Context matters**
 
-JSON didn't "win" universally—it won for **data interchange** specifically. APIs carrying structured data see JSON dominance. Configuration files use JSON or YAML (YAML adds comments JSON lacks). Databases adopt JSON-based formats (MongoDB, PostgreSQL JSONB). Document markup remains XML standard (EPUB, DocBook, SVG). Office formats stay with XML (DOCX, XLSX, PPTX).
+JSON didn't "win" universallyΓÇöit won for **data interchange** specifically. APIs carrying structured data see JSON dominance. Configuration files use JSON or YAML (YAML adds comments JSON lacks). Databases adopt JSON-based formats (MongoDB, PostgreSQL JSONB). Document markup remains XML standard (EPUB, DocBook, SVG). Office formats stay with XML (DOCX, XLSX, PPTX).
 
 JSON succeeded because it **matched the right use case** (data interchange) with the **right architecture** (minimal, composable) at the **right time** (AJAX revolution, REST APIs emerging).
 
@@ -910,7 +910,8 @@ JSON is text-based. Binary data must be encoded:
 
 ```json
 {
-  "image": "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg=="
+  "image": "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJ
+  AAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg=="
 }
 ```
 
@@ -998,7 +999,7 @@ Let's compare JSON to its alternatives across key dimensions:
 
 Despite JSON's dominance, there are clear cases where alternatives are better:
 
-### 1. High-Performance Systems → Protocol Buffers, FlatBuffers
+### 1. High-Performance Systems: Protocol Buffers, FlatBuffers
 
 When you're handling millions of requests per second, Protocol Buffers offer compelling advantages:
 
@@ -1020,7 +1021,7 @@ message Person {
 
 Read more: Understanding Protocol Buffers (covered in Chapter 14)
 
-### 2. Human-Edited Configuration → YAML, TOML, JSON5
+### 2. Human-Edited Configuration: YAML, TOML, JSON5
 
 When developers edit config files frequently:
 
@@ -1051,7 +1052,7 @@ database:
 
 **Trade-off:** YAML has subtle parsing gotchas (indentation, special values like `no`/`yes`).
 
-### 3. Large Tabular Datasets → CSV, Parquet, Arrow
+### 3. Large Tabular Datasets: CSV, Parquet, Arrow
 
 For analytics and data pipelines:
 
@@ -1065,7 +1066,7 @@ id,name,email,created
 
 **Trade-off:** No nested structures, limited type information.
 
-### 4. Document Storage → BSON, MessagePack
+### 4. Document Storage: BSON, MessagePack
 
 When JSON-like flexibility meets binary efficiency:
 
@@ -1301,7 +1302,7 @@ You're building SocialDev, a platform for developers to share projects and conne
 - **Without validation: garbage in, runtime crashes**
 
 **2. Storage efficiency (Chapter 4 solves this)**
-- 312 bytes/user × 10M users = 3.12 GB as text JSON
+- 312 bytes/user ├ù 10M users = 3.12 GB as text JSON
 - Field names ("username", "email") repeated 10 million times
 - Every query parses text format
 - No way to index into JSON structure efficiently
@@ -1309,7 +1310,7 @@ You're building SocialDev, a platform for developers to share projects and conne
 
 **3. Network efficiency (Chapter 5 solves this)**
 - Mobile clients pay cellular data costs
-- 312 bytes × 500K requests/day = 156 MB/day bandwidth
+- 312 bytes ├ù 500K requests/day = 156 MB/day bandwidth
 - Text parsing drains mobile battery
 - Slow networks (3G) make large responses painful
 - **Without binary encoding: bandwidth costs, poor mobile UX**
@@ -1358,12 +1359,12 @@ You're building SocialDev, a platform for developers to share projects and conne
 **4. It shows real trade-offs** - Binary formats are faster but harder to debug. JSON-RPC is structured but more complex than REST. Each chapter discusses when to use (and when not to use) each technology.
 
 **By Chapter 8, you'll have a complete, production-ready User API:**
-- ✓ Validated inputs (JSON Schema)
-- ✓ Efficient storage (JSONB)
-- ✓ Optimized mobile delivery (MessagePack)
-- ✓ Structured protocol (JSON-RPC)
-- ✓ Streaming exports (JSON Lines)
-- ✓ Secure authentication (JWT)
+- Γ£ô Validated inputs (JSON Schema)
+- Γ£ô Efficient storage (JSONB)
+- Γ£ô Optimized mobile delivery (MessagePack)
+- Γ£ô Structured protocol (JSON-RPC)
+- Γ£ô Streaming exports (JSON Lines)
+- Γ£ô Secure authentication (JWT)
 
 **This is JSON's power** - an incomplete core (6 types, simple syntax) with a complete ecosystem (modular solutions for every gap).
 
@@ -1425,3 +1426,4 @@ In Chapter 2, we'll map the entire JSON ecosystem - understanding how JSON Schem
 **Comparisons:**
 - [XML vs JSON Performance Benchmarks](https://www.xml.com/pub/a/2006/01/04/xml-vs-json.html)
 - [Protocol Buffers vs JSON](https://blog.gopheracademy.com/advent-2016/go-and-package-focused-design/)
+
