@@ -23,11 +23,11 @@ Events accumulate in memory, the cluster exhausts resources, and six hours later
 
 This story is real, and it illustrates the fundamental paradox of JSON in production systems: 
 
-it ____seems____ simple, but building reliable systems around it requires sophisticated understanding of an entire ecosystem. 
+it __seems__ simple, but building reliable systems around it requires sophisticated understanding of an entire ecosystem. 
 
 You ***probably*** think you know JSON. 
 
-This book will show you how much you ____don't know____ and why that matters for building systems that don't fail.
+This book will show you how much you __don't know__ and why that matters for building systems that don't fail.
 
 {pagebreak}
 
