@@ -45,7 +45,7 @@ Personal reference for pursuing technical writing opportunities while maintainin
 - Founder, Blackwell Systems (OSS + future proprietary developer tools)
 - 10 open-source projects with comprehensive documentation
 - Published technical blog: 94,152 lines (27 articles)
-- Book manuscript near-publication: "You Don't Know JSON" - 92,206 words (26,402 lines, ~820 pages formatted), content complete
+- Book manuscript near-publication: "You Don't Know JSON" - 91,301 words (27,268 lines, ~740 pages formatted), content complete
 - Total documentation: ~226,000 lines across all work
 - 3x AWS Certified, Azure, Terraform
 
@@ -878,9 +878,9 @@ async fn handler() -> Result<Json<User>, Error> {
 
 **Documentation Volume:**
 - Blog: 94,152 lines (verified)
-- Book manuscript: 28,716 lines / 96,110 words (verified)
+- Book manuscript: 27,268 lines / 91,301 words (verified)
 - OSS projects: ~96,000 lines (9 verified at 86,011 + pipeboard estimated ~10k)
-- Total: ~219,000 lines / 96,110+ words
+- Total: ~217,000 lines / 91,301+ words
 
 **This is Staff-level documentation volume.**
 
