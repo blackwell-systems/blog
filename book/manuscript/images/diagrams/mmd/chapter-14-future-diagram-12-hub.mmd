@@ -1,0 +1,32 @@
+graph TB
+    center["**Success Criteria**<br/>for JSON's successor"]
+    
+    architecture["**Match Architecture**<br/>• Align with era's<br/>computing model"]
+    problem["**Solve Real Problem**<br/>• Address gaps<br/>JSON doesn't"]
+    adoption["**Easy Adoption**<br/>• Low friction<br/>• Quick value"]
+    ecosystem["**Strong Ecosystem**<br/>• Tools, libraries<br/>• Community support"]
+    
+    modularity["**Modularity**<br/>• Core stays simple<br/>• Extensions separate"]
+    optional["**Optional Schema**<br/>• Not required<br/>for basic use"]
+    readable["**Human-Readable**<br/>• Debug-friendly<br/>• Inspectable"]
+    webfirst["**Web-First**<br/>• Browser native<br/>• No transpilation"]
+    
+    center --> architecture
+    center --> problem
+    center --> adoption
+    center --> ecosystem
+    
+    architecture -.-> modularity
+    problem -.-> optional
+    adoption -.-> readable
+    ecosystem -.-> webfirst
+    
+    style center fill:#4C4538,stroke:#6b7280,stroke-width:3px,color:#f0f0f0
+    style architecture fill:#3A4A5C,stroke:#6b7280,stroke-width:2px,color:#f0f0f0
+    style problem fill:#3A4C43,stroke:#6b7280,stroke-width:2px,color:#f0f0f0
+    style adoption fill:#4C4538,stroke:#6b7280,stroke-width:2px,color:#f0f0f0
+    style ecosystem fill:#4C3A3C,stroke:#6b7280,stroke-width:2px,color:#f0f0f0
+    style modularity fill:#3A4A5C,stroke:#6b7280,stroke-width:2px,color:#f0f0f0
+    style optional fill:#3A4C43,stroke:#6b7280,stroke-width:2px,color:#f0f0f0
+    style readable fill:#4C4538,stroke:#6b7280,stroke-width:2px,color:#f0f0f0
+    style webfirst fill:#4C3A3C,stroke:#6b7280,stroke-width:2px,color:#f0f0f0
