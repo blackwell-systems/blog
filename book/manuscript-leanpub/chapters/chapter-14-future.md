@@ -8,10 +8,8 @@ But JSON isn't the solution to every problem. Understanding when JSON works and 
 
 In this chapter, we'll examine the formats and patterns emerging alongside JSON, understand their niches, and apply the lessons from JSON's evolution to predict what succeeds next.
 
-
 ![Format Comparison](chapter-14-future-diagram-2-light.png)
 {width: 85%}
-
 
 ## When JSON Isn't Enough
 
@@ -553,7 +551,7 @@ console.log(user);
 4. Consumer reads message, extracts schema ID
 5. Consumer fetches schema 42 from registry (cached locally)
 6. Consumer decodes using reader schema (v2)
-7. Avro resolves differences (v1 → v2 mapping)
+7. Avro resolves differences (v1 -> v2 mapping)
 
 **Benefits:** Producers and consumers evolve independently. Schema compatibility enforced by registry. Bandwidth efficient since schema isn't repeated in every message. Full history of schema evolution. Can query registry for all versions.
 
@@ -858,10 +856,7 @@ const balance = await connection.getBalance(publicKey);
 - Universal tooling (Postman, curl work immediately)
 - Debug-friendly (readable requests/responses)
 
-{height: 85%}
-![Lessons Applied to Future Formats](chapter-14-future-diagram-5-light.png)
-{width: 85%}
-
+![Lessons Applied to Future Formats](chapter-14-future-diagram-5-hub-light.png)
 
 ## The Future: Lessons Applied
 
@@ -899,9 +894,9 @@ JSON succeeded because it matched 2000s architectural patterns (modularity, simp
 
 ### The Architectural Zeitgeist Continues
 
-**2000s:** Modularity → JSON succeeded  
-**2010s:** Type safety + performance → Protobuf/GraphQL emerged  
-**2020s+:** Edge + serverless → JSON thrives again
+**2000s:** Modularity -> JSON succeeded  
+**2010s:** Type safety + performance -> Protobuf/GraphQL emerged  
+**2020s+:** Edge + serverless -> JSON thrives again
 
 **Why JSON persists:**
 - Matches current architecture (serverless, edge, distributed)
@@ -928,10 +923,7 @@ JSON didn't succeed by being "the best" format. It succeeded by:
 
 Future formats that succeed will follow the same principles: match contemporary architecture, stay focused, enable ecosystem growth.
 
-{height: 85%}
-![Lessons from JSON Success](chapter-14-future-diagram-12-light.png)
-{width: 85%}
-
+![Lessons from JSON Success](chapter-14-future-diagram-12-hub-light.png)
 
 ## Conclusion: Choose Tools for Problems, Not Trends
 
@@ -960,7 +952,6 @@ The zeitgeist lesson applies to all technology choices: understand the architect
 | Phase 5 | Polyglot | JSON (web), Protobuf (services), GraphQL (mobile) | Optimized per use case |
 
 ![When to Migrate from JSON](chapter-14-future-diagram-10-light.png)
-{width: 85%}
 
 | Era | Technologies | Key Trends |
 |-----|--------------|------------|
