@@ -1,0 +1,12 @@
+graph TB
+    commit["**On Commit**<br/><br/>• **Lint** (ESLint, prettier)<br/>• **Unit Tests** (fast, isolated)<br/>• **Format check** (JSON)"]
+    
+    pr["**On Pull Request**<br/><br/>• **Integration Tests** (test DB)<br/>• **Contract Tests** (Pact)<br/>• **Security Scan** (SAST, deps)"]
+    
+    deploy["**On Deploy**<br/><br/>• **Smoke Tests** (health checks)<br/>• **Load Tests** (performance)<br/>• **Monitor** (error rates)"]
+    
+    commit --> pr --> deploy
+    
+    style commit fill:#D4E8D4,stroke:#3a5a3a,stroke-width:2px,color:#2c2c2c
+    style pr fill:#C8D8E8,stroke:#3a4a5a,stroke-width:2px,color:#2c2c2c
+    style deploy fill:#E8D4C0,stroke:#5a4a3a,stroke-width:2px,color:#2c2c2c
