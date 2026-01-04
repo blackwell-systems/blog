@@ -1,0 +1,26 @@
+graph TB
+    schema["**user.proto**<br/><br/>**syntax** = 'proto3';<br/>**message** User {<br/>  **string** id = 1;<br/>  **string** name = 2;<br/>  **string** email = 3;<br/>}"]
+    
+    go["**Go**<br/>user.pb.go<br/>Type-safe **structs**"]
+    js["**JavaScript**<br/>user_pb.js<br/>**Classes**"]
+    py["**Python**<br/>user_pb2.py<br/>**Types**"]
+    rs["**Rust**<br/>user.rs<br/>**Structs**"]
+    
+    usage["**Type-Safe Usage (Go)**<br/><br/>user := **&User**{<br/>  Id: 'user-123',<br/>  Name: 'Alice'<br/>}<br/><br/>data := proto.**Marshal**(user)<br/>proto.**Unmarshal**(data, &user)<br/><br/>"]
+    
+    schema --> go
+    schema --> js
+    schema --> py
+    schema --> rs
+    
+    go --> usage
+    js --> usage
+    py --> usage
+    rs --> usage
+    
+    style schema fill:#E8D4C0,stroke:#5a4a3a,stroke-width:3px,color:#2c2c2c
+    style go fill:#C8D8E8,stroke:#3a4a5a,stroke-width:2px,color:#2c2c2c
+    style js fill:#D4E8D4,stroke:#3a5a3a,stroke-width:2px,color:#2c2c2c
+    style py fill:#E8C8C8,stroke:#5a3a3a,stroke-width:2px,color:#2c2c2c
+    style rs fill:#C8D8E8,stroke:#3a4a5a,stroke-width:2px,color:#2c2c2c
+    style usage fill:#E8D4C0,stroke:#5a4a3a,stroke-width:2px,color:#2c2c2c
