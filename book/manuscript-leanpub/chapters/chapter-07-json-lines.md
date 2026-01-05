@@ -1478,7 +1478,7 @@ rl.on('line', async (line) => {
 **If file has 1M lines and processing takes 500ms each:**
 - Lines arrive: 1M/second (reading is fast)
 - Lines processed: 2/second (processing is slow)
-- Memory fills with 999,998 pending lines → crash
+- Memory fills with 999,998 pending lines -> crash
 
 **Solution: Pause and resume streams**
 
