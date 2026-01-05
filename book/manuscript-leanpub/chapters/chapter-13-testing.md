@@ -861,10 +861,8 @@ Contract testing bridges the gap between unit tests and full integration tests, 
 
 While schema-based testing validates data structures and contract testing ensures service compatibility, API testing focuses on the behavior of individual endpoints under various conditions. This section applies the API design patterns from Chapter 11--pagination, error handling, versioning, rate limiting--showing how to test that these production patterns work correctly under stress and edge cases. Effective API testing covers the full spectrum from unit-level endpoint testing to comprehensive integration scenarios.
 
-
-![API Testing Strategy](chapter-13-testing-diagram-4-light.png)
-{width: 85%}
-
+![API Testing Strategy](chapter-13-testing-diagram-4-testing-pyramid-light.png)
+{width: 70%}
 
 ### Unit Testing HTTP Endpoints
 
@@ -2576,11 +2574,11 @@ function analyzePerformance() {
   
   // Alert if performance degrades
   if (p95 > 500) {
-    console.warn('⚠️  P95 response time exceeded 500ms threshold');
+    console.warn('ΓÜá∩╕Å  P95 response time exceeded 500ms threshold');
   }
   
   if (p99 > 1000) {
-    console.warn('⚠️  P99 response time exceeded 1000ms threshold');
+    console.warn('ΓÜá∩╕Å  P99 response time exceeded 1000ms threshold');
   }
 }
 
@@ -2661,7 +2659,7 @@ func FuzzJSONParser(f *testing.F) {
     f.Add(`{"null_value":null}`)
     f.Add(`{"boolean":true,"false_val":false}`)
     f.Add(`{"float":3.14159,"negative":-42}`)
-    f.Add(`{"unicode":"Hello, 世界"}`)
+    f.Add(`{"unicode":"Hello, Σ╕ûτòî"}`)
     
     f.Fuzz(func(t *testing.T, input string) {
         var result interface{}
@@ -2728,7 +2726,7 @@ func FuzzJSONSchemaValidation(f *testing.F) {
 // Run fuzzing with: go test -fuzz=FuzzJSONParser -fuzztime=30s
 ```
 
-Go's built-in fuzzer explores millions of input variations automatically, seeding from your initial corpus and mutating inputs to discover edge cases. The round-trip property test (parse → marshal → parse) catches subtle bugs where the parser accepts input that can't be re-encoded, indicating internal inconsistencies. Running these tests for 30 seconds generates thousands of test cases that would take days to write manually.
+Go's built-in fuzzer explores millions of input variations automatically, seeding from your initial corpus and mutating inputs to discover edge cases. The round-trip property test (parse ΓåÆ marshal ΓåÆ parse) catches subtle bugs where the parser accepts input that can't be re-encoded, indicating internal inconsistencies. Running these tests for 30 seconds generates thousands of test cases that would take days to write manually.
 
 **JavaScript fuzzing with custom generators:**
 
@@ -2967,9 +2965,9 @@ Malformed JSON test cases serve as regression protection, ensuring that your err
 
 With comprehensive test suites covering schemas, contracts, security, performance, and fuzzing, the final step is automation. CI/CD pipelines ensure these tests run on every code change, preventing regressions before they reach production. Comprehensive testing automation ensures consistent quality across all changes:
 
-
-![CI/CD Testing Pipeline](chapter-13-testing-diagram-8-light.png)
-{width: 85%}
+{height: 70%}
+![CI/CD Testing Pipeline](chapter-13-testing-diagram-cicd-pipeline-light.png)
+{width: 70%}
 
 
 **GitHub Actions workflow for comprehensive JSON system testing:**
@@ -3308,3 +3306,4 @@ Fuzz testing and CI/CD integration complete the comprehensive testing strategy f
 We've now covered the complete JSON ecosystem: its architecture, all major technical layers, practical application patterns, and testing strategies. One question remains: **where is JSON going?** Chapter 14 looks forward - emerging patterns, JSON's limitations that still lack solutions, and the technologies that may eventually succeed it.
 
 **Next:** Chapter 14 - The Future of JSON and Beyond
+
