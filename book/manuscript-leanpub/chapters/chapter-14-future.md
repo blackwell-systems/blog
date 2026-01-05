@@ -548,7 +548,7 @@ console.log(user);
 4. Consumer reads message, extracts schema ID
 5. Consumer fetches schema 42 from registry (cached locally)
 6. Consumer decodes using reader schema (v2)
-7. Avro resolves differences (v1 → v2 mapping)
+7. Avro resolves differences (v1 -> v2 mapping)
 
 **Benefits:** Producers and consumers evolve independently. Schema compatibility enforced by registry. Bandwidth efficient since schema isn't repeated in every message. Full history of schema evolution. Can query registry for all versions.
 
@@ -669,7 +669,7 @@ Browsers can't do HTTP/2 bidirectional streaming (gRPC requirement). gRPC-Web so
 
 **Architecture:**
 ```
-Browser → gRPC-Web (HTTP/1.1) → Envoy Proxy → gRPC (HTTP/2) → Server
+Browser -> gRPC-Web (HTTP/1.1) -> Envoy Proxy -> gRPC (HTTP/2) -> Server
 ```
 
 **Client code (looks like gRPC):**
@@ -695,7 +695,7 @@ client.getUser(request, {}, (err, response) => {
 **Benefits:**
 - Type-safe browser APIs (Protobuf types in TypeScript)
 - Code generation from .proto files
-- Streaming support (server → client)
+- Streaming support (server -> client)
 - Consistent API across web and mobile
 
 **Trade-offs:**
