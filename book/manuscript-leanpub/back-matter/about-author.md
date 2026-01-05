@@ -16,7 +16,7 @@ I'd love to hear from readers--whether you have questions about the book, want t
 
 **Website:** [https://blackwell-systems.com](https://blackwell-systems.com)  
 **Email:** dayna@blackwell-systems.com  
-**LinkedIn:** [linkedin.com/in/dayblackwell](https://linkedin.com/in/dayblackwell)  
+**LinkedIn:** [linkedin.com/in/daynablackwell](https://linkedin.com/in/daynablackwell)  
 **GitHub:** [github.com/blackwellsystems](https://github.com/blackwellsystems)
 
 ---
