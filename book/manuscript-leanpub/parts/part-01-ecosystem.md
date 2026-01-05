@@ -1,4 +1,5 @@
--# Part I: The JSON Ecosystem
+{class: part}
+# Part I: The JSON Ecosystem
 
 **How modularity filled every gap through independent solutions**
 

@@ -1,4 +1,5 @@
--# Part II: Building with JSON
+{class: part}
+# Part II: Building with JSON
 
 **Applying architectural lessons to production systems**
 
