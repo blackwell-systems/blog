@@ -45,7 +45,7 @@ Personal reference for pursuing technical writing opportunities while maintainin
 - Founder, Blackwell Systems (OSS + future proprietary developer tools)
 - 10 open-source projects with comprehensive documentation
 - Published technical blog: 94,152 lines (27 articles)
-- Book manuscript near-publication: "You Don't Know JSON" - 94,311 words (24,971 lines, ~740 pages formatted), content complete
+- Book manuscript near-publication: "You Don't Know JSON" - 95,008 words (24,953 lines, ~740 pages formatted), content complete
 - Total documentation: ~226,000 lines across all work
 - 3x AWS Certified, Azure, Terraform
 
@@ -566,7 +566,7 @@ You understand:
 - All articles: comprehensive (1,500-5,000+ words), with code examples and diagrams
 
 **Book Manuscript (Near-Publication):**
-- **"You Don't Know JSON"** - 94,311 words (24,971 lines, ~740 pages formatted), 14 chapters + 3 appendices
+- **"You Don't Know JSON"** - 95,008 words (24,953 lines, ~740 pages formatted), 14 chapters + 3 appendices
 - Comprehensive technical book covering JSON architecture, API design, security, testing, and data pipelines
 - 64+ professional mermaid diagrams with consistent visual theme
 - Production-ready code examples in JavaScript, Go, Python, Rust, SQL, Bash
@@ -878,9 +878,9 @@ async fn handler() -> Result<Json<User>, Error> {
 
 **Documentation Volume:**
 - Blog: 94,152 lines (verified)
-- Book manuscript: 24,971 lines / 94,311 words (verified)
+- Book manuscript: 24,953 lines / 95,008 words (verified)
 - OSS projects: ~96,000 lines (9 verified at 86,011 + pipeboard estimated ~10k)
-- Total: ~215,000 lines / 94,311+ words
+- Total: ~215,000 lines / 95,008+ words
 
 **This is Staff-level documentation volume.**
 
@@ -1085,7 +1085,7 @@ Walk through one of your blog articles:
 
 ### Production Capability Discovered
 
-**Timeline: 94,311-word technical book in 1 month**
+**Timeline: 95,008-word technical book in 1 month**
 
 This production velocity is extraordinary and represents a significant competitive advantage:
 - Most technical authors: 500-1,000 words/day over 6-12 months
