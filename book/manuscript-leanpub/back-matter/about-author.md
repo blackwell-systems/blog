@@ -51,11 +51,13 @@ Dayna is available for:
 
 ---
 
-**Speaking Inquiries:** speaking@blackwell-systems.com  
-For conference talks, meetups, or podcast appearances
+**Speaking & Podcast Inquiries:** speaking@blackwell-systems.com  
+For conference talks, meetups, and podcast appearances
 
 **Consulting Inquiries:** consulting@blackwell-systems.com  
 For architecture consulting, workshops, or technical advising
+
+Dayna is particularly interested in podcast discussions about JSON ecosystem patterns, architectural decision-making, developer experience, and the lessons from modular technology design.
 
 ---
 
