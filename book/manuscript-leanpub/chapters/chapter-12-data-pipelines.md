@@ -329,8 +329,8 @@ df.to_sql('users', engine, if_exists='append', index=False)
 - Immediate data availability
 - Event-driven architectures
 
-
-![Extract, Transform, Load](chapter-12-data-pipelines-diagram-3-light.png)
+{height: 60%}
+![Extract, Transform, Load](chapter-12-data-pipelines-diagram-etl-pipeline-light.png)
 {width: 85%}
 
 
@@ -2774,3 +2774,4 @@ As data volumes continue growing, these patterns provide the foundation for buil
 But building pipelines is only half the challenge. How do you ensure they work correctly? Chapter 13 explores testing strategies for JSON systems: schema validation tests, contract testing, property-based testing, and integration testing patterns that catch bugs before production.
 
 **Next:** Chapter 13 - Testing JSON Systems
+

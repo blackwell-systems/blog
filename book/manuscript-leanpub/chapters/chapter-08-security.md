@@ -84,7 +84,7 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 ```
 
 **Critical security considerations:**
-- Algorithm confusion attacks (RS256 → HS256)
+- Algorithm confusion attacks (RS256 -> HS256)
 - Token substitution (using valid token for wrong user)
 - Weak secrets (brute-forceable HMAC keys)
 - Missing expiration checks
@@ -2010,7 +2010,7 @@ Chapter 9 synthesizes the lessons from JSON's evolution - what this ecosystem's 
 10. Consider JWE for sensitive payloads
 
 **Critical vulnerabilities to avoid:**
-- Algorithm confusion (RS256 → HS256)
+- Algorithm confusion (RS256 -> HS256)
 - None algorithm acceptance
 - Weak or hardcoded secrets
 - Missing expiration checks
