@@ -33,7 +33,7 @@ JSON carries authentication tokens, financial data, and sensitive information ac
 
 **JSON's approach:** Separate security standards (JWT, JWS, JWE) - modular composition
 
-**Architecture shift:** Built-in security → Composable security layers, Monolithic → Mix-and-match, Complex canonicalization → Simple Base64 encoding
+**Architecture shift:** Built-in security -> Composable security layers, Monolithic -> Mix-and-match, Complex canonicalization -> Simple Base64 encoding
 {/blurb}
 
 This chapter covers:
