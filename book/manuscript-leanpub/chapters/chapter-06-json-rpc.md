@@ -721,7 +721,7 @@ func main() {
 }
 ```
 
-**Python implementation available:** See [example repository](https://github.com/blackwell-systems/json-examples) for Flask-based JSON-RPC server with decorator pattern for method registration.
+**Python implementation available:** See [companion repository](https://github.com/blackwell-systems/you-dont-know-json) for Flask-based JSON-RPC server with decorator pattern for method registration.
 
 {blurb, class: tip}
 **Implementation Checklist:**
@@ -1029,7 +1029,7 @@ func main() {
 }
 ```
 
-**Python client:** Similar pattern using `requests` library. See [example repository](https://github.com/blackwell-systems/json-examples) for complete implementation.
+**Python client:** Similar pattern using `requests` library. See [companion repository](https://github.com/blackwell-systems/you-dont-know-json) for complete implementation.
 
 {height: 85%}
 ![JSON-RPC Request/Response Lifecycle](chapter-06-json-rpc-diagram-2-light--depreciated.png)
@@ -2275,6 +2275,9 @@ Chapter 7 explores JSON Lines - another modular solution that enables streaming 
 ---
 
 ## Further Reading
+
+**Code Examples:**
+- [Companion Repository](https://github.com/blackwell-systems/you-dont-know-json) - JSON-RPC server and client with batch requests, error handling, and notifications
 
 **Specifications:**
 - [JSON-RPC 2.0 Specification](https://www.jsonrpc.org/specification)

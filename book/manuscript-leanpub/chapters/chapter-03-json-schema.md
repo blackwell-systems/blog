@@ -1885,6 +1885,9 @@ This is modularity in action again: validation lives in JSON Schema, performance
 
 ## Further Reading
 
+**Code Examples:**
+- [Companion Repository](https://github.com/blackwell-systems/you-dont-know-json) - Complete validation examples with Ajv, custom errors, and Express integration
+
 **Specifications:**
 - [JSON Schema Specification](https://json-schema.org/specification.html)
 - [Understanding JSON Schema (Official Guide)](https://json-schema.org/understanding-json-schema/)

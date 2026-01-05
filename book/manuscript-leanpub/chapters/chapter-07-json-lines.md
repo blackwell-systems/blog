@@ -2135,6 +2135,9 @@ Chapter 8 explores how the ecosystem addressed this - JWT for authentication tok
 
 ## Further Reading
 
+**Code Examples:**
+- [Companion Repository](https://github.com/blackwell-systems/you-dont-know-json) - Streaming JSONL parser and log processing pipeline with error recovery
+
 **Specifications:**
 - [JSON Lines](https://jsonlines.org/)
 - [Newline Delimited JSON](http://ndjson.org/)
