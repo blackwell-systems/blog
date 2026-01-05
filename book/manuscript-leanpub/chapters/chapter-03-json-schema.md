@@ -77,20 +77,11 @@ In Chapter 1, we introduced a User API for a social platform. We have basic JSON
 }
 ```
 
-**The problems:**
-- Clients could send `"email": "not-an-email"`
-- Nothing prevents `"followers": -1000`
-- Users could set `"verified": true` themselves
-- No validation on username length or format
+**The problems:** Without validation, clients could send `"email": "not-an-email"` and your system would accept it. Nothing prevents `"followers": -1000` from corrupting your statistics. Malicious users could set `"verified": true` themselves, bypassing your verification flow entirely. Username length and format remain unconstrained, allowing empty strings or SQL injection attempts.
 
-**What we need:**
-- Email format validation
-- Numeric ranges (followers >= 0)
-- Required fields (username, email)
-- String constraints (username 3-20 chars)
-- Read-only fields (id, verified, created)
+**What we need:** Email format validation to reject malformed addresses before they enter the database. Numeric ranges ensuring followers and following counts stay non-negative. Required field enforcement so username and email can't be omitted. String constraints limiting usernames to 3-20 characters with safe character sets. Read-only field protection preventing clients from setting id, verified, or created timestamps themselves.
 
-JSON Schema will solve all of these.
+JSON Schema solves all of these problems through declarative validation rules.
 
 ---
 
@@ -191,23 +182,9 @@ JSON Schema is itself a JSON document that describes other JSON documents.
 }
 ```
 
-**This schema enforces:**
-- Required fields (username, email)
-- Username format (3-20 chars, lowercase alphanumeric + underscore)
-- Valid email format
-- Non-negative followers and following counts
-- Skills array (max 10 items)
-- Location string (max 100 chars)
-- Website must be valid URI format
-- Read-only fields (id, created, verified) - clients can't set these
-- No additional fields allowed
+**This schema enforces several critical constraints:** Required fields (username, email) must be present in every request. Username format stays constrained to 3-20 lowercase alphanumeric characters plus underscores. Valid email format rejects malformed addresses. Non-negative followers and following counts prevent negative statistics. The skills array limits to 10 items maximum. Location strings cap at 100 characters. Website URLs must pass URI format validation. Read-only fields (id, created, verified) cannot be set by clients--the server owns these. Finally, no additional fields beyond those defined are allowed, preventing payload bloat.
 
-**Key concepts:**
-- `$schema` - Declares which JSON Schema version you're using
-- `type` - The data type this schema validates
-- `properties` - Object field definitions
-- `required` - Fields that must be present
-- `additionalProperties` - Whether extra fields are allowed
+**Key concepts introduced here:** The `$schema` keyword declares which JSON Schema version you're using, ensuring validator compatibility. The `type` keyword specifies the data type this schema validates (object, string, number, etc.). The `properties` object defines validation rules for each individual field. The `required` array lists fields that must be present in valid documents. The `additionalProperties` setting controls whether extra fields beyond those defined are allowed or rejected.
 
 ### Schema Evolution: Draft Versions
 
@@ -1847,20 +1824,9 @@ queue.subscribe('events', (msg) => {
 
 JSON Schema transforms JSON from "any structure passes" to "only valid structures accepted." It bridges the gap between dynamic typing and type safety without changing JSON itself.
 
-**What you learned:**
-- JSON Schema provides validation layer for JSON
-- Schemas define types, constraints, and structure
-- Composition patterns (allOf, anyOf, oneOf) enable complex validation
-- References ($ref, $defs) enable schema reuse
-- Code generation creates types from schemas
-- OpenAPI uses JSON Schema for API contracts
-- Schema evolution requires careful planning
+**What you learned:** JSON Schema provides the validation layer JSON itself deliberately omitted. Schemas define types, constraints, and structural rules declaratively. Composition patterns like allOf, anyOf, and oneOf enable complex validation logic without custom code. References through $ref and $defs enable schema reuse across your API. Code generation creates typed interfaces from schemas automatically. OpenAPI leverages JSON Schema for API contracts. Schema evolution requires careful planning to maintain backward compatibility.
 
-**Key insight:** JSON Schema adds the contract layer JSON was missing. It enables:
-- Type safety without changing JSON format
-- API contracts that are both docs and validation
-- Code generation from a single source of truth
-- Runtime validation with compile-time-like guarantees
+**Key insight:** JSON Schema adds the contract layer JSON was missing, transforming JSON from "untyped text" to "strongly validated data." It enables type safety without changing the JSON format itself. API contracts become both documentation and validation simultaneously. Code generation works from a single source of truth. Runtime validation provides compile-time-like guarantees for dynamically typed languages.
 
 {blurb, class: tip}
 **Best Practice Summary:**
