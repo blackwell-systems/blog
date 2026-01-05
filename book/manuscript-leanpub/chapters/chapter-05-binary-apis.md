@@ -1887,6 +1887,9 @@ This demonstrates the modularity pattern again: MessagePack handles efficient en
 
 ## References
 
+**Code Examples:**
+- [Companion Repository](https://github.com/blackwell-systems/you-dont-know-json) - MessagePack encoding/decoding, Express API with content negotiation, and Go implementation with performance benchmarks
+
 **Specifications:**
 - [MessagePack Specification](https://msgpack.org/)
 - [CBOR RFC 8949](https://www.rfc-editor.org/rfc/rfc8949.html)

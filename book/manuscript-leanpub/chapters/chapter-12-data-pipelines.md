@@ -2763,4 +2763,12 @@ The key insight is that JSON's flexibility becomes a strength in pipelines when 
 
 As data volumes continue growing, these patterns provide the foundation for building JSON pipelines that scale gracefully, fail safely, and operate transparently. The modular approach mirrors JSON's own philosophy: simple components composed thoughtfully create powerful, maintainable systems.
 
-**Data pipelines demonstrate JSON's real-world maturity** - combining JSON Lines streaming (Chapter 7), validation (Chapter 3), error handling patterns, and monitoring to process millions of events reliably. The modular ecosystem provides all the pieces; production teams compose them thoughtfully.\n\nBut building pipelines is only half the challenge. How do you ensure they work correctly? Chapter 13 explores testing strategies for JSON systems: schema validation tests, contract testing, property-based testing, and integration testing patterns that catch bugs before production.\n\n**Next:** Chapter 13 - Testing JSON Systems
+**Data pipelines demonstrate JSON's real-world maturity** - combining JSON Lines streaming (Chapter 7), validation (Chapter 3), error handling patterns, and monitoring to process millions of events reliably. The modular ecosystem provides all the pieces; production teams compose them thoughtfully.
+
+{blurb, class: information}
+**Code Examples:** The [companion repository](https://github.com/blackwell-systems/you-dont-know-json) includes production-ready stream transformer with validation, enrichment, and error handling patterns from this chapter.
+{/blurb}
+
+But building pipelines is only half the challenge. How do you ensure they work correctly? Chapter 13 explores testing strategies for JSON systems: schema validation tests, contract testing, property-based testing, and integration testing patterns that catch bugs before production.
+
+**Next:** Chapter 13 - Testing JSON Systems

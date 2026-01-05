@@ -3301,6 +3301,10 @@ Fuzz testing and CI/CD integration complete the comprehensive testing strategy f
 
 **Testing brings the JSON ecosystem full circle** - validating that all the modular pieces (schemas from Chapter 3, binary formats from Chapters 4-5, protocols from Chapter 6, streaming from Chapter 7, security from Chapter 8, API patterns from Chapter 11, and data pipelines from Chapter 12) work correctly in combination. Comprehensive testing transforms JSON's flexibility from a liability (anything parses) into an asset (validated, reliable systems).
 
+{blurb, class: information}
+**Code Examples:** The [companion repository](https://github.com/blackwell-systems/you-dont-know-json) includes property-based tests with fast-check generating 1000+ test cases automatically, and Go benchmark suite comparing JSON implementations for performance testing.
+{/blurb}
+
 We've now covered the complete JSON ecosystem: its architecture, all major technical layers, practical application patterns, and testing strategies. One question remains: **where is JSON going?** Chapter 14 looks forward - emerging patterns, JSON's limitations that still lack solutions, and the technologies that may eventually succeed it.
 
 **Next:** Chapter 14 - The Future of JSON and Beyond
