@@ -1240,9 +1240,9 @@ For more on Protocol Buffers, see Chapter 14
 - **Total: $7,000-$14,000**
 
 **Monthly savings from examples above:**
-- Small API (1B requests): $72-$108/month → **ROI in 6-12 months**
-- Mobile API (10M requests): $1,800-$2,700/month → **ROI in 3-5 months**
-- Large API (10B requests): $7,200-$10,800/month → **ROI in 1 month**
+- Small API (1B requests): $72-$108/month -> **ROI in 6-12 months**
+- Mobile API (10M requests): $1,800-$2,700/month -> **ROI in 3-5 months**
+- Large API (10B requests): $7,200-$10,800/month -> **ROI in 1 month**
 
 {blurb, class: tip}
 **Cost Optimization Strategy:** For APIs serving >100M requests/month or mobile apps with bandwidth-constrained users, binary formats often pay for themselves within 6 months purely from bandwidth savings - before considering performance improvements.
