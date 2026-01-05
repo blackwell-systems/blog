@@ -2574,11 +2574,11 @@ function analyzePerformance() {
   
   // Alert if performance degrades
   if (p95 > 500) {
-    console.warn('ΓÜá∩╕Å  P95 response time exceeded 500ms threshold');
+    console.warn('WARNING: P95 response time exceeded 500ms threshold');
   }
   
   if (p99 > 1000) {
-    console.warn('ΓÜá∩╕Å  P99 response time exceeded 1000ms threshold');
+    console.warn('WARNING: P99 response time exceeded 1000ms threshold');
   }
 }
 
