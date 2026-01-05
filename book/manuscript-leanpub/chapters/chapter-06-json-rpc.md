@@ -1311,7 +1311,7 @@ const result = await client.call('eth_call', [{
 VS Code, Neovim, and other editors use JSON-RPC for language intelligence:
 
 ```json
-// Client → Server: Request code completion
+// Client -> Server: Request code completion
 {
   "jsonrpc": "2.0",
   "id": 1,
@@ -1327,7 +1327,7 @@ VS Code, Neovim, and other editors use JSON-RPC for language intelligence:
   }
 }
 
-// Server → Client: Completion results
+// Server -> Client: Completion results
 {
   "jsonrpc": "2.0",
   "id": 1,
@@ -1347,7 +1347,7 @@ VS Code, Neovim, and other editors use JSON-RPC for language intelligence:
   }
 }
 
-// Server → Client: Publish diagnostics (notification)
+// Server -> Client: Publish diagnostics (notification)
 {
   "jsonrpc": "2.0",
   "method": "textDocument/publishDiagnostics",
