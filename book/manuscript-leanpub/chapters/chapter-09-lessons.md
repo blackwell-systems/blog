@@ -18,11 +18,11 @@ Here's the remarkable pattern we've documented across this book:
 
 | Problem | XML (1998) | JSON (2001+) | Architecture |
 |---------|-----------|--------------|--------------|
-| **Validation** | XSD (built-in) | JSON Schema (separate) | Monolithic → Modular |
-| **Binary** | N/A | JSONB, MessagePack (separate) | N/A → Modular |
-| **Protocol** | SOAP (built-in) | JSON-RPC (separate) | Monolithic → Modular |
-| **Security** | XML Signature (built-in) | JWT, JWS (separate) | Monolithic → Modular |
-| **Query** | XPath (built-in) | jq, JSONPath (separate) | Monolithic → Modular |
+| **Validation** | XSD (built-in) | JSON Schema (separate) | Monolithic -> Modular |
+| **Binary** | N/A | JSONB, MessagePack (separate) | N/A -> Modular |
+| **Protocol** | SOAP (built-in) | JSON-RPC (separate) | Monolithic -> Modular |
+| **Security** | XML Signature (built-in) | JWT, JWS (separate) | Monolithic -> Modular |
+| **Query** | XPath (built-in) | jq, JSONPath (separate) | Monolithic -> Modular |
 
 **JSON didn't avoid XML's problems. It organized the solutions differently.**
 
@@ -294,7 +294,7 @@ Each solution evolves independently: JSON Schema updates don't break parsers. JW
 
 ### Lesson 4: Good Ideas Transcend Architecture
 
-**JSX proves it:** Self-describing hierarchical markup was always good for UIs. It survived the XML → JSON → JSX journey. The syntax persisted through two major architectural shifts.
+**JSX proves it:** Self-describing hierarchical markup was always good for UIs. It survived the XML -> JSON -> JSX journey. The syntax persisted through two major architectural shifts.
 
 **Other patterns demonstrate the same resilience.** Request/response communication proves fundamental across decades of protocol evolution. It persisted from SOAP's monolithic XML through REST's modular HTTP to GraphQL's query-based approaches and gRPC's binary encoding. The packaging changed radically - XML to JSON to Protocol Buffers - but the core pattern of "send request, receive response" remained because it solves a real problem elegantly.
 
@@ -316,7 +316,7 @@ Imagine being an XML developer in 1998 who needs validation. You look at the XML
 
 Now imagine being a JSON developer in 2024 facing the same need. You Google "JSON validation" and find JSON Schema, Joi, Yup, Zod, AJV, TypeBox, and Superstruct in the first page of results. Each has passionate advocates. Each solves validation differently. You read comparison articles trying to understand the trade-offs. You check GitHub stars as a proxy for quality. You debate with your team about which approach fits your architecture. You choose one and hope it's the right choice. Six months later you wonder if you should have picked differently.
 
-**More choice ≠ less complexity.** Sometimes it's more. The paradox of modularity is that decoupling solutions from the core specification enables innovation and competition, but it also fragments the ecosystem. Every team faces the same discovery and evaluation burden. Some make informed choices. Others pick based on what they found first or what their framework already includes. A few never discover that validation solutions exist at all.
+**More choice does not equal less complexity.** Sometimes it's more. The paradox of modularity is that decoupling solutions from the core specification enables innovation and competition, but it also fragments the ecosystem. Every team faces the same discovery and evaluation burden. Some make informed choices. Others pick based on what they found first or what their framework already includes. A few never discover that validation solutions exist at all.
 
 ### Fragmented Best Practices
 
