@@ -1304,12 +1304,12 @@ const user = {
 **Impact depends on your setup:**
 
 **With mature tooling (automated pipeline):**
-- `make generate` → commit → CI deploys
+- `make generate` -> commit -> CI deploys
 - Similar velocity to JSON for established teams
 - Overhead: ~2-5 minutes for regeneration + deployment
 
 **Without automation (manual process):**
-- Update proto → manually regenerate → test → coordinate → deploy
+- Update proto -> manually regenerate -> test -> coordinate -> deploy
 - Cross-team coordination if shared protos
 - Overhead: 30 minutes to 2 hours depending on team size
 
