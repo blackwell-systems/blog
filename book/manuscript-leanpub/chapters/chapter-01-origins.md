@@ -103,31 +103,17 @@ The specification aimed for the sweet spot: simpler than SGML, more powerful tha
 **Microsoft embraced XML aggressively:** XML support in IE 5 in 1999. XML as configuration format in .NET in 2000. Office XML formats as precursor to DOCX. MSXML parser bundled with Windows.
 
 
-**Sun Microsystems pushed XML for Java:**
-- JAXP (Java API for XML Processing)
-- XML-based J2EE deployment descriptors
-- JAXB (Java Architecture for XML Binding)
+**Sun Microsystems pushed XML for Java:** They built JAXP (Java API for XML Processing) into the standard library, made XML-based J2EE deployment descriptors mandatory for enterprise applications, and created JAXB (Java Architecture for XML Binding) to generate Java classes from XML schemas.
 
-**IBM promoted XML for enterprise:**
-- WebSphere XML tooling
-- XML database products
-- Industry consortium participation
+**IBM promoted XML for enterprise:** They invested heavily in WebSphere XML tooling, developed XML database products, and actively participated in industry consortiums to establish XML as the enterprise standard.
 
 **The SOAP explosion (2000-2003):**
 
 XML's killer app (and eventual albatross) was SOAP - Simple Object Access Protocol. Microsoft and IBM heavily promoted SOAP as the future of distributed computing, positioning it as the successor to CORBA and DCOM.
 
-**SOAP promised:**
-- Language-neutral RPC
-- HTTP transport (firewall-friendly)
-- Automatic code generation from WSDL
-- Enterprise-grade features (security, transactions, reliability)
+**SOAP promised** language-neutral RPC that would work across any platform, HTTP transport that could traverse firewalls, automatic code generation from WSDL definitions, and enterprise-grade features like security, transactions, and reliability built right in.
 
-**SOAP delivered:**
-- Massive XML payloads for simple function calls
-- Complex tooling requirements (WSDL, code generators)
-- 50+ WS-* specifications (WS-Security, WS-ReliableMessaging, etc.)
-- Interoperability nightmares despite "standard" protocols
+**SOAP delivered** massive XML payloads just to call simple functions, complex tooling requirements with WSDL compilers and code generators, over 50 WS-* specifications (WS-Security, WS-ReliableMessaging, WS-AtomicTransaction, and dozens more), and interoperability nightmares despite supposedly "standard" protocols.
 
 {pagebreak}
 
@@ -181,19 +167,11 @@ But XML's complexity became its downfall. The problem wasn't any single feature 
 
 **Query layer (built-in):** XPath as query language for selecting nodes. XQuery as SQL-like language for XML. XSLT for transformation and templating.
 
-**Protocol layer (built-in):**
-- SOAP (Simple Object Access Protocol)
-- WSDL (Web Services Description Language)
-- WS-Security, WS-ReliableMessaging, WS-AtomicTransaction
-- 50+ WS-* specifications
+**Protocol layer (built-in):** SOAP (Simple Object Access Protocol), WSDL (Web Services Description Language), WS-Security, WS-ReliableMessaging, WS-AtomicTransaction, and over 50 additional WS-* specifications.
 
 **The architectural problem:** Every XML parser had to support this entire stack. You couldn't use XML without dealing with namespaces. You couldn't validate without learning XSD. You couldn't query without XPath.
 
-**The result:**
-- XML parsers: 50,000+ lines of code
-- XSD validators: Complex type systems rivaling programming languages
-- SOAP toolkits: Megabytes of libraries just to call a remote function
-- Learning curve: Months to master the ecosystem
+**The result:** XML parsers ballooned to 50,000+ lines of code to handle the entire specification. XSD validators implemented type systems as complex as programming languages themselves. SOAP toolkits required megabytes of libraries just to call a remote function. The learning curve stretched to months before developers could claim mastery of the ecosystem.
 
 **Specific pain points:**
 
@@ -272,12 +250,7 @@ var person = {
 };
 ```
 
-**Key insight:** This notation was:
-- Already in JavaScript engines (browsers everywhere)
-- Minimal syntax (no closing tags)
-- Easy to parse (recursive descent parser is ~500 lines)
-- Human-readable
-- Machine-friendly
+**Key insight:** This notation was already in JavaScript engines running in browsers everywhere. The minimal syntax eliminated closing tags. Parsing was easy - a recursive descent parser fit in ~500 lines of code. It remained human-readable for debugging while being machine-friendly for processing.
 
 {pagebreak}
 ### The Same Data in JSON
@@ -470,17 +443,9 @@ Despite the name ("Asynchronous JavaScript and XML"), JSON became the dominant d
 
 **Real-world impact:**
 
-By 2007:
-- Google Maps API officially supported JSON responses
-- Yahoo APIs defaulted to JSON
-- Flickr API offered JSON alongside XML
-- Twitter API (launched 2006) was JSON-first
+By 2007, the industry had shifted decisively. Google Maps API officially supported JSON responses. Yahoo APIs defaulted to JSON. Flickr API offered JSON alongside XML. Twitter API, launched in 2006, was JSON-first from day one.
 
-The transition was swift because JSON solved real pain points:
-- 60%+ bandwidth reduction
-- 10x+ parsing performance improvement
-- Native JavaScript integration
-- No XML parser library required
+The transition was swift because JSON solved real pain points: 60%+ bandwidth reduction over XML, 10x+ parsing performance improvement, native JavaScript integration without any libraries, and no XML parser dependency whatsoever.
 
 **The turning point:** When Google - the largest web company - chose JSON over XML for their flagship AJAX applications, the industry followed. XML remained for documents and configuration, but for APIs carrying data, JSON won decisively.
 
@@ -534,11 +499,7 @@ MongoDB, CouchDB, and other NoSQL databases chose JSON-like formats:
 }
 ```
 
-**Why JSON for databases:**
-- Schema flexibility (add fields without migrations)
-- Direct JavaScript integration
-- Document model matches JSON structure
-- Query results are already in API format
+**Why JSON for databases:** Schema flexibility meant developers could add fields without running migrations - just insert documents with new properties and the database accepted them. Direct JavaScript integration eliminated the object-relational mapping layer entirely. The document model matched JSON structure naturally, so what you stored was what you queried. Most compellingly, query results were already in API format - fetch from MongoDB, send to client, no transformation needed.
 
 ### 4. Configuration Files
 
@@ -800,12 +761,7 @@ Now we reach the core problem. JSON won because it was simple. But that simplici
 
 Is `age` a string or a number? Both are valid JSON. The parser accepts both. Your application crashes when it expects a number.
 
-**Real-world consequences:**
-- API breaking changes go undetected
-- Invalid data passes validation
-- Runtime errors instead of compile-time checks
-- Documentation is separate from data format
-- Client-server contract is implicit, not explicit
+**Real-world consequences:** API breaking changes go undetected until they hit production. Invalid data passes validation because there is no validation. Runtime errors replace compile-time checks. Documentation lives separately from the data format itself. The client-server contract remains implicit rather than explicit, relying on convention and hope rather than enforcement.
 
 ### 2. No Date/Time Type
 
@@ -921,10 +877,7 @@ JSON is text-based. Binary data must be encoded:
 }
 ```
 
-**Problems:**
-- Base64 encoding increases size by ~33%
-- Additional encoding/decoding overhead
-- Not efficient for large binary files
+**Problems:** Base64 encoding increases size by ~33% compared to raw binary. Additional encoding and decoding overhead slows processing. The approach simply isn't efficient for large binary files like images or videos.
 
 ### 6. Verbose for Large Datasets
 
