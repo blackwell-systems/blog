@@ -59,11 +59,7 @@ GET    /users/search?q=alice        # Search (not really RESTful)
 {"jsonrpc": "2.0", "method": "searchUsers", "params": {"query": "alice", "filters": {"verified": true}}, "id": 4}
 ```
 
-**Why JSON-RPC fits user management:**
-- `followUser()` is an action, not a resource
-- `searchUsers()` with complex filtering is a function call
-- Batch requests: get user + followers + following in one call
-- WebSocket support for real-time user status updates
+**Why JSON-RPC fits user management:** The action-oriented nature of user management reveals itself when you consider operations like `followUser()` - this is fundamentally an action, not a resource manipulation. Complex operations like `searchUsers()` with multi-field filtering become natural function calls rather than awkward URL parameters. JSON-RPC's batch request support lets clients fetch a user, their followers, and their following list in a single round-trip. For real-time features like presence indicators or live notifications, WebSocket transport provides bidirectional communication that REST's request-response model cannot match.
 
 This completes the **protocol layer** for our User API.
 
@@ -207,19 +203,11 @@ processOrder(orderId)   // Touches: 5 microservices across 3 databases
 
 ### The RPC Renaissance
 
-RPC isn't new - it dates to the 1980s (Sun RPC, CORBA). But modern RPC protocols learned from past failures:
+RPC isn't new - it dates to the 1980s (Sun RPC, CORBA). But modern RPC protocols learned from past failures.
 
-**Old RPC problems:**
-- Complex specifications (CORBA, SOAP)
-- Tight coupling to programming languages
-- Poor tooling
-- Verbose XML payloads
+**Old RPC struggled with complexity:** CORBA and SOAP demanded heavyweight specifications that tightly coupled implementations to specific programming languages. Tooling was poor, requiring specialized infrastructure, and XML payloads bloated network traffic. These protocols were technically complete but practically burdensome.
 
-**Modern RPC solutions:**
-- Simple specifications (JSON-RPC 2.0 is 8 pages)
-- Language-agnostic
-- Excellent tooling
-- Efficient formats (JSON, Protocol Buffers)
+**Modern RPC embraced simplicity:** JSON-RPC 2.0 fits on 8 pages. The specification is language-agnostic, working anywhere JSON works. Excellent libraries exist for every major language, and efficient formats like JSON and Protocol Buffers keep payloads lean. The shift from comprehensive to minimal mirrors the broader architectural pattern we've seen throughout this book.
 
 **Evolution of RPC Protocols Timeline:**
 
@@ -1032,7 +1020,7 @@ func main() {
 **Python client:** Similar pattern using `requests` library. See [companion repository](https://github.com/blackwell-systems/you-dont-know-json) for complete implementation.
 
 {height: 85%}
-![JSON-RPC Request/Response Lifecycle](chapter-06-json-rpc-diagram-2-light--depreciated.png)
+![JSON-RPC Request/Response Lifecycle](chapter-06-json-rpc-diagram-2-light--deprecated.png)
 {width: 85%}
 
 ---
@@ -2251,18 +2239,9 @@ JSON-RPC fills the gap between REST's resource orientation and gRPC's performanc
 - WebSockets for real-time bidirectional RPC
 - Middleware for auth, logging, rate limiting
 
-**When to use JSON-RPC:**
-+ Internal microservices (simplicity matters)
-+ Action-oriented domains (calculations, operations)
-+ Real-time applications (WebSocket support)
-+ Systems needing batch operations
-+ Rapid prototyping (no schema required)
+**When to use JSON-RPC:** Internal microservices benefit from JSON-RPC's simplicity - no need for the ceremonial REST conventions that public APIs require. Action-oriented domains like financial calculations, batch operations, or workflow automation map naturally to function calls rather than resource manipulations. Real-time applications gain bidirectional communication through WebSocket transport, enabling server-initiated updates without polling overhead. Systems requiring batch operations can bundle multiple calls into single requests, dramatically reducing network round-trips. Rapid prototyping proceeds faster without designing URL hierarchies or debating HTTP verb semantics - just define methods and call them.
 
-**When to avoid:**
-- Public REST APIs (standardization matters)
-- Resource-oriented CRUD (REST is more natural)
-- Performance-critical systems (use gRPC)
-- Need strong typing (use gRPC with Protobuf)
+**When to avoid JSON-RPC:** Public-facing REST APIs benefit from REST's widespread understanding and standardization - developers already know how to work with REST, and tooling like OpenAPI provides excellent documentation. Resource-oriented CRUD operations map naturally to HTTP verbs, making REST the more intuitive choice. Performance-critical systems processing millions of requests per second should consider gRPC, which offers significantly lower latency through HTTP/2 and Protocol Buffers. Applications requiring strong compile-time type safety benefit from gRPC's code generation from .proto definitions, catching type errors before runtime.
 
 **JSON-RPC demonstrates the modular pattern once again:** it's a protocol layer that works with any serialization format (JSON, MessagePack, CBOR) and any transport (HTTP, WebSockets, IPC). Each component evolves independently.
 
