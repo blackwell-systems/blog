@@ -113,7 +113,7 @@ For teams, this book works well for technical book clubs, provides reference pat
 
 **Use as a reference** after your initial read. Each chapter is designed to stand alone for quick consultation. Code examples are complete and runnable. Diagrams summarize key concepts visually. Appendices provide quick syntax references.
 
-All code examples are tested and verified working. The GitHub repository contains all code, organized by language, with setup instructions and regular updates. Mermaid diagrams are available in source form for your presentations. JSON Schema examples are production-ready. Testing templates from Chapter 13 can be adapted immediately.
+All code examples are tested and verified working. The GitHub repository at https://github.com/blackwell-systems/you-dont-know-json contains all code, organized by language, with setup instructions and regular updates. Mermaid diagrams are available in source form for your presentations. JSON Schema examples are production-ready. Testing templates from Chapter 13 can be adapted immediately.
 
 {pagebreak}
 
