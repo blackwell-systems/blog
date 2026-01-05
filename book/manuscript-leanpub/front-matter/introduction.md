@@ -47,15 +47,13 @@ These aren't theoretical problems, they're the daily reality of systems built wi
 
 This book takes you deep into JSON's ecosystem, teaching not just syntax but the architectural thinking that makes JSON systems reliable, secure, and scalable.
 
-### Part I: Foundation
+### Part I: The JSON Ecosystem
 
 **Chapter 1: The Origins** examines how JSON won the data format wars, displacing XML and becoming the web's standard data exchange format. You'll understand the architectural factors that drove JSON's success and why alternatives like XML ultimately failed.
 
 **Chapter 2: JSON and Modern Architecture** reveals the deeper patterns behind JSON's dominance. You'll learn how JSON's design aligns with microservices, loose coupling, and composability--the architectural principles that define modern software systems.
 
 **Chapter 3: JSON Schema** shows how to transform JSON from a loose text format into a reliable data contract system. You'll master validation, code generation, and documentation patterns that make JSON systems maintainable at scale.
-
-### Part II: Production Patterns
 
 **Chapter 4: Binary Formats** explores when and how to move beyond JSON. You'll learn MessagePack, CBOR, and other binary alternatives, understanding their trade-offs and migration strategies.
 
@@ -69,7 +67,7 @@ This book takes you deep into JSON's ecosystem, teaching not just syntax but the
 
 **Chapter 9: Lessons** synthesizes the architectural principles learned throughout the book, giving you frameworks for making technology decisions that extend far beyond JSON.
 
-### Part III: Advanced Applications
+### Part II: Building with JSON
 
 **Chapter 10: Human-Friendly Alternatives** compares JSON5, HJSON, YAML, and TOML for configuration use cases, helping you choose the right format for human-edited files.
 
@@ -77,7 +75,7 @@ This book takes you deep into JSON's ecosystem, teaching not just syntax but the
 
 **Chapter 12: Data Pipelines** shows how to build systems that process millions of JSON events per day with Kafka, proper validation, error handling, and monitoring.
 
-**Chapter 13: Testing** covers comprehensive testing strategies for JSON systems öschema-based testing, contract testing, security testing, performance testing, and fuzz testing that finds edge cases.
+**Chapter 13: Testing** covers comprehensive testing strategies for JSON systems - schema-based testing, contract testing, security testing, performance testing, and fuzz testing that finds edge cases.
 
 **Chapter 14: Beyond JSON** looks ahead to emerging alternatives and helps you evaluate when JSON is the right choice versus newer formats like Protocol Buffers or emerging standards.
 
