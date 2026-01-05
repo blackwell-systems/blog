@@ -333,6 +333,24 @@ No XML parser library needed. No SAX vs DOM decision. Just two functions.
 | **2020+** | JSON Schema, JSONB, JSONL | Complete modular ecosystem |
 | | JSON ecosystem mature | Production-ready tooling |
 
+{blurb, class: information}
+**Why Licensing Matters: The JSMin Cautionary Tale**
+
+Crockford made two major contributions to JavaScript: JSON (universally adopted) and JSMin (largely forgotten). The difference? Licensing.
+
+JSON had no restrictions--just a public domain specification anyone could implement. JSMin included the clause "The Software shall be used for Good, not Evil." This joke had serious consequences:
+
+**Corporate rejection:** IBM, Google, and Yahoo couldn't get legal clearance for "Evil" being undefined. Their lawyers rejected the ambiguous restriction.
+
+**Forced reimplementation:** Rather than use JSMin, the JavaScript community built alternatives: UglifyJS (BSD), Terser (BSD), Closure Compiler (Apache), esbuild (MIT). Every major minifier today uses a proper open source license.
+
+**Market lesson:** JSMin was first and technically sound, but licensing friction killed adoption. Today, most developers have never heard of it. Meanwhile, less-restricted alternatives became industry standards.
+
+**The contrast:** JSON succeeded partly because it was unrestricted. No licensing barriers, no usage restrictions, no legal ambiguity. Any company could adopt it without legal review. JSMin's technical merit couldn't overcome its licensing burden.
+
+Adoption barriers--even silly ones--can kill excellent technology. JSON's unrestricted specification wasn't just generous; it was strategically essential for universal adoption.
+{/blurb}
+
 ---
 
 ## Why JSON Won
