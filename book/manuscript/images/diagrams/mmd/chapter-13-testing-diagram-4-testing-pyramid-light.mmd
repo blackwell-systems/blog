@@ -1,0 +1,15 @@
+graph TB
+    e2e["<b>E2E TESTS</b><br/>━━━━━━━━━━━━━━━━━━<br/><br/><b>Full System Validation</b><br/><br/>✓ Browser automation<br/>✓ Multi-step user flows<br/>✓ Production environment"]
+    
+    contract["<b>CONTRACT TESTS</b><br/>━━━━━━━━━━━━━━━━━━━━━━━━<br/><br/><b>API Boundary Verification</b><br/><br/>✓ Consumer expectations<br/>✓ Provider compliance<br/>✓ Pact contracts"]
+    
+    integration["<b>INTEGRATION TESTS</b><br/>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━<br/><br/><b>Component Interaction</b><br/><br/>✓ Endpoints + Database<br/>✓ Authentication flows<br/>✓ Error handling"]
+    
+    unit["<b>UNIT TESTS</b><br/>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━<br/><br/><b>Isolated Function Verification</b><br/><br/>✓ JSON Schema validation<br/>✓ Business logic<br/>✓ Response serialization"]
+    
+    unit --> integration --> contract --> e2e
+    
+    style unit fill:#D4E8D4,stroke:#3a5a3a,stroke-width:3px,color:#2c2c2c
+    style integration fill:#C8D8E8,stroke:#3a4a5a,stroke-width:3px,color:#2c2c2c
+    style contract fill:#E8D4C0,stroke:#5a4a3a,stroke-width:3px,color:#2c2c2c
+    style e2e fill:#E8C8C8,stroke:#5a3a3a,stroke-width:3px,color:#2c2c2c
