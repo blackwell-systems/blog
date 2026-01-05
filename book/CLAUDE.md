@@ -217,6 +217,43 @@ graph LR
     style module1 fill:#3A4A5C,stroke:#6b7280,stroke-width:2px,stroke-dasharray: 5 5,color:#f0f0f0
 ```
 
+## Unicode/Mojibake Issues in Leanpub
+
+**Problem:** Leanpub's PDF generator doesn't handle certain Unicode characters properly, resulting in mojibake corruption in the generated PDFs.
+
+**Common corruptions found:**
+```
+"ΓÇö" → Em-dash (—)           # Should be double hyphen (--)
+"ΓëÑ" → Greater-than-equal (≥) # Should be (>=)
+"Γåæ" → Right arrow (→)        # Should be (->)
+"ΓÇÖ" → Smart apostrophe (')   # Should be straight quote (')
+"ΓÜá∩╕Å" → Warning emoji (⚠️)    # Should be text "WARNING:"
+```
+
+**Solution:** Replace Unicode characters with ASCII equivalents in `manuscript-leanpub/` chapters:
+- Em-dash (—) → double hyphen (--)
+- Arrows (→ ↓ ←) → ASCII (-> v <-)
+- Math symbols (≥) → ASCII (>=)
+- Emoji (⚠️) → text ("WARNING:")
+- Smart quotes/apostrophes (', ') → straight quotes (', ")
+
+**How to find and fix:**
+```bash
+# Search for mojibake patterns
+grep -n "Γ" manuscript-leanpub/chapters/*.md
+
+# Common locations:
+# - Chapter 3: API versioning examples (->)
+# - Chapter 12: Architecture diagrams (arrows in code blocks)
+# - Chapter 13: Warning messages (⚠️ emoji)
+# - Chapter 2, 14: Rust function signatures (->)
+```
+
+**Prevention:** 
+- Use ASCII equivalents in Leanpub manuscript from the start
+- Keep Unicode in blog version (`manuscript/`) for web display
+- Only `manuscript-leanpub/` needs ASCII conversion
+
 ## Troubleshooting
 
 **Diagram too tall for PDF**:
