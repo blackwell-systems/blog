@@ -45,7 +45,7 @@ While database binary formats optimize storage and queries, API binary formats o
 
 **The key distinction:** Text encoding represents data as ASCII/UTF-8 characters like `{"id":123}` producing readable text. Binary encoding represents data as compact bytes like `0x82 0xa2 id 0x7b` for efficient binary representation.
 
-**Architecture shift:** Text-only encoding → Binary encoding options, Failed standards → Modular ecosystem success, One verbose approach → Multiple optimized formats
+**Architecture shift:** Text-only encoding -> Binary encoding options, Failed standards -> Modular ecosystem success, One verbose approach -> Multiple optimized formats
 
 This chapter focuses on **MessagePack** (universal binary JSON) and **CBOR** (IETF-standardized format), comparing them with Protocol Buffers and analyzing real bandwidth cost savings.
 
