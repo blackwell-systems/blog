@@ -861,103 +861,9 @@ const balance = await connection.getBalance(publicKey);
 
 ![Lessons Applied to Future Formats](chapter-14-future-diagram-5-hub-light.png)
 
-## The Future: Lessons Applied
-
-JSON succeeded because it matched 2000s architectural patterns (modularity, simplicity, loose coupling). What patterns will drive the next decade?
-
-### Current Trends (2025)
-
-**JSON remains dominant** across web APIs where REST and GraphQL both use JSON as their primary data format, configuration files where package.json and tsconfig.json define project metadata, edge computing platforms like Cloudflare Workers that optimize for JavaScript compatibility, and blockchain systems where JSON-RPC serves as the standard interface for interacting with distributed ledgers. These domains prioritize simplicity, debuggability, and universal tooling support over raw performance.
-
-**Binary formats continue growing in specific niches** where their trade-offs make sense. Protocol Buffers dominates internal microservices communication where type safety and performance matter more than human readability. Apache Avro owns Kafka pipelines where schema evolution and streaming integration are essential. CBOR (Concise Binary Object Representation) fits IoT devices with severe bandwidth and power constraints. MessagePack serves gaming and real-time systems that need faster serialization than JSON but can't justify Protobuf's schema overhead.
-
-### Near Future (2026-2028)
-
-**Predictions based on architectural zeitgeist:**
-
-**1. Hybrid approaches become standard**
-- JSON for external APIs (simplicity, compatibility)
-- Protobuf for internal services (performance, type safety)
-- No single format dominates - use the right tool per problem
-
-**2. Edge computing drives JSON growth**
-- Serverless everywhere (Lambda, Workers, Functions)
-- JavaScript at edge (Deno, Bun adoption)
-- JSON native format for edge platforms
-
-**3. Schema tooling improves**
-- JSON Schema + TypeScript integration deepens
-- OpenAPI 3.1 adoption (JSON Schema compatibility)
-- VS Code/IDEs provide real-time validation
-
-**4. WASM gets better JSON support**
-- Interface Types enable structured data
-- Still slower than native, but gap narrows
-- JSON remains boundary format
-
-### The Architectural Zeitgeist Continues
-
-**2000s:** Modularity → JSON succeeded  
-**2010s:** Type safety + performance → Protobuf/GraphQL emerged  
-**2020s+:** Edge + serverless → JSON thrives again
-
-**Why JSON persists:**
-- Matches current architecture (serverless, edge, distributed)
-- Browser native (PWAs, SPAs remain dominant)
-- Developer ergonomics (debug, test, understand easily)
-- Ecosystem maturity (20+ years of tools, libraries, knowledge)
-
-**Data Format Evolution Matching Architecture Timeline:**
-
-| Era | Architectural Pattern | Key Data Formats | Core Technologies | Philosophy |
-|-----|----------------------|-------------------|-------------------|-----------|
-| 1990s | Monolithic | XML, SOAP | Built-in everything, Enterprise SOA | Integrated solutions |
-| 2000s | Modular | JSON, REST | Composable ecosystem, Microservices | Loose coupling |
-| 2010s | Type-Safe | Protocol Buffers, gRPC | Code generation, Service mesh | Strong contracts |
-| 2020s+ | Distributed | JSON (edge, serverless), Protobuf (internal), GraphQL (flexible) | Hybrid architectures | Right tool per context |
-
-### The Core Lesson
-
-JSON didn't succeed by being "the best" format. It succeeded by:
-1. **Matching its era's patterns** (modular, composable)
-2. **Staying minimal** (let ecosystem fill gaps)
-3. **Prioritizing simplicity** (easy to implement, debug, teach)
-4. **Enabling evolution** (independent extensions)
-
-Future formats that succeed will follow the same principles: match contemporary architecture, stay focused, enable ecosystem growth.
-
-![Lessons from JSON Success](chapter-14-future-diagram-12-hub-light.png)
-
-## Conclusion: Choose Tools for Problems, Not Trends
-
-The question is never "Should I switch from JSON to Protobuf?" The question is "What problem am I solving?"
-
-**JSON remains the default choice** when simplicity matters—which is most of the time. Use JSON when debugging is essential during development and troubleshooting, since text-based formats let engineers inspect payloads directly without special tools. Browser compatibility makes JSON mandatory for public APIs unless you're willing to add JavaScript libraries that negate binary format benefits. Rapid iteration during prototyping and experimentation favors JSON's flexibility—no schemas to update, no code to regenerate, just modify the data structure and continue.
-
-**Protocol Buffers justifies its complexity** when type safety is critical in financial or healthcare systems where runtime type errors could be catastrophic. Performance becomes essential at high throughput—when you're processing millions of requests per second, Protobuf's 50% size reduction and faster parsing translate to real infrastructure cost savings. Schema evolution complexity with 1000+ clients requires Protobuf's field numbering guarantees that changes won't break existing clients. Internal services where you control both producer and consumer can adopt Protobuf without the integration friction that external APIs face.
-
-**Apache Avro fits naturally** in the Kafka ecosystem where Schema Registry provides centralized schema management. Streaming pipelines benefit from Avro's self-describing format that embeds schemas alongside data. Rapid schema evolution in environments with frequent changes works better with Avro's runtime resolution than Protobuf's compile-time requirements. Self-describing data for archives and data lakes makes Avro ideal since the schema travels with the data, enabling future systems to understand historical records without external dependencies.
-
-**GraphQL solves specific frontend problems** when complex frontend needs require multiple views of the same data—the product listing needs minimal fields while the detail page needs everything. Mobile bandwidth matters enough to justify GraphQL's query language when optimizing requests can significantly improve user experience. Flexible queries become essential when client requirements change frequently and you want to avoid versioning multiple REST endpoints—letting clients control data selection reduces backend API churn.
-
-**Staying with JSON makes sense** when your current solution works fine and you don't have measurable problems that alternatives would solve. Team capacity constraints matter—if your team doesn't have time for migration, schema definition, code generation setup, and the learning curve of new formats, JSON's familiarity wins. The benefits must justify the complexity; don't migrate to binary formats just because they're "better"—migrate when you have specific problems (performance, type safety, schema evolution) that JSON demonstrably can't solve.
-
-The zeitgeist lesson applies to all technology choices: understand the architectural patterns of your era, choose tools that match those patterns, and remember that "best practice" changes as architecture evolves.
-
-**Typical Migration Journey Timeline:**
-
-| Phase | Technology Focus | Key Actions | Performance Level |
-|-------|------------------|-------------|-------------------|
-| **Phase 1** | **JSON** | Start with JSON, rapid development | 10K requests/sec |
-| **Phase 2** | **Binary JSON** | Add MessagePack, optimize hot paths | 50K requests/sec |
-| **Phase 3** | **Mixed Approach** | JSON (external APIs), MessagePack (internal) | 200K requests/sec |
-| **Phase 4** | **Protobuf** | Migrate critical services, schema enforcement | 1M requests/sec |
-| **Phase 5** | **Polyglot** | JSON (web), Protobuf (services), GraphQL (mobile) | Optimized per use case |
-
-![When to Migrate from JSON](chapter-14-future-diagram-10-light.png)
-{pagebreak}
-
 ## Technology Landscape: 2025 and Beyond
+
+JSON succeeded because it matched 2000s architectural patterns (modularity, simplicity, loose coupling). Understanding what patterns will drive the next decade helps us predict which formats will thrive and which will fade.
 
 ### Current State (2025): JSON's Universal Dominance
 
@@ -1057,7 +963,75 @@ In the long term, beyond 2029, treat JSON like TCP/IP - fundamental infrastructu
 
 The future of JSON is boring, and that's exactly what we want. Technologies that become infrastructure win by becoming invisible. JSON's greatest achievement won't be replacing Protocol Buffers or inspiring some future format. It will be becoming so ubiquitous that developers in 2030 don't even think about it, just like we don't think about HTTP or TCP/IP today. That's the hallmark of truly successful technology - becoming invisible by becoming universal.
 
+### The Architectural Zeitgeist: Why Timing Matters
+
+JSON's success wasn't accidental - it matched the architectural evolution of its era. Understanding this pattern helps predict which formats will succeed next.
+
+**1990s - Monolithic Era:** XML and SOAP dominated because they matched the architectural pattern. Enterprise SOA bundled everything together - security, transactions, reliability all in one protocol stack. XML's verbosity wasn't a bug; it was a feature that supported the "build everything in" philosophy. When your architecture is monolithic, your data format can be too.
+
+**2000s - Modular Era:** JSON succeeded by matching the shift to modularity. REST APIs broke monoliths into independent services. Microservices architectures emerged. JSON thrived because it was minimal and composable - just data structure, no opinions about RPC mechanisms or security. The ecosystem filled gaps independently: JSON Schema for validation, JWT for security, JSON-RPC for RPC when needed. This modularity matched the architectural zeitgeist perfectly.
+
+**2010s - Type-Safe Era:** Protocol Buffers and gRPC emerged as systems scaled and type safety became critical. Large companies with hundreds of microservices needed compile-time guarantees that changes wouldn't break systems. The architectural pattern shifted toward strong contracts and code generation. Protobuf matched this era's needs: explicit schemas, code generation, backwards compatibility guarantees. GraphQL emerged for similar reasons - frontend complexity demanded typed queries and strong contracts.
+
+**2020s+ - Distributed Era:** Edge computing, serverless functions, and globally distributed systems drive current architecture. JSON thrives again because it matches this pattern. Edge functions run JavaScript, making JSON native. Serverless architectures need simple serialization without heavy runtimes. Global distribution requires human-debuggable formats when troubleshooting across regions. Meanwhile, Protocol Buffers serves internal high-performance paths where type safety justifies complexity.
+
+The pattern is clear: successful formats match their era's architectural patterns. Future formats will succeed by understanding contemporary architecture, not by being objectively "better."
+
+**Data Format Evolution Matching Architecture Timeline:**
+
+| Era | Architectural Pattern | Key Data Formats | Core Technologies | Philosophy |
+|-----|----------------------|-------------------|-------------------|-----------|
+| 1990s | Monolithic | XML, SOAP | Built-in everything, Enterprise SOA | Integrated solutions |
+| 2000s | Modular | JSON, REST | Composable ecosystem, Microservices | Loose coupling |
+| 2010s | Type-Safe | Protocol Buffers, gRPC | Code generation, Service mesh | Strong contracts |
+| 2020s+ | Distributed | JSON (edge, serverless), Protobuf (internal), GraphQL (flexible) | Hybrid architectures | Right tool per context |
+
+![Lessons from JSON Success](chapter-14-future-diagram-12-hub-light.png)
+
+### The Core Lesson: Match Patterns, Not Benchmarks
+
+JSON didn't succeed by being "the best" format. It succeeded by:
+
+1. **Matching its era's patterns** - Modular architecture needed modular data formats
+2. **Staying minimal** - Let ecosystem fill gaps rather than bundling everything
+3. **Prioritizing simplicity** - Easy to implement, debug, and teach wins over optimal performance
+4. **Enabling evolution** - Independent extensions allow ecosystem to adapt without coordination
+
+Future formats that succeed will follow these same principles. They'll match contemporary architecture, stay focused on core problems, and enable ecosystems to grow around them.
+
+The zeitgeist lesson applies to all technology choices: understand your era's architectural patterns, choose tools that align with those patterns, and remember that "best practice" changes as architecture evolves.
+
+### Migration Journey: When to Move Beyond JSON
+
+Not every project needs to follow the full migration path, but understanding the typical progression helps you identify where you are and what comes next.
+
+**Typical Migration Timeline:**
+
+| Phase | Technology Focus | Key Actions | Performance Level |
+|-------|------------------|-------------|-------------------|
+| **Phase 1** | **JSON** | Start with JSON, rapid development | 10K requests/sec |
+| **Phase 2** | **Binary JSON** | Add MessagePack, optimize hot paths | 50K requests/sec |
+| **Phase 3** | **Mixed Approach** | JSON (external APIs), MessagePack (internal) | 200K requests/sec |
+| **Phase 4** | **Protobuf** | Migrate critical services, schema enforcement | 1M requests/sec |
+| **Phase 5** | **Polyglot** | JSON (web), Protobuf (services), GraphQL (mobile) | Optimized per use case |
+
+Most projects never leave Phase 1. JSON at 10K requests/second handles the vast majority of systems. Only migrate when you have measurable problems that JSON can't solve - high infrastructure costs from bandwidth, production incidents from type errors, or schema evolution breaking clients.
+
+![When to Migrate from JSON](chapter-14-future-diagram-10-light.png)
+
 ## Conclusion: Choose Tools for Problems, Not Trends
+
+The question facing every architect isn't "Should I switch from JSON to Protobuf?" It's "What problem am I solving, and does JSON solve it?"
+
+**JSON remains the default choice** when simplicity matters—which is most of the time. Use JSON when debugging is essential during development and troubleshooting, since text-based formats let engineers inspect payloads directly without special tools. Browser compatibility makes JSON mandatory for public APIs unless you're willing to add JavaScript libraries that negate binary format benefits. Rapid iteration during prototyping and experimentation favors JSON's flexibility—no schemas to update, no code to regenerate, just modify the data structure and continue.
+
+**Protocol Buffers justifies its complexity** when type safety is critical in financial or healthcare systems where runtime type errors could be catastrophic. Performance becomes essential at high throughput—when you're processing millions of requests per second, Protobuf's 50% size reduction and faster parsing translate to real infrastructure cost savings. Schema evolution complexity with 1000+ clients requires Protobuf's field numbering guarantees that changes won't break existing clients. Internal services where you control both producer and consumer can adopt Protobuf without the integration friction that external APIs face.
+
+**Apache Avro fits naturally** in the Kafka ecosystem where Schema Registry provides centralized schema management. Streaming pipelines benefit from Avro's self-describing format that embeds schemas alongside data. Rapid schema evolution in environments with frequent changes works better with Avro's runtime resolution than Protobuf's compile-time requirements. Self-describing data for archives and data lakes makes Avro ideal since the schema travels with the data, enabling future systems to understand historical records without external dependencies.
+
+**GraphQL solves specific frontend problems** when complex frontend needs require multiple views of the same data—the product listing needs minimal fields while the detail page needs everything. Mobile bandwidth matters enough to justify GraphQL's query language when optimizing requests can significantly improve user experience. Flexible queries become essential when client requirements change frequently and you want to avoid versioning multiple REST endpoints—letting clients control data selection reduces backend API churn.
+
+**Staying with JSON makes sense** when your current solution works fine and you don't have measurable problems that alternatives would solve. Team capacity constraints matter—if your team doesn't have time for migration, schema definition, code generation setup, and the learning curve of new formats, JSON's familiarity wins. The benefits must justify the complexity; don't migrate to binary formats just because they're "better"—migrate when you have specific problems (performance, type safety, schema evolution) that JSON demonstrably can't solve.
 
 JSON thrived by embracing incompleteness and matching its era's architectural patterns. The future belongs to formats that understand their niche, enable ecosystems, and align with how we build software.
 
