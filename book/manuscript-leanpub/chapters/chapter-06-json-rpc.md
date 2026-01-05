@@ -28,7 +28,7 @@ Now we examine another gap: **protocol conventions**. JSON defines data structur
 
 **JSON's approach:** Lightweight protocol conventions (JSON-RPC) - optional structure
 
-**Architecture shift:** Heavyweight protocol → Lightweight convention, Built-in tooling → Simple libraries, Enterprise features → Essential simplicity
+**Architecture shift:** Heavyweight protocol -> Lightweight convention, Built-in tooling -> Simple libraries, Enterprise features -> Essential simplicity
 {/blurb}
 
 REST dominates web APIs, but its resource-oriented model doesn't fit every problem. How do you represent `transfer_funds(from, to, amount)` as HTTP verbs and URLs? You could force it into `POST /transfers` with a body, but you're fighting the paradigm.
