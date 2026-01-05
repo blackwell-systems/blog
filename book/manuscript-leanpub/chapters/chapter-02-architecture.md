@@ -25,13 +25,13 @@ Understanding this distinction explains why JSON's apparent "weaknesses" became 
 
 **J2EE** (Java 2 Platform, Enterprise Edition) provided complete application servers with built-in persistence, messaging, transactions, and security. EJB containers handled everything from deployment to lifecycle management.
 
-**XML** offered a complete data format ecosystem with validation (XSD), transformation (XSLT), querying (XPath), and protocols (SOAP) all bundled conceptually. Learn one technology, get them all—whether you needed them or not.
+**XML** offered a complete data format ecosystem with validation (XSD), transformation (XSLT), querying (XPath), and protocols (SOAP) all bundled conceptually. Learn one technology, get them all--whether you needed them or not.
 
 **The philosophy:** Build complete, integrated systems. Everything should work together out of the box. Don't make developers assemble pieces.
 
 **2000s-2010s: The Modular Revolution**
 
-**Dominant patterns:** Microservices, loose coupling, and dependency injection defined the era. The Unix philosophy experienced a revival—"do one thing well" became the mantra for building composable systems.
+**Dominant patterns:** Microservices, loose coupling, and dependency injection defined the era. The Unix philosophy experienced a revival--"do one thing well" became the mantra for building composable systems.
 
 **Technologies that embodied this:**
 **REST APIs** used existing HTTP verbs as the protocol, let developers choose their payload format (typically JSON), required no framework, and encouraged composing your own stack from independent pieces.
@@ -211,7 +211,7 @@ Each component does one thing: `cat` reads files, `grep` filters lines, `cut` ex
 
 **Contrast with monolithic approach:** A single "log analyzer" program handles filtering, extraction, sorting, and counting in one codebase. Updating one feature means rebuilding the entire program. Want different extraction logic? Modify the source code. Need to replace one function? Rewrite the whole tool.
 
-**Unix's modularity enabled** independent evolution of each tool. You could replace `grep` with faster alternatives like `ack` or `ripgrep`, compose new workflows without programming, and use tools from different eras together—1970s `cat` happily pipes to 2020s `jq`.
+**Unix's modularity enabled** independent evolution of each tool. You could replace `grep` with faster alternatives like `ack` or `ripgrep`, compose new workflows without programming, and use tools from different eras together--1970s `cat` happily pipes to 2020s `jq`.
 
 **The parallel to JSON** is direct: JSON is the data flowing through pipes (like Unix passes text). JSON Schema filters invalid data (like grep). jq extracts and transforms (like cut/sort). MessagePack optimizes the pipe (like compression).
 
@@ -710,7 +710,7 @@ app.use(validateMiddleware(schema));
 
 **Technologies that succeeded:** Microsoft Visual Studio as all-in-one IDE. J2EE application servers. Oracle database including everything. XML as complete data ecosystem.
 
-**Why this worked:** Technology changed slowly enough that companies could invest once and use the same tools for years. The smaller ecosystem meant fewer alternatives to evaluate, and enterprise budgets supported buying complete solutions. Teams could specialize deeply—dedicating entire departments to mastering technologies like XML.
+**Why this worked:** Technology changed slowly enough that companies could invest once and use the same tools for years. The smaller ecosystem meant fewer alternatives to evaluate, and enterprise budgets supported buying complete solutions. Teams could specialize deeply--dedicating entire departments to mastering technologies like XML.
 
 ### 2000s: "Let Me Choose"
 
@@ -759,7 +759,7 @@ When evaluating any technology, ask:
 
 **Counterexample: Some frameworks resist modularity:**
 
-**GraphQL (comprehensive):** Core includes query language, type system, introspection, and subscriptions. Less modular than REST plus JSON with more integration. Still successful? Yes, but for different reason—solves specific pain point.
+**GraphQL (comprehensive):** Core includes query language, type system, introspection, and subscriptions. Less modular than REST plus JSON with more integration. Still successful? Yes, but for different reason--solves specific pain point.
 
 **Why GraphQL succeeds despite being more monolithic:** Pain point is severe with REST over-fetching and under-fetching. Integration is the feature combining type system with queries. Ecosystem still remains modular with Apollo vs Relay vs Hasura.
 
@@ -779,7 +779,7 @@ Understanding architectural zeitgeist helps you:
 
 **3. Make better architectural decisions:** Choose patterns that align with team culture. Don't force monolithic approaches in modular era or vice versa.
 
-**4. Understand why good technologies fail.** Technology failure is often not technical but architectural—a mismatch with prevailing patterns. XML wasn't bad; it was simply out of step with 2000s thinking about how systems should be built.
+**4. Understand why good technologies fail.** Technology failure is often not technical but architectural--a mismatch with prevailing patterns. XML wasn't bad; it was simply out of step with 2000s thinking about how systems should be built.
 
 ### The Pattern Repeats
 
@@ -787,7 +787,7 @@ This isn't unique to JSON vs XML:
 
 **Monolithic → Modular transitions** appear throughout computing history: mainframes gave way to Unix pipes which evolved into containers; comprehensive IDEs yielded to text editors with composable tools, then re-emerged as modular IDEs like VS Code; monolithic frameworks fragmented into libraries which spawned microservice architectures; XML's completeness succumbed to JSON's minimalism, which spawned a modular ecosystem.
 
-**The cycle may repeat.** Today's extreme modularity (1.5 million npm packages) may trigger a pendulum swing back toward integration—a framework renaissance. The pattern: modularity creates fragmentation, and fragmentation eventually creates desire for integration.
+**The cycle may repeat.** Today's extreme modularity (1.5 million npm packages) may trigger a pendulum swing back toward integration--a framework renaissance. The pattern: modularity creates fragmentation, and fragmentation eventually creates desire for integration.
 
 **The lesson:** Architectural patterns are cyclical. Today's modular revolution may become tomorrow's fragmentation problem, spawning a new integration movement. Understanding the cycle helps you adapt.
 

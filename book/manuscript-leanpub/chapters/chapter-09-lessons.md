@@ -425,7 +425,7 @@ Let's be honest about modularity's costs.
 
 **Recognize architectural assumptions:**
 
-**If you're building in 2024:** Loose coupling is expected—don't fight it. Modular components are standard—embrace it. Composability is valued—design for it.
+**If you're building in 2024:** Loose coupling is expected--don't fight it. Modular components are standard--embrace it. Composability is valued--design for it.
 
 **If zeitgeist shifts:** Recognize when assumptions change. Adapt to new patterns. Don't cling to "the old way."
 
@@ -501,7 +501,7 @@ When zeitgeist shifts, successful technologies shift with it. Unsuccessful ones 
 
 ### Bringing It All Together
 
-**You now know JSON**—not just the syntax, but why it succeeded through architectural alignment, how the ecosystem filled gaps with modular solutions, when to use what through decision frameworks, and what it teaches us about pattern survival.
+**You now know JSON**--not just the syntax, but why it succeeded through architectural alignment, how the ecosystem filled gaps with modular solutions, when to use what through decision frameworks, and what it teaches us about pattern survival.
 
 **More importantly:** You understand how technologies reflect their era's architectural thinking. This lens applies far beyond JSON.
 

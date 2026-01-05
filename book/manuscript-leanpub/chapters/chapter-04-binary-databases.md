@@ -200,7 +200,7 @@ JSONB uses a decomposed binary format:
 
 **Benefits:** No reparsing on queries since the data is already decomposed. Keys are stored once per object. Direct access to nested fields happens via offset jumping. The structure is indexable using GIN or GiST indexes.
 
-**Trade-off:** Inserts are slower due to decomposition overhead. Storage is slightly larger than compressed JSON text. Key order isn't preserved—keys are sorted for efficiency instead.
+**Trade-off:** Inserts are slower due to decomposition overhead. Storage is slightly larger than compressed JSON text. Key order isn't preserved--keys are sorted for efficiency instead.
 
 ### Querying JSONB
 
