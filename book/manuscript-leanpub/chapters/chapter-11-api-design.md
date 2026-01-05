@@ -258,12 +258,9 @@ Consider a simple user listing endpoint:
 GET /users
 ```
 
-Without pagination, this works fine when you have 50 users. But what happens when you have 50,000? Or 50 million? The problems compound:
+Without pagination, this works fine when you have 50 users. But what happens when you have 50,000? Or 50 million? The problems compound across every layer of your system.
 
-- **Server memory**: Loading massive result sets into memory can crash your application
-- **Network transfer**: Large responses are slow and expensive
-- **Client processing**: Browsers and mobile apps can't handle huge JSON arrays
-- **Database performance**: `SELECT * FROM users` without limits kills database performance
+**Server memory** becomes the first bottleneck--loading massive result sets into memory can crash your application before it even sends a response. **Network transfer** turns into a performance nightmare as large responses take seconds to transmit, wasting bandwidth and money. **Client processing** hits the wall when browsers and mobile apps try to parse and render huge JSON arrays, often freezing the UI. **Database performance** collapses as `SELECT * FROM users` without limits forces full table scans that lock resources and starve other queries.
 
 Pagination isn't optional for production APIs--it's a fundamental requirement.
 
