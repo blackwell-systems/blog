@@ -85,7 +85,7 @@ In Chapter 1, we introduced a User API for a social platform. We have basic JSON
 
 **What we need:**
 - Email format validation
-- Numeric ranges (followers ≥ 0)
+- Numeric ranges (followers >= 0)
 - Required fields (username, email)
 - String constraints (username 3-20 chars)
 - Read-only fields (id, verified, created)
