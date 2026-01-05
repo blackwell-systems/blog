@@ -83,12 +83,7 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 }
 ```
 
-**Critical security considerations:**
-- Algorithm confusion attacks (RS256 -> HS256)
-- Token substitution (using valid token for wrong user)
-- Weak secrets (brute-forceable HMAC keys)
-- Missing expiration checks
-- JWT injection in user profile updates
+**Critical security considerations:** Algorithm confusion attacks where attackers exploit mismatched algorithm expectations between RS256 and HS256. Token substitution attempts using valid tokens for wrong users by manipulating claims. Weak secrets enabling brute-force attacks on HMAC keys. Missing expiration checks allowing expired tokens to remain valid indefinitely. JWT injection attacks embedding malicious tokens in user profile updates or other fields.
 
 This completes the **security layer** for our User API - from basic JSON to production-ready authenticated system.
 
@@ -109,13 +104,7 @@ Modern applications send JSON everywhere:
 }
 ```
 
-**Questions JSON can't answer:**
-- Is this data from a trusted source?
-- Has it been tampered with in transit?
-- Should it be encrypted?
-- How do we verify the sender's identity?
-
-Standard JSON provides **zero** answers. It's the application's responsibility to handle security.
+**Questions JSON can't answer:** Is this data from a trusted source? Has it been tampered with in transit? Should it be encrypted? How do we verify the sender's identity? Standard JSON provides **zero** answers to these fundamental security questions. It's the application's responsibility to handle security.
 
 ### What XML Had (For Better or Worse)
 
