@@ -1,4 +1,5 @@
 front-matter/introduction.md
+parts/part-01-ecosystem.md
 chapters/chapter-01-origins.md
 chapters/chapter-02-architecture.md
 chapters/chapter-03-json-schema.md
@@ -8,6 +9,7 @@ chapters/chapter-06-json-rpc.md
 chapters/chapter-07-json-lines.md
 chapters/chapter-08-security.md
 chapters/chapter-09-lessons.md
+parts/part-02-practice.md
 chapters/chapter-10-human-friendly.md
 chapters/chapter-11-api-design.md
 chapters/chapter-12-data-pipelines.md
