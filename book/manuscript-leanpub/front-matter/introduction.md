@@ -51,7 +51,7 @@ This book takes you deep into JSON's ecosystem, teaching not just syntax but the
 
 **Chapter 1: The Origins** examines how JSON won the data format wars, displacing XML and becoming the web's standard data exchange format. You'll understand the architectural factors that drove JSON's success and why alternatives like XML ultimately failed.
 
-**Chapter 2: JSON and Modern Architecture** reveals the deeper patterns behind JSON's dominance. You'll learn how JSON's design aligns with microservices, loose coupling, and composabilityΓÇöthe architectural principles that define modern software systems.
+**Chapter 2: JSON and Modern Architecture** reveals the deeper patterns behind JSON's dominance. You'll learn how JSON's design aligns with microservices, loose coupling, and composability--the architectural principles that define modern software systems.
 
 **Chapter 3: JSON Schema** shows how to transform JSON from a loose text format into a reliable data contract system. You'll master validation, code generation, and documentation patterns that make JSON systems maintainable at scale.
 
@@ -59,7 +59,7 @@ This book takes you deep into JSON's ecosystem, teaching not just syntax but the
 
 **Chapter 4: Binary Formats** explores when and how to move beyond JSON. You'll learn MessagePack, CBOR, and other binary alternatives, understanding their trade-offs and migration strategies.
 
-**Chapter 5: Binary APIs** covers gRPC, Protocol Buffers, and Apache ThriftΓÇöwhen to choose these alternatives to REST and JSON, and how to implement them effectively.
+**Chapter 5: Binary APIs** covers gRPC, Protocol Buffers, and Apache Thrift--when to choose these alternatives to REST and JSON, and how to implement them effectively.
 
 **Chapter 6: JSON-RPC** demonstrates how simple remote procedure calls can scale to handle millions of requests while maintaining the simplicity that makes JSON attractive.
 

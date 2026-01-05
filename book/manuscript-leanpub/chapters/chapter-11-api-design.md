@@ -4,7 +4,7 @@
 
 ---
 
-JSON became the dominant data exchange format for web APIs, but JSON itself is just syntaxΓÇöit tells you how to represent data, not how to design effective APIs. This chapter bridges that gap, exploring the patterns and conventions that emerged from real-world usage to make JSON-based APIs robust, scalable, and maintainable.
+JSON became the dominant data exchange format for web APIs, but JSON itself is just syntax--it tells you how to represent data, not how to design effective APIs. This chapter bridges that gap, exploring the patterns and conventions that emerged from real-world usage to make JSON-based APIs robust, scalable, and maintainable.
 
 The fundamental challenge is that HTTP and JSON together provide the building blocks but not the blueprint. You can send JSON over HTTP in countless ways, but only certain patterns lead to APIs that are intuitive for clients, reliable under load, and maintainable over time.
 
@@ -32,7 +32,7 @@ PATCH /api/users/123
 DELETE /api/users/123
 ```
 
-The difference isn't just stylisticΓÇöthe REST approach leverages HTTP semantics, enables caching, provides clear resource relationships, and follows patterns that millions of developers already understand.
+The difference isn't just stylistic--the REST approach leverages HTTP semantics, enables caching, provides clear resource relationships, and follows patterns that millions of developers already understand.
 
 This chapter examines seven critical areas where conventions transform basic JSON-over-HTTP into production-ready APIs: resource modeling, pagination strategies, error handling, versioning approaches, rate limiting, content negotiation, and security patterns.
 
@@ -43,7 +43,7 @@ This chapter examines seven critical areas where conventions transform basic JSO
 
 ## 1. REST API Fundamentals
 
-REST (Representational State Transfer) isn't a formal standardΓÇöit's a set of architectural principles that emerged from observing what made web APIs successful. While purist REST implementations are rare, REST-inspired patterns dominate modern API design because they align with how HTTP was designed to work.
+REST (Representational State Transfer) isn't a formal standard--it's a set of architectural principles that emerged from observing what made web APIs successful. While purist REST implementations are rare, REST-inspired patterns dominate modern API design because they align with how HTTP was designed to work.
 
 ### Resource-Oriented Thinking
 
@@ -265,7 +265,7 @@ Without pagination, this works fine when you have 50 users. But what happens whe
 - **Client processing**: Browsers and mobile apps can't handle huge JSON arrays
 - **Database performance**: `SELECT * FROM users` without limits kills database performance
 
-Pagination isn't optional for production APIsΓÇöit's a fundamental requirement.
+Pagination isn't optional for production APIs--it's a fundamental requirement.
 
 ### Pattern 1: Offset-Based Pagination
 
@@ -905,7 +905,7 @@ Consistent error formats transform error handling from a tedious per-endpoint ta
 
 ## 4. API Versioning Strategies
 
-APIs evolve constantlyΓÇönew features, changed behavior, improved performance, security fixes. But you can't break existing clients when you ship updates. API versioning provides a migration path that keeps old clients working while enabling new features. The versioning strategy you choose affects everything from URL structure to client complexity to operational overhead.
+APIs evolve constantly--new features, changed behavior, improved performance, security fixes. But you can't break existing clients when you ship updates. API versioning provides a migration path that keeps old clients working while enabling new features. The versioning strategy you choose affects everything from URL structure to client complexity to operational overhead.
 
 ### The Breaking Change Problem
 
@@ -1183,7 +1183,7 @@ Adapt semantic versioning principles for APIs:
 - **PATCH**: Bug fixes (no API surface changes)
 
 ```javascript
-// v1.0.0 ΓåÆ v1.1.0: Added optional field (backward compatible)
+// v1.0.0 -> v1.1.0: Added optional field (backward compatible)
 {
   "id": 123,
   "name": "Alice",
@@ -1191,7 +1191,7 @@ Adapt semantic versioning principles for APIs:
   "createdAt": "2024-01-15T10:30:00Z"  // New field
 }
 
-// v1.1.0 ΓåÆ v2.0.0: Removed field (breaking change)
+// v1.1.0 -> v2.0.0: Removed field (breaking change)
 {
   "id": 123,
   "firstName": "Alice",
@@ -1957,11 +1957,11 @@ Content negotiation enables APIs to serve optimal representations while maintain
 
 ## 7. Security Patterns
 
-Security isn't an afterthought in API designΓÇöit's a foundational requirement that affects every aspect of your implementation. Building on the JWT patterns from Chapter 8, this section covers the essential security layers that protect your API and its users from common attacks and vulnerabilities.
+Security isn't an afterthought in API design--it's a foundational requirement that affects every aspect of your implementation. Building on the JWT patterns from Chapter 8, this section covers the essential security layers that protect your API and its users from common attacks and vulnerabilities.
 
 ### HTTPS Enforcement
 
-HTTPS isn't optional for APIsΓÇöit's the foundation of API security. All data should be encrypted in transit:
+HTTPS isn't optional for APIs--it's the foundation of API security. All data should be encrypted in transit:
 
 ```javascript
 // Redirect HTTP to HTTPS in production
@@ -2385,7 +2385,7 @@ const securityRateLimit = rateLimit({
 app.use('/auth/', securityRateLimit);
 ```
 
-These security patterns create multiple layers of protection that work together to secure your API. Remember that security is an ongoing processΓÇöregularly audit your code, update dependencies, and stay informed about new vulnerabilities and best practices.
+These security patterns create multiple layers of protection that work together to secure your API. Remember that security is an ongoing process--regularly audit your code, update dependencies, and stay informed about new vulnerabilities and best practices.
 
 
 ![API Security Layers](chapter-11-api-design-diagram-13-light.png)
@@ -2396,7 +2396,7 @@ These security patterns create multiple layers of protection that work together 
 
 This chapter has covered the essential patterns that transform basic JSON-over-HTTP into production-ready APIs. By implementing REST principles, standardized pagination, consistent error handling, thoughtful versioning, rate limiting, content negotiation, and comprehensive security, you create APIs that are not only functional but delightful for developers to use.
 
-The patterns presented here aren't theoreticalΓÇöthey've been battle-tested across thousands of production APIs from companies like GitHub, Stripe, and Twitter. Choose the approaches that fit your specific requirements, but always prioritize consistency and developer experience.
+The patterns presented here aren't theoretical--they've been battle-tested across thousands of production APIs from companies like GitHub, Stripe, and Twitter. Choose the approaches that fit your specific requirements, but always prioritize consistency and developer experience.
 
 As you design your APIs, remember that today's internal API often becomes tomorrow's public API. Building with these patterns from the start saves significant refactoring effort and provides a foundation that can scale with your needs.
 
