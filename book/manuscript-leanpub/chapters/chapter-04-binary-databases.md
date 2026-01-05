@@ -35,7 +35,7 @@ For configuration files and API responses under 100KB, this is fine. But when st
 
 **JSON's approach:** Database-specific binary formats (JSONB, BSON) succeeded where XML's failed - modular, database-optimized solutions
 
-**Architecture shift:** Text-only → Binary storage with text compatibility, Failed standards → Database-integrated formats, No binary data type → Extended types (BSON)
+**Architecture shift:** Text-only -> Binary storage with text compatibility, Failed standards -> Database-integrated formats, No binary data type -> Extended types (BSON)
 {/blurb}
 
 Database binary JSON formats solve this at the storage layer - maintaining JSON's structure and flexibility while dramatically improving query speed and storage efficiency.
