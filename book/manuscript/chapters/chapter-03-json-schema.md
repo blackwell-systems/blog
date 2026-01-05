@@ -1400,8 +1400,8 @@ Old data with shorter strings fails.
 
 **2. API versioning:**
 ```
-/v1/users  → user-schema-v1.json
-/v2/users  → user-schema-v2.json
+/v1/users  -> user-schema-v1.json
+/v2/users  -> user-schema-v2.json
 ```
 
 **3. Feature flags in schema:**
