@@ -274,7 +274,7 @@ services:
       - POSTGRES_JSON_EXTENSION=enabled
 ```
 
-**Each container:** Single responsibility. Replace independently (node:18 → node:20). Different data formats inside (doesn't matter). Communicate via standard protocols (HTTP + JSON).
+**Each container:** Single responsibility. Replace independently (node:18 -> node:20). Different data formats inside (doesn't matter). Communicate via standard protocols (HTTP + JSON).
 
 **The parallel:** Docker containers are independent like JSON ecosystem components. Compose via well-defined interfaces like JSON plus HTTP. Replace without affecting others like swapping MessagePack for JSON.
 
@@ -785,7 +785,7 @@ Understanding architectural zeitgeist helps you:
 
 This isn't unique to JSON vs XML:
 
-**Monolithic → Modular transitions** appear throughout computing history: mainframes gave way to Unix pipes which evolved into containers; comprehensive IDEs yielded to text editors with composable tools, then re-emerged as modular IDEs like VS Code; monolithic frameworks fragmented into libraries which spawned microservice architectures; XML's completeness succumbed to JSON's minimalism, which spawned a modular ecosystem.
+**Monolithic -> Modular transitions** appear throughout computing history: mainframes gave way to Unix pipes which evolved into containers; comprehensive IDEs yielded to text editors with composable tools, then re-emerged as modular IDEs like VS Code; monolithic frameworks fragmented into libraries which spawned microservice architectures; XML's completeness succumbed to JSON's minimalism, which spawned a modular ecosystem.
 
 **The cycle may repeat.** Today's extreme modularity (1.5 million npm packages) may trigger a pendulum swing back toward integration--a framework renaissance. The pattern: modularity creates fragmentation, and fragmentation eventually creates desire for integration.
 
@@ -808,10 +808,10 @@ This chapter established the architectural framework for understanding the rest 
    - Modular: Incomplete, composable, flexible
 
 3. **JSON's "weaknesses" were strategic**
-   - No validation → JSON Schema emerged
-   - No binary format → MessagePack, CBOR emerged
-   - No protocol → JSON-RPC, REST conventions emerged
-   - No security → JWT, JWS, JWE emerged
+   - No validation -> JSON Schema emerged
+   - No binary format -> MessagePack, CBOR emerged
+   - No protocol -> JSON-RPC, REST conventions emerged
+   - No security -> JWT, JWS, JWE emerged
 
 4. **Modularity enables ecosystem evolution**
    - Each component evolves independently

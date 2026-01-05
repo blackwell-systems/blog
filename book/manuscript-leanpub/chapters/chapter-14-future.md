@@ -813,7 +813,7 @@ struct User {
 }
 
 #[wasm_bindgen]
-pub fn process_user(json_str: &str) → String {
+pub fn process_user(json_str: &str) -> String {
     // Parse JSON string to Rust struct
     let user: User = serde_json::from_str(json_str).unwrap();
     
