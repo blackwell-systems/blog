@@ -50,11 +50,7 @@ Now we face the **scalability problem**: our User API has grown to 10 million us
 ]
 ```
 
-**Problems:**
-- Must load all 10M users into memory (30+ GB RAM)
-- Cannot start processing until complete file is parsed
-- Single corrupt user breaks entire export
-- Cannot resume if process crashes at user 8 million
+**Problems:** Standard JSON arrays demand loading all 10 million users into memory - easily 30+ GB of RAM that most systems lack. Processing cannot begin until the complete file is parsed, creating frustrating delays. A single corrupt user record anywhere in the array breaks the entire export, forcing you to fix and restart from the beginning. When the process crashes at user 8 million after hours of work, there's no way to resume - you must start over from user zero.
 
 **JSON Lines approach (scales):**
 ```jsonl
@@ -233,11 +229,7 @@ stream.on('line', (line) => {
 ```
 
 **Contrast with SAX (40+ lines minimum):**
-- No handler classes
-- No state tracking
-- No event matching
-- No tag nesting management
-- Just: read line, parse JSON, process
+The simplicity is striking: no handler classes to implement, no state tracking between events, no event matching logic, no tag nesting management. The entire pattern reduces to: read line, parse JSON, process. That's it.
 
 **The modular brilliance:** JSON Lines didn't require new parsers or language features. It's pure convention - use existing tools (readline, JSON.parse) in a streaming pattern.
 
@@ -1409,11 +1401,7 @@ setInterval(() => {
 ```
 
 {blurb, class: information}
-**Fault Tolerance Benefits:**
-- Corrupted lines are isolated (don't affect other lines)
-- Processing is resumable (checkpoint at any line)
-- Append-only writes are safe (no file locking needed)
-- Partial results available (process what you can)
+**Fault Tolerance Benefits:** JSON Lines provides natural fault tolerance through line isolation - a corrupted line affects only itself, leaving all other records intact and processable. Processing becomes resumable at any point by checkpointing the last successfully processed line number, enabling recovery from crashes without starting over. Append-only writes require no file locking since each write is an atomic line addition, simplifying concurrent producer scenarios. Partial results remain available even when processing fails midway, allowing you to extract value from what was successfully processed rather than losing everything to a single failure.
 {/blurb}
 
 ---
@@ -1661,11 +1649,7 @@ await pipeline(
 );
 ```
 
-**Benefits:**
-- Composable (mix and match transforms)
-- Automatic backpressure (built into pipeline)
-- Memory efficient (constant memory usage)
-- Reusable components
+**Benefits:** Stream pipelines are composable - you can mix and match transformation stages like Unix pipes, creating custom processing chains from reusable components. Backpressure handling is automatic, built into Node.js streams, ensuring fast producers don't overwhelm slow consumers. Memory efficiency remains constant regardless of dataset size since only the current chunk resides in memory. Each pipeline stage becomes a reusable component that can be shared across different processing workflows.
 
 ### Production Monitoring for Streaming
 
