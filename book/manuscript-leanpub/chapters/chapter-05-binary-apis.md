@@ -367,10 +367,7 @@ res.send(encoded);
 - MessagePack: $30/month per 10K users
 - **Savings: $17/month or $204/year per 10K users**
 
-**Battery impact:**
-- Smaller payloads = less radio time
-- Faster parsing = less CPU time
-- MessagePack reduces battery drain by ~15-20% for API-heavy apps
+**Battery impact:** Mobile devices pay a double tax for text JSON - radio transmission time drains battery proportional to payload size, and CPU parsing time consumes additional power. MessagePack addresses both: smaller payloads reduce radio time, and binary parsing is computationally cheaper than text parsing. For API-heavy mobile applications, this translates to approximately 15-20% reduction in battery drain from network operations.
 
 **Implementation (mobile client):**
 ```javascript
@@ -391,13 +388,7 @@ async function fetchUser(userId) {
 }
 ```
 
-**When to use MessagePack for our User API:**
-- ✓ Mobile apps (bandwidth and battery critical)
-- ✓ High-volume endpoints (user feed, search results)
-- ✓ Large response payloads (user profiles with posts)
-- ✗ Web browsers (JSON simpler, no MessagePack native)
-- ✗ Debug/development (JSON human-readable)
-- ✗ Third-party integrations (JSON universal)
+**When to use MessagePack for our User API:** Mobile applications represent the strongest use case - bandwidth and battery consumption are critical to user experience, and users on cellular networks pay real costs for data transfer. High-volume endpoints like user feeds and search results multiply the bandwidth savings across millions of requests. Large response payloads, such as user profiles with embedded posts and media metadata, see the most significant absolute byte savings. However, web browsers present challenges since they lack native MessagePack support, requiring JavaScript libraries that add complexity. During development and debugging, JSON's human readability accelerates troubleshooting compared to hex-dumping binary formats. Third-party integrations expect JSON universally - asking partners to support MessagePack creates friction that usually isn't worth the bandwidth savings.
 
 **Hybrid approach:**
 ```javascript
@@ -1839,31 +1830,13 @@ Binary JSON formats solve the performance limitations of text JSON for API and d
 
 ### Decision Matrix
 
-**Choose MessagePack if:**
-+ General-purpose binary serialization
-+ Maximum speed and size efficiency
-+ Microservice communication
-+ Message queues, caching layers
-+ Wide language support needed
+**Choose MessagePack** for general-purpose binary serialization where maximum speed and size efficiency matter. It excels in microservice communication, message queues, and caching layers where the overhead of schema management outweighs the benefits. MessagePack's wide language support - with mature libraries for JavaScript, Go, Python, Rust, Java, and dozens more - makes it ideal for polyglot systems where different services use different languages.
 
-**Choose CBOR if:**
-+ IoT or embedded systems
-+ Security applications (WebAuthn, COSE)
-+ Need IETF standard
-+ Deterministic encoding required
+**Choose CBOR** when you need IETF standardization or work in specialized domains. IoT and embedded systems benefit from CBOR's self-describing format and compact encoding on resource-constrained devices. Security applications like WebAuthn and COSE rely on CBOR's deterministic encoding guarantees, where the same data always produces identical bytes - critical for cryptographic signatures.
 
-**Choose Protocol Buffers if:**
-+ Maximum performance (size + speed)
-+ Schema enforcement critical
-+ Long-term data storage
-+ RPC systems (gRPC)
+**Choose Protocol Buffers** when schema enforcement and maximum performance justify the added complexity. Applications storing data long-term benefit from Protocol Buffers' explicit versioning and backward compatibility guarantees. RPC systems using gRPC get Protocol Buffers' type safety and code generation, catching errors at compile time. The trade-off: you must maintain .proto schema files and regenerate code when schemas change.
 
-**Stick with JSON if:**
-+ Human readability critical (configs, logs)
-+ Debugging frequency high
-+ Payloads small (<10 KB)
-+ Performance acceptable
-+ Simplicity trumps efficiency
+**Stick with JSON** when human readability provides more value than the 30-40% size savings binary formats offer. Configuration files and application logs should remain JSON - engineers need to read and edit them directly. High debugging frequency means the time saved by reading JSON responses outweighs the bandwidth costs. Small payloads under 10 KB see minimal absolute savings, and when performance is already acceptable, the operational complexity of binary formats isn't justified. Sometimes simplicity trumps efficiency.
 
 ### What We Learned
 
