@@ -42,7 +42,7 @@ All three parse successfully. But which is correct? Your application crashes at 
 
 **JSON's approach:** External validation layer (JSON Schema) - separate standard
 
-**Architecture shift:** Built-in validation → External validation, Complex type system → Simple constraint-based, Monolithic → Modular
+**Architecture shift:** Built-in validation -> External validation, Complex type system -> Simple constraint-based, Monolithic -> Modular
 {/blurb}
 
 JSON Schema solves this. It's a vocabulary for defining the structure, types, and constraints of JSON documents. Think of it as TypeScript for JSON - adding type safety and validation without changing the underlying format.
