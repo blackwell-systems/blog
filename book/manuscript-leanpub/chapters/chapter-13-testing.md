@@ -2726,7 +2726,7 @@ func FuzzJSONSchemaValidation(f *testing.F) {
 // Run fuzzing with: go test -fuzz=FuzzJSONParser -fuzztime=30s
 ```
 
-Go's built-in fuzzer explores millions of input variations automatically, seeding from your initial corpus and mutating inputs to discover edge cases. The round-trip property test (parse ΓåÆ marshal ΓåÆ parse) catches subtle bugs where the parser accepts input that can't be re-encoded, indicating internal inconsistencies. Running these tests for 30 seconds generates thousands of test cases that would take days to write manually.
+Go's built-in fuzzer explores millions of input variations automatically, seeding from your initial corpus and mutating inputs to discover edge cases. The round-trip property test (parse -> marshal -> parse) catches subtle bugs where the parser accepts input that can't be re-encoded, indicating internal inconsistencies. Running these tests for 30 seconds generates thousands of test cases that would take days to write manually.
 
 **JavaScript fuzzing with custom generators:**
 
