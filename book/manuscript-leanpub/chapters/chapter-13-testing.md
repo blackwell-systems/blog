@@ -861,7 +861,7 @@ Contract testing bridges the gap between unit tests and full integration tests, 
 
 While schema-based testing validates data structures and contract testing ensures service compatibility, API testing focuses on the behavior of individual endpoints under various conditions. This section applies the API design patterns from Chapter 11--pagination, error handling, versioning, rate limiting--showing how to test that these production patterns work correctly under stress and edge cases. Effective API testing covers the full spectrum from unit-level endpoint testing to comprehensive integration scenarios.
 
-{height: 40%}
+{height: 55%}
 ![API Testing Strategy](chapter-13-testing-diagram-4-testing-pyramid-light.png)
 
 ### Unit Testing HTTP Endpoints
