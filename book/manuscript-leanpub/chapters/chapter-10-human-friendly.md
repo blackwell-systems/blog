@@ -49,7 +49,7 @@ Why is the port 8080? Why 5000ms timeout? Future developers have no context. In 
 }
 ```
 
-Add a new field, forget to remove the trailing comma → `Unexpected token }`. This breaks CI, wastes 30 minutes debugging what should be a 30-second change.
+Add a new field, forget to remove the trailing comma -> `Unexpected token }`. This breaks CI, wastes 30 minutes debugging what should be a 30-second change.
 
 **Everything quoted:**
 ```json
@@ -637,7 +637,7 @@ Each format occupies a different niche. The right choice depends on your team, t
 
 Switching configuration formats mid-project requires planning. Here's how to migrate safely.
 
-### JSON → JSON5 (Easiest)
+### JSON -> JSON5 (Easiest)
 
 
 !["Migrating from JSON to JSON5 - Four-Step Process](chapter-10-human-friendly-diagram-5-light.png)
@@ -674,7 +674,7 @@ const config = JSON5.parse(fs.readFileSync('./config.json5', 'utf8'));
 
 **Benefit:** JSON is valid JSON5, so migration can be gradual.
 
-### JSON → YAML
+### JSON -> YAML
 
 **Use converter:**
 ```bash
@@ -692,7 +692,7 @@ json2yaml config.json > config.yaml
 - Quote ambiguous values (`no`, `yes`, `on`, `off`)
 - Verify indentation consistency
 
-### JSON → TOML
+### JSON -> TOML
 
 **Flatten structure into sections:**
 
