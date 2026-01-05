@@ -183,9 +183,9 @@ RPC treats all cardinalities equally as function parameters:
 
 REST URLs often mirror database tables:
 ```
-/users     → SELECT * FROM users
-/posts     → SELECT * FROM posts
-/comments  → SELECT * FROM comments
+/users     ΓåÆ SELECT * FROM users
+/posts     ΓåÆ SELECT * FROM posts
+/comments  ΓåÆ SELECT * FROM comments
 ```
 **Problem:** Database refactoring forces API changes. Split a table? Your URL structure breaks. Add a join table? Need new endpoints.
 
@@ -320,7 +320,7 @@ A request without `id` - fire-and-forget:
 No response expected or sent. Useful for logging, metrics, non-critical updates.
 
 
-![JSON-RPC Request Types](chapter-06-json-rpc-diagram-1-light--depreciated.png)
+![JSON-RPC Request Types](chapter-06-json-rpc-diagram-1-light)
 {width: 85%}
 
 
@@ -2275,3 +2275,4 @@ Chapter 7 explores JSON Lines - another modular solution that enables streaming 
 **Related:**
 - [Understanding Protocol Buffers: Part 1](#)
 - [Serialization Explained](#)
+

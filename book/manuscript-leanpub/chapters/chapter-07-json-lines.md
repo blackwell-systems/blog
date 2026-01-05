@@ -730,10 +730,7 @@ split -l 10000 data.jsonl chunk_
 # Results: chunk_aa, chunk_ab, chunk_ac (10K lines each)
 ```
 
-
 ![JSON Lines Unix Integration](chapter-07-json-lines-diagram-2-light.png)
-{width: 85%}
-
 
 ---
 
@@ -2143,3 +2140,4 @@ Chapter 8 explores how the ecosystem addressed this - JWT for authentication tok
 
 **Related:**
 - [Serialization Explained](#)
+

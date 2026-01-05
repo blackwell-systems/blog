@@ -575,15 +575,9 @@ console.log(user);
 
 **Uber:** Kafka pipelines with Avro. Schema evolution without coordination. Petabytes of data per day.
 
-**Netflix:**
-- Keystone data pipeline (Kafka + Avro)
-- Real-time analytics
-- Schema registry for compatibility
+**Netflix:** Their Keystone data pipeline runs on Kafka with Avro for real-time analytics. Schema registry ensures compatibility across hundreds of services producing and consuming events.
 
-**Confluent (Kafka company):**
-- Schema Registry as managed service
-- Enterprise Kafka standard
-- Compatibility checking enforced
+**Confluent (Kafka company):** They provide Schema Registry as a managed service, making it the enterprise Kafka standard with compatibility checking enforced at the infrastructure level.
 
 The pattern: Avro dominates **streaming data pipelines** where schema evolution is frequent and services evolve independently. Protobuf dominates **request/response APIs** where type safety and performance are critical.
 
@@ -791,11 +785,7 @@ async function handleRequest(request) {
 }
 ```
 
-**Why JSON dominates edge:**
-- JavaScript engines optimized for JSON
-- No build/deploy overhead (instant updates)
-- Universal format (works everywhere)
-- Debugging at edge (readable logs)
+**Why JSON dominates edge:** JavaScript engines are already optimized for JSON parsing at runtime. There's no build or deploy overhead - edge functions update instantly without recompilation. JSON works as a universal format across all edge providers. Most critically, debugging at the edge requires readable logs, and JSON's text format makes troubleshooting distributed edge networks tractable.
 
 ### WebAssembly: The JSON Boundary Challenge
 
@@ -853,11 +843,7 @@ const balance = await connection.getBalance(publicKey);
 // Uses JSON-RPC under the hood
 ```
 
-**Why JSON-RPC won in blockchain:**
-- Browser compatibility (wallets run in browsers)
-- Simple integration (any language)
-- Universal tooling (Postman, curl work immediately)
-- Debug-friendly (readable requests/responses)
+**Why JSON-RPC won in blockchain:** Browser compatibility was essential since most wallets run as browser extensions or web apps. Simple integration meant any language could interact with smart contracts without specialized libraries. Universal tooling like Postman and curl worked immediately without custom blockchain clients. Most importantly, the debug-friendly nature of readable JSON requests and responses made troubleshooting smart contract calls tractable for developers learning blockchain concepts.
 
 ![Lessons Applied to Future Formats](chapter-14-future-diagram-5-hub-light.png)
 

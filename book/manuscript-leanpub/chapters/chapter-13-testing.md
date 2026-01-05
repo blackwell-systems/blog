@@ -861,8 +861,8 @@ Contract testing bridges the gap between unit tests and full integration tests, 
 
 While schema-based testing validates data structures and contract testing ensures service compatibility, API testing focuses on the behavior of individual endpoints under various conditions. This section applies the API design patterns from Chapter 11--pagination, error handling, versioning, rate limiting--showing how to test that these production patterns work correctly under stress and edge cases. Effective API testing covers the full spectrum from unit-level endpoint testing to comprehensive integration scenarios.
 
+{height: 40%}
 ![API Testing Strategy](chapter-13-testing-diagram-4-testing-pyramid-light.png)
-{width: 70%}
 
 ### Unit Testing HTTP Endpoints
 
@@ -2659,7 +2659,7 @@ func FuzzJSONParser(f *testing.F) {
     f.Add(`{"null_value":null}`)
     f.Add(`{"boolean":true,"false_val":false}`)
     f.Add(`{"float":3.14159,"negative":-42}`)
-    f.Add(`{"unicode":"Hello, Σ╕ûτòî"}`)
+    f.Add(`{"unicode":"Hello, ╬úΓòò├╗╧ä├▓├«"}`)
     
     f.Fuzz(func(t *testing.T, input string) {
         var result interface{}
@@ -3306,4 +3306,5 @@ Fuzz testing and CI/CD integration complete the comprehensive testing strategy f
 We've now covered the complete JSON ecosystem: its architecture, all major technical layers, practical application patterns, and testing strategies. One question remains: **where is JSON going?** Chapter 14 looks forward - emerging patterns, JSON's limitations that still lack solutions, and the technologies that may eventually succeed it.
 
 **Next:** Chapter 14 - The Future of JSON and Beyond
+
 
