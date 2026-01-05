@@ -121,14 +121,14 @@ But you're working against the model. The endpoints become verb-heavy, the resou
 **Transactions:** How do you express "transfer funds AND log transaction AND notify user" as atomic operation?  
 **Complex queries:** Search with 10 filters becomes `/users?filter1=x&filter2=y&filter3=z...` (URL length limits).  
 **Multi-resource actions:** "Archive project AND notify team AND update dashboard" spans multiple resources.  
-**Stateful operations:** "Start build → monitor progress → retrieve artifacts" doesn't map to CRUD.
+**Stateful operations:** "Start build -> monitor progress -> retrieve artifacts" doesn't map to CRUD.
 
 **In JSON-RPC, these are just function calls:**
 - `batchDeleteUsers(ids: [1,2,3,...])`
 - `transferFunds(from, to, amount, notify: true)`
 - `searchUsers(filters: {...})`
 - `archiveProject(projectId, options: {...})`
-- `startBuild(params) → pollBuildStatus(buildId) → getArtifacts(buildId)`
+- `startBuild(params) -> pollBuildStatus(buildId) -> getArtifacts(buildId)`
 
 The paradigm matches the problem naturally.
 {/blurb}
@@ -152,7 +152,7 @@ Now reads use POST. Not cacheable, not idempotent.
 
 **Option 2:** Create temporary "selection" resources
 ```http
-POST /user-selections → {"selection_id": "abc"}
+POST /user-selections -> {"selection_id": "abc"}
 GET /user-selections/abc/users
 ```
 Two requests to get some users. Absurdly complex.
