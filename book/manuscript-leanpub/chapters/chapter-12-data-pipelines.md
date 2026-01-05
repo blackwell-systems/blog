@@ -2279,8 +2279,8 @@ Real-world JSON pipelines combine all the patterns we've explored into complete 
 
 **Components:**
 ```
-Microservices → Filebeat → Kafka → Logstash → Elasticsearch → Kibana
-                  ↓
+Microservices -> Filebeat -> Kafka -> Logstash -> Elasticsearch -> Kibana
+                   |
               JSON Lines logs
 ```
 {height: "100%"}
@@ -2411,8 +2411,8 @@ output {
 
 **Components:**
 ```
-Web/Mobile Apps → API Gateway → Kafka → Flink → ClickHouse → Dashboard
-                                   ↓
+Web/Mobile Apps -> API Gateway -> Kafka -> Flink -> ClickHouse -> Dashboard
+                                    |
                                  Feature Store
 ```
 
@@ -2490,9 +2490,10 @@ public class UserEventProcessor extends DataStream<UserEvent> {
 
 **Components:**
 ```
-APIs → Airflow → Extract (JSON Lines) → dbt → Snowflake → BI Tools
-  ↓
-Dead Letter Queue ← Validation ← Transform
+APIs -> Airflow -> Extract (JSON Lines) -> dbt -> Snowflake -> BI Tools
+  |
+  v
+Dead Letter Queue <- Validation <- Transform
 ```
 
 **Implementation:**
@@ -2605,8 +2606,8 @@ extract_task >> transform_task >> dbt_run
 
 **Components:**
 ```
-PostgreSQL → Debezium → Kafka → Schema Registry → Consumer → BigQuery
-               ↓
+PostgreSQL -> Debezium -> Kafka -> Schema Registry -> Consumer -> BigQuery
+                |
          JSON change events
 ```
 
@@ -2677,9 +2678,10 @@ func main() {
 
 **Components:**
 ```
-Event Stream → Feature Engineering → Feature Store → Model Training
-      ↓              ↓                    ↓
-   JSON Events → Computed Features → Versioned Features → Models
+Event Stream -> Feature Engineering -> Feature Store -> Model Training
+      |               |                     |
+      v               v                     v
+   JSON Events -> Computed Features -> Versioned Features -> Models
 ```
 
 **Implementation:**
