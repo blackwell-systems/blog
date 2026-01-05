@@ -14,8 +14,8 @@ The architectural lens applied throughout this book comes from building systems 
 
 I'd love to hear from readers--whether you have questions about the book, want to share how you've applied these patterns, or just want to discuss data formats and architecture.
 
-**Website:** [https://blackwell.systems](https://blackwell.systems)  
-**Email:** dayna@blackwell.systems  
+**Website:** [https://blackwell-systems.com](https://blackwell-systems.com)  
+**Email:** dayna@blackwell-systems.com  
 **LinkedIn:** [linkedin.com/in/dayblackwell](https://linkedin.com/in/dayblackwell)  
 **GitHub:** [github.com/blackwellsystems](https://github.com/blackwellsystems)
 
@@ -55,12 +55,12 @@ Dayna is available for:
 ### Speaking Inquiries
 
 For conference talks, meetups, or podcast appearances:  
-**Email:** speaking@blackwell.systems
+**Email:** speaking@blackwell-systems.com
 
 ### Consulting Inquiries
 
 For architecture consulting, workshops, or technical advising:  
-**Email:** consulting@blackwell.systems
+**Email:** consulting@blackwell-systems.com
 
 ---
 
