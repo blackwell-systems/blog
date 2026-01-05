@@ -1766,11 +1766,11 @@ if (conn.metrics.encodingTime > baseline * 1.2) {
 - 30% faster message encoding on server
 - 25% faster decoding on mobile clients
 - Reduced battery drain on mobile (less CPU for parsing)
-- **p99 latency improved: 450ms → 320ms**
+- **p99 latency improved: 450ms -> 320ms**
 
 **Mobile impact (most significant):**
 - Cellular users saw largest improvement
-- Message load time: 2.1s → 1.3s on 3G
+- Message load time: 2.1s -> 1.3s on 3G
 - **Mobile crash rate reduced 15%** (memory pressure from parsing)
 
 **Lessons learned:**
