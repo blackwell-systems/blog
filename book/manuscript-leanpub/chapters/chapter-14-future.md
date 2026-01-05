@@ -364,10 +364,7 @@ message User {
 
 This system provides what JSON can't: **compile-time verification of compatibility**. Before deploying, run your tests against old message formats. If they compile and pass, compatibility is guaranteed.
 
-
-![Protobuf Schema Example](chapter-14-future-diagram-protobuf-schema-example-light.png)
-{height: 85%}
-
+![Protobuf Schema Example](chapter-14-future-diagram-protobuf-hub-light.png)
 
 ### Size Comparison: JSON vs Protobuf
 
@@ -551,7 +548,7 @@ console.log(user);
 4. Consumer reads message, extracts schema ID
 5. Consumer fetches schema 42 from registry (cached locally)
 6. Consumer decodes using reader schema (v2)
-7. Avro resolves differences (v1 -> v2 mapping)
+7. Avro resolves differences (v1 → v2 mapping)
 
 **Benefits:** Producers and consumers evolve independently. Schema compatibility enforced by registry. Bandwidth efficient since schema isn't repeated in every message. Full history of schema evolution. Can query registry for all versions.
 
@@ -754,8 +751,14 @@ components:
 
 **Adoption:** Still growing, but gaining traction in Kafka-heavy organizations.
 
-{height: 100%}
-![REST vs GraphQL vs gRPC](chapter-14-future-diagram-3-light.png)
+<!-- ![REST vs GraphQL vs gRPC](chapter-14-future-diagram-3-light.png) -->
+  | Aspect | REST + JSON | GraphQL | gRPC + Protobuf |
+  |--------|-------------|---------|-----------------|
+  | **Endpoints** | Multiple endpoints | Single endpoint | Multiple services<br/>Code-generated stubs |
+  | **Data fetching** | Over/under fetching<br/>Fixed responses | Exact data<br/>Client specifies fields | Type-safe<br/>Schema enforced |
+  | **Transport** | HTTP/1.1<br/>Request per resource | HTTP/1.1<br/>Multiple resources | HTTP/2<br/>Bidirectional streaming |
+  | **Caching** | URL-based | Complex, query-based | Not web-friendly<br/>gRPC-Web needed |
+
 
 ## JSON in New Contexts
 
@@ -810,7 +813,7 @@ struct User {
 }
 
 #[wasm_bindgen]
-pub fn process_user(json_str: &str) -> String {
+pub fn process_user(json_str: &str) → String {
     // Parse JSON string to Rust struct
     let user: User = serde_json::from_str(json_str).unwrap();
     
@@ -894,9 +897,9 @@ JSON succeeded because it matched 2000s architectural patterns (modularity, simp
 
 ### The Architectural Zeitgeist Continues
 
-**2000s:** Modularity -> JSON succeeded  
-**2010s:** Type safety + performance -> Protobuf/GraphQL emerged  
-**2020s+:** Edge + serverless -> JSON thrives again
+**2000s:** Modularity → JSON succeeded  
+**2010s:** Type safety + performance → Protobuf/GraphQL emerged  
+**2020s+:** Edge + serverless → JSON thrives again
 
 **Why JSON persists:**
 - Matches current architecture (serverless, edge, distributed)
@@ -945,20 +948,116 @@ The zeitgeist lesson applies to all technology choices: understand the architect
 
 | Phase | Technology Focus | Key Actions | Performance Level |
 |-------|------------------|-------------|-------------------|
-| Phase 1 | JSON | Start with JSON, rapid development | 10K requests/sec |
-| Phase 2 | Binary JSON | Add MessagePack, optimize hot paths | 50K requests/sec |
-| Phase 3 | Mixed Approach | JSON (external APIs), MessagePack (internal) | 200K requests/sec |
-| Phase 4 | Protobuf | Migrate critical services, schema enforcement | 1M requests/sec |
-| Phase 5 | Polyglot | JSON (web), Protobuf (services), GraphQL (mobile) | Optimized per use case |
+| **Phase 1** | **JSON** | Start with JSON, rapid development | 10K requests/sec |
+| **Phase 2** | **Binary JSON** | Add MessagePack, optimize hot paths | 50K requests/sec |
+| **Phase 3** | **Mixed Approach** | JSON (external APIs), MessagePack (internal) | 200K requests/sec |
+| **Phase 4** | **Protobuf** | Migrate critical services, schema enforcement | 1M requests/sec |
+| **Phase 5** | **Polyglot** | JSON (web), Protobuf (services), GraphQL (mobile) | Optimized per use case |
 
 ![When to Migrate from JSON](chapter-14-future-diagram-10-light.png)
+{pagebreak}
 
-| Era | Technologies | Key Trends |
-|-----|--------------|------------|
-| **Current (2025)** | JSON: Universal default<br/><br/>Protobuf: Internal APIs<br/><br/>GraphQL: Mobile/SPA<br/><br/>REST: External APIs | JSON dominates across all use cases |
-| **Near Future<br/>(2026-2028)** | JSON: Still dominant<br/><br/>Edge computing growth<br/><br/>gRPC-Web: Browser adoption<br/><br/>AsyncAPI: Event docs standard<br/><br/>WASM: Better JSON integration | JSON expands<br/><br/>Specialized tools mature |
-| **Far Future<br/>(2029+)** | JSON: Core protocol remains<br/><br/>Schema-based: Internal<br/><br/>Hybrid: Mix per use case<br/><br/>New format?: Must match architectural zeitgeist | JSON as foundation<br/><br/>Ecosystem diversifies |
+## Technology Landscape: 2025 and Beyond
 
+### Current State (2025): JSON's Universal Dominance
+
+JSON has achieved something rare in technology: near-universal adoption across wildly different use cases. Twenty years after Douglas Crockford extracted it from JavaScript, JSON serves as the default serialization format across the entire software ecosystem.
+
+Walk through any modern software stack, and you'll find JSON at every layer. REST APIs from Stripe, Twilio, and GitHub universally return JSON responses. GraphQL wraps its responses in JSON for mobile and single-page applications. Webhook payloads arrive as JSON across payment processors, version control systems, and SaaS platforms. The public API landscape has standardized on JSON so completely that developers don't even question the choice anymore.
+
+Configuration and infrastructure tools have followed suit. Package managers like npm store metadata in package.json files. Even Cargo, Rust's package manager, uses TOML for its manifest files but publishes JSON metadata to the registry. Cloud infrastructure tools increasingly prefer JSON - AWS CloudFormation templates, Terraform state files, and Kubernetes manifests all support or default to JSON. CI/CD pipelines from GitHub Actions to GitLab CI to CircleCI all parse JSON configurations.
+
+The database layer tells the same story. PostgreSQL's JSONB type, MySQL's JSON columns, and MongoDB's native document model all provide first-class JSON support. Log aggregation systems from the ELK stack to Datadog to Splunk expect JSON Lines format. Event streaming platforms like Kafka, RabbitMQ, and AWS EventBridge all expect JSON message payloads.
+
+JSON dominates not because it's technically superior for every use case, but because it's "good enough" everywhere and excellent at interoperability. Every programming language has mature, battle-tested JSON libraries. Every developer understands the structure of `{"key": "value"}` instantly, regardless of their native language or background. Every tool in the chain expects JSON input and produces JSON output, creating a seamless data flow from client to server to database to analytics pipeline.
+
+This universality creates network effects that are nearly impossible to overcome. A new format would need to be dramatically better - perhaps 10x better, not just 2x - to justify fragmenting the ecosystem that has coalesced around JSON. The switching costs are simply too high when every tool, every library, every tutorial, and every Stack Overflow answer assumes JSON as the default.
+
+### Near Future (2026-2028): Specialization Within JSON's Ecosystem
+
+JSON's dominance won't disappear in the next few years, but the ecosystem will stratify. Different use cases will adopt specialized tools optimized for their specific requirements, while maintaining JSON compatibility at system boundaries.
+
+#### Internal APIs: Protocol Buffers Gain Ground
+
+The pattern we're seeing emerge in 2025 will accelerate through 2028. High-traffic backend systems will increasingly adopt Protocol Buffers for internal microservice communication. Companies like Google, Netflix, and Uber have already proven this approach works at scale. The benefits are compelling: payloads shrink to 20-30% of their JSON equivalent, reducing bandwidth costs dramatically in high-volume systems. Schema definitions catch breaking changes at compile time rather than runtime, preventing entire classes of production incidents.
+
+But JSON will remain dominant at system boundaries. Public APIs will continue exposing JSON endpoints because backwards compatibility matters more than marginal performance gains. Developer experience trumps efficiency when external developers are your customers. They already know JSON, their tools already parse JSON, and their code examples already demonstrate JSON. Forcing them to learn Protocol Buffers just to call your API creates unnecessary friction.
+
+The winning architecture bridges both worlds. API gateways translate between JSON and Protobuf at system edges. Mobile applications send JSON to a REST endpoint. The gateway converts that JSON to Protobuf before forwarding requests to internal microservices. Those services communicate in Protobuf among themselves, achieving high performance where it matters. When results need to flow to external webhook consumers, the gateway translates back to JSON.
+
+Consider a payment processor in 2027. A mobile app sends a JSON payment request to the API gateway. The gateway validates the request and converts it to Protobuf before forwarding to the payment service. That service makes a Protobuf call to the fraud detection service to verify the transaction. Once approved, the payment service sends a Protobuf message to the notification service, which converts the status update to JSON and delivers it to the merchant's webhook endpoint.
+
+This hybrid approach wins because it requires no "big bang" migration. Internal teams get the performance and type safety benefits of Protobuf. External developers get the familiar JSON APIs they expect. Teams can adopt Protobuf gradually, service by service, without breaking existing integrations.
+
+#### WebAssembly: Better JSON Integration
+
+WebAssembly presents a different kind of opportunity. Today's WASM limitation is clear: JSON processing in browsers still requires a JavaScript bridge. WASM modules can't directly access JSON without serialization overhead, which negates much of WASM's performance advantage. Every time you want to pass data between JavaScript and a WASM module, you serialize to bytes, transfer across the boundary, and deserialize on the other side.
+
+The WASM Component Model, expected to stabilize between 2026 and 2028, will standardize JSON as an interface type. Rust, C++, and Go modules compiled to WASM will consume and produce JSON natively, without the serialization round-trip. Performance will approach native code speeds - perhaps 5-10x faster than JavaScript's JSON.parse for large datasets.
+
+This unlocks several use cases that are impractical today. Client-side data processing becomes viable for datasets that would currently freeze the UI. Imagine parsing a 100MB JSON export file entirely in the browser, processing it with a Rust-compiled WASM module, and displaying results without ever sending data to a server. Edge computing platforms like Cloudflare Workers and Fastly Compute can run WASM modules that process JSON at CDN edge locations, bringing computation closer to users. Application plugin systems can load WASM modules that consume JSON configuration and data, enabling safe sandboxed extensions.
+
+Picture a data visualization application in 2028. A user uploads a 50MB JSON file containing time-series data. The application loads a WASM module compiled from Rust that implements a moving average algorithm. The module processes the JSON directly, without the serialization overhead that makes this impractical today. The result, still a JavaScript object, flows directly to the charting library for rendering. The entire process feels instant, even though we're processing tens of millions of data points in the browser.
+
+JSON remains the data format throughout this pipeline. Developers don't learn new serialization schemes or adapt their data models. They simply get 10x faster execution for the JSON processing they were already doing.
+
+#### Specialized Formats Find Their Niches
+
+The ecosystem will continue maturing with purpose-built formats finding their niches alongside JSON. Binary formats will serve performance-critical code paths. MessagePack achieves 30-50% smaller payloads than JSON and has found adoption in Redis and Fluent logging systems. CBOR provides JSON-compatible binary encoding for IoT devices where bandwidth is constrained. Avro brings self-describing schemas to Kafka ecosystems where schema evolution matters more than human readability.
+
+Structured text formats will serve specific domains where human editability matters more than machine efficiency. YAML dominates configuration files for Kubernetes, Ansible, and Docker Compose because its whitespace-based syntax reads naturally for complex nested structures. TOML serves application configurations in Cargo, pipenv, and Hugo because its explicit sections and type annotations prevent common configuration errors. HCL powers infrastructure-as-code in Terraform, Nomad, and Consul because its specialized syntax for resources and data sources fits the domain perfectly.
+
+But none of these formats replace JSON. They complement it. Tools export to JSON for interoperability with the broader ecosystem. JSON serves as the universal translator between formats - YAML to JSON to TOML conversions are standard features. APIs use JSON even when internal storage uses Avro or Protobuf, maintaining the common interface that makes the ecosystem interoperable.
+
+The trend is clear: JSON expands into new domains while specialized tools mature for specific use cases. It's not winner-take-all. It's JSON as the universal interchange format plus specialized formats where domain requirements justify the complexity.
+
+### Far Future (2029+): JSON as Foundation, Not Frontier
+
+By 2030, JSON will have completed its transition from "innovative technology" to "invisible infrastructure." This isn't a prediction of decline - it's a prediction of success.
+
+#### JSON Becomes Infrastructure
+
+Consider the parallel with HTTP. When the protocol launched in 1991, it was revolutionary. Stateless request-response, text-based headers, simple enough to type manually with telnet - these design choices seemed radical compared to existing network protocols. By 2010, HTTP had become invisible. Developers didn't debate HTTP versus alternatives. They just used it. HTTP/2 arrived in 2015 with major performance improvements, followed by HTTP/3 in 2022 with UDP-based transport. Yet most developers never noticed these changes. The protocol improved under the hood while maintaining the same developer experience.
+
+JSON will follow this same path. In 2001, it was revolutionary - simpler than XML, native to JavaScript, human-readable but machine-parseable. By 2030, JSON will be invisible. It will be the default assumption, not a conscious choice. Junior developers won't remember "before JSON" any more than today's juniors remember "before HTTP." It's just how data looks, like water to a fish.
+
+Improvements will happen at the implementation level without changing the format. JSON parsers will get faster through better algorithms and SIMD instructions. Compression will become ubiquitous, with servers automatically compressing JSON over the wire like they do with gzip for HTML. Libraries will add better validation and type checking without changing the core format. The debates will shift from "JSON versus X" to "which JSON Schema validator should we use" or "what's our JSON compression strategy."
+
+#### If Something Replaces JSON, It Must Match the Zeitgeist
+
+JSON succeeded because it matched the technological moment of the 2000s. The web was exploding from millions to billions of users. JavaScript was the language of the web, and JSON was JavaScript-native. XML had proven too complex for simple use cases - multiple namespace syntaxes, angle-bracket verbosity, impedance mismatch with programming language data structures. APIs needed a standard format that was simple enough for small projects but robust enough for large systems. JSON was "good enough" everywhere, and that universality mattered more than being optimal anywhere.
+
+For a new format to replace JSON, it would need to match a similar technological shift. Imagine quantum computing becomes mainstream in the 2030s, as common as web applications were in the 2000s. JSON can't represent quantum superposition states or entangled qubits. A quantum-native serialization format might emerge that handles quantum state naturally. But adoption would only happen if quantum applications become as ubiquitous as web applications are today - a big if.
+
+The more realistic scenario is that JSON evolves rather than gets replaced. JSON Schema transitions from "optional spec" to "enforced standard," with libraries validating by default rather than on request. Binary JSON variants become default for network transport, like gzip for HTTP - invisible to developers but improving performance automatically. Type hints get added through comments or extensions, following TypeScript's playbook of adding types to JavaScript without breaking compatibility.
+
+#### The Ecosystem Diversifies Around JSON
+
+By 2030, the technology landscape will have sorted itself into clear layers, each using the format best suited to its requirements, with JSON serving as the common language between layers.
+
+Public-facing systems - external APIs, developer documentation, webhook integrations - will use JSON completely. GraphQL, REST, webhooks will all speak JSON because developer experience prioritizes familiarity over marginal efficiency gains. When you're serving thousands of different client applications written by external developers, the value of using a format everyone already knows far outweighs any performance benefit from switching to something more efficient but less familiar.
+
+High-performance internal systems - microservice communication, data pipelines, message queues - will use binary formats where measurements justify the complexity. Protocol Buffers, Avro, MessagePack provide 5-10x efficiency improvements in bandwidth and parsing speed. At the scale of millions of requests per second, those gains translate to real cost savings. But these internal systems will maintain JSON translation at boundaries, keeping the external interface stable while optimizing the internal implementation.
+
+Human-facing systems - configuration files, structured logs, debugging tools - will split between JSON and more specialized formats based on the use case. API responses and structured logs will use JSON because machines parse them and consistency matters more than readability. Configuration files and CI/CD pipelines will use YAML or TOML because humans edit them and expressiveness matters more than parsing speed. Tools will convert between formats seamlessly, just as developers today think nothing of converting JSON to YAML or vice versa.
+
+Embedded and IoT systems will use compact binary formats like CBOR or MessagePack on constrained devices where every byte counts. But at the cloud boundary where those devices connect to backend services, the protocol will be JSON for compatibility with the broader ecosystem. Edge devices translate their compact internal format to JSON when communicating with the cloud, keeping the interface consistent even as the implementation varies.
+
+The pattern that emerges is clear: JSON becomes the common currency of data exchange. Systems may use specialized formats internally, optimized for their specific requirements. But at boundaries between systems, especially when crossing organizational boundaries, everyone speaks JSON. It's like human languages - we may speak different languages at home, but English serves as the lingua franca for international communication because everyone learns it and standardization has value in itself.
+
+### What Developers Should Do Now
+
+These predictions suggest clear strategies for developers working with JSON today.
+
+In the short term, through 2027, stick with JSON for public APIs. Don't fight the ecosystem. JSON has won the developer mindshare battle, and trying to convince external developers to learn Protocol Buffers or MessagePack just to use your API creates unnecessary friction. Reserve binary formats for internal microservices where you control both ends of the connection and can measure actual performance benefits. Consider learning WebAssembly if you process large JSON datasets in browsers or on edge servers - the performance benefits will only grow as the Component Model matures. Start using JSON Schema for API contracts and validation if you haven't already. By 2027, schema validation will be table stakes, not a nice-to-have.
+
+In the medium term, from 2027 to 2029, monitor WebAssembly Component Model adoption in production environments. Early adopters will reveal which use cases benefit most from native WASM JSON processing. Evaluate binary JSON formats if your infrastructure costs are dominated by bandwidth rather than engineering time. But keep JSON as the default choice - only specialize when measurements prove the benefits justify the added complexity. Resist the temptation to optimize prematurely based on theoretical advantages rather than measured production requirements.
+
+In the long term, beyond 2029, treat JSON like TCP/IP - fundamental infrastructure that "just works." Stop thinking about JSON as a technology choice and start thinking about it as an assumption. Focus energy on JSON tooling improvements: better schema validators, faster parsers, smarter compression algorithms. These incremental improvements compound over time without requiring ecosystem coordination. Don't wait for "the next JSON" that will revolutionize data serialization. History suggests that infrastructure technologies evolve gradually rather than getting replaced suddenly.
+
+The future of JSON is boring, and that's exactly what we want. Technologies that become infrastructure win by becoming invisible. JSON's greatest achievement won't be replacing Protocol Buffers or inspiring some future format. It will be becoming so ubiquitous that developers in 2030 don't even think about it, just like we don't think about HTTP or TCP/IP today. That's the hallmark of truly successful technology - becoming invisible by becoming universal.
+
+## Conclusion: Choose Tools for Problems, Not Trends
 
 JSON thrived by embracing incompleteness and matching its era's architectural patterns. The future belongs to formats that understand their niche, enable ecosystems, and align with how we build software.
 
