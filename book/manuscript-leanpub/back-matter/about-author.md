@@ -17,7 +17,8 @@ I'd love to hear from readers--whether you have questions about the book, want t
 **Website:** [https://blackwell-systems.com](https://blackwell-systems.com)  
 **Email:** dayna@blackwell-systems.com  
 **LinkedIn:** [linkedin.com/in/dayna-blackwell](https://linkedin.com/in/dayna-blackwell)  
-**GitHub:** [github.com/blackwellsystems](https://github.com/blackwellsystems)
+**GitHub:** [github.com/blackwell-systems](https://github.com/blackwell-systems)  
+**Twitter/X:** [@blackwellsys](https://twitter.com/blackwellsys)
 
 ---
 
@@ -41,7 +42,7 @@ Dayna is available for:
 - Technology selection guidance and architectural decision frameworks
 - Developer tooling and documentation strategy
 
-**Topics I Enjoy Speaking About**
+**Sample Talk Topics**
 - When JSON isn't enough (and what to use instead)
 - Building production-ready APIs with JSON Schema
 - Streaming architectures with JSON Lines and Kafka
@@ -52,15 +53,11 @@ Dayna is available for:
 
 ---
 
-### Speaking Inquiries
+**Speaking Inquiries:** speaking@blackwell-systems.com  
+For conference talks, meetups, or podcast appearances
 
-For conference talks, meetups, or podcast appearances:  
-**Email:** speaking@blackwell-systems.com
-
-### Consulting Inquiries
-
-For architecture consulting, workshops, or technical advising:  
-**Email:** consulting@blackwell-systems.com
+**Consulting Inquiries:** consulting@blackwell-systems.com  
+For architecture consulting, workshops, or technical advising
 
 ---
 
@@ -80,9 +77,11 @@ This book wouldn't exist without the support and feedback of many people:
 
 ---
 
-**Thank you for reading.** Whether you're building your first REST API or architecting systems at scale, I hope this book gives you a practical framework for navigating the JSON ecosystem and making technology decisions that serve your actual problems rather than chasing trends.
+**Thank you for reading.** Whether you're building your first REST API or architecting systems at scale, I hope this book gives you a practical framework for navigating JSON's ecosystem and making technology decisions that serve your actual problems rather than chasing trends.
 
-The best technology choice is the one that solves your problem with the least complexity. Sometimes that's JSON. Sometimes it's not. Now you have the tools to decide.
+The best technology choice is the one that solves your problem with the least complexity. Sometimes that's JSON. Sometimes it's not.
+
+Now you have the tools to decide.
 
 -- Dayna Blackwell
 
