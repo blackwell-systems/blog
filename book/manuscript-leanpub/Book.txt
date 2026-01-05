@@ -16,7 +16,7 @@ chapters/chapter-12-data-pipelines.md
 chapters/chapter-13-testing.md
 chapters/chapter-14-future.md
 back-matter/conclusion.md
-back-matter/about-author.md
 appendices/appendix-a-specification.md
 appendices/appendix-b-quick-reference.md
 appendices/appendix-c-resources.md
+back-matter/about-author.md
