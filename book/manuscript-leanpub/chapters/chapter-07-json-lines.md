@@ -140,7 +140,7 @@ parser.parse("users.xml", handler);
 
 **JSON's approach:** Format convention (JSON Lines) - separate standard  
 
-**Architecture shift:** Built-in streaming → Format-based streaming, Complex APIs → Simple line reading, Stateful parsing → Stateless processing
+**Architecture shift:** Built-in streaming -> Format-based streaming, Complex APIs -> Simple line reading, Stateful parsing -> Stateless processing
 {/blurb}
 
 ### What XML Had: SAX and StAX
