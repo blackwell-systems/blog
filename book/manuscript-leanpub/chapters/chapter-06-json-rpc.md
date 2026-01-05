@@ -440,7 +440,7 @@ Send multiple requests in one HTTP call:
 **Note:** Notification (`notify_hello`) has no response.
 
 **Benefits:**
-- Reduced HTTP overhead (3 calls → 1 request)
+- Reduced HTTP overhead (3 calls -> 1 request)
 - Lower latency (1 round trip instead of 3)
 - Atomic batches (all succeed or all fail)
 - Better connection utilization
