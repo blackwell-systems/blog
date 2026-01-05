@@ -1,6 +1,6 @@
 # Chapter 12: JSON in Data Pipelines
 
-*JSON is everywhere in modern data systems—API responses, application logs, event streams, configuration files. But raw JSON isn't enough for production data pipelines. You need validation, transformation, error handling, monitoring, and orchestration at scale.*
+*JSON is everywhere in modern data systems--API responses, application logs, event streams, configuration files. But raw JSON isn't enough for production data pipelines. You need validation, transformation, error handling, monitoring, and orchestration at scale.*
 
 ---
 
@@ -13,7 +13,7 @@ Consider this real-world scenario: An e-commerce company processes 1 million ord
   {"productId": "prod-
 ```
 
-A single malformed JSON record—network truncated during transmission—crashes their consumer. Without proper error handling, the entire pipeline backs up. Events pile in memory, the cluster exhausts resources, and six hours later they've lost $200,000 in revenue while engineers scramble to recover.
+A single malformed JSON record--network truncated during transmission--crashes their consumer. Without proper error handling, the entire pipeline backs up. Events pile in memory, the cluster exhausts resources, and six hours later they've lost $200,000 in revenue while engineers scramble to recover.
 
 This chapter examines how to build production-grade JSON data pipelines that handle millions of events reliably. We'll cover the complete ecosystem: ETL patterns with JSON Lines, streaming with Kafka, validation strategies, error handling, monitoring, and real-world architectures that process JSON at scale.
 
@@ -3246,7 +3246,7 @@ These production architectures demonstrate that successful JSON pipelines combin
 
 JSON data pipelines have evolved from simple ETL scripts to sophisticated distributed systems capable of processing millions of events per second. This chapter has explored the complete ecosystem: from basic ETL patterns through streaming architectures, validation strategies, error handling, monitoring, and real-world implementations.
 
-The key insight is that JSON's flexibility becomes a strength in pipelines when combined with proper validation, error handling, and observability. The patterns presented here—quarantine systems, dead letter queues, circuit breakers, and comprehensive monitoring—transform JSON's looseness into resilient, production-ready systems.
+The key insight is that JSON's flexibility becomes a strength in pipelines when combined with proper validation, error handling, and observability. The patterns presented here--quarantine systems, dead letter queues, circuit breakers, and comprehensive monitoring--transform JSON's looseness into resilient, production-ready systems.
 
 As data volumes continue growing, these patterns provide the foundation for building JSON pipelines that scale gracefully, fail safely, and operate transparently. The modular approach mirrors JSON's own philosophy: simple components composed thoughtfully create powerful, maintainable systems.
 

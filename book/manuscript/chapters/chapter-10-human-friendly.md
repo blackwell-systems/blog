@@ -272,7 +272,7 @@ print(config['name'])
 
 ## YAML: The DevOps Standard
 
-YAML (YAML Ain't Markup Language) dominates infrastructure configuration. Docker Compose, Kubernetes, GitHub Actions, Ansible, GitLab CI—all use YAML. Understanding why reveals lessons about ecosystem adoption.
+YAML (YAML Ain't Markup Language) dominates infrastructure configuration. Docker Compose, Kubernetes, GitHub Actions, Ansible, GitLab CI--all use YAML. Understanding why reveals lessons about ecosystem adoption.
 
 ### Why YAML Won DevOps
 
