@@ -96,10 +96,7 @@ To find all error logs, you must:
 3. Iterate through array
 4. Filter for `"level": "error"`
 
-**For a 10GB log file:**
-- Memory usage: 10GB+
-- Parse time: Minutes
-- Processing: All-or-nothing
+**For a 10GB log file:** Memory usage exceeds 10GB as the entire file loads into RAM. Parse time extends to minutes as the parser processes millions of records. Processing remains all-or-nothing - you can't access a single error until the entire array parses successfully.
 
 ### Why JSON Arrays Are All-or-Nothing
 
@@ -1472,10 +1469,7 @@ rl.on('line', async (line) => {
 });
 ```
 
-**If file has 1M lines and processing takes 500ms each:**
-- Lines arrive: 1M/second (reading is fast)
-- Lines processed: 2/second (processing is slow)
-- Memory fills with 999,998 pending lines -> crash
+**If file has 1M lines and processing takes 500ms each:** Lines arrive at 1M/second because reading is fast. Lines process at only 2/second because processing is slow. Memory fills with 999,998 pending lines faster than they can be processed, eventually crashing the system.
 
 **Solution: Pause and resume streams**
 
@@ -1566,10 +1560,7 @@ for await (const line of rl) {
 const results = await Promise.all(promises);
 ```
 
-**Benefits:**
-- 10x throughput vs sequential (if operations are I/O bound)
-- Bounded memory (only 10 records in-flight)
-- Automatic error handling per record
+**Benefits:** This provides 10x throughput versus sequential processing when operations are I/O bound, since multiple operations execute concurrently. Memory stays bounded with only 10 records in-flight at any time. Error handling happens automatically per record without halting the entire pipeline.
 
 ### Transform Streams for Pipelines
 
@@ -1712,12 +1703,7 @@ setInterval(() => {
 }, 10000);
 ```
 
-**Key metrics to monitor:**
-- **Lines processed per second** (throughput)
-- **Processing lag** (real-time vs processed timestamp)
-- **Error rate** (failed parses or processing)
-- **Memory usage** (detect backpressure issues)
-- **Queue depth** (how many records waiting)
+**Key metrics to monitor:** **Lines processed per second** measures throughput and helps detect bottlenecks. **Processing lag** compares real-time clock to processed timestamps, revealing how far behind the pipeline runs. **Error rate** tracks failed parses or processing attempts, highlighting data quality issues. **Memory usage** detects backpressure problems before they cause crashes. **Queue depth** shows how many records are waiting, indicating whether consumers can keep pace with producers.
 
 ---
 
