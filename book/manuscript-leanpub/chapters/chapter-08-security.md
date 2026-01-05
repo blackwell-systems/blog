@@ -365,7 +365,7 @@ except jwt.InvalidTokenError:
 
 ### JWT Use Cases
 
-JWT's design enables several common authentication patterns. **API authentication** is the most prevalent - clients include JWTs in the `Authorization` header, servers validate signatures and extract claims:
+JWT's design enables several authentication patterns that solve different architectural problems. API authentication dominates production usage - clients include JWTs in the `Authorization` header, servers validate signatures and extract claims without database lookups:
 
 ```http
 GET /api/users/me HTTP/1.1
@@ -373,11 +373,11 @@ Host: api.example.com
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 ```
 
-**Single sign-on (SSO)** leverages JWT's portability. Users authenticate once with a central auth server, receive a JWT, then present that token to multiple services. Each service validates the token independently without contacting the auth server - the signature proves authenticity. This enables federation without runtime dependencies between services.
+This request-response model extends naturally to single sign-on (SSO), where JWT's portability becomes the key feature. Users authenticate once with a central auth server and receive a JWT. They then present that token to multiple services - API gateway, data service, analytics service - and each validates the token independently. No service needs to contact the auth server during verification because the signature proves authenticity. This federation pattern eliminates runtime dependencies between services while maintaining security.
 
-**Information exchange** treats JWTs as signed messages rather than authentication tokens. When service A sends data to service B, signing the payload with JWS proves it came from A and hasn't been tampered with. The expiration claim limits replay window. This matters for inter-service communication where proving message origin matters more than user identity.
+Beyond authentication, JWTs serve as signed messages for information exchange. When service A sends data to service B, signing the payload with JWS proves it came from A and hasn't been tampered with. The expiration claim limits the replay window. This matters for inter-service communication where proving message origin matters more than user identity - think audit events, workflow transitions, or batch job coordination.
 
-**Stateless sessions** eliminate server-side session storage by embedding all session data in the JWT. The server becomes stateless - any instance can handle any request by validating the token and extracting claims. This enables horizontal scaling without session affinity. The trade-off is immutable session data - updating requires issuing new tokens.
+The most architecturally significant pattern is stateless sessions. By embedding all session data in the JWT, servers eliminate session storage entirely. Any instance can handle any request by validating the token and extracting claims - no sticky sessions, no distributed session stores, no coordination overhead. This enables trivial horizontal scaling: add servers, they work immediately. The trade-off is immutability - session data becomes read-only. Updating user roles or permissions requires issuing new tokens, not modifying existing ones.
 
 
 ![JWT Authentication Flow - Stateless Token Verification](chapter-08-security-diagram-1-light.png)
@@ -396,9 +396,9 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 
 ### Signing Algorithms
 
-JWS supports two fundamental approaches to signing, each with different security properties and operational trade-offs.
+JWS supports two fundamental approaches to signing, each trading different security properties against operational complexity. The choice between them shapes your entire authentication architecture.
 
-**HMAC (symmetric signing)** uses a shared secret key for both signing and verification. When you sign with `HS256` (HMAC + SHA-256), both the signer and verifier possess the same secret. This creates operational simplicity - one key to manage - and computational efficiency - HMAC is fast. But it requires secure key distribution, and any party that can verify signatures can also forge them:
+**HMAC (symmetric signing)** uses a shared secret key for both signing and verification. When you sign with `HS256` (HMAC + SHA-256), both the signer and verifier possess the same secret. This creates operational simplicity - one key to manage - and computational efficiency - HMAC is fast. But it requires secure key distribution, and critically, any party that can verify signatures can also forge them:
 
 ```json
 {
@@ -406,9 +406,9 @@ JWS supports two fundamental approaches to signing, each with different security
 }
 ```
 
-If you distribute your HMAC secret to ten microservices for signature verification, all ten can create valid signatures. This limits HMAC to scenarios where all parties trust each other completely or where a single service both creates and validates signatures.
+Consider the implications: if you distribute your HMAC secret to ten microservices for signature verification, all ten can create valid signatures. This isn't a vulnerability when all parties trust each other completely, or when a single service both creates and validates signatures. But it fundamentally limits federation - you can't safely distribute verification capability to untrusted parties because verification capability equals signing capability.
 
-**Asymmetric signing (RSA, ECDSA)** separates signing and verification with public-key cryptography. The private key signs, the public key verifies. Distribute the public key freely - possession doesn't enable forgery. This matters for federated systems where signature creators and validators don't trust each other equally:
+**Asymmetric signing (RSA, ECDSA)** breaks this constraint by separating signing and verification with public-key cryptography. The private key signs, the public key verifies. You can distribute the public key freely - possession doesn't enable forgery, only validation. This architectural shift enables federated systems where signature creators and validators don't trust each other equally:
 
 ```json
 {
@@ -421,7 +421,7 @@ If you distribute your HMAC secret to ten microservices for signature verificati
 }
 ```
 
-RSA signing is computationally expensive - roughly 100x slower than HMAC for equivalent security. ECDSA provides a middle ground - asymmetric security properties with better performance than RSA and smaller keys (256-bit ECDSA ≈ 3072-bit RSA security). Modern systems increasingly prefer ECDSA unless legacy RSA compatibility is required.
+The cost is computational. RSA signing is roughly 100x slower than HMAC for equivalent security - measurable at scale, negligible for most APIs. ECDSA provides a middle ground: asymmetric security properties with better performance than RSA and smaller keys (256-bit ECDSA provides approximately the same security as 3072-bit RSA). Modern systems increasingly prefer ECDSA unless legacy RSA compatibility is required. The performance difference matters less than the architectural flexibility - choose based on your trust model, not microseconds.
 
 **Algorithm comparison:**
 
@@ -1112,7 +1112,9 @@ Production JWT systems require discipline around token lifecycle, validation, an
 
 ### Token Lifecycle Management
 
-**Short-lived access tokens limit exposure windows.** When access tokens expire in 15 minutes, a stolen token remains valid for at most 15 minutes. Long-lived tokens (hours or days) create extended vulnerability windows where attackers exploit stolen credentials:
+Production JWT systems require discipline around token lifecycle, validation, and key management. These patterns emerge from securing systems where compromised tokens mean data breaches and business impact.
+
+**Short-lived access tokens limit exposure windows.** The fundamental security principle: minimize blast radius. When access tokens expire in 15 minutes, a stolen token remains valid for at most 15 minutes. Long-lived tokens (hours or days) create extended vulnerability windows where attackers exploit stolen credentials. But shorter expiration conflicts with user experience - nobody wants to re-authenticate every 15 minutes:
 
 ```javascript
 // Access token - short-lived
@@ -1126,9 +1128,9 @@ const refreshToken = jwt.sign({ sub: userId }, secret, {
 });
 ```
 
-Balance security against user experience - shorter expiration is more secure, but frequent re-authentication annoys users. The two-token pattern solves this: short-lived access tokens for API calls, long-lived refresh tokens for obtaining new access tokens. Store refresh tokens server-side where revocation is possible. Access tokens remain stateless and fast to validate.
+The two-token pattern resolves this tension. Short-lived access tokens authenticate API calls with minimal exposure risk. Long-lived refresh tokens obtain new access tokens without requiring password re-entry. Crucially, refresh tokens live server-side where revocation is possible - you can't revoke a stateless JWT, but you can revoke its refresh token. Access tokens remain stateless and fast to validate. User experience stays smooth. Security boundaries stay tight.
 
-**Explicit audience and issuer claims prevent token substitution.** Without audience validation, an attacker can steal a token issued for service A and use it against service B. Without issuer validation, attackers can mint tokens using compromised keys from a different system:
+**Explicit audience and issuer claims prevent token substitution attacks.** Consider what happens without these checks: an attacker steals a token issued for service A and uses it against service B. Both services accept it because the signature is valid. Or an attacker compromises keys from a different system and mints tokens that your service blindly trusts. These aren't theoretical - they happen in production:
 
 ```javascript
 const token = jwt.sign(payload, secret, {
@@ -1144,7 +1146,7 @@ jwt.verify(token, secret, {
 });
 ```
 
-The verification library checks these claims automatically if you configure them. Without this check, tokens become transferable between services - a major security failure in microservice architectures.
+The verification library checks these claims automatically when you configure them. Without this check, tokens become transferable between services - a major security failure in microservice architectures. The issuer claim proves the token came from your auth server specifically, not some other compromised system. The audience claim proves the token was intended for your service, not accidentally leaked from another service's authentication flow. Both are one-line additions that prevent entire classes of attacks.
 
 ### Key Management
 
