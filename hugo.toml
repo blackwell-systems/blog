@@ -1,4 +1,4 @@
-baseURL = 'https://blackwell-systems.github.io/blog/'
+baseURL = 'https://blog.blackwell-systems.com/'
 languageCode = 'en-us'
 title = 'Blackwell Systems Blog'
 theme = 'nightfall'
