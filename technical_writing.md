@@ -45,8 +45,8 @@ Personal reference for pursuing technical writing opportunities while maintainin
 - Founder, Blackwell Systems (OSS + future proprietary developer tools)
 - 10 open-source projects with comprehensive documentation
 - Published technical blog: 94,152 lines (27 articles)
-- Book manuscript near-publication: "You Don't Know JSON" - 95,008 words (24,953 lines, ~740 pages formatted), content complete
-- Total documentation: ~226,000 lines across all work
+- Book manuscript near-publication: "You Don't Know JSON" - 107,424 words (27,387 lines, ~835 pages formatted), content complete
+- Total documentation: ~239,000 lines across all work
 - 3x AWS Certified, Azure, Terraform
 
 **Strategy:** Dual employment - maintain backend engineering while pursuing technical writing contracts/opportunities.
@@ -566,9 +566,13 @@ You understand:
 - All articles: comprehensive (1,500-5,000+ words), with code examples and diagrams
 
 **Book Manuscript (Near-Publication):**
-- **"You Don't Know JSON"** - 95,008 words (24,953 lines, ~740 pages formatted), 14 chapters + 3 appendices
+- **"You Don't Know JSON"** - 107,424 words (27,387 lines, ~835 pages formatted)
+  - 14 chapters (93,456 words / 24,504 lines)
+  - Front matter: Introduction (1,739 words / 146 lines)
+  - Back matter: Conclusion + About the Author (2,827 words / 233 lines)
+  - 3 appendices: Specification, Quick Reference, Resources (9,402 words / 2,504 lines)
 - Comprehensive technical book covering JSON architecture, API design, security, testing, and data pipelines
-- 64+ professional mermaid diagrams with consistent visual theme
+- 66 professional mermaid diagrams with consistent dark/light theme variants
 - Production-ready code examples in JavaScript, Go, Python, Rust, SQL, Bash
 - Cover design complete (2100×3000px for Leanpub digital format)
 - Status: Content and cover complete, ready for final publishing setup
@@ -878,9 +882,9 @@ async fn handler() -> Result<Json<User>, Error> {
 
 **Documentation Volume:**
 - Blog: 94,152 lines (verified)
-- Book manuscript: 24,953 lines / 95,008 words (verified)
+- Book manuscript: 27,387 lines / 107,424 words (verified)
 - OSS projects: ~96,000 lines (9 verified at 86,011 + pipeboard estimated ~10k)
-- Total: ~215,000 lines / 95,008+ words
+- Total: ~217,539 lines / 107,424+ words
 
 **This is Staff-level documentation volume.**
 
@@ -1085,12 +1089,12 @@ Walk through one of your blog articles:
 
 ### Production Capability Discovered
 
-**Timeline: 95,008-word technical book in 1 month**
+**Timeline: 107,424-word technical book in 1 month**
 
 This production velocity is extraordinary and represents a significant competitive advantage:
 - Most technical authors: 500-1,000 words/day over 6-12 months
-- Your demonstrated rate: ~3,000 words/day sustained
-- **Result: 6-12x faster than typical technical authors**
+- Your demonstrated rate: ~3,500 words/day sustained
+- **Result: 7-14x faster than typical technical authors**
 
 This isn't just impressive - it's a business model.
 
