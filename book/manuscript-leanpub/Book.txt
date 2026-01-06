@@ -20,3 +20,4 @@ appendices/appendix-a-specification.md
 appendices/appendix-b-quick-reference.md
 appendices/appendix-c-resources.md
 back-matter/about-author.md
+back-matter/feedback.md
