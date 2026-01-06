@@ -8,6 +8,10 @@ Written by Dayna Blackwell.
 
 Technical writing on developer tools, automation, systems programming, artificial intelligence and distributed systems.
 
+## Books
+
+**[You Don't Know JSON](https://leanpub.com/you-dont-know-json)** - A comprehensive guide to JSON's ecosystem: from schema validation to binary formats (MessagePack, CBOR, Protocol Buffers), streaming architectures, security patterns, API design, data pipelines, and testing strategies. Learn when JSON works, when it doesn't, and what to use instead. Available on Leanpub.
+
 ## Open Source Projects
 
 ### Developer Tools
