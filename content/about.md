@@ -4,9 +4,11 @@ date: 2025-12-01
 draft: false
 ---
 
-Written by Dayna Blackwell.
+**Dayna Blackwell** is a software architect, technical author, and the founder of Blackwell Systems. A "builder-first" advocate for developer experience, Dayna has shipped 10 open-source production tools ranging from unified secrets management (vaultmux) to modular development frameworks (blackdot), all maintained with the same rigor as the enterprise systems she architects.
 
-Technical writing on developer tools, automation, systems programming, artificial intelligence and distributed systems.
+With five years of experience in the high-stakes world of enterprise hospitality--designing APIs that serve millions and data pipelines processing billions of events--Dayna specializes in making complex, "high-consequence" systems accessible. She is a prolific technical writer with over 225,000 lines of published documentation, 3x AWS Certified, and a specialist in infrastructure-as-code (Terraform, CDK, Pulumi) and cloud architecture.
+
+This blog covers developer tools, automation, systems programming, artificial intelligence, and distributed systems--focusing on practical patterns that work in production.
 
 ## Books
 
