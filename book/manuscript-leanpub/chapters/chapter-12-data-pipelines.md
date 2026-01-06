@@ -26,12 +26,7 @@ Extract-Transform-Load (ETL) remains the foundation of data engineering, but JSO
 
 ### The JSON ETL Challenge
 
-Traditional ETL assumes rigid schemas: you know exactly which columns exist and their types. JSON ETL deals with:
-- **Schema evolution**: APIs add fields without warning
-- **Nested data**: Complex hierarchies don't fit relational tables cleanly  
-- **Missing fields**: Optional properties create sparse datasets
-- **Type variations**: Numbers sometimes arrive as strings
-- **Size variations**: Records range from bytes to megabytes
+Traditional ETL assumes rigid schemas: you know exactly which columns exist and their types. JSON ETL deals with messier realities. **Schema evolution** means APIs add fields without warning, breaking assumptions about data shape. **Nested data** with complex hierarchies doesn't fit relational tables cleanly, requiring flattening strategies. **Missing fields** create sparse datasets where optional properties may or may not exist. **Type variations** appear when numbers sometimes arrive as strings due to JSON's loose typing. **Size variations** range from bytes to megabytes within the same field across different records.
 
 Building reliable JSON ETL requires handling these realities systematically.
 
