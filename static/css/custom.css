@@ -1,6 +1,6 @@
 /* Global background for the whole site */
 body {
-  background-image: url("/blog/background.svg");
+  background-image: url("/background.svg");
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
