@@ -552,6 +552,218 @@ Product Docs Site
 - Code style in documentation
 - Inclusive language practices
 
+**File Encoding and Character Sets**
+
+Every text file has an encoding. Documentation engineers must ensure consistent encoding across all files.
+
+**Why UTF-8 is the standard:**
+
+```
+UTF-8 advantages:
+- Backward compatible with ASCII (first 127 characters identical)
+- Variable-width (1-4 bytes): efficient for English, supports all Unicode
+- No byte-order mark (BOM) needed
+- Universal browser/tool support
+- Required for JSON (RFC 8259)
+- Git-friendly (consistent diffs)
+```
+
+**Common encoding problems:**
+
+```markdown
+## Problem 1: Curly quotes from Word
+**Source:** Microsoft Word (Windows-1252)
+**Issue:** "Hello" becomes â€œHelloâ€ in UTF-8 readers
+**Solution:** Configure editor to use straight quotes, or convert
+
+## Problem 2: Em dashes
+**Source:** Copy-paste from Word/web
+**Issue:** — becomes â€" (UTF-8 interpreted as Latin-1)
+**Solution:** Use actual em dash (—) or three hyphens (---) in markdown
+
+## Problem 3: User names
+**Source:** Real user names with accents
+**Issue:** José becomes JosÃ© 
+**Solution:** Always use UTF-8, never Latin-1
+
+## Problem 4: Emoji
+**Source:** Modern documentation with emoji
+**Issue:** 🚀 doesn't render or shows as �
+**Solution:** UTF-8 encoding + correct font
+```
+
+**Git and encoding:**
+
+```.gitattributes
+# Ensure consistent line endings
+* text=auto
+
+# Force UTF-8 for markdown
+*.md text eol=lf encoding=UTF-8
+*.mdx text eol=lf encoding=UTF-8
+
+# Force UTF-8 for config files
+*.json text eol=lf encoding=UTF-8
+*.yaml text eol=lf encoding=UTF-8
+*.yml text eol=lf encoding=UTF-8
+```
+
+**Editor configuration:**
+
+```.editorconfig
+# EditorConfig: consistent encoding across editors
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+[*.md]
+charset = utf-8
+trim_trailing_whitespace = false  # Preserve markdown trailing spaces
+```
+
+**Detecting file encoding:**
+
+```bash
+# Linux/Mac: file command
+file -i docs/*.md
+# Output: docs/readme.md: text/plain; charset=utf-8
+
+# Python: chardet library
+python3 -c "import chardet; print(chardet.detect(open('file.md', 'rb').read()))"
+# Output: {'encoding': 'utf-8', 'confidence': 0.99}
+
+# Find non-UTF-8 files
+find docs -name "*.md" -exec file -i {} \; | grep -v utf-8
+```
+
+**Pre-commit hook for encoding validation:**
+
+```bash
+#!/bin/bash
+# .git/hooks/pre-commit
+
+echo "Checking file encoding..."
+
+NON_UTF8=$(find docs -name "*.md" -exec file -i {} \; | grep -v "charset=utf-8" | grep -v "charset=us-ascii")
+
+if [ -n "$NON_UTF8" ]; then
+  echo "Error: Non-UTF-8 files found:"
+  echo "$NON_UTF8"
+  echo ""
+  echo "Convert to UTF-8:"
+  echo "  iconv -f WINDOWS-1252 -t UTF-8 file.md > file.md.utf8"
+  echo "  mv file.md.utf8 file.md"
+  exit 1
+fi
+
+echo "✓ All files are UTF-8"
+```
+
+**Converting files to UTF-8:**
+
+```bash
+# iconv: convert single file
+iconv -f WINDOWS-1252 -t UTF-8 input.md > output.md
+
+# Batch convert all files in directory
+find docs -name "*.md" -exec sh -c '
+  iconv -f ISO-8859-1 -t UTF-8 "$1" > "$1.utf8" && mv "$1.utf8" "$1"
+' _ {} \;
+
+# dos2unix: fix line endings + encoding
+dos2unix -k -o docs/*.md  # -k preserves timestamps
+```
+
+**HTML meta tag (SSG generates):**
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">  <!-- Critical: tells browser file is UTF-8 -->
+  <title>Documentation</title>
+</head>
+```
+
+**Database considerations:**
+
+```sql
+-- MySQL: utf8mb4 supports full Unicode (including emoji)
+CREATE TABLE docs (
+  id INT PRIMARY KEY,
+  content TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- PostgreSQL: UTF-8 by default
+CREATE DATABASE docs ENCODING 'UTF8' LC_COLLATE='en_US.UTF-8' LC_CTYPE='en_US.UTF-8';
+```
+
+**Why not other encodings:**
+
+| Encoding | Issue | When You See It |
+|----------|-------|-----------------|
+| **Latin-1 (ISO-8859-1)** | Only Western European chars | Legacy Windows files |
+| **Windows-1252** | Microsoft's Latin-1 extension | Word documents |
+| **ASCII** | Only 0-127 (no accents) | Ancient systems |
+| **UTF-16** | 2-byte minimum (inefficient) | Windows internals, Java |
+| **UTF-32** | 4-byte fixed (wasteful) | Rare, academic |
+
+**Best practices:**
+
+1. **Always use UTF-8** - No exceptions for markdown files
+2. **Configure editors** - Set UTF-8 as default in VS Code, Vim, etc.
+3. **Git attributes** - Force UTF-8 via `.gitattributes`
+4. **Validate in CI/CD** - Fail builds on non-UTF-8 files
+5. **Convert legacy content** - Use `iconv` during migrations
+6. **HTML meta tag** - Always include `<meta charset="UTF-8">`
+7. **Database UTF-8** - Use `utf8mb4` in MySQL for emoji support
+
+**Common mistakes:**
+
+```markdown
+❌ Don't:
+- Copy-paste from Word without checking encoding
+- Assume files are UTF-8 (verify!)
+- Use Latin-1 "because it's smaller"
+- Ignore encoding in database schema
+
+✓ Do:
+- Configure editor to save as UTF-8
+- Add `.gitattributes` to enforce encoding
+- Validate encoding in pre-commit hooks
+- Use EditorConfig for team consistency
+- Test with non-ASCII characters (José, 北京, Москва)
+```
+
+**Testing encoding:**
+
+```markdown
+# Test file: encoding-test.md
+Test characters:
+- Basic ASCII: Hello world
+- Latin accents: café, naïve, résumé
+- German: Größe, Mädchen
+- Spanish: ñ, ¿Qué?
+- French: œ, Ç, é
+- Curly quotes: "Hello" 'world'
+- Em dash: word—word
+- Emoji: 🚀 ✅ ⚠️
+- Math: ∑, √, ∞
+- Currency: €, £, ¥, ₹
+- CJK: 你好 (Chinese), こんにちは (Japanese), 안녕 (Korean)
+- Cyrillic: Привет (Russian)
+- Arabic: مرحبا
+- Hebrew: שלום
+
+If all characters display correctly, encoding is correct.
+```
+
+**Key insight:** UTF-8 isn't just for internationalization—it's the foundation of all modern text files. Even English-only docs need UTF-8 for curly quotes, em dashes, code examples, and user-generated content.
+
 **Example: Documentation PR Template**
 ```markdown
 ## Documentation Change
@@ -2388,6 +2600,302 @@ Annual maintenance:
 
 Cost per language: ~$8,660 over 5 years
 ```
+
+**Mojibake: Character Encoding Corruption in Translations**
+
+Mojibake (文字化け, "character transformation") occurs when text is decoded with the wrong character encoding, producing garbled output.
+
+**Common mojibake examples:**
+
+```markdown
+## Original text (UTF-8):
+café → cafÃ© (read as Latin-1)
+naïve → naÃ¯ve
+"Hello" → â€œHelloâ€
+resumé → resumÃ©
+José → JosÃ©
+
+## CJK characters:
+你好 (Chinese) → ä½ å¥½
+こんにちは (Japanese) → ã"ã‚"ã«ã¡ã¯
+안녕 (Korean) → ì•ˆë…•
+
+## Emoji:
+🚀 → ðŸš€ (UTF-8 interpreted as Latin-1)
+```
+
+**How mojibake happens:**
+
+```
+Text flow with encoding mismatch:
+
+Source (UTF-8) → Writer encodes → File saved
+                      ↓
+              [Encoding information lost]
+                      ↓
+               Reader decodes with wrong encoding (Latin-1)
+                      ↓
+                 Mojibake! ðŸš€
+```
+
+**Translation workflow causes:**
+
+```markdown
+## Scenario 1: Translator uses wrong editor
+1. Translator opens UTF-8 file in Windows Notepad (defaults to ANSI/Windows-1252)
+2. Adds Spanish translation: "José trabajó en el año 2024"
+3. Saves file (Notepad saves as Windows-1252)
+4. File committed to Git (expects UTF-8)
+5. Result: JosÃ© trabajÃ³ en el aÃ±o 2024
+
+## Scenario 2: Email-based translation
+1. Send docs via email for translation
+2. Email client converts encoding
+3. Translator copy-pastes from email → Word → docs
+4. Each step introduces encoding changes
+5. Result: Multiple layers of mojibake
+
+## Scenario 3: Legacy system migration
+1. Old CMS used Latin-1 (Western European only)
+2. Migration script assumes UTF-8
+3. Existing accented characters double-encode
+4. Result: Historical content has mojibake, new content is fine
+```
+
+**Detection strategies:**
+
+```python
+# detect-mojibake.py
+import re
+from pathlib import Path
+
+# Common mojibake patterns (UTF-8 read as Latin-1)
+MOJIBAKE_PATTERNS = [
+    r'Ã©',  # é (e-acute)
+    r'Ã ',  # à (a-grave)
+    r'Ã¨',  # è (e-grave)
+    r'Ã´',  # ô (o-circumflex)
+    r'Ã§',  # ç (c-cedilla)
+    r'Ã±',  # ñ (n-tilde)
+    r'â€œ', # " (left double quote)
+    r'â€',  # " (right double quote)
+    r'â€"', # — (em dash)
+    r'ðŸ',  # Emoji prefix
+]
+
+def detect_mojibake(file_path):
+    """Detect potential mojibake in markdown files"""
+    content = Path(file_path).read_text(encoding='utf-8')
+    
+    issues = []
+    for pattern in MOJIBAKE_PATTERNS:
+        matches = re.finditer(pattern, content)
+        for match in matches:
+            line_num = content[:match.start()].count('\n') + 1
+            context = content[max(0, match.start()-20):match.end()+20]
+            issues.append({
+                'file': file_path,
+                'line': line_num,
+                'pattern': pattern,
+                'context': context
+            })
+    
+    return issues
+
+# Run on all docs
+for file in Path('docs').rglob('*.md'):
+    issues = detect_mojibake(file)
+    if issues:
+        print(f"\n{file}:")
+        for issue in issues:
+            print(f"  Line {issue['line']}: {issue['context']}")
+```
+
+**Automated CI/CD check:**
+
+```yaml
+# .github/workflows/encoding.yml
+name: Detect Mojibake
+
+on: [push, pull_request]
+
+jobs:
+  check-encoding:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Check for mojibake patterns
+        run: |
+          # Look for common mojibake patterns
+          MOJIBAKE=$(grep -r "Ã©\|Ã \|â€œ\|â€\|ðŸ" docs/ || true)
+          
+          if [ -n "$MOJIBAKE" ]; then
+            echo "Potential mojibake detected:"
+            echo "$MOJIBAKE"
+            echo ""
+            echo "Files may have encoding issues. Check:"
+            echo "  file -i filename.md"
+            echo "  iconv -f WINDOWS-1252 -t UTF-8 filename.md"
+            exit 1
+          fi
+          
+          echo "✓ No mojibake detected"
+      
+      - name: Verify all files are UTF-8
+        run: |
+          find docs -name "*.md" -exec file -i {} \; | grep -v utf-8 | grep -v us-ascii && exit 1 || echo "✓ All UTF-8"
+```
+
+**Fixing mojibake:**
+
+```bash
+# Step 1: Identify the original encoding
+file -i broken.md
+# Output: broken.md: text/plain; charset=iso-8859-1
+
+# Step 2: Convert to UTF-8
+iconv -f ISO-8859-1 -t UTF-8 broken.md > fixed.md
+
+# Step 3: Verify fix
+diff broken.md fixed.md
+
+# Step 4: For double-encoding (UTF-8 interpreted as Latin-1, then saved as UTF-8):
+# This is trickier - need to decode twice
+iconv -f UTF-8 -t LATIN1 double-encoded.md | iconv -f UTF-8 -t UTF-8 > fixed.md
+```
+
+**Python script for bulk fixing:**
+
+```python
+# fix-mojibake.py
+from pathlib import Path
+import ftfy  # pip install ftfy (fixes text for you)
+
+def fix_mojibake_in_file(file_path):
+    """Automatically fix mojibake using ftfy library"""
+    content = Path(file_path).read_text(encoding='utf-8', errors='replace')
+    
+    # ftfy detects and fixes mojibake
+    fixed_content = ftfy.fix_text(content)
+    
+    if content != fixed_content:
+        print(f"Fixed mojibake in: {file_path}")
+        Path(file_path).write_text(fixed_content, encoding='utf-8')
+        return True
+    return False
+
+# Fix all markdown files
+fixed_count = 0
+for file in Path('docs').rglob('*.md'):
+    if fix_mojibake_in_file(file):
+        fixed_count += 1
+
+print(f"\nFixed {fixed_count} files")
+```
+
+**Prevention strategies:**
+
+```markdown
+## 1. Translator guidelines
+**Provide clear instructions:**
+
+"When translating, ensure your editor is set to UTF-8:
+- VS Code: Bottom right shows encoding, click to change
+- Sublime Text: File → Save with Encoding → UTF-8
+- Notepad++: Encoding → Convert to UTF-8
+- Never use Windows Notepad for translations"
+
+## 2. Translation platform enforcement
+Use Crowdin/Phrase which handle encoding correctly:
+- Files uploaded/downloaded always UTF-8
+- Web interface handles all encoding
+- Translators don't touch file encoding
+
+## 3. Pre-commit validation
+Add hook to reject non-UTF-8 files:
+
+#!/bin/bash
+find docs -name "*.md" -exec file -i {} \; | grep -v "utf-8\|us-ascii" && exit 1
+
+## 4. EditorConfig enforcement
+Require UTF-8 in .editorconfig:
+
+[*.md]
+charset = utf-8
+
+## 5. Git attributes
+Force UTF-8 in .gitattributes:
+
+*.md text eol=lf encoding=UTF-8
+```
+
+**Testing for mojibake:**
+
+```markdown
+# Create test file: mojibake-test.md
+
+Include characters from target languages:
+
+English: café, résumé, naïve
+Spanish: José, año, señor, ¿Qué?
+French: Français, œuvre, Ç
+German: Größe, Mädchen, Füße
+Portuguese: João, São Paulo, não
+Italian: città, perché
+Polish: Łódź, Kraków
+Turkish: İstanbul, Çağlar
+Russian: Москва, Санкт-Петербург
+Arabic: مرحبا
+Hebrew: שלום
+Chinese: 你好，北京
+Japanese: こんにちは、東京
+Korean: 안녕하세요, 서울
+Emoji: 🚀 ✅ ⚠️ 🎉
+
+If ANY character displays incorrectly, you have encoding issues.
+```
+
+**Common encoding chains that cause mojibake:**
+
+```
+1. UTF-8 → Latin-1 → UTF-8 (double encoding)
+   café → cafÃ© (most common)
+
+2. UTF-8 → Windows-1252 → UTF-8
+   "Hello" → â€œHelloâ€ (curly quotes)
+
+3. Latin-1 → UTF-8 → Latin-1
+   café → caf� (replacement character)
+
+4. Emoji in Latin-1 context
+   🚀 → ðŸš€ (4-byte UTF-8 read as 4 Latin-1 chars)
+```
+
+**Case study: WordPress migration mojibake**
+
+Problem: Migrating 500 blog posts from WordPress (MySQL Latin-1) to static site (UTF-8)
+
+```sql
+-- WordPress database was Latin-1:
+ALTER DATABASE wordpress CHARACTER SET latin1 COLLATE latin1_swedish_ci;
+
+-- Content: "José's café" stored correctly in Latin-1
+-- Export to JSON (Python script assumed UTF-8)
+-- Result: JosÃ©â€™s cafÃ© (double mojibake!)
+
+-- Solution:
+-- 1. Export from MySQL specifying Latin-1:
+mysqldump --default-character-set=latin1 wordpress > export.sql
+
+-- 2. Convert export to UTF-8:
+iconv -f LATIN1 -t UTF-8 export.sql > export-utf8.sql
+
+-- 3. Import to new database as UTF-8:
+mysql --default-character-set=utf8mb4 newdb < export-utf8.sql
+```
+
+**Key insight:** Mojibake is a translation workflow problem, not just an encoding problem. Prevention requires automated checks, translator education, and platform enforcement. The ftfy Python library can automatically fix most mojibake, but prevention is always better than remediation.
 
 **Recommendation:** Path-based URLs, Crowdin for translation management, machine translation + human review workflow, prioritize languages by user analytics.
 
