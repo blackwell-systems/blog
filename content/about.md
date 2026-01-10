@@ -6,11 +6,13 @@ draft: false
 
 **Dayna Blackwell** is a software architect and technical author specializing in high-throughput, event-driven systems at scale. I design the systems that keep data moving reliably--from backend services and API integrations to analytics pipelines and the infrastructure supporting them.
 
-Currently, I work on the global loyalty and promotions platform for a major hospitality brand, designing and operating services behind rewards programs, digital wallets, and large-scale promotional campaigns used by customers worldwide. My work spans backend services (Python FastAPI/Pydantic, Java Jakarta EE), event-driven architectures (AWS Lambda, SNS/SQS, EventBridge, DynamoDB), and data engineering (AWS Glue, Redshift ETL pipelines transforming single-table designs into analytics-ready relational models).
+Currently, I work on the global loyalty and promotions platform for a major hospitality brand, designing and operating services behind rewards programs, digital wallets, and large-scale promotional campaigns used by customers worldwide. My work spans backend services (Python FastAPI/Pydantic, Java Jakarta EE), serverless event-driven architectures (AWS Lambda, SNS/SQS, EventBridge, DynamoDB), ETL pipelines (AWS Glue, Redshift), and infrastructure-as-code (AWS CDK, Terraform, Chef).
 
-As the author of **You Don't Know JSON** (107,000 words exploring the JSON ecosystem), I've spent years deep-diving into the protocols defining modern web communication. My expertise lies in building event-driven architectures that are not just scalable, but "hard to break"--focusing on idempotency, Content-Based Deduplication, Selective Semantic Hashing, and observability patterns (Datadog, Splunk, CloudWatch) that make distributed systems understandable when things break.
+With a career spanning from operations leadership to backend enterprise architecture, I led the modernization of legacy hospitality systems into serverless, event-driven pipelines on AWS. As a prolific technical writer (225,000+ lines of documentation, 3x AWS Certified), I've authored **You Don't Know JSON** (127,000 words exploring the JSON ecosystem) and bridge the gap between complex engineering and stakeholder value.
 
-This blog covers developer tools, backend architecture, event-driven systems, data pipelines, infrastructure-as-code, and the lessons learned building production systems at scale.
+My expertise lies in building event-driven architectures that are not just scalable, but "hard to break"--focusing on idempotency, Content-Based Deduplication, Selective Semantic Hashing, and observability patterns (Datadog, Splunk, CloudWatch) that make distributed systems understandable when things break.
+
+This blog covers developer tools, backend architecture, serverless workflows, event-driven systems, performance optimization, cost efficiency, data pipelines, infrastructure-as-code, and the lessons learned building production systems at scale.
 
 ## Books
 
