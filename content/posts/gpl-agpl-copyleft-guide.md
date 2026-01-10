@@ -1413,7 +1413,7 @@ Your licensing choice ultimately depends on your philosophy: do you value maximu
 - [Copyleft Guide - Practical GPL Compliance](https://copyleft.org/)
 
 **Case Law:**
-- [Versata v. Ameriprise (GPL enforceable)](https://en.wikipedia.org/wiki/Versata_Software_Inc._v._Ameriprise_Financial,_Inc.)
+- Versata v. Ameriprise - GPL enforceable in US courts
 - [BusyBox GPL Litigation](https://www.softwarefreedom.org/news/2009/dec/14/busybox-gpl-lawsuit/)
 
 **Historical:**
