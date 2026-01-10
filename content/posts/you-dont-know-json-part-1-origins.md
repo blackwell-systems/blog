@@ -1055,12 +1055,14 @@ The JSON ecosystem evolved to patch these gaps while preserving the core simplic
 
 {{< callout type="info" >}}
 **Series Roadmap:** This series explores the JSON ecosystem:
-- **Part 1** (this article): Origins and fundamental weaknesses
-- **Part 2**: JSON Schema - validation, types, and contracts
-- **Part 3**: Binary JSON formats - JSONB, BSON, MessagePack
-- **Part 6**: Streaming JSON - JSON Lines and large datasets
-- **Part 5**: JSON-RPC and protocol layers
-- **Part 6**: Security - JWT, canonicalization, and attacks
+- **Part 1** (this article): Origins, Evolution, and the Cracks in the Foundation
+- **Part 2**: JSON Schema and the Art of Validation
+- **Part 3**: Binary JSON in Databases (JSONB, BSON)
+- **Part 4**: Binary JSON for APIs and Data Transfer (MessagePack, CBOR)
+- **Part 5**: JSON-RPC: When REST Isn't Enough
+- **Part 6**: JSON Lines: Processing Gigabytes Without Running Out of Memory
+- **Part 7**: Security: Authentication, Signatures, and Attacks
+- **Part 8**: Lessons from the JSON Revolution
 {{< /callout >}}
 
 In Part 2, we'll solve JSON's most critical weakness: the lack of validation. JSON Schema transforms JSON from "untyped text" into "strongly validated contracts" without sacrificing simplicity. We'll explore how to define schemas, validate data at runtime, generate code from schemas, and integrate validation into your entire stack.
