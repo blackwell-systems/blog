@@ -474,9 +474,11 @@ Based on previous conversations, the blog owner prefers:
 ### LinkedIn Post Preferences
 
 **Emoji usage for LinkedIn posts (different from blog):**
+- 🗂️ for "What's inside" section headers
 - 🔹 for bullet point lists
 - 📚 for links to blog posts
 - 📦 for links to GitHub repos or crates.io packages
+- ❔ to frame engagement questions at the end (e.g., "❔ What license did you choose for your last project, and why❔")
 
 LinkedIn posts should be:
 - Direct and straightforward (no hype or false claims)
