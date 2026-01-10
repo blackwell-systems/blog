@@ -1,0 +1,24 @@
+# Leanpub generated files
+*.pdf
+*.epub
+*.mobi
+
+# Working files
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Build artifacts
+build/
+output/
+
+# Drafts and notes
+drafts/
+notes/
+scratch/
+
+# Editor files
+.vscode/
+.idea/
+*.sublime-*

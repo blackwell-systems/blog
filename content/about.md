@@ -4,11 +4,13 @@ date: 2025-12-01
 draft: false
 ---
 
-**Dayna Blackwell** is a software architect, technical author, and the founder of Blackwell Systems. A "builder-first" advocate for developer experience, Dayna has shipped 10 open-source production tools ranging from unified secrets management (vaultmux) to modular development frameworks (blackdot), all maintained with the same rigor as the enterprise systems she architects.
+**Dayna Blackwell** is a software architect and technical author specializing in high-throughput, event-driven systems at scale. I design the systems that keep data moving reliably--from backend services and API integrations to analytics pipelines and the infrastructure supporting them.
 
-With five years of experience in the high-stakes world of enterprise hospitality--designing APIs that serve millions and data pipelines processing billions of events--Dayna specializes in making complex, "high-consequence" systems accessible. She is a prolific technical writer with over 225,000 lines of published documentation, 3x AWS Certified, and a specialist in infrastructure-as-code (Terraform, CDK, Pulumi) and cloud architecture.
+Currently, I work on the global loyalty and promotions platform for a major hospitality brand, designing and operating services behind rewards programs, digital wallets, and large-scale promotional campaigns used by customers worldwide. My work spans backend services (Python FastAPI/Pydantic, Java Jakarta EE), event-driven architectures (AWS Lambda, SNS/SQS, EventBridge, DynamoDB), and data engineering (AWS Glue, Redshift ETL pipelines transforming single-table designs into analytics-ready relational models).
 
-This blog covers developer tools, automation, systems programming, artificial intelligence, and distributed systems--focusing on practical patterns that work in production.
+As the author of **You Don't Know JSON** (107,000 words exploring the JSON ecosystem), I've spent years deep-diving into the protocols defining modern web communication. My expertise lies in building event-driven architectures that are not just scalable, but "hard to break"--focusing on idempotency, Content-Based Deduplication, Selective Semantic Hashing, and observability patterns (Datadog, Splunk, CloudWatch) that make distributed systems understandable when things break.
+
+This blog covers developer tools, backend architecture, event-driven systems, data pipelines, infrastructure-as-code, and the lessons learned building production systems at scale.
 
 ## Books
 
