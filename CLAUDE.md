@@ -463,13 +463,26 @@ The blog auto-deploys to GitHub Pages via GitHub Actions on every push to `main`
 Based on previous conversations, the blog owner prefers:
 
 1. **Professional, subdued aesthetics** - Never use bright colors
-2. **No emoji** - Use text symbols (`+`, `-`)
+2. **No emoji in blog posts** - Use text symbols (`+`, `-`)
 3. **Comprehensive content** - Long-form, detailed articles are encouraged
 4. **Educational approach** - Explain the "why" not just the "how"
 5. **Multiple examples** - Show code in various languages
 6. **Visual aids** - Use mermaid diagrams extensively
 7. **Decision frameworks** - Help readers choose between options
 8. **Real-world examples** - Show how patterns combine in actual systems
+
+### LinkedIn Post Preferences
+
+**Emoji usage for LinkedIn posts (different from blog):**
+- 🔹 for bullet point lists
+- 📚 for links to blog posts
+- 📦 for links to GitHub repos or crates.io packages
+
+LinkedIn posts should be:
+- Direct and straightforward (no hype or false claims)
+- Reference all related parts in a series
+- Include engagement question at the end
+- Use appropriate hashtags (not excessive)
 
 ---
 
