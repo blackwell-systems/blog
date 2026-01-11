@@ -1,6 +1,6 @@
 ---
 title: "The Python Paradox: How Python Dominates Big Data Despite the GIL"
-date: 2025-01-11
+date: 2026-01-11
 draft: false
 tags: ["python", "gil", "concurrency", "parallelism", "big-data", "numpy", "pandas", "data-science", "machine-learning", "performance", "cpython", "threading", "multiprocessing", "pyspark", "polars", "optimization", "distributed-computing", "reference-counting", "memory-management", "pep-703"]
 categories: ["programming", "python"]
