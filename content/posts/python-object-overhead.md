@@ -158,10 +158,10 @@ flowchart TB
 | Language | Storage Location | Size (bytes) | Metadata | Allocation |
 |----------|-----------------|--------------|----------|------------|
 | C | Inline (stack/register) | 4 | None | Instant |
-| Go | Inline (escape analysis) | 8 | None (unless escapes) | Instant or allocator |
+| Go | Inline (escape analysis) | 8 | None (stack); GC metadata if escaped | Stack or heap (escape analysis) |
 | Rust | Inline (stack) | 4 or 8 | None | Instant |
 | Java | Stack (primitive) | 4 | None | Instant |
-| Java | Heap (Integer object) | 16 | Object header (12) + value (4) | Allocator |
+| Java | Heap (Integer object) | ~16 (typical HotSpot) | Object header (~12) + value (4) | Allocator |
 | Python | Heap (always boxed) | 28 | Refcount (8) + type (8) + size (8) + value (4) | pymalloc |
 
 ### Code Examples
@@ -317,14 +317,14 @@ end = time.time()
 | Go | 8 MB | Contiguous array |
 | Rust | 4 MB | Contiguous `Vec<i32>` |
 | Java | 4 MB + overhead | Primitive array, contiguous |
-| Python | ~28 MB | List of PyLongObject pointers + 28 bytes per object |
+| Python | ~36-40+ MB | List pointers (~8MB) + per-int objects (~28-32MB) + allocator overhead |
 
 Python uses **7x more memory** than C for the same logical data.
 
 ### Cache Performance
 
-Modern CPUs rely on cache locality. Stack-allocated data benefits from:
-- Sequential access (stack grows contiguously)
+Modern CPUs rely on cache locality. Contiguous, inline data benefits from:
+- Sequential access (contiguous memory layout)
 - Small size (fits in L1 cache: 32-64 KB)
 - Prefetching (CPU predicts access patterns)
 
@@ -707,7 +707,8 @@ Python made a conscious choice: **developer productivity over raw performance.**
 **What you pay:**
 - 7x memory overhead (vs C)
 - 10-50x slower execution (pure Python vs C)
-- Heap allocation for all values
+- Values are boxed objects (typically heap-allocated) accessed via references
+- Pointer indirection and reference counting overhead
 - GC pauses
 
 **The verdict:** For most Python code (web services, data pipelines, scripting), the overhead is acceptable. For performance-critical inner loops, drop down to NumPy, C extensions, or another language.
@@ -722,7 +723,7 @@ Python made a conscious choice: **developer productivity over raw performance.**
 
 Python's "everything is an object" design carries a real cost:
 - 28 bytes for a simple integer (vs 4 bytes in C)
-- All allocations on the heap (vs stack in C/Go/Rust)
+- Values are boxed objects (typically heap-allocated) accessed via references
 - Pointer indirection for every value access
 - Reference counting overhead
 
