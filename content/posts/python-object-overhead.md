@@ -12,10 +12,12 @@ All Python developers know that everything in Python is an object. Numbers are o
 
 But at what cost?
 
-This design decision has profound implications for memory usage and performance. A simple integer in C occupies 4 bytes on the stack. In Python, that same integer is a 28-byte object on the heap. This article explores why Python made this choice, what the overhead looks like in practice, and when it matters.
+This design decision has profound implications for memory usage and performance. In typical C code, an integer is stored inline (often on the stack or in registers) with no metadata - just 4 bytes. In Python, that same integer is a 28-byte object on the heap, accessed through pointer indirection. This article explores why Python made this choice, what the overhead looks like in practice, and when it matters.
+
+**Note:** Sizes shown are for 64-bit CPython builds; exact layout varies by platform and build configuration.
 
 {{< callout type="info" >}}
-**Key Insight:** Python's "everything is an object" philosophy means every value carries metadata (reference count, type pointer, value). This enables dynamic typing and flexible programming at the cost of memory overhead and allocation performance.
+**Key Insight:** Python's cost isn't just "heap vs stack" - it's pointer indirection, reference counting, and loss of data locality. Every Python value is boxed (stored as an object with metadata), requiring pointer dereference to access the actual value. This enables dynamic typing and flexible programming at the cost of memory overhead and allocation performance.
 {{< /callout >}}
 
 ---
@@ -24,13 +26,18 @@ This design decision has profound implications for memory usage and performance.
 
 ### C Integer Storage
 
-In C, an integer is just 4 bytes of data on the stack:
+In typical C code, integers are stored inline without metadata:
 
 ```c
-int x = 42;
+int x = 42;              // Automatic storage (typically stack)
+static int y = 42;       // Static storage (data segment)
+int* z = malloc(sizeof(int)); // Heap (explicit allocation)
+*z = 42;
 ```
 
-**Memory layout:**
+For local variables, the typical layout is:
+
+**Memory layout (automatic/stack storage):**
 ```
 Stack:
 ┌──────────┐
@@ -40,11 +47,11 @@ Stack:
 │ 00101010 │  ← 42 in binary
 └──────────┘
 Total: 4 bytes
-Location: Stack
+Location: Stack (or register)
 Allocation: Instant (bump stack pointer)
 ```
 
-The CPU can directly operate on this value. No indirection, no metadata, no heap allocation.
+The CPU can directly operate on this value. No indirection, no metadata, no dynamic allocation.
 
 ### Python Integer Storage
 
@@ -73,7 +80,7 @@ Heap:
 └─────────────────────┘
 Total: 28 bytes
 Location: Heap
-Allocation: Malloc + metadata initialization
+Allocation: CPython allocator (pymalloc), refcount initialization
 ```
 
 **Seven times larger.** And this doesn't include the pointer on the stack (8 bytes) that references this object.
@@ -150,12 +157,12 @@ flowchart TB
 
 | Language | Storage Location | Size (bytes) | Metadata | Allocation |
 |----------|-----------------|--------------|----------|------------|
-| C | Stack | 4 | None | Instant |
-| Go | Stack | 8 | None | Instant |
-| Rust | Stack | 4 or 8 | None | Instant |
+| C | Inline (stack/register) | 4 | None | Instant |
+| Go | Inline (escape analysis) | 8 | None (unless escapes) | Instant or allocator |
+| Rust | Inline (stack) | 4 or 8 | None | Instant |
 | Java | Stack (primitive) | 4 | None | Instant |
-| Java | Heap (Integer object) | 16 | Object header (12) + value (4) | Malloc |
-| Python | Heap | 28 | Refcount (8) + type (8) + size (8) + value (4) | Malloc |
+| Java | Heap (Integer object) | 16 | Object header (12) + value (4) | Allocator |
+| Python | Heap (always boxed) | 28 | Refcount (8) + type (8) + size (8) + value (4) | pymalloc |
 
 ### Code Examples
 
@@ -297,6 +304,8 @@ end = time.time()
 ```
 
 **50x slower.** Most of this overhead is heap allocation and reference counting.
+
+**Note:** Exact timings vary by platform, Python version, and allocator behavior; the ratios shown are illustrative of typical overhead.
 
 ### Memory Bandwidth
 
