@@ -105,7 +105,7 @@ y = x           # refcount = 2 (INCREMENT)
 del y           # refcount = 1 (DECREMENT)
 ```
 
-The increment/decrement operations (`Py_INCREF`/`Py_DECREF`) are **not atomic**—they're read-modify-write operations:
+The increment/decrement operations (`Py_INCREF`/`Py_DECREF`) are **not atomic** - they're read-modify-write operations:
 
 1. Read current refcount
 2. Add or subtract 1
@@ -141,7 +141,7 @@ This causes:
 {{< callout type="warning" >}}
 **Trade-off Decision (1997)**
 
-When threading was added to Python 1.5 in 1997, multi-core CPUs were rare/expensive. The GIL was a pragmatic choice: simple to implement, minimal overhead for single-threaded programs (the common case), and threading was primarily for I/O concurrency—not CPU parallelism.
+When threading was added to Python 1.5 in 1997, multi-core CPUs were rare/expensive. The GIL was a pragmatic choice: simple to implement, minimal overhead for single-threaded programs (the common case), and threading was primarily for I/O concurrency - not CPU parallelism.
 {{< /callout >}}
 
 ---
@@ -262,7 +262,7 @@ result = df.group_by('category').agg(pl.sum('value'))
 # No GIL involved at all
 ```
 
-Polars shows you don't even need C extensions—you can write the entire library in a language without a GIL, expose a Python API, and get full parallelism.
+Polars shows you don't even need C extensions - you can write the entire library in a language without a GIL, expose a Python API, and get full parallelism.
 
 ### PySpark: Distributed JVM Processing
 
@@ -587,7 +587,7 @@ flowchart LR
 - Full parallelism across all cores
 - Optimized with SIMD, vectorization
 
-**You get both.** Python's "slowness" only matters if you write pure Python loops for heavy computation—which you shouldn't be doing anyway.
+**You get both.** Python's "slowness" only matters if you write pure Python loops for heavy computation - which you shouldn't be doing anyway.
 
 ### The Real Genius
 
@@ -625,7 +625,7 @@ The "limitation" became a **forcing function** for good architecture.
 
 **Question:** If Python has the GIL and can't do parallelism, how does it dominate big data?
 
-**Answer:** Python doesn't process your data. NumPy, pandas, Polars, and PySpark do—and they don't have the GIL's limitations.
+**Answer:** Python doesn't process your data. NumPy, pandas, Polars, and PySpark do - and they don't have the GIL's limitations.
 
 When you write:
 ```python
@@ -666,7 +666,7 @@ Python gives you the **abstraction**. The libraries give you the **performance**
 
 3. **The complaints are about bad Python code, not Python itself.** Vectorize with NumPy instead of writing loops.
 
-4. **The GIL forced good architecture.** You can't be lazy—you must use the right abstractions.
+4. **The GIL forced good architecture.** You can't be lazy - you must use the right abstractions.
 
 5. **For CPU-bound pure Python code, use multiprocessing.** Each process has its own GIL.
 
@@ -674,7 +674,7 @@ Python gives you the **abstraction**. The libraries give you the **performance**
 
 7. **The GIL is going away.** PEP 703 (2023) makes it optional; Python 3.13t (2024) is the experimental no-GIL build.
 
-8. **Python's dominance isn't an accident.** The ecosystem solved the parallelism problem by design—Python coordinates, C/Rust/JVM executes.
+8. **Python's dominance isn't an accident.** The ecosystem solved the parallelism problem by design - Python coordinates, C/Rust/JVM executes.
 
 ---
 

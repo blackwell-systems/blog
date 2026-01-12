@@ -65,7 +65,13 @@ Use callout blocks to highlight important information:
    - Use `-` instead of ❌
    - Never use 🎉, 🚀, or other emoji
 
-2. **Comprehensive, educational content**
+2. **No em-dashes** - Use hyphens or rephrase:
+   - Use `-` (hyphen) or `:` (colon) instead of `—` (em-dash)
+   - Example: "Python is slow - not fast" instead of "Python is slow—not fast"
+   - Em-dashes are associated with AI-generated content
+   - Rephrase for clarity when possible
+
+3. **Comprehensive, educational content**
    - Write detailed, thorough articles (5,000+ words is fine)
    - Include code examples in multiple languages
    - Provide comparison tables
