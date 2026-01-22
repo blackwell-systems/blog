@@ -34,13 +34,15 @@ This post explores the performance implications of Go's value philosophy through
 
 **Escape analysis** is a compiler optimization that determines whether a variable's lifetime extends beyond the function that creates it.
 
+**Lifetime** means the period during which a variable must remain valid in memory. A variable's lifetime starts when it's created and ends when nothing can reference it anymore.
+
 When you create a variable in a function, the compiler asks a fundamental question:
 
 > "Does any reference to this variable exist after this function returns?"
 
-**If no:** The variable can be allocated on the stack. When the function returns, the stack frame is destroyed and the memory is instantly reclaimed.
+**If no:** The variable's lifetime matches the function's execution. It can be allocated on the stack. When the function returns, the stack frame is destroyed and the memory is instantly reclaimed.
 
-**If yes:** The variable "escapes" to the heap. It must survive beyond the function's lifetime, so the garbage collector manages it.
+**If yes:** The variable's lifetime extends beyond the function. The variable "escapes" to the heap where it must survive until the garbage collector determines nothing references it anymore.
 
 ### Simple Example
 
