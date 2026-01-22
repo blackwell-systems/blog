@@ -159,12 +159,32 @@ fmt.Println(p1.X)  // 1 (p1 unchanged)
 
 **Values have no identity:**
 
+Only references have identity. In Python, objects have identity (memory address) because everything is a reference. In Go, values are just data with no identity separate from their contents.
+
 ```go
 a := Point{1, 2}
 b := Point{1, 2}
 
-// a and b are equal (same value)
-// No concept of "same object in memory" vs "equal values"
+fmt.Println(a == b)  // true (same value)
+// No "is" operator - only == exists
+// No id() function - values don't have identity
+
+// Python: Objects (references) have both value and identity
+// Python: a == b (value equality) vs a is b (identity equality)
+// Go:     Values only have value equality (a == b)
+```
+
+**When you need identity in Go, use explicit pointers:**
+
+```go
+p1 := &Point{1, 2}
+p2 := &Point{1, 2}
+
+fmt.Println(p1 == p2)  // false (different pointers - Go's version of identity)
+fmt.Println(*p1 == *p2)  // true (same value when dereferenced)
+
+p3 := p1
+fmt.Println(p1 == p3)  // true (same pointer - identity equality)
 ```
 
 **Explicit pointers for sharing:**
@@ -303,6 +323,58 @@ func modifyPointer(p *Point) {
 ```
 
 The assignment semantics (reference vs value) determine the default parameter passing behavior. Languages with reference semantics naturally pass references to functions. Go's value semantics mean everything is copied unless you explicitly use pointers.
+
+### The Primitive vs Object Question
+
+This raises an important question: Is everything in Go a "primitive" since everything behaves like a value?
+
+**Python:** No primitives at all. Everything is a reference to a heap-allocated object with identity.
+```python
+x = 42
+type(x)  # <class 'int'> - even integers are objects
+id(x)    # Every value has identity
+x.bit_length()  # Integers have methods
+```
+
+**Java:** Explicit split between primitives and objects.
+```java
+int x = 42;          // Primitive (value type, stack, no methods)
+Integer y = 42;      // Object (reference type, heap, has methods)
+
+// Different behavior:
+int a = 5;
+int b = a;           // Copy value
+b = 10;              // a unchanged
+
+Integer c = new Integer(5);
+Integer d = c;       // Copy reference
+d = 10;              // Wait, this creates new Integer, doesn't modify c
+```
+
+Java's primitive/object split creates complexity: boxing/unboxing, different semantics, performance tradeoffs.
+
+**Go:** No primitive/object distinction. Everything follows value semantics, but you're not limited to simple types.
+```go
+// All of these behave the same way (value semantics):
+x := 42                    // Built-in type
+p := Point{1, 2}           // User-defined struct
+m := MyInt(10)             // Type alias
+s := []int{1, 2, 3}        // Slice (value, but contains reference to array)
+
+// All copied on assignment:
+x2 := x  // Copy
+p2 := p  // Copy (entire struct)
+m2 := m  // Copy
+s2 := s  // Copy (slice header, not underlying array)
+```
+
+**The key insight:**
+
+- **Python:** Everything is an object (reference semantics everywhere)
+- **Java:** Split model (primitives are values, objects are references)
+- **Go:** Everything behaves like values by default (uniform semantics, explicit pointers for references)
+
+Go doesn't need a primitive type system because value semantics work for complex types too. A struct with 10 fields behaves just like an integer - copied on assignment, no identity, stack-allocatable. Java needed primitives for performance (avoiding heap allocation), but Go achieves this through escape analysis instead.
 
 ---
 
