@@ -194,7 +194,18 @@ p3.X = 100
 fmt.Println(p1.X)  // 100 (same Point in memory)
 ```
 
-Pointer equality (`p1 == p2`) checks identity: "Do these pointers reference the same memory location?" This is equivalent to Python's `is` operator or checking `id(a) == id(b)`.
+{{< callout type="success" >}}
+**Identity Equivalence Across Languages**
+
+Go's pointer equality (`p1 == p2`) is equivalent to:
+- Python's `is` operator: `a is b`
+- Python's identity comparison: `id(a) == id(b)`
+- Java's reference equality: `a == b` (for objects)
+
+All check the same thing: "Do these references point to the same memory location?"
+
+The difference: Python/Java check identity by default. Go requires explicit pointers to get identity semantics.
+{{< /callout >}}
 
 **Explicit pointers for sharing:**
 
