@@ -381,17 +381,45 @@ p2 = Point(30, 40)
 # └─────────────────────────────┘
 ```
 
-**Method call mechanism:**
+**Method call mechanism (vtable dispatch):**
 
 ```python
 p1.distance()
 
 # Runtime process:
 # 1. Follow p1 (pointer to object in memory)
-# 2. Read object header's type pointer
-# 3. Look up 'distance' in Point class method table
-# 4. Call function with self=p1 (dynamic dispatch)
+# 2. Read object header's type pointer → Point class
+# 3. Look up 'distance' in Point class vtable (method table)
+# 4. Call function at that address with self=p1 (dynamic dispatch)
 ```
+
+**What is a vtable?** A vtable (virtual method table) is an array of function pointers stored in the class metadata. Every method in the class has an entry in the vtable pointing to its implementation. When you call a method on an object, the runtime follows the object's class pointer, looks up the method in that class's vtable, and calls the function it points to.
+
+**Why vtables exist - polymorphism:**
+
+```python
+class Animal:
+    def speak(self): print("...")
+
+class Dog(Animal):
+    def speak(self): print("Woof")
+
+class Cat(Animal):
+    def speak(self): print("Meow")
+
+# Each class has its own vtable:
+# Animal vtable: speak → address of Animal.speak
+# Dog vtable:    speak → address of Dog.speak
+# Cat vtable:    speak → address of Cat.speak
+
+animal = Dog()  # Declared as base type, actually Dog
+animal.speak()  # Prints "Woof" - runtime looks up Dog.speak in vtable
+
+# Compiler doesn't know animal is Dog (could be Cat)
+# Runtime follows: animal → Dog object → Dog class → vtable → Dog.speak
+```
+
+This indirection (object → class → vtable → function) enables polymorphism but costs performance: pointer dereferences and cache misses.
 
 **Java example:**
 
@@ -432,6 +460,49 @@ p.Distance()
 // Compile-time: resolves to function Distance(p Point)
 // Direct function call, no dynamic dispatch
 // No runtime type lookup needed
+// No vtable - compiler knows exact type
+```
+
+**Go avoids vtables for concrete types:**
+
+```go
+type Dog struct { name string }
+type Cat struct { name string }
+
+func (d Dog) Speak() { fmt.Println("Woof") }
+func (c Cat) Speak() { fmt.Println("Meow") }
+
+dog := Dog{name: "Fido"}
+dog.Speak()  // Direct call: Speak(dog)
+             // Compiler knows dog is Dog
+             // No vtable, no indirection
+
+// Polymorphism requires explicit interfaces:
+type Animal interface {
+    Speak()
+}
+
+var animal Animal = Dog{name: "Fido"}
+animal.Speak()  // NOW uses dynamic dispatch
+                // Interface value contains type info + vtable
+                // Only when you explicitly use interfaces
+```
+
+**Performance difference:**
+
+```go
+// Concrete type (no vtable):
+// Call instruction directly to Speak function
+// ~1 nanosecond
+
+// Through interface (vtable):
+// 1. Load interface type pointer
+// 2. Load method from interface table
+// 3. Indirect call through pointer
+// ~2-3 nanoseconds
+```
+
+The key difference: Go uses vtables **only when you ask for polymorphism** (interfaces). Python/Java use vtables **always** (every method call on every object).
 ```
 
 **The performance difference:**
