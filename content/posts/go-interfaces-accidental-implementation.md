@@ -222,7 +222,7 @@ The signatures match, so the code compiles. But is your game server really a gen
 **The scenario:**
 
 ```go
-// Original code (2024)
+// Original code
 func (db *Database) Save(data string) error {
     // implementation
 }
@@ -238,7 +238,7 @@ func BackupData(store Storage, data string) error {
 }
 ```
 
-**Six months later (2025), you add context support:**
+**Six months later, you add context support:**
 
 ```go
 func (db *Database) Save(ctx context.Context, data string) error {
