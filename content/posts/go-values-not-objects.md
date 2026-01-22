@@ -270,6 +270,22 @@ When you write `b = a`, what actually gets copied?
 - Makes sharing visible in the code through `&` and `*`
 
 **The pattern:** All three support both references and values. They differ in which is implicit (easy) and which requires explicit syntax (intentional).
+
+**The spectrum:**
+```
+Reference-heavy ←────────────────────────→ Value-heavy
+
+Python              Java              Go               C/Rust
+(always refs)       (split)           (values          (raw values
+                                      + pointers)      + unsafe)
+
+Implicit sharing ←──────────────────→ Explicit sharing
+Dynamic dispatch ←──────────────────→ Static dispatch
+Heap by default  ←──────────────────→ Stack preferred
+High overhead    ←──────────────────→ Zero overhead
+```
+
+Languages exist on a spectrum from "references by default" to "values by default." Moving right trades convenience (implicit sharing) for performance (stack allocation) and explicitness (visible sharing).
 {{< /callout >}}
 
 ### Why This Matters
