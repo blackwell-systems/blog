@@ -259,15 +259,36 @@ func processLargeStruct() {
 
 ```go
 func createCounter() func() int {
-    count := 0
-    return func() int {  // count escapes
-        count++
+    count := 0  // Escapes to heap
+    return func() int {
+        count++  // References heap-allocated count
         return count
     }
 }
+
+counter := createCounter()
+fmt.Println(counter())  // 1
+fmt.Println(counter())  // 2 (same count variable!)
 ```
 
-**Why:** The returned closure references `count`. The closure outlives the `createCounter` function, so `count` must escape to the heap to remain valid.
+**Why closures cause escape:** The returned closure references `count` from the outer function. After `createCounter` returns, its stack frame is destroyed. But the closure still needs access to `count`. The compiler detects this and allocates `count` on the heap instead of the stack.
+
+**Important: Variables are shared, not copied.** The outer function and closure both reference the same heap-allocated variable. This is why the counter maintains state across calls.
+
+**Not all closures escape:**
+
+```go
+func localClosure() int {
+    x := 10
+    
+    // Closure used only locally - doesn't escape
+    fn := func() int { return x * 2 }
+    return fn()  // Called immediately
+}
+// Both fn and x can stay on stack - fn doesn't outlive localClosure
+```
+
+**The rule:** Closures cause captured variables to escape only when the closure itself escapes (returned, stored in a struct field, etc.). Local-only closures can stay on the stack.
 
 ---
 
