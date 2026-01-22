@@ -14,7 +14,11 @@ You've heard the mantras:
 - **Java:** "Everything is a class"
 - **Go:** "Everything is a value"
 
-These aren't marketing slogans. They're fundamental design philosophies that shape every line of code you write. Understanding what "everything is a value" means in Go reveals why Go's concurrency model works, why it's fast, and why it feels different from object-oriented languages.
+{{< callout type="info" >}}
+**These Are Design Philosophies, Not Marketing Slogans**
+
+These statements describe fundamental design choices that shape every line of code you write. Understanding what "everything is a value" means in Go reveals why Go's concurrency model works, why it's fast, and why it feels different from object-oriented languages.
+{{< /callout >}}
 
 This post explores the mental model behind values, contrasts it with objects and classes, and shows how Go's value philosophy enables safe concurrency and predictable performance.
 
