@@ -1,7 +1,9 @@
 ---
-title: "Go's Value Philosophy: Why Everything Is a Value, Not an Object"
+title: "Go's Value Philosophy: Part 1 - Why Everything Is a Value, Not an Object"
 date: 2026-01-22
 draft: false
+series: ["go-value-philosophy"]
+seriesOrder: 1
 tags: ["go", "golang", "values", "objects", "memory-model", "philosophy", "python", "java", "comparison", "concurrency", "stack-allocation", "heap-allocation", "programming-paradigms", "type-systems", "performance", "mental-models"]
 categories: ["programming", "go"]
 description: "Deep dive into Go's value-oriented design philosophy and how it differs from Python's everything-is-an-object and Java's everything-is-a-class approaches. Understand how this fundamental choice affects memory, concurrency, and performance."
