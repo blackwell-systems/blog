@@ -928,46 +928,13 @@ result := scale(add(p, Point{3, 4}), 2)
 
 ## Putting It Together
 
-Go's "everything is a value" philosophy creates a programming model where:
+Go's "everything is a value" philosophy creates a programming model where data is copied by default. Assignment copies values, function arguments receive copies, and there's no hidden sharing. When sharing is needed, it's explicit through pointers, channels, or mutexes. This makes performance predictable through stack allocation and cheap copies, while keeping concurrency safer since each goroutine gets its own copies by default.
 
-**Data is copied by default:**
-- Assignment copies values
-- Function arguments receive copies
-- No hidden sharing
+The memory model stays simple: values are just bytes with no object headers or reference counting. This contrasts sharply with Python's heap-allocated objects with identity and Java's class hierarchies with inheritance.
 
-**Sharing is explicit:**
-- Use pointers when sharing is needed
-- Use channels for concurrent communication
-- Use mutexes for shared state
+**The trade-offs:**
 
-**Performance is predictable:**
-- Stack allocation when possible
-- No hidden allocations
-- Cheap copies for small values
-
-**Concurrency is safer:**
-- Each goroutine gets copies by default
-- No accidental data races from hidden sharing
-- Explicit synchronization when needed
-
-**Memory model is simple:**
-- Values are just bytes
-- No object headers
-- No reference counting
-
-This contrasts with Python's "everything is a heap-allocated object with identity" and Java's "everything lives in class hierarchies." Each approach has trade-offs:
-
-**Python's objects:**
-- Pros: Rich introspection, dynamic behavior, everything has methods
-- Cons: Memory overhead, GC pressure, requires synchronization
-
-**Java's classes:**
-- Pros: Strong typing, inheritance hierarchies, clear structure
-- Cons: Verbose, heavyweight, requires explicit interfaces
-
-**Go's values:**
-- Pros: Simple, fast, safe concurrency, predictable performance
-- Cons: No inheritance, manual memory management patterns, explicit copies
+Python's objects provide rich introspection and dynamic behavior at the cost of memory overhead and synchronization complexity. Java's classes offer strong typing and clear structure but demand verbose boilerplate and explicit interfaces. Go's values deliver simplicity and safe concurrency but require explicit copying and forego inheritance entirely.
 
 The mental model you choose shapes how you think about your program. Go's value philosophy encourages thinking about data flow (values moving through functions) rather than object graphs (references connecting objects).
 
