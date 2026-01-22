@@ -30,6 +30,44 @@ This post explores the performance implications of Go's value philosophy through
 
 ---
 
+## What Is Escape Analysis?
+
+**Escape analysis** is a compiler optimization that determines whether a variable's lifetime extends beyond the function that creates it.
+
+When you create a variable in a function, the compiler asks a fundamental question:
+
+> "Does any reference to this variable exist after this function returns?"
+
+**If no:** The variable can be allocated on the stack. When the function returns, the stack frame is destroyed and the memory is instantly reclaimed.
+
+**If yes:** The variable "escapes" to the heap. It must survive beyond the function's lifetime, so the garbage collector manages it.
+
+### Simple Example
+
+```go
+// Does NOT escape
+func calculate() int {
+    x := 42        // Created on stack
+    return x       // Returns COPY of value
+}                  // x destroyed when function returns
+
+// DOES escape
+func createUser() *User {
+    u := User{Name: "Alice"}  // Must go on heap
+    return &u                 // Returns POINTER to u
+}                             // Caller still has pointer after return
+```
+
+**Why this matters:**
+
+In the first example, `x` lives and dies with the function. Stack allocation is cheap (move a pointer), and cleanup is free (move the pointer back).
+
+In the second example, `u` must outlive `createUser()` because the caller receives a pointer to it. If `u` were on the stack, that pointer would reference deallocated memory after the function returns. The compiler detects this and allocates `u` on the heap instead, where it lives until the garbage collector determines nothing references it anymore.
+
+**The performance impact:** Stack allocation takes ~2 CPU cycles. Heap allocation takes ~50-100 cycles plus garbage collector overhead. Escape analysis determines which path your values take.
+
+---
+
 ## Stack vs Heap: The Performance Gap
 
 ### Memory Allocation Speed
