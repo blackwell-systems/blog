@@ -643,7 +643,7 @@ Be honest about the trade-offs:
 
 Use the right tool for the job. Protobuf shines at scale and in type-safety-critical systems, but it's overkill for many applications.
 
-## The Verdict
+## When Protocol Buffers Makes Sense
 
 Protocol Buffers trades human readability for performance and type safety. If you're building:
 - Microservices communicating internally

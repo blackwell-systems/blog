@@ -424,7 +424,7 @@ No Mockito, no reflection, no framework. Just plain Go code that automatically s
 
 ---
 
-## The Verdict: Embrace Accidental Implementation
+## Why Accidental Implementation Works
 
 Go's implicit interfaces turn potential confusion into compositional power. Yes, you'll occasionally implement interfaces by accident. But the benefits are worth it:
 

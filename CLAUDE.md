@@ -71,7 +71,15 @@ Use callout blocks to highlight important information:
    - Em-dashes are associated with AI-generated content
    - Rephrase for clarity when possible
 
-3. **Comprehensive, educational content**
+3. **Avoid AI-generated boilerplate phrases** - These sound formulaic and template-like:
+   - Never use "Key insight" as a section header or bold label
+   - Never use "The verdict" as a section header or concluding phrase
+   - Instead use natural language:
+     - "What this means" / "Why this matters" / "The reality"
+     - "Why X works" / "When X makes sense" / "Putting it together"
+   - Write conclusions as natural paragraphs without verdict declarations
+
+4. **Comprehensive, educational content**
    - Write detailed, thorough articles (5,000+ words is fine)
    - Include code examples in multiple languages
    - Provide comparison tables

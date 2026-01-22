@@ -711,7 +711,7 @@ Python made a conscious choice: **developer productivity over raw performance.**
 - Pointer indirection and reference counting overhead
 - GC pauses
 
-**The verdict:** For most Python code (web services, data pipelines, scripting), the overhead is acceptable. For performance-critical inner loops, drop down to NumPy, C extensions, or another language.
+For most Python code (web services, data pipelines, scripting), the overhead is acceptable. For performance-critical inner loops, drop down to NumPy, C extensions, or another language.
 
 {{< callout type="success" >}}
 **Best Practice:** Write your application in Python. Profile to find bottlenecks. Optimize only the hot paths with NumPy, Cython, or Rust extensions. You get 90% of the development speed with 90% of C's performance where it matters.
