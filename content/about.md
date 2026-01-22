@@ -12,7 +12,7 @@ With a career spanning from operations leadership to backend enterprise architec
 
 My expertise lies in building event-driven architectures that are not just scalable, but "hard to break"--focusing on idempotency, Content-Based Deduplication, Selective Semantic Hashing, and observability patterns (Datadog, Splunk, CloudWatch) that make distributed systems understandable when things break.
 
-This blog covers developer tools, backend architecture, serverless workflows, event-driven systems, performance optimization, cost efficiency, data pipelines, infrastructure-as-code, and the lessons learned building production systems at scale. My writing focuses on low-level implementation details: how things actually work under the hood, not just how to use them. You'll find explorations of memory models, type systems, serialization formats, and the technical decisions that shape how we build software.
+This blog covers developer tools, backend architecture, serverless workflows, event-driven systems, performance optimization, cost efficiency, data pipelines, infrastructure-as-code, and the lessons learned building production systems at scale. My writing focuses on low-level implementation details, system design, and software architecture: how things actually work under the hood, not just how to use them. You'll find explorations of memory models, type systems, serialization formats, and the technical decisions that shape how we build software.
 
 ## Books
 
