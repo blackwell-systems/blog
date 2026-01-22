@@ -251,11 +251,26 @@ When you write `b = a`, what actually gets copied?
 
 ### How Languages Present This Choice
 
-**Python's "everything is an object"** means everything is a reference by default. Even integers are heap-allocated objects. When you write `x = 5`, you're creating a reference to an integer object, not storing the value 5 directly.
+{{< callout type="info" >}}
+**Three Philosophies, One Choice: What Gets Copied?**
 
-**Java's "everything is a class"** creates a split: objects are references, primitives are values. This duality causes friction (boxing/unboxing, different semantics for `int` vs `Integer`) but was designed for performance - primitives avoid heap allocation overhead.
+**Python's "everything is an object"** = References by default
+- `x = 5` creates a reference to an integer object (heap-allocated)
+- Assignment copies references (shared state by default)
+- Explicit `copy.copy()` needed for independent copies
 
-**Go's "everything is a value"** means the default is copying data. When you write `p2 = p1`, you get an independent copy. References exist through explicit pointers (`*Point`), making sharing visible in the code.
+**Java's "everything is a class"** = Split model
+- Objects are references, primitives are values
+- Creates friction: boxing/unboxing, different semantics for `int` vs `Integer`
+- Designed for performance: primitives avoid heap overhead
+
+**Go's "everything is a value"** = Values by default
+- `p2 = p1` copies the data (independent copies by default)
+- Explicit pointers (`*Point`) for references (shared state when needed)
+- Makes sharing visible in the code through `&` and `*`
+
+**The pattern:** All three support both references and values. They differ in which is implicit (easy) and which requires explicit syntax (intentional).
+{{< /callout >}}
 
 ### Why This Matters
 
