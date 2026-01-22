@@ -36,9 +36,9 @@ This blog explores developer tools, backend architecture, event-driven systems, 
 
 **[domainstack](https://github.com/blackwell-systems/domainstack)** - Full-stack validation ecosystem for Rust: Type-safe validation with automatic TypeScript/Zod schema generation, serde integration, OpenAPI schemas, and web framework adapters (Axum, Actix, Rocket).
 
-**[error-envelope](https://github.com/blackwell-systems/error-envelope)** - Consistent, traceable, retry-aware HTTP error responses for Rust APIs — no framework required.
+**[error-envelope](https://github.com/blackwell-systems/error-envelope)** ([Rust crate](https://crates.io/crates/error-envelope)) - Consistent, traceable, retry-aware HTTP error responses for Rust APIs — no framework required.
 
-**[vaultmux](https://github.com/blackwell-systems/vaultmux)** - Go library for unified secret management across Bitwarden, 1Password, and pass. Interface-first design with 95%+ test coverage.
+**[vaultmux](https://github.com/blackwell-systems/vaultmux)** ([Go pkg](https://pkg.go.dev/github.com/blackwell-systems/vaultmux) | [Rust crate](https://crates.io/crates/vaultmux-rs)) - Unified secret management across Bitwarden, 1Password, and pass. Available in both Go and Rust with interface-first design and 95%+ test coverage.
 
 **[err-envelope](https://github.com/blackwell-systems/err-envelope)** - Structured HTTP error responses for Go. Works with net/http, Chi, Gin, and Echo. Machine-readable codes, field validation, trace IDs.
 
