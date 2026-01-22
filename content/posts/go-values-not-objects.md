@@ -259,15 +259,24 @@ fmt.Println(p.X)  // 100 (original modified)
 
 **How languages handle function calls:**
 
-**Python:** Pass-by-reference (always). When you pass an object to a function, you're passing a reference to that object.
+**Python:** Technically "pass-by-value of references." Since everything is already a reference, you pass a copy of the reference. The function can mutate the object but can't change which object the caller's variable references.
 ```python
 def modify(point):
-    point.x = 100  # Modifies the original object
+    point.x = 100  # Works! Mutates object through reference
 
 p = Point(1, 2)
-modify(p)  # Pass reference
-print(p.x)  # 100 (original modified)
+modify(p)
+print(p.x)  # 100 (original object modified)
+
+def try_reassign(point):
+    point = Point(999, 999)  # Only changes local reference
+
+p = Point(1, 2)
+try_reassign(p)
+print(p.x)  # 1 (caller's reference unchanged)
 ```
+
+For practical purposes, Python behaves like pass-by-reference since you can mutate objects through the reference you receive.
 
 **Java:** Pass-by-value, but for objects the "value" is a reference (confusing!). You're copying the reference, not the object.
 ```java
