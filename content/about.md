@@ -4,15 +4,19 @@ date: 2025-12-01
 draft: false
 ---
 
-**Dayna Blackwell** is a software architect and technical author specializing in high-throughput, event-driven systems at scale. I design the systems that keep data moving reliably--from backend services and API integrations to analytics pipelines and the infrastructure supporting them.
+**Dayna Blackwell** builds distributed systems that don't break at 2 AM.
 
-Currently, I work on the global loyalty and promotions platform for a major hospitality brand, designing and operating services behind rewards programs, digital wallets, and large-scale promotional campaigns used by customers worldwide. My work spans backend services (Python FastAPI/Pydantic, Java Jakarta EE), serverless event-driven architectures (AWS Lambda, SNS/SQS, EventBridge, DynamoDB), ETL pipelines (AWS Glue, Redshift), and infrastructure-as-code (AWS CDK, Terraform, Chef).
+I'm a software architect specializing in event-driven architectures at scale. Currently, I design and operate the global loyalty and promotions platform for a major hospitality brand - the backend services powering rewards programs, digital wallets, and promotional campaigns used by millions of customers worldwide.
 
-With a career spanning from operations leadership to backend enterprise architecture, I led the modernization of legacy hospitality systems into serverless, event-driven pipelines on AWS. As a prolific technical writer (225,000+ lines of documentation, 3x AWS Certified), I've authored **You Don't Know JSON** (127,000 words exploring the JSON ecosystem) and bridge the gap between complex engineering and stakeholder value.
+My work focuses on making distributed systems predictable: idempotent message handling, content-based deduplication, selective semantic hashing, and observability patterns that make production failures understandable when they happen. The goal is systems where 3 AM pages are rare and debuggable.
 
-My expertise lies in building event-driven architectures that are not just scalable, but "hard to break"--focusing on idempotency, Content-Based Deduplication, Selective Semantic Hashing, and observability patterns (Datadog, Splunk, CloudWatch) that make distributed systems understandable when things break.
+The tech stack spans serverless AWS (Lambda, EventBridge, DynamoDB, Glue, Redshift), backend services (Python FastAPI, Java Jakarta EE), and infrastructure-as-code (CDK, Terraform). My career path - from operations leadership through backend architecture - shapes how I think about systems: they have to work for the people maintaining them at 3 AM, not just the people designing them at 3 PM.
 
-This blog covers developer tools, backend architecture, serverless workflows, event-driven systems, performance optimization, cost efficiency, data pipelines, infrastructure-as-code, and the lessons learned building production systems at scale. My writing focuses on low-level implementation details, system design, and software architecture: how things actually work under the hood, not just how to use them. You'll find explorations of memory models, type systems, serialization formats, and the technical decisions that shape how we build software.
+Outside the Python/Java enterprise world, I build developer tools and libraries in Go and Rust. My open source work includes unified secret management across multiple vault backends (vaultmux), profile management for Claude Code with automatic context detection (dotclaude), type-safe validation with automatic TypeScript schema generation (domainstack), and structured error handling that works across different web frameworks (error-envelope, err-envelope).
+
+As a technical writer (3x AWS Certified, 225,000+ lines of documentation), I've authored **You Don't Know JSON** (127,000 words) and focus on explaining how things actually work: memory models, type systems, serialization formats, system design, software architecture, and the low-level implementation details that determine whether your architecture survives production.
+
+This blog explores developer tools, backend architecture, event-driven systems, performance optimization, data pipelines, and the lessons from building systems that handle real traffic.
 
 ## Books
 
