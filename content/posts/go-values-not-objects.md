@@ -530,61 +530,35 @@ animal.Speak()  // NOW uses dynamic dispatch
                 // Only when you explicitly use interfaces
 ```
 
-**Performance difference:**
+**The key difference:** Go uses vtables **only when you ask for polymorphism** (interfaces). Python/Java use vtables **always** (every method call on every object).
 
-```go
-// Concrete type (no vtable):
-// Call instruction directly to Speak function
-// ~1 nanosecond
+### Performance Implications Summary
 
-// Through interface (vtable):
-// 1. Load interface type pointer
-// 2. Load method from interface table
-// 3. Indirect call through pointer
-// ~2-3 nanoseconds
-```
+| Aspect | Python/Java (Objects) | Go (Values) | Go (Interfaces) |
+|--------|----------------------|-------------|-----------------|
+| Class metadata | Stored at runtime | Compile-time only | Stored for interface types |
+| Method dispatch | Dynamic (vtable) | Static (direct call) | Dynamic (interface table) |
+| Instance header | Required (16+ bytes) | None (0 bytes) | Interface wrapper (16 bytes) |
+| Method call cost | ~5-10ns (vtable lookup) | ~1ns (direct call) | ~2-3ns (interface dispatch) |
+| Memory overhead | High (headers + metadata) | Zero | Only when using interfaces |
 
-The key difference: Go uses vtables **only when you ask for polymorphism** (interfaces). Python/Java use vtables **always** (every method call on every object).
-```
+**What "everything is an object/value" means in practice:**
 
-**The performance difference:**
+**Python/Java:**
+- Every instance has runtime header → class metadata → vtable
+- Every method call: pointer dereference + vtable lookup + indirect call
+- Performance cost paid whether you need polymorphism or not
 
-| Aspect | Python/Java (Objects) | Go (Values) |
-|--------|----------------------|-------------|
-| Class metadata | Stored at runtime | Compile-time only |
-| Method dispatch | Dynamic (vtable lookup) | Static (direct call) |
-| Instance header | Required (type pointer) | None for values |
-| Memory overhead | 16+ bytes per object | 0 bytes overhead |
-| Method calls | Pointer dereference + vtable lookup | Direct function call |
+**Go values:**
+- No runtime type information, no headers, no vtables
+- Method calls resolved at compile time → direct function calls
+- Zero overhead for the common case (concrete types)
 
-**Why this matters:**
-
-When Python/Java say "everything is an object," they mean:
-- Every instance has a runtime header pointing to its class
-- Every method call goes through dynamic dispatch
-- Classes exist as runtime metadata structures
-
-When Go says "everything is a value," it means:
-- No runtime type information (unless using interfaces)
-- No class metadata to look up
-- Method calls resolved at compile time
-- Just raw data with zero overhead
-
-**Go with interfaces - object-like behavior when needed:**
-
-```go
-var i interface{} = Point{10, 20}
-
-// NOW we have object-like behavior:
-// Interface value: [type_pointer | value_pointer]
-// - type_pointer → Point's type metadata
-// - value_pointer → the Point data
-//
-// Method calls through interface use dynamic dispatch
-// But you opt into this explicitly
-```
-
-Go gives you object-like behavior (dynamic dispatch, type information) when you need it through interfaces, but the default is zero-overhead values with compile-time method resolution.
+**Go interfaces (opt-in objects):**
+- Explicit syntax (`var a Animal = dog`) wraps value in interface
+- Interface contains type pointer + value pointer
+- Method calls use dynamic dispatch through interface table
+- Pay for polymorphism only when you explicitly ask for it
 
 ### Connection to Pass-by-Value vs Pass-by-Reference
 
