@@ -444,4 +444,3 @@ Go's implicit interfaces turn potential confusion into compositional power. Yes,
 
 - [Effective Go: Interfaces](https://go.dev/doc/effective_go#interfaces)
 - [Go Proverbs: "The bigger the interface, the weaker the abstraction"](https://go-proverbs.github.io/)
-- [Go interfaces.md guide](/interview-kit) - Comprehensive technical reference
