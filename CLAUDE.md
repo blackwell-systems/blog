@@ -74,10 +74,13 @@ Use callout blocks to highlight important information:
 3. **Avoid AI-generated boilerplate phrases** - These sound formulaic and template-like:
    - Never use "Key insight" as a section header or bold label
    - Never use "The verdict" as a section header or concluding phrase
+   - Never use "It's not just X, it's Y" construction (now recognized as AI cliche)
    - Instead use natural language:
      - "What this means" / "Why this matters" / "The reality"
      - "Why X works" / "When X makes sense" / "Putting it together"
+     - Direct statements: "The difference is..." / "This comes from..."
    - Write conclusions as natural paragraphs without verdict declarations
+   - Write openings without "it's not just" formulations
 
 4. **Comprehensive, educational content**
    - Write detailed, thorough articles (5,000+ words is fine)
