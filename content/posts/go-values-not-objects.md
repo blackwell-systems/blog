@@ -195,6 +195,25 @@ p := Point{1, 2}
 // No metadata, no header, just the data
 ```
 
+{{< mermaid >}}
+flowchart LR
+    subgraph go["Go Value (16 bytes)"]
+        godata["X: 8 bytes<br/>Y: 8 bytes"]
+    end
+    
+    subgraph python["Python Object (80+ bytes)"]
+        pyheader["Object Header: 16 bytes<br/>Type Pointer: 8 bytes<br/>Dict: 48 bytes"]
+        pydata["x ref → int(1): 28 bytes<br/>y ref → int(2): 28 bytes"]
+        pyheader -.-> pydata
+    end
+    
+    style go fill:#3A4C43,stroke:#6b7280,color:#f0f0f0
+    style python fill:#4C3A3C,stroke:#6b7280,color:#f0f0f0
+    style godata fill:#66bb6a,stroke:#1b5e20,color:#fff
+    style pyheader fill:#ef5350,stroke:#b71c1c,color:#fff
+    style pydata fill:#ef5350,stroke:#b71c1c,color:#fff
+{{< /mermaid >}}
+
 **Copy operation is memcpy:**
 
 ```go
@@ -379,6 +398,25 @@ fmt.Println(c.count)  // 1 (modified!)
 |---------------|----------|---------|
 | Value `(t T)` | Small types, no mutation needed | `func (t Temperature) Celsius()` |
 | Pointer `(t *T)` | Large types, mutation needed | `func (c *Counter) Increment()` |
+
+{{< mermaid >}}
+sequenceDiagram
+    participant Original as Original Counter
+    participant Copy as Copy (value receiver)
+    participant Ptr as Pointer (pointer receiver)
+    
+    Note over Original: count = 0
+    
+    Original->>Copy: c.Increment() - passes copy
+    Note over Copy: count++ on copy<br/>(count = 1)
+    Copy-->>Original: copy discarded
+    Note over Original: count still 0
+    
+    Original->>Ptr: c.IncrementPtr() - passes pointer
+    Note over Ptr: count++ on original<br/>(via pointer)
+    Ptr-->>Original: modifies original
+    Note over Original: count = 1
+{{< /mermaid >}}
 
 {{< callout type="warning" >}}
 **Common Mistake: Value Receivers Don't Mutate**
