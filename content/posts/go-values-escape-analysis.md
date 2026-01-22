@@ -600,13 +600,7 @@ Go's value philosophy achieves performance through intelligent compiler analysis
 
 The compiler handles most optimization automatically. Your job is writing clear code that gives the compiler opportunities to optimize.
 
-★ Insight ─────────────────────────────────────
-**Value semantics + escape analysis = Go's performance secret**
-
-Go doesn't force you to choose between clarity and performance. Write clean value-oriented code, and the compiler figures out optimal memory placement. When performance matters, use profiling to identify actual bottlenecks rather than optimizing prematurely.
-
-The power comes from having both: simple value semantics as the default, with escape analysis ensuring performance remains excellent.
-─────────────────────────────────────────────────
+Value semantics combined with escape analysis form Go's performance foundation. You don't choose between clarity and performance - write clean value-oriented code, and the compiler determines optimal memory placement. When performance matters, use profiling to identify actual bottlenecks rather than optimizing prematurely. The power comes from simple value semantics as the default, with escape analysis ensuring performance remains excellent.
 
 ---
 
