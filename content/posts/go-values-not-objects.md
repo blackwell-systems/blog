@@ -5,7 +5,7 @@ draft: false
 tags: ["go", "golang", "values", "objects", "memory-model", "philosophy", "python", "java", "comparison", "concurrency", "stack-allocation", "heap-allocation", "programming-paradigms", "type-systems", "performance", "mental-models"]
 categories: ["programming", "go"]
 description: "Deep dive into Go's value-oriented design philosophy and how it differs from Python's everything-is-an-object and Java's everything-is-a-class approaches. Understand how this fundamental choice affects memory, concurrency, and performance."
-summary: "In Python, everything is an object. In Java, everything is a class. In Go, everything is a value. This isn't just terminology - it's a fundamental design philosophy that shapes how you write concurrent code, manage memory, and reason about performance."
+summary: "In Python, everything is an object. In Java, everything is a class. In Go, everything is a value. These are fundamental design philosophies that shape how you write concurrent code, manage memory, and reason about performance."
 ---
 
 You've heard the mantras:
