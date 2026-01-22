@@ -14,6 +14,8 @@ The tech stack spans serverless AWS (Lambda, EventBridge, DynamoDB, Glue, Redshi
 
 Outside the Python/Java enterprise world, I build developer tools and libraries in Go and Rust. My open source work includes unified secret management across multiple vault backends (vaultmux), profile management for Claude Code with automatic context detection (dotclaude), type-safe validation with automatic TypeScript schema generation (domainstack), and structured error handling that works across different web frameworks (error-envelope, err-envelope).
 
+As a polyglot programmer, I approach each language by building strong mental models: understanding why Go treats everything as a value, why Python makes everything an object, why Rust enforces ownership. Each represents a fundamentally different way of thinking about memory, concurrency, and composition. This cross-language perspective shapes how I design systems and choose the right tool for each problem.
+
 As a technical writer (3x AWS Certified, 225,000+ lines of documentation), I've authored **You Don't Know JSON** (127,000 words) and focus on explaining how things actually work: memory models, type systems, serialization formats, system design, software architecture, and the low-level implementation details that determine whether your architecture survives production.
 
 This blog explores developer tools, backend architecture, event-driven systems, performance optimization, data pipelines, and the lessons from building systems that handle real traffic.
