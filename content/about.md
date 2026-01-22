@@ -40,7 +40,7 @@ This blog explores developer tools, backend architecture, event-driven systems, 
 
 **[vaultmux](https://github.com/blackwell-systems/vaultmux)** ([Go pkg](https://pkg.go.dev/github.com/blackwell-systems/vaultmux) | [Rust crate](https://crates.io/crates/vaultmux-rs)) - Unified secret management across Bitwarden, 1Password, and pass. Available in both Go and Rust with interface-first design and 95%+ test coverage.
 
-**[err-envelope](https://github.com/blackwell-systems/err-envelope)** - Structured HTTP error responses for Go. Works with net/http, Chi, Gin, and Echo. Machine-readable codes, field validation, trace IDs.
+**[err-envelope](https://github.com/blackwell-systems/err-envelope)** ([Go pkg](https://pkg.go.dev/github.com/blackwell-systems/err-envelope)) - Structured HTTP error responses for Go. Works with net/http, Chi, Gin, and Echo. Machine-readable codes, field validation, trace IDs.
 
 ### Utilities
 
