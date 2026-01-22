@@ -53,7 +53,7 @@ git checkout <tab>
 # Dynamically generates suggestions from your repo
 ```
 
-**Key insight:** Completions are code that runs when you press tab. They can do anything - read files, call commands, parse state.
+**What's really happening:** Completions are code that runs when you press tab. They can do anything - read files, call commands, parse state.
 
 ## The Completion Architecture
 

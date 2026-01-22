@@ -553,7 +553,7 @@ zle -N fzf-file-widget
 bindkey '^T' fzf-file-widget
 ```
 
-**Key insight:** fzf isn't magic. It's just a TUI that reads stdin and writes stdout. The ZLE widget handles the integration.
+**The simplicity:** fzf isn't magic. It's just a TUI that reads stdin and writes stdout. The ZLE widget handles the integration.
 
 ## Understanding ZLE Modes
 

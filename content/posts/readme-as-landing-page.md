@@ -387,7 +387,7 @@ To other engineers, maybe. To users evaluating your project, it shows lack of fo
 "This README is so long they must be serious" is not a thought anyone has ever had. "This README is so long I'll come back later" is a thought everyone has had.
 
 {{< callout type="info" >}}
-**Key Insight:** Thoroughness belongs in your documentation. Conciseness belongs in your README. These are not conflicting goals - they're different audiences at different stages of the journey.
+**The principle:** Thoroughness belongs in your documentation. Conciseness belongs in your README. These are not conflicting goals - they're different audiences at different stages of the journey.
 {{< /callout >}}
 
 ## The Discipline Framework

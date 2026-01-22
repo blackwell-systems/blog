@@ -17,7 +17,7 @@ This design decision has profound implications for memory usage and performance.
 **Note:** Sizes shown are for 64-bit CPython builds; exact layout varies by platform and build configuration.
 
 {{< callout type="info" >}}
-**Key Insight:** Python's cost isn't just "heap vs stack" - it's pointer indirection, reference counting, and loss of data locality. Every Python value is boxed (stored as an object with metadata), requiring pointer dereference to access the actual value. This enables dynamic typing and flexible programming at the cost of memory overhead and allocation performance.
+**What this means:** Python's cost isn't just "heap vs stack" - it's pointer indirection, reference counting, and loss of data locality. Every Python value is boxed (stored as an object with metadata), requiring pointer dereference to access the actual value. This enables dynamic typing and flexible programming at the cost of memory overhead and allocation performance.
 {{< /callout >}}
 
 ---

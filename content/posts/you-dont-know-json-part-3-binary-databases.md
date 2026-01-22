@@ -805,7 +805,7 @@ Database binary JSON formats excel at different use cases:
 | MongoDB | JSON | 1.56 GB | 1.8s (scan) | N/A |
 | MongoDB | BSON | 1.31 GB | 0.12s (indexed) | +280 MB |
 
-**Key insights:**
+**What this means:**
 - Binary formats trade insert speed for query speed
 - Indexing provides 5-20x query speedup
 - Storage overhead: 5-15% for binary format + indexes

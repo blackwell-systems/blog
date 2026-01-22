@@ -212,7 +212,7 @@ processOrder(orderId)   // Touches: 5 microservices across 3 databases
 
 **Benefit:** Refactor backend freely without breaking API contract. Add caching, change storage systems, split services - clients see the same method signature.
 
-**Key Insight:** REST excels at resource manipulation (CRUD). RPC excels at action invocation (function calls). Choose based on your domain - don't force actions into resource models or vice versa. If your API is mostly verbs (calculate, process, execute, transform), RPC is the natural fit.
+**The distinction:** REST excels at resource manipulation (CRUD). RPC excels at action invocation (function calls). Choose based on your domain - don't force actions into resource models or vice versa. If your API is mostly verbs (calculate, process, execute, transform), RPC is the natural fit.
 {{< /callout >}}
 
 ### The RPC Renaissance

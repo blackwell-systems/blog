@@ -436,7 +436,7 @@ Go's implicit interfaces turn potential confusion into compositional power. Yes,
 
 **The solution isn't avoiding accidental implementation** - it's being intentional about which interfaces matter. Use compile-time guards for critical interfaces, keep interfaces small (1-3 methods), and embrace the flexibility.
 
-**Key insight:** Accidental implementation is Go's way of saying "behavior matters more than declarations." If your type has the right methods, it works. No inheritance hierarchies, no explicit contracts, just simple structural compatibility.
+**The bottom line:** Accidental implementation is Go's way of saying "behavior matters more than declarations." If your type has the right methods, it works. No inheritance hierarchies, no explicit contracts, just simple structural compatibility.
 
 ---
 

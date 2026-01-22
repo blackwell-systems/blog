@@ -45,7 +45,7 @@ flowchart TB
 {{< /mermaid >}}
 
 {{< callout type="info" >}}
-**Key Insight:** These testing approaches aren't mutually exclusive. Production Rust projects typically use multiple testing strategies together—unit tests for logic, integration tests for APIs, property-based tests for edge cases, and snapshot tests for complex outputs.
+**The reality:** These testing approaches aren't mutually exclusive. Production Rust projects typically use multiple testing strategies together—unit tests for logic, integration tests for APIs, property-based tests for edge cases, and snapshot tests for complex outputs.
 {{< /callout >}}
 
 ---
@@ -408,7 +408,7 @@ pub fn divide(a: i32, b: i32) -> Result<i32, String> {
 - - Examples would be too long for documentation
 
 {{< callout type="info" >}}
-**Key Insight:** Doc tests serve dual purposes—they're executable documentation and regression tests. When your API changes in a breaking way, doc tests will fail, forcing you to update examples.
+**Why this matters:** Doc tests serve dual purposes—they're executable documentation and regression tests. When your API changes in a breaking way, doc tests will fail, forcing you to update examples.
 {{< /callout >}}
 
 ---

@@ -1470,7 +1470,7 @@ Binary JSON formats solve the performance limitations of text JSON for API and d
 - Schema drift without validation
 - Ecosystem smaller than JSON
 
-**Key insight:** Binary formats fill the gap between JSON's simplicity and Protocol Buffers' schema enforcement. They're the right choice when JSON's performance matters but schema flexibility is still needed.
+**The trade-off:** Binary formats fill the gap between JSON's simplicity and Protocol Buffers' schema enforcement. They're the right choice when JSON's performance matters but schema flexibility is still needed.
 
 ---
 

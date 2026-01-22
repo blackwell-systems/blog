@@ -232,7 +232,7 @@ var person = {
 };
 ```
 
-**Key insight:** This notation was:
+**What this reveals:** This notation was:
 - Already in JavaScript engines (browsers everywhere)
 - Minimal syntax (no closing tags)
 - Easy to parse (recursive descent parser is ~500 lines)

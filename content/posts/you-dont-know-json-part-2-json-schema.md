@@ -1662,7 +1662,7 @@ JSON Schema transforms JSON from "any structure passes" to "only valid structure
 - OpenAPI uses JSON Schema for API contracts
 - Schema evolution requires careful planning
 
-**Key insight:** JSON Schema adds the contract layer JSON was missing. It enables:
+**The transformation:** JSON Schema adds the contract layer JSON was missing. It enables:
 - Type safety without changing JSON format
 - API contracts that are both docs and validation
 - Code generation from a single source of truth

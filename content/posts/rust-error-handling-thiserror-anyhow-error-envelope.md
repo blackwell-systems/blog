@@ -178,7 +178,7 @@ log_error(&PaymentError::InvalidCard("1234".into()));
 - **HTTP responses:** thiserror errors need conversion to HTTP formats--that's where `error-envelope` comes in.
 
 {{< callout type="info" >}}
-**Key Insight:** `thiserror` is about **defining error types**, not handling them. It generates boilerplate (`Display`, `Error` trait, `From` conversions) so you can focus on modeling your domain's failure modes.
+**The distinction:** `thiserror` is about **defining error types**, not handling them. It generates boilerplate (`Display`, `Error` trait, `From` conversions) so you can focus on modeling your domain's failure modes.
 {{< /callout >}}
 
 ---

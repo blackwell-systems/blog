@@ -77,7 +77,7 @@ let result = match some_function() {
 3. **Type conversion** - Call `.into()` to convert error types
 
 {{< callout type="info" >}}
-**Key Insight:** The `?` operator doesn't just unwrap--it also converts error types using the `From` trait. This is why you can use `?` with functions returning different error types in the same function.
+**What makes this work:** The `?` operator doesn't just unwrap--it also converts error types using the `From` trait. This is why you can use `?` with functions returning different error types in the same function.
 {{< /callout >}}
 
 ## The Three Faces of ?
