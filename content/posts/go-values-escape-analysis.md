@@ -34,7 +34,11 @@ This post explores the performance implications of Go's value philosophy through
 
 **Escape analysis** is a compiler optimization that determines whether a variable's lifetime extends beyond the function that creates it.
 
-**Lifetime** means the period during which a variable must remain valid in memory. A variable's lifetime starts when it's created and ends when nothing can reference it anymore.
+{{< callout type="info" >}}
+**What Is Lifetime?**
+
+Lifetime is the period during which a variable must remain valid in memory. A variable's lifetime starts when it's created and ends when nothing can reference it anymore.
+{{< /callout >}}
 
 When you create a variable in a function, the compiler asks a fundamental question:
 
