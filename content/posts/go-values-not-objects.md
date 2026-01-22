@@ -176,16 +176,25 @@ fmt.Println(a == b)  // true (same value)
 
 **When you need identity in Go, use explicit pointers:**
 
+Identity means "unique location in memory" - does this data structure occupy its own distinct memory address? In Go, pointers provide this concept explicitly.
+
 ```go
-p1 := &Point{1, 2}
-p2 := &Point{1, 2}
+p1 := &Point{1, 2}  // Allocate Point at memory address 0x1234
+p2 := &Point{1, 2}  // Allocate Point at different address 0x5678
 
-fmt.Println(p1 == p2)  // false (different pointers - Go's version of identity)
-fmt.Println(*p1 == *p2)  // true (same value when dereferenced)
+fmt.Println(p1 == p2)  // false (different memory addresses - different identity)
+fmt.Println(*p1 == *p2)  // true (same contents - value equality)
 
-p3 := p1
-fmt.Println(p1 == p3)  // true (same pointer - identity equality)
+// Share identity by copying the pointer
+p3 := p1  // p3 now points to same address (0x1234)
+fmt.Println(p1 == p3)  // true (same memory address - same identity)
+
+// Modifying through one pointer affects the other (shared identity)
+p3.X = 100
+fmt.Println(p1.X)  // 100 (same Point in memory)
 ```
+
+Pointer equality (`p1 == p2`) checks identity: "Do these pointers reference the same memory location?" This is equivalent to Python's `is` operator or checking `id(a) == id(b)`.
 
 **Explicit pointers for sharing:**
 
@@ -250,6 +259,219 @@ The reference-vs-value choice determines:
 4. **API design:** Languages with default references encourage mutation (modify shared state). Languages with default values encourage immutability (return modified copies).
 
 **The key insight:** Python, Java, and Go all support both references and values. The difference is which one is the **default** and which requires explicit syntax. Go inverts the common pattern by making values implicit and references explicit.
+
+### Objects Are Not Just Pointers to Structs
+
+A common misconception: "Objects are just structs with a pointer, right?" Not quite. Objects carry metadata that Go values (even pointer-based ones) don't have.
+
+**Python object in memory:**
+```
+Variable on stack: [pointer]
+                      ↓
+Heap-allocated object: [ref_count | type_pointer | __dict__ | data]
+                        (8 bytes)   (8 bytes)      (48+ bytes) (varies)
+```
+
+Every Python object has:
+- Reference count (for garbage collection)
+- Type pointer (links to class definition)
+- Attribute dictionary (stores instance attributes)
+- Then finally the actual data
+
+**Java object in memory:**
+```
+Variable on stack: [reference]
+                      ↓
+Heap-allocated object: [mark_word | class_pointer | data]
+                        (8 bytes)  (8 bytes)        (varies)
+```
+
+Every Java object has:
+- Mark word (GC info, lock state, hash code)
+- Class pointer (links to class metadata)
+- Then the actual data
+
+**Go value (stack-allocated):**
+```
+Variable on stack: [data]
+                    (just the data, no metadata, no pointer)
+```
+
+**Go pointer:**
+```
+Variable on stack: [pointer]
+                      ↓
+Heap-allocated struct: [data]
+                        (just the data, no metadata!)
+```
+
+**The crucial difference:** Go pointers point directly to data with zero metadata overhead. Python/Java references point to structures that wrap the data in metadata.
+
+**Size comparison for storing two integers:**
+
+```go
+// Go value
+type Point struct { X, Y int }
+// Memory: 16 bytes (8 bytes × 2 integers)
+
+// Go pointer
+p := &Point{1, 2}
+// Memory: 8 bytes (pointer) + 16 bytes (data) = 24 bytes total
+
+// Python
+class Point:
+    def __init__(self, x, y):
+        self.x, self.y = x, y
+p = Point(1, 2)
+// Memory: ~80+ bytes
+//   8 bytes (variable pointer)
+//   16 bytes (object header)
+//   48 bytes (attribute dictionary)
+//   28 bytes (int object for x)
+//   28 bytes (int object for y)
+```
+
+**What this means:**
+
+When Go uses pointers, you get reference semantics (shared state, identity) without object overhead. The pointer references raw data, not a metadata-wrapped object. This is why Go can use pointers liberally for large structs without the memory overhead that Python/Java objects carry.
+
+### What Is an Object Really? Class vs Object
+
+Understanding the implementation difference between classes and objects clarifies what "everything is an object" actually costs.
+
+**Class (compile-time + runtime metadata):**
+- Template defining field layout and method locations
+- Method table (vtable): function pointers for dynamic dispatch
+- Type information for runtime reflection
+- **One per type** - all instances share the same class metadata
+
+**Object (runtime instance):**
+- Header pointing to its class
+- Instance data (the actual field values)
+- **Many per class** - each instantiation creates a new object
+
+**Python example:**
+
+```python
+class Point:
+    def __init__(self, x, y):
+        self.x, self.y = x, y
+    
+    def distance(self):
+        return (self.x**2 + self.y**2)**0.5
+
+# Class metadata (stored once in memory):
+# ┌─────────────────────────────┐
+# │ Class: Point                │
+# │ - __dict__: {'x': ..., ...} │
+# │ - Methods: distance → 0x1234│
+# └─────────────────────────────┘
+
+# Object instances (many created):
+p1 = Point(10, 20)
+p2 = Point(30, 40)
+
+# Each object:
+# ┌─────────────────────────────┐
+# │ Object header               │
+# │ - type pointer → Point class│ ← Links to class metadata
+# │ - reference count           │
+# │ Instance data:              │
+# │ - __dict__: {x: 10, y: 20}  │
+# └─────────────────────────────┘
+```
+
+**Method call mechanism:**
+
+```python
+p1.distance()
+
+# Runtime process:
+# 1. Follow p1 (pointer to object in memory)
+# 2. Read object header's type pointer
+# 3. Look up 'distance' in Point class method table
+# 4. Call function with self=p1 (dynamic dispatch)
+```
+
+**Java example:**
+
+```java
+class Point {
+    int x, y;
+    double distance() { return Math.sqrt(x*x + y*y); }
+}
+
+Point p = new Point();
+p.distance();
+
+// Runtime:
+// 1. Follow p (reference to object)
+// 2. Read object header's class pointer
+// 3. Look up distance() in vtable
+// 4. Call method (dynamic dispatch through vtable)
+```
+
+**Go - no classes at all:**
+
+```go
+type Point struct { X, Y int }
+
+func (p Point) Distance() float64 {
+    return math.Sqrt(float64(p.X*p.X + p.Y*p.Y))
+}
+
+// NO class metadata exists at runtime
+// NO method table
+// NO vtable lookup
+// Just data layout known at compile time
+
+p := Point{10, 20}
+// Memory: [10][20] (16 bytes, no header, no type pointer)
+
+p.Distance()
+// Compile-time: resolves to function Distance(p Point)
+// Direct function call, no dynamic dispatch
+// No runtime type lookup needed
+```
+
+**The performance difference:**
+
+| Aspect | Python/Java (Objects) | Go (Values) |
+|--------|----------------------|-------------|
+| Class metadata | Stored at runtime | Compile-time only |
+| Method dispatch | Dynamic (vtable lookup) | Static (direct call) |
+| Instance header | Required (type pointer) | None for values |
+| Memory overhead | 16+ bytes per object | 0 bytes overhead |
+| Method calls | Pointer dereference + vtable lookup | Direct function call |
+
+**Why this matters:**
+
+When Python/Java say "everything is an object," they mean:
+- Every instance has a runtime header pointing to its class
+- Every method call goes through dynamic dispatch
+- Classes exist as runtime metadata structures
+
+When Go says "everything is a value," it means:
+- No runtime type information (unless using interfaces)
+- No class metadata to look up
+- Method calls resolved at compile time
+- Just raw data with zero overhead
+
+**Go with interfaces - object-like behavior when needed:**
+
+```go
+var i interface{} = Point{10, 20}
+
+// NOW we have object-like behavior:
+// Interface value: [type_pointer | value_pointer]
+// - type_pointer → Point's type metadata
+// - value_pointer → the Point data
+//
+// Method calls through interface use dynamic dispatch
+// But you opt into this explicitly
+```
+
+Go gives you object-like behavior (dynamic dispatch, type information) when you need it through interfaces, but the default is zero-overhead values with compile-time method resolution.
 
 ### Connection to Pass-by-Value vs Pass-by-Reference
 
