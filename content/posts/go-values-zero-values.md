@@ -75,14 +75,15 @@ fmt.Println(s)  // ""
 fmt.Println(b)  // false
 ```
 
-**Python: Variables don't exist until assigned**
+**Python: Assignment creates variables**
 ```python
-# x doesn't exist yet
-print(x)  # NameError: name 'x' is not defined
-
-# Must assign to create
-x = 0     # Now x exists
+# Python has no separate declaration step
+# Assignment creates the variable
+x = 0     # Declaration and initialization happen together
 print(x)  # 0
+
+# But there's no way to declare without initializing
+# No equivalent to "var x int" that gives a default
 ```
 
 **Java: Local variables forbidden before assignment**
