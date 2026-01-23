@@ -30,7 +30,7 @@ This post explores the mental model behind values, contrasts it with objects and
 
 ### Python: Everything Is an Object
 
-In Python, even the number `5` is a heap-allocated object with identity, methods, and reference semantics.
+In Python, even the integer `5` is a heap-allocated object with identity, methods, and reference semantics.
 
 ```python
 # Everything is an object with identity
