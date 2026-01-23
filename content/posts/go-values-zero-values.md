@@ -41,7 +41,11 @@ flowchart LR
     style go fill:#3A4C43,stroke:#6b7280,color:#f0f0f0
 {{< /mermaid >}}
 
-In most languages, these are separate steps. You declare a variable (reserve space), then initialize it (give it a value). Go merges these: declaration IS initialization. When you declare `var x int`, you don't get uninitialized memory - you get the integer `0`. Every Go variable is initialized at the moment it's declared.
+In most languages, these are separate steps. You declare a variable (reserve space), then initialize it (give it a value).
+
+Go merges these: declaration IS initialization. When you declare `var x int`, you don't get uninitialized memory - you get the integer `0`.
+
+Every Go variable is initialized at the moment it's declared.
 
 {{< callout type="info" >}}
 **Zero Values: Go's Valid-by-Default Philosophy**
