@@ -121,12 +121,22 @@ fmt.Println(m["key"]) // 0 (safe!)
 ```java
 String s = null;
 System.out.println(s.length());  // NullPointerException!
+
+Map<String, Integer> m = null;
+int value = m.get("key");  // NullPointerException!
+
+List<String> list = null;
+int size = list.size();  // NullPointerException!
 ```
 
-**The difference:** Go's nil values have well-defined behavior:
+NullPointerException is the most common production error in Java. Every null reference is a landmine waiting to explode.
+
+**The difference:** Go's nil values have well-defined, safe behavior for reading:
 - Nil slices can be read (length 0) and appended to
 - Nil maps can be read (returns zero value) but not written to
 - Methods can be called on nil receivers (if the method handles it)
+
+**The key insight:** In Go, collections (slices, maps) can be nil and still safely queried. In Java, any operation on a null collection crashes. This eliminates the majority of null-related production errors.
 
 **"Valid by default" means:** Every declared variable can be safely used in some way. For value types (int, bool, string, struct), all operations work. For types with nil zero values (pointers, slices, maps, channels), read operations work - only mutation requires initialization.
 
