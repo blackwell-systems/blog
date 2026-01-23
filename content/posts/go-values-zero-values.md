@@ -19,7 +19,9 @@ var x int
 fmt.Println(x)  // What is x?
 ```
 
-In Python, undeclared variables don't exist (NameError). In Java, local variables must be assigned before use (compile error). In Go, `x` exists immediately as the value `0` - the **zero value** for integers.
+In Python, undeclared variables don't exist (NameError).
+In Java, local variables must be assigned before use (compile error).
+In Go, `x` exists immediately as the value `0` - the **zero value** for integers.
 
 Go declaration doesn't just reserve memory - it creates a valid, usable value. There is no "uninitialized state."
 
