@@ -128,13 +128,13 @@ System.out.println(s.length());  // NullPointerException!
 - Nil maps can be read (returns zero value) but not written to
 - Methods can be called on nil receivers (if the method handles it)
 
-**"Valid by default" means:** Every declared variable can be safely used in some way. For value types, all operations work. For reference types with nil, read operations work - only mutation requires initialization.
+**"Valid by default" means:** Every declared variable can be safely used in some way. For value types (int, bool, string, struct), all operations work. For types with nil zero values (pointers, slices, maps, channels), read operations work - only mutation requires initialization.
 
 ## What Are Zero Values?
 
 **Zero value** is the value a variable holds from the moment it's declared. It's not "default" or "initial" - it's simply what the value IS until you assign something else.
 
-For most types, the zero value supports all operations. For pointer-like types (slices, maps, pointers, channels), the zero value is `nil`, which supports read operations but may require initialization before write operations.
+For most types, the zero value supports all operations. For types whose zero value is `nil` (pointers, slices, maps, channels, interfaces, functions), read operations work but write operations may require initialization.
 
 ### Built-in Types
 
@@ -287,7 +287,7 @@ fmt.Println(strings.ToUpper(name))  // "" (works fine, no panic)
 // No nil checks needed for value types
 ```
 
-**The pattern:** Go reserves `nil` for pointers, slices, maps, channels, interfaces, and functions. Value types (int, bool, string, structs) never nil - they always have valid zero values.
+**The pattern:** Some types have `nil` as their zero value: pointers, slices, maps, channels, interfaces, and functions. Other types (int, bool, string, structs) are never nil - they always have concrete zero values.
 
 ### 2. Simpler Struct Initialization
 
