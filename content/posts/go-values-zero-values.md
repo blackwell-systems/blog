@@ -27,6 +27,20 @@ In Go, `x` exists immediately as the value `0` - the **zero value** for integers
 - **Declaration:** Announcing a variable exists and reserving memory for it
 - **Initialization:** Giving that variable its first value
 
+{{< mermaid >}}
+flowchart LR
+    subgraph other["Most Languages"]
+        d1[Declaration<br/>Reserve memory] --> i1[Uninitialized state] --> a1[Assignment<br/>First value]
+    end
+    
+    subgraph go["Go"]
+        d2[Declaration<br/>Reserve memory] --> i2[Zero value<br/>Immediate value]
+    end
+
+    style other fill:#4C4538,stroke:#6b7280,color:#f0f0f0
+    style go fill:#3A4C43,stroke:#6b7280,color:#f0f0f0
+{{< /mermaid >}}
+
 In most languages, these are separate steps. You declare a variable (reserve space), then initialize it (give it a value). Go merges these: declaration IS initialization. When you declare `var x int`, you don't get uninitialized memory - you get the integer `0`. Every Go variable is initialized at the moment it's declared.
 
 {{< callout type="info" >}}
