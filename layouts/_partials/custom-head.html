@@ -1,6 +1,17 @@
 <!-- Custom CSS -->
 <link rel="stylesheet" href="{{ "css/custom.css" | absURL }}">
 
+<!-- Inline code styling - only for code in prose, not code blocks -->
+<style>
+  p code,
+  li code {
+    background: rgba(58, 74, 92, 0.5);
+    padding: 0.2em 0.4em;
+    border-radius: 3px;
+    font-weight: 500;
+  }
+</style>
+
 <!-- Mermaid diagram support -->
 <script type="module">
   import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
