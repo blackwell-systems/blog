@@ -78,7 +78,7 @@ void method() {
 }
 ```
 
-**The key distinction:** Go has no concept of "uninitialized variables." Declaration doesn't just reserve memory - it creates a value in that memory. The zero value IS the value, not a placeholder for a future value.
+**The key distinction:** Go has no concept of "uninitialized variables." Declaration creates a value in memory. The zero value IS the value, not a placeholder for a future value.
 
 ### The Nil Paradox: Valid by Default?
 
