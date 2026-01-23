@@ -1,8 +1,8 @@
 ---
-title: "Go's Value Model: Part 3 - Zero Values and the Valid-by-Default Philosophy"
+title: "Go's Value Philosophy: Part 3 - Zero Values and the Valid-by-Default Philosophy"
 date: 2026-01-23
 draft: false
-series: ["go-value-model"]
+series: ["go-value-philosophy"]
 seriesOrder: 3
 tags: ["go", "golang", "zero-values", "initialization", "null-safety", "memory-model", "default-values", "api-design", "python", "java", "comparison", "nil", "none", "programming-paradigms"]
 categories: ["programming", "go"]
