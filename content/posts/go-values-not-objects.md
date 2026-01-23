@@ -30,9 +30,9 @@ This post explores the mental model behind values, contrasts it with objects and
 
 ### Python: Everything Is an Object
 
-In Python, even the integer `5` is a heap-allocated object. This means every value has three characteristics:
+In Python, even the integer `5` is a heap-allocated object. This means values are stored as objects with three characteristics:
 
-**1. Identity** - A unique memory address that distinguishes it from other values  
+**1. Identity** - A memory address that identifies the object (though multiple variables may reference the same object)  
 **2. Methods** - Functions you can call on the value (like `.bit_length()` on integers)  
 **3. Reference semantics** - Assignment copies references, not data (multiple variables can point to the same object)
 
@@ -42,6 +42,9 @@ x = 5
 y = 5
 
 print(id(x))  # Object identity (memory address)
+print(id(y))  # Same identity! (integer interning optimization)
+print(x is y)  # True - both reference the same object
+
 print(type(5))  # <class 'int'> - even integers are classes
 
 # Integers have methods (functions bound to the value)
@@ -55,9 +58,30 @@ print(type(greet))  # <class 'function'>
 greet.custom_attr = 42  # Can add attributes to functions!
 ```
 
+**The identity caveat - integer interning and constant folding:**
+
+Python optimizes small integers by pre-creating objects for values from -5 to 256 (this is called **integer interning**). All variables referencing these values point to the same pre-allocated object. Additionally, the Python compiler performs **constant folding** - when it sees literal values in the same compilation unit, it often reuses the same object even for larger integers.
+
+```python
+# Integer interning (guaranteed for -5 to 256)
+a = 5
+b = 5
+print(a is b)  # True (same object, always)
+
+# Constant folding (optimization, not guaranteed)
+x = 1000
+y = 1000
+print(x is y)  # True in same scope (compiler optimization)
+
+# Different creation methods bypass optimization
+m = 1000
+n = int("1000")  # Runtime conversion, not a literal
+print(m is n)  # False (different objects)
+```
+
 **Objects have identity separate from value:**
 
-In Python, two objects can contain identical data but remain distinct entities in memory. Each object has a unique identity (memory address) that persists regardless of its contents.
+For mutable types like lists, Python always creates distinct objects. Two lists with identical contents occupy different memory locations and have different identities.
 
 ```python
 a = [1, 2, 3]
