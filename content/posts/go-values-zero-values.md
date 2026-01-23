@@ -78,7 +78,9 @@ void method() {
 }
 ```
 
+{{< callout type="info" >}}
 **The key distinction:** Go has no concept of "uninitialized variables." Declaration creates a value in memory. The zero value IS the value, not a placeholder for a future value.
+{{< /callout >}}
 
 ### The Nil Paradox: Valid by Default?
 
