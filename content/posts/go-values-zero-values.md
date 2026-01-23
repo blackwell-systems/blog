@@ -23,7 +23,11 @@ In Python, undeclared variables don't exist (NameError).
 In Java, local variables must be assigned before use (compile error).
 In Go, `x` exists immediately as the value `0` - the **zero value** for integers.
 
-Go declaration doesn't just reserve memory - it creates a valid, usable value. There is no "uninitialized state."
+**Declaration vs initialization:**
+- **Declaration:** Announcing a variable exists and reserving memory for it
+- **Initialization:** Giving that variable its first value
+
+In most languages, these are separate steps. You declare a variable (reserve space), then initialize it (give it a value). Go merges these: declaration IS initialization. When you declare `var x int`, you don't get uninitialized memory - you get the integer `0`. Every Go variable is initialized at the moment it's declared.
 
 {{< callout type="info" >}}
 **Zero Values: Go's Valid-by-Default Philosophy**
