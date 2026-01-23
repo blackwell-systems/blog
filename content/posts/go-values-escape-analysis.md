@@ -644,4 +644,4 @@ Value semantics combined with escape analysis form Go's performance foundation. 
 
 ## Next in Series
 
-**Part 3: API Design Patterns with Values** - Coming soon. Learn how to design APIs that leverage Go's value semantics for clarity and performance.
+**Part 3: Zero Values and Initialization** - Coming soon. Learn how every Go type has a zero value and why this enables "valid by default" APIs without nil checks or initialization boilerplate.
