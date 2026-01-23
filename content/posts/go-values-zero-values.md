@@ -77,13 +77,12 @@ fmt.Println(b)  // false
 
 **Python: Assignment creates variables**
 ```python
-# Python has no separate declaration step
+# Python has no "var x" or "let x" syntax
 # Assignment creates the variable
 x = 0     # Declaration and initialization happen together
 print(x)  # 0
 
-# But there's no way to declare without initializing
-# No equivalent to "var x int" that gives a default
+# Can't declare without a value - no equivalent to "var x int"
 ```
 
 **Java: Local variables forbidden before assignment**
