@@ -60,7 +60,7 @@ greet.custom_attr = 42  # Can add attributes to functions!
 
 **The identity caveat - integer interning and constant folding:**
 
-Python optimizes small integers by pre-creating objects for values from -5 to 256 (this is called **integer interning**). All variables referencing these values point to the same pre-allocated object. Additionally, the Python compiler performs **constant folding** - when it sees literal values in the same compilation unit, it often reuses the same object even for larger integers.
+Python optimizes small integers by pre-creating objects for values from -5 to 256 (this is called **integer interning** - a general optimization technique where runtimes share immutable values to reduce memory usage). All variables referencing these values point to the same pre-allocated object. Additionally, the Python compiler performs **constant folding** - when it sees literal values in the same compilation unit, it often reuses the same object even for larger integers.
 
 ```python
 # Integer interning (guaranteed for -5 to 256)
