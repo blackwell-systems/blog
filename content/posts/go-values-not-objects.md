@@ -30,7 +30,11 @@ This post explores the mental model behind values, contrasts it with objects and
 
 ### Python: Everything Is an Object
 
-In Python, even the integer `5` is a heap-allocated object.
+In Python, even the integer `5` is a heap-allocated object. This means every value has three characteristics:
+
+**1. Identity** - A unique memory address that distinguishes it from other values  
+**2. Methods** - Functions you can call on the value (like `.bit_length()` on integers)  
+**3. Reference semantics** - Assignment copies references, not data (multiple variables can point to the same object)
 
 ```python
 # Everything is an object with identity
@@ -40,7 +44,7 @@ y = 5
 print(id(x))  # Object identity (memory address)
 print(type(5))  # <class 'int'> - even integers are classes
 
-# Integers have methods
+# Integers have methods (functions bound to the value)
 print((5).bit_length())  # 3
 
 # Functions are objects
