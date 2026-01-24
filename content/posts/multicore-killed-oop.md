@@ -297,7 +297,7 @@ def process_users():
 
 **The fundamental problem:** Reference semantics mean **all state is shared by default**. In concurrent code, shared mutable state requires synchronization (locks), which:
 
-1. **Serializes execution** - Only one thread can access locked section (defeats parallelism)
+1. **Serializes execution** - Only one thread can access locked section (**defeats parallelism**)
 2. **Adds complexity** - Every shared access needs lock/unlock logic
 3. **Enables deadlocks** - Multiple locks can deadlock if acquired in wrong order
 4. **Hides race conditions** - Forget one lock, and you have data corruption
