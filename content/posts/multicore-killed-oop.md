@@ -369,17 +369,21 @@ for p in points:
     sum += p.x + p.y  # Each access: follow pointer → cache miss
 ```
 
-{{< mermaid >}}
-graph LR
-    A[Array of pointers] -->|ptr[0]| B[Point @ 0x1000]
-    A -->|ptr[1]| C[Point @ 0x5000]
-    A -->|ptr[2]| D[Point @ 0x9000]
-    
-    style A fill:#4C4538,stroke:#6b7280,color:#f0f0f0
-    style B fill:#4C3A3C,stroke:#6b7280,color:#f0f0f0
-    style C fill:#4C3A3C,stroke:#6b7280,color:#f0f0f0
-    style D fill:#4C3A3C,stroke:#6b7280,color:#f0f0f0
-{{< /mermaid >}}
+```
+Reference semantics (scattered memory):
+
+Array of pointers:           Objects on heap:
+┌──────────┐
+│ ptr[0]   │──────────────> Point @ 0x1000 (x, y)
+├──────────┤
+│ ptr[1]   │──────────────> Point @ 0x5000 (x, y) (different cache line!)
+├──────────┤
+│ ptr[2]   │──────────────> Point @ 0x9000 (x, y) (different cache line!)
+└──────────┘
+
+Each pointer dereference = potential cache miss
+Array traversal requires jumping between scattered heap locations
+```
 
 **Value semantics enable cache-friendly layout:**
 
@@ -399,19 +403,20 @@ for i := range points {
 }
 ```
 
-{{< mermaid >}}
-graph LR
-    A[Contiguous array] --> B[Point 0]
-    B --> C[Point 1]
-    C --> D[Point 2]
-    D --> E[Point 3]
-    
-    style A fill:#3A4A5C,stroke:#6b7280,color:#f0f0f0
-    style B fill:#3A4C43,stroke:#6b7280,color:#f0f0f0
-    style C fill:#3A4C43,stroke:#6b7280,color:#f0f0f0
-    style D fill:#3A4C43,stroke:#6b7280,color:#f0f0f0
-    style E fill:#3A4C43,stroke:#6b7280,color:#f0f0f0
-{{< /mermaid >}}
+```
+Value semantics (contiguous memory):
+
+Array of Point values (all in one block):
+┌────────────────────────────────────────────────────┐
+│ Point[0]   │ Point[1]   │ Point[2]   │ Point[3]   │
+│ (x:0, y:0) │ (x:1, y:1) │ (x:2, y:2) │ (x:3, y:3) │
+└────────────────────────────────────────────────────┘
+  ↑──────────── Single contiguous memory block ──────↑
+  ↑────────── Fits in one or two cache lines ────────↑
+
+Sequential access = cache hits (CPU prefetches next values)
+All data local, no pointer chasing required
+```
 
 **Performance impact:**
 
