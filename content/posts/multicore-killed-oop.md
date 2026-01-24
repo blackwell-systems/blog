@@ -362,8 +362,8 @@ p2 = p1  # Copies REFERENCE (hidden sharing)
 
 |                       | **Single Core** | **Multicore** |
 |-----------------------|-----------------|---------------|
-| **Reference Semantics** (Python/Java) | ✓ Time-slicing provides safety | ✗ Data races everywhere |
-| **Value Semantics** (C/Go) | ✓ Independent copies | ✓ Still independent copies |
+| **Reference Semantics** (Python/Java) | Time-slicing provides safety | Data races everywhere |
+| **Value Semantics** (C/Go) | Independent copies | Still independent copies |
 
 {{< callout type="info" >}}
 **Why Go Succeeded Where Java Struggled**
@@ -1039,10 +1039,10 @@ list2.add("item");  // list1 affected
 
 | Combination | Result |
 |-------------|--------|
-| Threads + Single Core | ✓ I/O concurrency (worked great) |
-| References + Single Core | ✓ Time-slicing provides safety |
-| Values + Multicore | ✓ Independent copies (C handled fine) |
-| **Threads + References + Multicore** | ✗ **Data races everywhere** |
+| Threads + Single Core | I/O concurrency (worked great) |
+| References + Single Core | Time-slicing provides safety |
+| Values + Multicore | Independent copies (C handled fine) |
+| **Threads + References + Multicore** | **Data races everywhere** |
 
 {{< mermaid >}}
 graph TB
