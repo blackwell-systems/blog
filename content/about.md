@@ -103,5 +103,15 @@ As a technical writer (3x AWS Certified, 225,000+ lines of documentation), I've 
 
 ## Contact
 
+I'm available for consulting, speaking engagements, and podcast interviews. Topics I can speak about include distributed systems architecture, event-driven patterns, serverless AWS, API design, language design trade-offs, and developer tooling.
+
+**Reach out for:**
+- Consulting on distributed systems architecture and event-driven design
+- Technical speaking engagements (conferences, meetups, corporate events)
+- Podcast interviews on systems design, language design, or developer productivity
+- Open source collaboration and sponsorship inquiries
+
+**Contact:**
+- Email: dayna@blackwell-systems.com
 - GitHub: [@blackwell-systems](https://github.com/blackwell-systems)
-- Issues: [blackdot](https://github.com/blackwell-systems/blackdot/issues) | [dotclaude](https://github.com/blackwell-systems/dotclaude/issues) | [gcp-secret-manager-emulator](https://github.com/blackwell-systems/gcp-secret-manager-emulator/issues) | [domainstack](https://github.com/blackwell-systems/domainstack/issues) | [error-envelope](https://github.com/blackwell-systems/error-envelope/issues) | [vaultmux](https://github.com/blackwell-systems/vaultmux/issues) | [err-envelope](https://github.com/blackwell-systems/err-envelope/issues) | [mdfx](https://github.com/blackwell-systems/mdfx/issues) | [pipeboard](https://github.com/blackwell-systems/pipeboard/issues)
+- Project issues: [blackdot](https://github.com/blackwell-systems/blackdot/issues) | [dotclaude](https://github.com/blackwell-systems/dotclaude/issues) | [gcp-secret-manager-emulator](https://github.com/blackwell-systems/gcp-secret-manager-emulator/issues) | [domainstack](https://github.com/blackwell-systems/domainstack/issues) | [error-envelope](https://github.com/blackwell-systems/error-envelope/issues) | [vaultmux](https://github.com/blackwell-systems/vaultmux/issues) | [err-envelope](https://github.com/blackwell-systems/err-envelope/issues) | [mdfx](https://github.com/blackwell-systems/mdfx/issues) | [pipeboard](https://github.com/blackwell-systems/pipeboard/issues)
