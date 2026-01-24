@@ -9,7 +9,7 @@ description: "Complete guide to choosing the MIT License: what it means, when to
 summary: "Why MIT became the most popular open-source license, when to choose it over GPL/Apache/BSD, and a decision framework for selecting the right license for your project"
 ---
 
-The MIT License is one of the most widely used permissive licenses in open source. It's popular because it's short, easy to understand, and broadly compatible—and GitHub's recent license metrics continue to show MIT as the most common license among repositories that declare one. But popularity doesn't mean it's always the right choice. This guide explains what MIT permits, what it doesn't cover (notably patents and trademarks), and how to choose between MIT, Apache 2.0, GPL-family licenses, and source-available alternatives based on your goals.
+The MIT License is one of the most widely used permissive licenses in open source. It's popular because it's short, easy to understand, and broadly compatible - and GitHub's recent license metrics continue to show MIT as the most common license among repositories that declare one. But popularity doesn't mean it's always the right choice. This guide explains what MIT permits, what it doesn't cover (notably patents and trademarks), and how to choose between MIT, Apache 2.0, GPL-family licenses, and source-available alternatives based on your goals.
 
 {{< callout type="info" >}}
 **Part 1 of Open Source Licensing Series** - Read [Part 2: Apache 2.0 License Guide](../apache-2-license-guide/) for explicit patent protection comparison.

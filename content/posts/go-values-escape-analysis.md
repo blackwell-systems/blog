@@ -609,7 +609,7 @@ go tool pprof mem.prof
 BenchmarkOptimized-8    10000000    120 ns/op    0 B/op    0 allocs/op
 ```
 
-Zero allocations means everything stays on the stack—maximum performance.
+Zero allocations means everything stays on the stack - maximum performance.
 
 ---
 
@@ -637,11 +637,11 @@ Value semantics combined with escape analysis form Go's performance foundation. 
 - [Go Performance Workshop](https://dave.cheney.net/high-performance-go-workshop/gophercon-2019.html) - Dave Cheney
 - [Escape Analysis Internals](https://github.com/golang/go/blob/master/src/cmd/compile/internal/escape/escape.go) - Go compiler source
 
+**This Series:**
+- [Part 1: Why Everything Is a Value]({{< relref "go-values-not-objects.md" >}}) - Go's fundamental design philosophy
+- **Part 2: Escape Analysis and Performance** (this article)
+- [Part 3: Zero Values and Initialization]({{< relref "go-values-zero-values.md" >}}) - Why Go types have valid defaults
+
 **Related Posts:**
-- [Part 1: Go's Value Philosophy]({{< relref "go-values-not-objects.md" >}})
-
----
-
-## Next in Series
-
-**Part 3: Zero Values and Initialization** - Coming soon. Learn how every Go type has a zero value and why this enables "valid by default" APIs without nil checks or initialization boilerplate.
+- [Multicore Killed OOP]({{< relref "multicore-killed-oop.md" >}}) - Why modern CPUs favor value semantics
+- [Python Object Overhead]({{< relref "python-object-overhead.md" >}}) - The cost of everything being an object

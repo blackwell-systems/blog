@@ -1685,7 +1685,13 @@ OOP served us well for three decades. But the multicore era demands a different 
 
 ## Further Reading
 
+**External Resources:**
 - **Go Concurrency Patterns:** [Go Blog - Share Memory By Communicating](https://go.dev/blog/codelab-share)
 - **Rust Ownership:** [The Rust Book - Ownership](https://doc.rust-lang.org/book/ch04-00-understanding-ownership.html)
 - **Data-Oriented Design:** [Mike Acton - Data-Oriented Design](https://www.youtube.com/watch?v=rX0ItVEVjHc)
-- **Related Series:** [Go's Value Philosophy (Part 1-3)](/tags/go-value-philosophy/)
+
+**Related Articles on This Blog:**
+- [Go's Value Philosophy: Part 1 - Why Everything Is a Value]({{< relref "go-values-not-objects.md" >}}) - Deep dive into Go's value semantics
+- [Go's Value Philosophy: Part 2 - Escape Analysis and Performance]({{< relref "go-values-escape-analysis.md" >}}) - How Go optimizes value allocation
+- [Python Object Overhead: Why Everything Is Slow]({{< relref "python-object-overhead.md" >}}) - The cost of Python's everything-is-an-object model
+- [Go Interfaces and Accidental Implementation]({{< relref "go-interfaces-accidental-implementation.md" >}}) - How Go achieves polymorphism without inheritance

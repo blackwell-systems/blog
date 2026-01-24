@@ -650,7 +650,7 @@ JSON.stringify(person);
 You must manually break cycles or use a [serialization library]({{< relref "serialization-explained.md" >}}) that detects and handles them.
 
 {{< callout type="warning" >}}
-**Critical Insight:** JSON's weaknesses aren't bugs - they're consequences of extreme simplification. Every missing feature (schemas, comments, binary support) was left out intentionally to keep the format minimal.
+**Why this matters:** JSON's weaknesses aren't bugs - they're consequences of extreme simplification. Every missing feature (schemas, comments, binary support) was left out intentionally to keep the format minimal.
 {{< /callout >}}
 
 ---

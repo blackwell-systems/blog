@@ -753,3 +753,8 @@ The price of everything being an object? **Acceptable** for most code, **optimiz
 - [Python Memory Management (Real Python)](https://realpython.com/python-memory-management/)
 - [memory_profiler](https://pypi.org/project/memory-profiler/)
 - [tracemalloc documentation](https://docs.python.org/3/library/tracemalloc.html)
+
+**Related Articles on This Blog:**
+- [Multicore Killed OOP]({{< relref "multicore-killed-oop.md" >}}) - Why object-oriented design struggles with modern CPUs
+- [Go's Value Philosophy: Part 1]({{< relref "go-values-not-objects.md" >}}) - How Go avoids Python's object overhead
+- [Python GIL and the Big Data Paradox]({{< relref "python-gil-big-data-paradox.md" >}}) - Why Python dominates ML despite the GIL

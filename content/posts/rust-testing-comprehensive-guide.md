@@ -10,7 +10,7 @@ summary: "A complete overview of Rust testing strategies: unit tests, integratio
 
 Your Rust project needs tests. But which kind? Unit tests? Integration tests? Property-based tests? Snapshot tests?
 
-Here's a comprehensive overview of Rust testing approaches—what each one does, when to use it, and how they work together to build confidence in your code.
+Here's a comprehensive overview of Rust testing approaches - what each one does, when to use it, and how they work together to build confidence in your code.
 
 ## The Testing Landscape
 
@@ -45,7 +45,7 @@ flowchart TB
 {{< /mermaid >}}
 
 {{< callout type="info" >}}
-**The reality:** These testing approaches aren't mutually exclusive. Production Rust projects typically use multiple testing strategies together—unit tests for logic, integration tests for APIs, property-based tests for edge cases, and snapshot tests for complex outputs.
+**The reality:** These testing approaches aren't mutually exclusive. Production Rust projects typically use multiple testing strategies together - unit tests for logic, integration tests for APIs, property-based tests for edge cases, and snapshot tests for complex outputs.
 {{< /callout >}}
 
 ---
@@ -178,7 +178,7 @@ flowchart TB
 - - Testing system integration points
 
 {{< callout type="success" >}}
-**Best Practice:** Write unit tests first (TDD style) for complex business logic. The need to write tests will naturally guide you toward more testable designs—pure functions, dependency injection, and clear separation of concerns.
+**Best Practice:** Write unit tests first (TDD style) for complex business logic. The need to write tests will naturally guide you toward more testable designs - pure functions, dependency injection, and clear separation of concerns.
 {{< /callout >}}
 
 ---
@@ -408,7 +408,7 @@ pub fn divide(a: i32, b: i32) -> Result<i32, String> {
 - - Examples would be too long for documentation
 
 {{< callout type="info" >}}
-**Why this matters:** Doc tests serve dual purposes—they're executable documentation and regression tests. When your API changes in a breaking way, doc tests will fail, forcing you to update examples.
+**Why this matters:** Doc tests serve dual purposes - they're executable documentation and regression tests. When your API changes in a breaking way, doc tests will fail, forcing you to update examples.
 {{< /callout >}}
 
 ---
@@ -580,7 +580,7 @@ async fn test_fetch_user(#[future] api_client: ApiClient) {
 
 ### proptest: Property-Based Testing
 
-**What it is:** A framework for property-based testing—generating random inputs to find edge cases you didn't think of.
+**What it is:** A framework for property-based testing - generating random inputs to find edge cases you didn't think of.
 
 **Type:** Crate ([proptest](https://crates.io/crates/proptest))
 
@@ -884,7 +884,7 @@ fn test_inline() {
 }
 ```
 
-The expected value is stored inline—cargo insta updates the `@"..."` string when you accept changes.
+The expected value is stored inline - cargo insta updates the `@"..."` string when you accept changes.
 
 **4. JSON snapshots:**
 
@@ -970,7 +970,7 @@ Snapshot:
 - - Output format changes frequently
 
 {{< callout type="warning" >}}
-**Important:** Snapshot tests are only as good as the reviews. Don't blindly accept all changes with `cargo insta accept`. Review diffs carefully—snapshot tests can hide regressions if you're not paying attention.
+**Important:** Snapshot tests are only as good as the reviews. Don't blindly accept all changes with `cargo insta accept`. Review diffs carefully - snapshot tests can hide regressions if you're not paying attention.
 {{< /callout >}}
 
 ---

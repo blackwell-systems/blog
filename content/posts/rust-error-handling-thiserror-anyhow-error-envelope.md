@@ -1127,4 +1127,9 @@ The three crates aren't redundant--they're specialized tools for different stage
 - [thiserror](https://github.com/dtolnay/thiserror) - Typed error definitions
 - [anyhow](https://github.com/dtolnay/anyhow) - Flexible error handling
 
+**Related Articles on This Blog:**
+- [Rust Error Handling: The ? Operator Explained]({{< relref "rust-error-handling-question-mark-operator.md" >}}) - How Rust's ? operator simplifies error propagation
+- [The Complete Guide to Rust Testing]({{< relref "rust-testing-comprehensive-guide.md" >}}) - Testing error handling in Rust
+- [HTTP Error Responses with err-envelope]({{< relref "err-envelope-http-errors.md" >}}) - Practical guide to the err-envelope crate
+
 **License:** MIT

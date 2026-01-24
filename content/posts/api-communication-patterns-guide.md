@@ -8,12 +8,12 @@ description: "A comprehensive guide to API communication patterns including REST
 summary: "Master API communication patterns: REST, GraphQL, WebSocket, gRPC, webhooks, message queues, and more. Complete guide with diagrams, code examples, and decision frameworks for choosing the right pattern."
 ---
 
-Modern applications need to communicate—with browsers, mobile apps, microservices, and third-party systems. But with so many communication patterns available (REST, GraphQL, WebSocket, gRPC, webhooks, message queues, and more), how do you choose the right one?
+Modern applications need to communicate - with browsers, mobile apps, microservices, and third-party systems. But with so many communication patterns available (REST, GraphQL, WebSocket, gRPC, webhooks, message queues, and more), how do you choose the right one?
 
 This guide breaks down **14 communication patterns**, explaining what each one is, when to use it, and how it compares to alternatives. Whether you're building a real-time chat app, a microservices architecture, or a public API, you'll learn which pattern fits your needs.
 
 {{< callout type="info" >}}
-**The reality:** These patterns aren't competing technologies—they're **complementary tools** for different communication needs. REST for standard APIs, webhooks for event notifications, WebSocket for real-time bidirectional chat, gRPC for high-performance microservices. The best architectures use multiple patterns together.
+**The reality:** These patterns aren't competing technologies - they're **complementary tools** for different communication needs. REST for standard APIs, webhooks for event notifications, WebSocket for real-time bidirectional chat, gRPC for high-performance microservices. The best architectures use multiple patterns together.
 {{< /callout >}}
 
 ## The Evolution of API Communication
@@ -1688,7 +1688,7 @@ flowchart LR
 - **Webhooks** - Alert notifications (PagerDuty, Slack)
 
 {{< callout type="success" >}}
-**Best Practice:** Start simple with REST, add real-time patterns (WebSocket/SSE) where needed, introduce message queues for async processing, and use gRPC for internal high-performance services. Don't over-engineer—adopt patterns as requirements emerge.
+**Best Practice:** Start simple with REST, add real-time patterns (WebSocket/SSE) where needed, introduce message queues for async processing, and use gRPC for internal high-performance services. Don't over-engineer - adopt patterns as requirements emerge.
 {{< /callout >}}
 
 ---
@@ -1744,7 +1744,11 @@ Modern applications require multiple communication patterns working together. He
 - **MQTT**: [MQTT.org](https://mqtt.org/)
 
 {{< callout type="info" >}}
-**Want to dive deeper?** Check out our related articles on [serialization formats](/blog/posts/serialization-explained/), [building production APIs](/blog/posts/), and [microservices architecture patterns](/blog/posts/).
+**Want to dive deeper into data formats?**
+
+- [Understanding Protocol Buffers: Part 1]({{< relref "understanding-protobuf-part-1.md" >}}) - Binary protocol for gRPC
+- [You Don't Know JSON: Part 1]({{< relref "you-dont-know-json-part-1-origins.md" >}}) - Complete JSON ecosystem guide
+- [Serialization Explained]({{< relref "serialization-explained.md" >}}) - How data travels between systems
 {{< /callout >}}
 
 ---

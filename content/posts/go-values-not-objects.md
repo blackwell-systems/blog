@@ -1497,6 +1497,12 @@ The mental model you choose shapes how you think about your program. Go's value 
 - [Effective Go: Interfaces and Other Types](https://go.dev/doc/effective_go#interfaces)
 - [Go Proverbs](https://go-proverbs.github.io/)
 
+**This Series:**
+- **Part 1: Why Everything Is a Value** (this article)
+- [Part 2: Escape Analysis and Performance]({{< relref "go-values-escape-analysis.md" >}}) - How Go optimizes memory allocation
+- [Part 3: Zero Values and Initialization]({{< relref "go-values-zero-values.md" >}}) - Why Go types have valid defaults
+
 **Related Posts:**
+- [Multicore Killed OOP]({{< relref "multicore-killed-oop.md" >}}) - How hardware evolution made value semantics essential
 - [Go Interfaces: The Type System Feature You Implement By Accident]({{< relref "go-interfaces-accidental-implementation.md" >}})
 - [Python's Object Overhead: Why Everything Being an Object Has a Cost]({{< relref "python-object-overhead.md" >}})
