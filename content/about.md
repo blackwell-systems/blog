@@ -4,7 +4,7 @@ date: 2025-12-01
 draft: false
 ---
 
-**Dayna Blackwell** builds distributed systems that don't break at 2 AM.
+**Dayna Blackwell** builds reliable distributed systems at scale.
 
 I'm a software architect specializing in event-driven architectures at scale. Currently, I design and operate the global loyalty and promotions platform for a major hospitality brand - the backend services powering rewards programs, digital wallets, and promotional campaigns used by millions of customers worldwide.
 
