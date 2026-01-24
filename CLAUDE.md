@@ -73,6 +73,7 @@ Use callout blocks to highlight important information:
 
 3. **Avoid AI-generated boilerplate phrases** - These sound formulaic and template-like:
    - Never use "Key insight" as a section header or bold label
+   - Never use "Critical insight" as a section header or bold label
    - Never use "The verdict" as a section header or concluding phrase
    - Never use "It's not just X, it's Y" construction (now recognized as AI cliche)
    - Instead use natural language:

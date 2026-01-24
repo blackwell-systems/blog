@@ -310,7 +310,7 @@ Mutexes don't solve OOP's concurrency problems - they're a band-aid that sacrifi
 
 ### Reference Semantics Specifically Made This Catastrophic
 
-**Critical insight:** Not all languages suffered equally. The multicore crisis was specific to **reference-dominant languages** (Python, Java, Ruby, C#).
+Not all languages suffered equally. The multicore crisis was specific to **reference-dominant languages** (Python, Java, Ruby, C#).
 
 **Value-oriented languages handled multicore fine:**
 
@@ -1307,7 +1307,7 @@ For small structs, copying is comparable to pointer overhead
 For cache-cold pointers, copying is FASTER (sequential memory)
 ```
 
-**Critical insight:** Slices, maps, and strings contain **pointers internally**. Copying the struct copies the pointer (cheap), not the underlying data:
+Slices, maps, and strings contain **pointers internally**. Copying the struct copies the pointer (cheap), not the underlying data:
 
 ```go
 type Request struct {
