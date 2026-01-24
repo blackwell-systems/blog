@@ -195,14 +195,16 @@ OOP languages designed in the single-core era (1980s-1990s) assumed sequential e
 
 **Why does Python have a GIL?**
 
+**The GIL (Global Interpreter Lock)** is a mutex lock on the CPython interpreter process. Only one thread can hold the GIL at a time, which means only one thread can execute Python bytecode at any moment - even on multicore CPUs.
+
 The GIL was created in 1991 - the **single-core era**. Guido van Rossum's design assumption:
 
 > "Only one thread needs to execute Python bytecode at a time"
 
-This made perfect sense when CPUs had one core! The GIL simplified:
-- Memory management (reference counting without locks)
-- C extension compatibility (no thread-safety requirements)
-- Implementation complexity (simpler interpreter)
+This made perfect sense when CPUs had one core! The single mutex lock simplified:
+- **Memory management:** Reference counting without per-object locks (all mutations serialized by GIL)
+- **C extension compatibility:** C extensions don't need thread-safety (GIL protects them)
+- **Implementation complexity:** Simpler interpreter (one global lock vs thousands of fine-grained locks)
 
 **Problem:** This assumption broke in 2005 when multicore arrived.
 
