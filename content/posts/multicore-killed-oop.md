@@ -245,6 +245,30 @@ for i := 0; i < 1000; i++ {
 
 **Key insight:** Each goroutine operates on independent data. No shared state = no locks = true parallelism.
 
+{{< callout type="info" >}}
+**Stack vs Heap: Lifetime and Performance**
+
+Value semantics enable a critical optimization: **stack allocation**.
+
+**Stack allocation (deterministic lifetime):**
+- Values live exactly as long as the function scope (LIFO deallocation)
+- Allocation: Move stack pointer (1 CPU cycle)
+- Deallocation: Automatic when function returns (instant)
+- Cache-friendly: Sequential, predictable access
+- No GC tracking needed
+
+**Heap allocation (flexible lifetime):**
+- Values outlive their creating function (deallocation decoupled from allocation)
+- Allocation: Search free list, update metadata (~50-100 CPU cycles)
+- Deallocation: Garbage collector scans and frees (variable latency)
+- Cache-unfriendly: Scattered allocation
+- Requires GC tracking overhead
+
+**Go's escape analysis:** Compiler decides stack vs heap based on lifetime needs. Values that don't escape stay on stack (fast). Values that escape go to heap (flexible, GC-managed).
+
+The performance difference (stack ~100× faster) stems from the lifetime model: deterministic LIFO deallocation is inherently cheaper than flexible GC-managed deallocation.
+{{< /callout >}}
+
 **When sharing is needed, use channels:**
 
 ```go
