@@ -84,7 +84,7 @@ Reference semantics enabled:
 
 1. **Efficient passing** - Pass 8-byte pointer instead of copying large objects
 2. **Shared state** - Multiple parts of code operate on same data
-3. **Polymorphism** - References enable dynamic dispatch through vtables
+3. **Polymorphism** - References enable dynamic dispatch through [vtables](https://en.wikipedia.org/wiki/Virtual_method_table)
 4. **Object identity** - Objects have identity (`id()` in Python, `==` checks reference in Java)
 
 This worked well in the **single-threaded era** of the 1990s-2000s. The problems were manageable:
