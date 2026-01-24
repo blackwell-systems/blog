@@ -681,7 +681,7 @@ for (Shape s : shapes) {
 **Memory layout visualization:**
 
 ```
-shapes array (contiguous):        Heap (scattered):
+Array of pointers (contiguous):   Objects on heap (scattered):
 ┌──────────┐
 │ ref [0]  │─────────────────────> Circle @ 0x1000
 ├──────────┤                       (vtable ptr, id, radius)
@@ -692,9 +692,10 @@ shapes array (contiguous):        Heap (scattered):
 │ ref [3]  │─────────────────────> Rectangle @ 0xF400
 └──────────┘
 
-Problem: Objects scattered across heap
-Every access = pointer dereference + potential cache miss
-CPU cannot prefetch (unpredictable memory pattern)
+The array itself is contiguous (cache-friendly pointer access)
+But dereferencing those pointers jumps to scattered heap locations
+Problem: Each object access = pointer dereference + cache miss
+CPU cannot prefetch objects (unpredictable scattered pattern)
 ```
 
 ### Go's Alternative: No Inheritance, Opt-In Polymorphism
@@ -736,15 +737,17 @@ for i := range rectangles {
 
 ```
 Java (inheritance required):
-- shapes array: 8,000 bytes (1000 refs × 8 bytes)
-- Circle objects: ~20,000 bytes (500 × 40 bytes, scattered)
-- Rectangle objects: ~24,000 bytes (500 × 48 bytes, scattered)
-Total: ~52 KB, scattered across heap
+- shapes array: 8,000 bytes (1000 refs × 8 bytes, contiguous pointers)
+- Circle objects: ~20,000 bytes (500 × 40 bytes, scattered on heap)
+- Rectangle objects: ~24,000 bytes (500 × 48 bytes, scattered on heap)
+Total: ~52 KB
+Performance: Pointer array is contiguous, but dereferencing = cache miss
 
 Go (concrete types, no inheritance):
-- circles array: 8,000 bytes (500 × 16 bytes, contiguous)
-- rectangles array: 12,000 bytes (500 × 24 bytes, contiguous)
-Total: 20 KB, sequential memory (2.6× smaller, cache-friendly)
+- circles array: 8,000 bytes (500 × 16 bytes, all data contiguous)
+- rectangles array: 12,000 bytes (500 × 24 bytes, all data contiguous)
+Total: 20 KB (2.6× smaller, fully cache-friendly)
+Performance: No pointers, no dereferencing, sequential data access
 ```
 
 **When you DO need polymorphism in Go:**
