@@ -12,17 +12,66 @@ My work focuses on making distributed systems predictable: idempotent message ha
 
 The tech stack spans serverless AWS (Lambda, EventBridge, DynamoDB, Glue, Redshift), backend services (Python FastAPI, Java Jakarta EE), and infrastructure-as-code (CDK, Terraform). My career path - from operations leadership through backend architecture - shapes how I think about systems: they have to work for the people maintaining them at 3 AM, not just the people designing them at 3 PM.
 
+---
+
+## What I Write About
+
+This blog provides comprehensive technical deep-dives into programming language fundamentals and distributed systems architecture. I write to build strong mental models - the kind you can't get from framework documentation or tutorials. When you understand *why* Go chose value semantics, or *why* multicore CPUs exposed OOP's flaws, you're not just learning syntax - you're understanding fundamental tradeoffs that apply across all languages and systems.
+
+**Language Design & Mental Models:**
+- Value semantics vs reference semantics (Go, Rust vs Python, Java)
+- Why modern languages moved away from OOP patterns
+- Memory models, concurrency primitives, and performance implications
+- Cache locality, stack vs heap, escape analysis
+- Building strong mental models through polyglot comparison
+
+**Distributed Systems:**
+- Event-driven architectures at scale
+- Idempotent message handling and deduplication patterns
+- Observability and debugging production failures
+- Serverless patterns and AWS architecture
+- API design (REST, GraphQL, WebSocket, gRPC)
+
+**Developer Tools:**
+- Claude Code workflows and AI-assisted development
+- Secret management and security patterns
+- Structured error handling across frameworks
+- Open source library design
+
+These articles are the ones I wish existed when I was learning: comprehensive (5,000+ words is common), visual (Mermaid diagrams throughout), and focused on the "why" rather than the "how."
+
+---
+
+## Recent Articles
+
+- **[How Multicore CPUs Killed Object-Oriented Programming](/posts/multicore-killed-oop/)** - Why the 2005 hardware shift exposed OOP's fatal flaw: shared mutable state through references became catastrophic for concurrency
+- **[Go's Value Philosophy Series](/series/go-value-philosophy/)** - Deep dive into why Go treats everything as a value, not an object, and how this enables safe concurrency
+- **[Python Object Overhead](/posts/python-object-overhead/)** - Why a simple integer uses 28 bytes in Python, and what this means for performance
+- **[API Communication Patterns Guide](/posts/api-communication-patterns-guide/)** - REST, GraphQL, WebSocket, gRPC comparison with decision frameworks and real-world examples
+
+---
+
+## Polyglot Programming Philosophy
+
+As a polyglot programmer (Python, Java, Go, Rust), I approach each language by building strong mental models: understanding why Go treats everything as a value, why Python makes everything an object, why Rust enforces ownership. Polyglot programming forces you to confront the underlying implementations and low-level details of each language - when something you're used to "just working" in one language completely breaks in another, you can't stay at the surface level anymore.
+
+Each language represents a fundamentally different way of thinking about memory, concurrency, and composition. This cross-language perspective shapes how I design systems and choose the right tool for each problem. Seeing the same concept across multiple languages reveals the tradeoffs behind each design decision - from memory models and type systems to the low-level implementation details that determine whether your architecture survives production.
+
+---
+
+## Open Source & Technical Writing
+
 Outside the Python/Java enterprise world, I build developer tools and libraries in Go and Rust. My open source work includes unified secret management across multiple vault backends (vaultmux), profile management for Claude Code with automatic context detection (dotclaude), type-safe validation with automatic TypeScript schema generation (domainstack), and structured error handling that works across different web frameworks (error-envelope, err-envelope).
 
-As a polyglot programmer, I approach each language by building strong mental models: understanding why Go treats everything as a value, why Python makes everything an object, why Rust enforces ownership. Polyglot programming forces you to confront the underlying implementations and low-level details of each language - when something you're used to "just working" in one language completely breaks in another, you can't stay at the surface level anymore. Each represents a fundamentally different way of thinking about memory, concurrency, and composition. This cross-language perspective shapes how I design systems and choose the right tool for each problem.
+As a technical writer (3x AWS Certified, 225,000+ lines of documentation), I've authored **You Don't Know JSON** (127,000 words) - a comprehensive guide to JSON's ecosystem: from schema validation to binary formats (MessagePack, CBOR, Protocol Buffers), streaming architectures, security patterns, API design, data pipelines, and testing strategies. Learn when JSON works, when it doesn't, and what to use instead.
 
-As a technical writer (3x AWS Certified, 225,000+ lines of documentation), I've authored **You Don't Know JSON** (127,000 words). I break down systems-level concepts through polyglot comparisons. Seeing the same idea across multiple languages reveals the tradeoffs behind each design decision - from memory models and type systems to serialization formats and the low-level implementation details that determine whether your architecture survives production.
-
-This blog explores developer tools, backend architecture, event-driven systems, performance optimization, data pipelines, and the lessons from building systems that handle real traffic.
+---
 
 ## Books
 
 **[You Don't Know JSON](https://leanpub.com/you-dont-know-json)** - A comprehensive guide to JSON's ecosystem: from schema validation to binary formats (MessagePack, CBOR, Protocol Buffers), streaming architectures, security patterns, API design, data pipelines, and testing strategies. Learn when JSON works, when it doesn't, and what to use instead. Available on Leanpub.
+
+---
 
 ## Open Source Projects
 
@@ -49,6 +98,8 @@ This blog explores developer tools, backend architecture, event-driven systems, 
 **[mdfx](https://github.com/blackwell-systems/mdfx)** - Make your GitHub README stand out — tech badges (like shields.io, but better), progress bars, gauges, and Unicode text effects. Local and customizable.
 
 **[pipeboard](https://blackwell-systems.github.io/pipeboard/#/)** - Secure clipboard sharing over SSH tunnels. Share text between machines without exposing ports or using third-party services.
+
+---
 
 ## Contact
 
