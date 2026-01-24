@@ -539,7 +539,7 @@ Concurrency was the primary driver for value semantics, but there was a signific
 
 ### The Problem with References: Pointer Chasing
 
-Modern CPUs read memory in **cache lines** (typically 64 bytes). When you access address X, the CPU fetches X plus the next 63 bytes into cache. Sequential memory access is fast; scattered memory access is slow.
+Modern CPUs read memory in **cache lines** (typically 64 bytes). When you access address X, the CPU fetches X plus the next 63 bytes into cache. This happens because the cost of fetching a full 64-byte cache line from RAM is the same as fetching any smaller portion - the memory bus transfer is fixed-width. Sequential memory access is fast because the CPU prefetches cache lines; scattered memory access is slow because each pointer dereference may miss cache.
 
 **Reference semantics destroy cache locality:**
 
