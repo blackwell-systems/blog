@@ -433,7 +433,7 @@ for i := 0; i < 1000; i++ {
 }
 ```
 
-**Key insight:** Each goroutine operates on independent data. No shared state = no locks = true parallelism.
+Each goroutine operates on independent data. No shared state = no locks = true parallelism.
 
 {{< callout type="info" >}}
 **Stack vs Heap: Lifetime and Performance**
