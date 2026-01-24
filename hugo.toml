@@ -5,7 +5,7 @@ theme = 'nightfall'
 enableRobotsTXT = true
 
 [pagination]
-  pagerSize = 30
+  pagerSize = 12
 
 [taxonomies]
   tag = "tags"

@@ -5,7 +5,7 @@
   <!-- Tag Filter with Search -->
   <div class="tag-filter">
     <label class="filter-label">
-      <span>Filter by tag:</span>
+      <span>Filter by tag on this page:</span>
       <input type="text"
              id="tag-search"
              placeholder="Search tags (e.g., 'go', 'shell'...)"
@@ -14,7 +14,7 @@
 
     <div class="tag-buttons-wrapper">
       <button class="tag-filter-btn active" data-tag="all">
-        All Posts <span class="count">({{ len .Pages }})</span>
+        All Posts <span class="count">({{ len .Paginator.Pages }})</span>
       </button>
       {{ $tagCounts := dict }}
       {{ range .Site.RegularPages }}
@@ -31,13 +31,13 @@
     </div>
 
     <div class="filter-stats">
-      <span id="visible-count">{{ len .Pages }}</span> of {{ len .Pages }} posts
+      <span id="visible-count">{{ len .Paginator.Pages }}</span> of {{ len .Paginator.Pages }} posts on this page
     </div>
   </div>
 
   <!-- Posts List -->
   <div class="posts-list">
-    {{ range .Pages }}
+    {{ range .Paginator.Pages }}
       <article class="post-item" data-tags="{{ delimit .Params.tags "," }}" data-title="{{ .Title | lower }}">
         <h2>
           <a href="{{ .RelPermalink }}">{{ .Title }}</a>
@@ -68,6 +68,23 @@
   <div class="no-posts-message" style="display: none;">
     <p>No posts match the selected tag. <a href="#" onclick="filterPosts('all'); return false;">Show all posts</a></p>
   </div>
+
+  <!-- Pagination -->
+  {{ if gt .Paginator.TotalPages 1 }}
+  <nav class="pagination">
+    {{ if .Paginator.HasPrev }}
+      <a href="{{ .Paginator.Prev.URL }}" class="pagination-link prev">← Newer Posts</a>
+    {{ end }}
+    
+    <span class="pagination-info">
+      Page {{ .Paginator.PageNumber }} of {{ .Paginator.TotalPages }}
+    </span>
+    
+    {{ if .Paginator.HasNext }}
+      <a href="{{ .Paginator.Next.URL }}" class="pagination-link next">Older Posts →</a>
+    {{ end }}
+  </nav>
+  {{ end }}
 </div>
 
 <style>
@@ -247,6 +264,45 @@
 
 .post-item.filtered-out {
   display: none;
+}
+
+.pagination {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 3rem 0 2rem;
+  padding: 1.5rem;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 8px;
+  gap: 1rem;
+}
+
+.pagination-link {
+  padding: 0.75rem 1.5rem;
+  background: rgba(100, 200, 255, 0.1);
+  border: 1px solid rgba(100, 200, 255, 0.3);
+  border-radius: 4px;
+  text-decoration: none;
+  color: rgba(100, 200, 255, 1);
+  transition: all 0.2s;
+  font-weight: 500;
+}
+
+.pagination-link:hover {
+  background: rgba(100, 200, 255, 0.2);
+  border-color: rgba(100, 200, 255, 0.5);
+}
+
+.pagination-info {
+  opacity: 0.7;
+  font-size: 90%;
+}
+
+@media (max-width: 600px) {
+  .pagination {
+    flex-direction: column;
+    text-align: center;
+  }
 }
 </style>
 
