@@ -136,7 +136,7 @@ NullPointerException is the most common production error in Java. Every null ref
 - Nil maps can be read (returns zero value) but not written to
 - Methods can be called on nil receivers (if the method handles it)
 
-**The key insight:** In Go, collections (slices, maps) can be nil and still safely queried. In Java, any operation on a null collection crashes. This eliminates the majority of null-related production errors.
+In Go, collections (slices, maps) can be nil and still safely queried. In Java, any operation on a null collection crashes. This eliminates the majority of null-related production errors.
 
 **"Valid by default" means:** Every declared variable can be safely used in some way. For value types (int, bool, string, struct), all operations work. For types with nil zero values (pointers, slices, maps, channels), read operations work - only mutation requires initialization.
 
