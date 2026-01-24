@@ -446,6 +446,214 @@ Value semantics deliver both safety and performance.
 
 ---
 
+## Inheritance: The Cache Locality Killer
+
+Inheritance has a hidden cost that compounds the reference semantics problem: **you cannot store polymorphic objects contiguously**.
+
+### The Fundamental Problem
+
+When you use inheritance for polymorphism, you must use pointers to the base class. This forces heap allocation and destroys cache locality:
+
+```java
+// Java: Classic OOP inheritance
+abstract class Shape {
+    int id;
+    abstract double area();
+}
+
+class Circle extends Shape {
+    int radius;
+    double area() { return Math.PI * radius * radius; }
+}
+
+class Rectangle extends Shape {
+    int width, height;
+    double area() { return width * height; }
+}
+
+// Can't store different types in same array directly
+// Must use references to base class:
+Shape[] shapes = new Shape[1000];
+for (int i = 0; i < 1000; i++) {
+    if (i % 2 == 0) {
+        shapes[i] = new Circle(i);      // Heap allocated
+    } else {
+        shapes[i] = new Rectangle(i, i*2);  // Heap allocated
+    }
+}
+
+// Iteration: Pointer chasing every access
+for (Shape s : shapes) {
+    double a = s.area();  // Follow pointer + vtable dispatch
+}
+```
+
+**Memory layout visualization:**
+
+```
+shapes array (contiguous):        Heap (scattered):
+┌──────────┐
+│ ref [0]  │─────────────────────> Circle @ 0x1000
+├──────────┤                       (vtable ptr, id, radius)
+│ ref [1]  │─────────────────────> Rectangle @ 0x5200
+├──────────┤                       (vtable ptr, id, width, height)
+│ ref [2]  │─────────────────────> Circle @ 0x9800
+├──────────┤
+│ ref [3]  │─────────────────────> Rectangle @ 0xF400
+└──────────┘
+
+Problem: Objects scattered across heap
+Every access = pointer dereference + potential cache miss
+CPU cannot prefetch (unpredictable memory pattern)
+```
+
+### Go's Alternative: No Inheritance, Opt-In Polymorphism
+
+Go achieves polymorphism through interfaces, but **doesn't force you to use them**:
+
+```go
+// Go: Concrete types (no inheritance)
+type Circle struct {
+    ID     int
+    Radius int
+}
+
+type Rectangle struct {
+    ID           int
+    Width, Height int
+}
+
+// When you DON'T need polymorphism (common case):
+// Separate arrays (cache-friendly!)
+circles := make([]Circle, 500)
+rectangles := make([]Rectangle, 500)
+
+// Process circles (contiguous, cache-friendly)
+for i := range circles {
+    area := math.Pi * float64(circles[i].Radius * circles[i].Radius)
+    // All Circle data sequential in memory
+    // CPU prefetches next values
+}
+
+// Process rectangles (contiguous, cache-friendly)
+for i := range rectangles {
+    area := rectangles[i].Width * rectangles[i].Height
+    // All Rectangle data sequential in memory
+}
+```
+
+**Memory comparison:**
+
+```
+Java (inheritance required):
+- shapes array: 8,000 bytes (1000 refs × 8 bytes)
+- Circle objects: ~20,000 bytes (500 × 40 bytes, scattered)
+- Rectangle objects: ~24,000 bytes (500 × 48 bytes, scattered)
+Total: ~52 KB, scattered across heap
+
+Go (concrete types, no inheritance):
+- circles array: 8,000 bytes (500 × 16 bytes, contiguous)
+- rectangles array: 12,000 bytes (500 × 24 bytes, contiguous)
+Total: 20 KB, sequential memory (2.6× smaller, cache-friendly)
+```
+
+**When you DO need polymorphism in Go:**
+
+```go
+// Go: Interface (opt-in polymorphism)
+type Shape interface {
+    Area() float64
+}
+
+// Now both types implement Shape
+func (c Circle) Area() float64 {
+    return math.Pi * float64(c.Radius * c.Radius)
+}
+
+func (r Rectangle) Area() float64 {
+    return float64(r.Width * r.Height)
+}
+
+// Interface array (reference-based, like Java)
+shapes := []Shape{
+    Circle{1, 5},
+    Rectangle{2, 10, 20},
+}
+
+// Now you pay the cost (pointer indirection)
+for _, s := range shapes {
+    area := s.Area()  // Interface dispatch
+}
+```
+
+**Go's philosophy:** Polymorphism is opt-in. Most code doesn't need it, so most code gets cache-friendly contiguous layout.
+
+### Real-World Impact: Game Engines and ECS
+
+This is why modern game engines abandoned OOP inheritance for **Entity-Component Systems (ECS)**:
+
+**Old way (OOP inheritance):**
+
+```cpp
+// Bad: Deep inheritance hierarchy
+class GameObject { virtual void update() = 0; };
+class MovableObject : public GameObject { Vector3 pos, vel; };
+class Enemy : public MovableObject { int health; };
+class FlyingEnemy : public Enemy { float altitude; };
+
+// Array of pointers (scattered, cache misses)
+GameObject* entities[100000];
+for (auto* e : entities) {
+    e->update();  // Pointer chase + vtable = cache miss nightmare
+}
+
+Performance: 1,000-5,000 entities before frame drops below 60 FPS
+```
+
+**Modern way (ECS, data-oriented):**
+
+```go
+// Good: Separate arrays by component type (no inheritance)
+type Position struct { X, Y, Z float64 }
+type Velocity struct { X, Y, Z float64 }
+type Health struct { HP int }
+
+// Contiguous arrays (cache-friendly!)
+positions := make([]Position, 100000)
+velocities := make([]Velocity, 100000)
+healths := make([]Health, 100000)
+
+// Process in bulk (vectorized, SIMD-friendly)
+for i := range positions {
+    positions[i].X += velocities[i].X
+    positions[i].Y += velocities[i].Y
+    positions[i].Z += velocities[i].Z
+}
+// Sequential access, CPU prefetches, can use SIMD (4-8 values at once)
+
+Performance: 100,000+ entities at 60 FPS
+```
+
+**Why ECS won:**
+
+| Aspect | OOP Inheritance | ECS (Data-Oriented) |
+|--------|-----------------|---------------------|
+| **Memory layout** | Scattered (pointers) | Contiguous (values) |
+| **Cache locality** | Poor (random access) | Excellent (sequential) |
+| **SIMD** | Difficult (scattered data) | Easy (contiguous arrays) |
+| **Entities/frame** | 1,000-5,000 | 100,000+ |
+| **Speedup** | Baseline | 20-100× faster |
+
+{{< callout type="success" >}}
+**Inheritance Forces Indirection**
+
+You cannot store polymorphic objects contiguously. Inheritance requires pointers to base class, which scatters derived objects across the heap. This destroys cache locality and prevents CPU prefetching.
+
+Go's interfaces are opt-in: use concrete types (cache-friendly) until you need polymorphism, then pay the cost explicitly (interfaces).
+{{< /callout >}}
+
+---
+
 ## The Lock Bottleneck: How Mutexes Kill Parallelism
 
 Let's look concretely at why locks defeat the purpose of multicore CPUs.
@@ -755,6 +963,323 @@ func transform(p Point) Point {  // Value = independent copy
 ```
 
 **Result:** Code is more verbose but easier to reason about.
+
+---
+
+## Value Semantics at Scale: Why Copy-by-Value Enables Massive Throughput
+
+This might seem counterintuitive: if value semantics mean copying data, doesn't that hurt performance at scale? And if OOP is so bad for concurrency, why do Java/Spring services handle millions of requests per second?
+
+The answers reveal important nuances about when value semantics matter and when they don't.
+
+### The Paradox: Copying Everything Should Be Slow
+
+**The concern:**
+
+```go
+// Go: Every function call copies the struct
+type Request struct {
+    UserID    int
+    SessionID string
+    Data      []byte  // Could be large!
+}
+
+func handleRequest(req Request) Response {
+    // req is a COPY of the original
+    // Doesn't this waste memory and CPU?
+}
+```
+
+**The reality:** Most structs are **small** (16-64 bytes), and copying is **fast**:
+
+```
+Benchmark: Copy struct vs follow pointer
+
+16-byte struct copy:     ~2 nanoseconds
+64-byte struct copy:     ~8 nanoseconds
+Pointer dereference:     ~1-5 nanoseconds (but cache miss = 100ns)
+
+For small structs, copying is comparable to pointer overhead
+For cache-cold pointers, copying is FASTER (sequential memory)
+```
+
+**Critical insight:** Slices, maps, and strings contain **pointers internally**. Copying the struct copies the pointer (cheap), not the underlying data:
+
+```go
+type Request struct {
+    UserID    int     // 8 bytes
+    SessionID string  // 16 bytes (pointer + length internally)
+    Data      []byte  // 24 bytes (pointer + len + cap internally)
+}
+
+// Size: 48 bytes (not including underlying data)
+// Copying: 48 bytes (~6ns)
+// Underlying arrays: Shared via pointers (not copied)
+```
+
+**When copying would be expensive, Go uses pointers:**
+
+```go
+// Large struct: Use pointer
+type LargeConfig struct {
+    Settings [1000]string
+}
+
+func process(cfg *LargeConfig) {  // Pointer (8 bytes)
+    // Don't copy 1000-element array
+}
+```
+
+### How Value Semantics Enable Scale
+
+**1. True parallelism without locks:**
+
+```go
+// Handle 10,000 concurrent requests (no locks!)
+func handler(w http.ResponseWriter, r *http.Request) {
+    // Each request in separate goroutine
+    // Each has independent copy of request data
+    // No shared state = no locks = perfect parallelism
+    
+    user := getUser(r.Context())      // Local copy
+    result := processData(user.Data)  // Local copy
+    writeResponse(w, result)          // No contention
+}
+
+// 10,000 goroutines process in parallel
+// No serialization at locks
+// Full CPU utilization across all cores
+```
+
+**2. Stack allocation reduces GC pressure:**
+
+```go
+// Most values stay on stack (escape analysis)
+func process(id int) Result {
+    config := Config{Timeout: 30}  // Stack
+    data := transform(id)          // Stack
+    return Result{Value: data}     // May escape to heap
+}
+
+// Only long-lived values go to heap
+// Short-lived values (99% of allocations) are stack-only
+// GC pressure: Minimal
+```
+
+**3. Predictable memory usage:**
+
+```go
+// Value semantics = predictable allocation
+func handleRequest(req Request) {
+    // Size known at compile time
+    // Stack allocation (deterministic)
+    // No heap fragmentation
+}
+
+// vs OOP: Every object is heap allocation
+// Unpredictable GC pauses
+// Heap fragmentation over time
+```
+
+### But Java/Spring Is Fast Too - What Gives?
+
+**The reality:** Modern Java (especially with Spring Boot) powers some of the highest-throughput systems in the world. How?
+
+**1. I/O-bound workloads dominate:**
+
+Most backend services spend 90%+ of time waiting for I/O (database, network, disk). CPU efficiency matters less:
+
+```java
+// Java/Spring: Typical request handler
+@GetMapping("/users/{id}")
+public User getUser(@PathVariable Long id) {
+    return userRepository.findById(id);  // 99% of time: waiting for DB
+}
+
+// Time breakdown:
+// CPU (object allocation, GC): ~1ms (1%)
+// Database query: ~99ms (99%)
+// 
+// Even if Go is 10× faster on CPU, total time:
+// Java: 1ms + 99ms = 100ms
+// Go:   0.1ms + 99ms = 99.1ms
+// Difference: Negligible (0.9%)
+```
+
+**When I/O dominates, language overhead is invisible.**
+
+**2. JVM optimizations are excellent:**
+
+Modern JVMs have 25+ years of optimization:
+
+- **JIT compilation:** Hotspot compiles hot paths to native code
+- **Escape analysis:** Stack-allocates objects that don't escape (like Go!)
+- **Generational GC:** Young generation GC is fast (~1-10ms pauses)
+- **TLAB (Thread-Local Allocation Buffer):** Lock-free allocation per thread
+
+```java
+// Java: JVM may stack-allocate this!
+public int calculate() {
+    Point p = new Point(1, 2);  // Doesn't escape
+    return p.x + p.y;
+}
+// After JIT: p allocated on stack (no heap, no GC)
+```
+
+**3. Thread pools limit concurrency overhead:**
+
+Spring doesn't spawn threads per request (expensive). It uses **thread pools**:
+
+```java
+// Spring Boot default: 200 threads (Tomcat thread pool)
+// 10,000 concurrent requests → 200 threads
+// No goroutine overhead (Java threads are OS threads)
+```
+
+Go's advantage: **cheap goroutines** (100,000+ on same hardware)
+
+**4. Vertical scaling covers many use cases:**
+
+```
+Single Spring Boot instance:
+- 16 cores, 64 GB RAM
+- 10,000 requests/second (typical web app)
+- Thread pool: 200-500 threads
+- Cost: $500-1000/month (AWS)
+
+When this works: 99% of web apps
+```
+
+Go's advantage shines at **extreme scale**:
+
+```
+Discord (Go-based):
+- 2.5+ trillion messages
+- 5+ million concurrent WebSocket connections
+- Millions of goroutines across cluster
+- GC pauses: <1ms (critical for real-time)
+
+Twitter timeline service (rewritten in Go):
+- Reduced infrastructure by 80%
+- Latency: 200ms → 30ms
+- Memory: 90% reduction
+
+Uber (migrated to Go):
+- Highest queries per second microservice
+- 95th percentile: 40ms
+```
+
+### When Value Semantics Matter Most
+
+**Value semantics shine when:**
+
+1. **Extreme concurrency** - Millions of goroutines vs thousands of threads
+2. **CPU-bound workloads** - Where language overhead is significant
+3. **Real-time requirements** - Predictable latency (GC pauses matter)
+4. **Memory-constrained** - Every allocation counts
+5. **High-frequency operations** - Tight loops processing data
+
+**Examples:**
+
+```
+Use Go/Rust (value semantics critical):
+- Real-time systems (game servers, trading systems)
+- Data processing pipelines (map-reduce, streaming)
+- High-frequency microservices (>100k req/s per instance)
+- WebSocket servers (millions of persistent connections)
+- CLI tools (startup time, memory efficiency)
+
+Java/Spring works fine (I/O-bound):
+- CRUD applications (database-heavy)
+- REST APIs (most business logic)
+- Admin dashboards
+- Batch processing (latency not critical)
+- Enterprise systems (vertical scaling acceptable)
+```
+
+### The Real Comparison
+
+**Java/Spring strengths:**
+
+- Mature ecosystem (decades of libraries)
+- Enterprise support
+- Developer pool (more Java developers)
+- Vertical scaling works for most apps
+- I/O-bound workloads hide language overhead
+
+**Go strengths:**
+
+- Extreme horizontal scaling (cheap goroutines)
+- Predictable latency (low GC pauses)
+- Lower memory footprint (3-10× less)
+- Faster CPU-bound operations
+- Simpler concurrency model (no callback hell)
+
+**The nuance:**
+
+```
+                                 Java/Spring          Go
+────────────────────────────────────────────────────────
+Typical web API (I/O-bound)      Excellent           Good
+Real-time WebSocket server       Struggles           Excellent
+CRUD application                 Excellent           Good
+Data processing pipeline         Good                Excellent
+Microservices (<10k req/s)       Excellent           Good
+Microservices (>100k req/s)      Expensive scaling   Efficient scaling
+```
+
+{{< callout type="warning" >}}
+**Don't Rewrite Your Java Service**
+
+If your Java/Spring service handles 5,000 requests/second comfortably, there's no reason to rewrite it in Go. The overhead doesn't matter when I/O dominates.
+
+Value semantics matter when you're pushing the limits: millions of connections, microsecond latencies, or tight CPU-bound loops. For most web apps, Java/Spring is perfectly adequate.
+{{< /callout >}}
+
+### Where Value Semantics Deliver 10-100× Wins
+
+**1. WebSocket/persistent connections:**
+
+```
+Java (threads):
+- 10,000 concurrent connections
+- 10,000 threads × 1MB stack = 10 GB memory
+- Context switching overhead
+
+Go (goroutines):
+- 1,000,000 concurrent connections
+- 1M goroutines × 2KB stack = 2 GB memory
+- Minimal context switching
+```
+
+**2. CPU-bound data processing:**
+
+```
+Processing 100M records:
+
+Java:
+- Object allocation per record: 100M allocations
+- GC pauses: 100-500ms
+- Cache misses: Scattered objects
+- Time: 60 seconds
+
+Go:
+- Stack allocation (escape analysis): Minimal heap
+- GC pauses: <1ms
+- Cache hits: Contiguous data
+- Time: 10 seconds
+```
+
+**3. Microservice mesh (1000s of services):**
+
+```
+1000 microservices:
+
+Java (200MB per service):  200 GB total memory
+Go (20MB per service):     20 GB total memory
+
+Savings: 10× memory reduction = 10× fewer servers = 10× cost reduction
+```
 
 ---
 
