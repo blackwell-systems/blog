@@ -216,12 +216,26 @@ Thread 2: heavy_computation()  # Wants Core 2
 # No parallelism for CPU-bound Python code
 ```
 
-**Why Python can't remove GIL:**
+**Why Python couldn't remove the GIL for 33 years:**
 - Reference counting everywhere (not thread-safe without GIL)
 - Thousands of C extensions assume single-threaded execution
 - Backward compatibility nightmare
 
-**The lesson:** Design choices from the single-core era became architectural constraints in the multicore era. Languages designed after 2005 (Go, Rust) made different choices from the start.
+{{< callout type="info" >}}
+**Update: Python 3.13 (October 2024)**
+
+Python finally made the GIL optional via PEP 703, but the implementation reveals how deep the architectural constraint went:
+
+- **Requires build flag:** `python3.13 --disable-gil` (not default)
+- **Performance cost:** 8-10% single-threaded slowdown without GIL
+- **C extension compatibility:** Requires per-object locks (massive ecosystem refactor)
+- **Timeline:** Won't be default until Python 3.15+ (2026 at earliest)
+- **Technical debt:** Deferred reference counting, per-object biased locks, thread-safe allocator
+
+It took **33 years** (1991-2024) to make the GIL optional, and it's still not the default. Even with GIL removal, Python's reference semantics mean you still need explicit synchronization for shared mutable state.
+{{< /callout >}}
+
+**The lesson:** Design choices from the single-core era became architectural constraints that took decades to unwind. Languages designed after 2005 (Go, Rust) made different choices from the start - they didn't have 30+ years of single-threaded assumptions baked into their ecosystems.
 
 ---
 
