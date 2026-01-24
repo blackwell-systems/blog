@@ -1200,7 +1200,40 @@ After 30 years of OOP dominance and 15 years of post-OOP languages, what have we
 
 **Value semantics eliminate the need for locks** in most code.
 
-### 3. Performance Matters More Than We Thought
+### 3. We Traded malloc/free for lock/unlock
+
+**The irony of OOP's evolution:**
+
+OOP (with garbage collection) was supposed to eliminate manual memory management. No more juggling `malloc()` and `free()`. No more memory leaks, double frees, use-after-free bugs.
+
+**What we got instead:** Manual concurrency management. Now we juggle `lock()` and `unlock()`:
+
+```c
+// 1990s: Manual memory management
+ptr = malloc(size);
+// ... use ptr ...
+free(ptr);  // Forget this = memory leak
+
+// 2010s: Manual lock management  
+mutex_lock(&m);
+// ... use shared data ...
+mutex_unlock(&m);  // Forget this = deadlock
+```
+
+**Same failure modes, different domain:**
+
+| Memory Management | Concurrency Management |
+|-------------------|------------------------|
+| Forget `free()` = memory leak | Forget `unlock()` = deadlock |
+| Double `free()` = crash | Double `unlock()` = undefined behavior |
+| Use after `free()` = corruption | Access without lock = race condition |
+| No compiler help | No compiler help |
+
+**The pattern:** When complexity is implicit (malloc/free, lock/unlock), humans make mistakes. Garbage collection solved memory. Ownership systems (Rust) and value semantics (Go) solve concurrency by making sharing explicit and automatic.
+
+OOP with GC fixed one manual management problem but created another. Post-OOP languages (Go, Rust) eliminate both through different mechanisms: GC + value semantics (Go) or compile-time ownership (Rust).
+
+### 4. Performance Matters More Than We Thought
 
 **Single-threaded era:** Convenience > performance (references were "good enough")
 
@@ -1211,7 +1244,7 @@ Value semantics deliver:
 - Cache locality (contiguous memory)
 - Stack allocation (no GC pressure)
 
-### 4. Explicit Is Better Than Implicit
+### 5. Explicit Is Better Than Implicit
 
 **OOP's philosophy:** Hide complexity (encapsulation, abstraction)
 
