@@ -103,12 +103,13 @@ As a technical writer (3x AWS Certified, 225,000+ lines of documentation), I've 
 
 ## Contact
 
-I'm available for consulting, speaking engagements, and podcast interviews. Topics I can speak about include distributed systems architecture, event-driven patterns, serverless AWS, API design, language design trade-offs, and developer tooling.
+I'm available for consulting, speaking engagements, and podcast interviews. Topics I can speak about include distributed systems architecture, event-driven patterns, serverless AWS, API design, language design trade-offs, developer tooling, and JSON ecosystem architecture (author of *You Don't Know JSON*).
 
 **Reach out for:**
 - Consulting on distributed systems architecture and event-driven design
 - Technical speaking engagements (conferences, meetups, corporate events)
-- Podcast interviews on systems design, language design, or developer productivity
+- Podcast interviews on systems design, language design, developer productivity, or JSON/API architecture
+- Book talks and workshops on *You Don't Know JSON*
 - Open source collaboration and sponsorship inquiries
 
 **Contact:**
