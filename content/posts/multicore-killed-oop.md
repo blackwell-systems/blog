@@ -1,18 +1,18 @@
 ---
-title: "How Multicore CPUs Killed Object-Oriented Programming"
+title: "How Multicore CPUs Changed Object-Oriented Programming"
 date: 2026-01-24
 draft: false
-tags: ["oop", "object-oriented", "concurrency", "parallelism", "multicore", "go", "rust", "java", "python", "reference-semantics", "value-semantics", "race-conditions", "mutex", "performance", "programming-paradigms", "history"]
+tags: ["oop", "object-oriented", "concurrency", "parallelism", "multicore", "go", "rust", "java", "python", "reference-semantics", "value-semantics", "race-conditions", "mutex", "performance", "programming-paradigms", "history", "composition", "inheritance"]
 categories: ["programming", "architecture"]
-description: "Object-oriented programming dominated for decades, but the multicore revolution exposed a fatal flaw: shared mutable state through references. Modern languages chose value semantics specifically to make concurrency safe by default."
-summary: "OOP's reference semantics were manageable in single-threaded code. But when CPUs went multicore in 2005, hidden shared state went from 'confusing' to 'catastrophic.' This is why Go, Rust, and modern languages abandoned default references for value semantics."
+description: "Object-oriented programming dominated for decades, but the multicore revolution exposed a critical flaw in classical OOP: shared mutable state through implicit references. Modern languages refined OOP with value semantics, composition, and explicit sharing to make concurrency safe by default."
+summary: "OOP's implicit reference semantics were manageable in single-threaded code. But when CPUs went multicore in 2005, hidden shared state went from 'confusing' to 'catastrophic.' This is why Go and Rust refined OOP: keeping methods and encapsulation while replacing inheritance with composition and implicit references with value semantics."
 ---
 
 For 30 years (1980s-2010s), object-oriented programming was the dominant paradigm. Java, Python, Ruby, C++, C# - all centered their design around objects: bundles of data and behavior, allocated on the heap, accessed through references.
 
 Then something changed.
 
-Languages designed after 2007 - Go, Rust, Zig - deliberately rejected classical OOP patterns. No classes. No inheritance. No default reference semantics. Why?
+Languages designed after 2007 - Go, Rust, Zig - deliberately rejected classical OOP patterns. No inheritance. No default reference semantics. Structs with methods instead of classes. Why?
 
 {{< callout type="info" >}}
 **The Multicore Revolution**
@@ -893,6 +893,203 @@ Go's interfaces are opt-in: use concrete types (cache-friendly) until you need p
 
 ---
 
+## Structs with Methods vs Classes: What's Actually Different?
+
+Go and Rust have structs with methods, which might look like classes. But there are fundamental differences that change how code is written and reasoned about.
+
+### What Classes Provide (Java/Python/C++)
+
+```java
+// Java: Traditional class
+public class Point {
+    private int x, y;
+    
+    // Constructor (special syntax, runs on initialization)
+    public Point(int x, int y) {
+        this.x = x;  // Implicit 'this' pointer
+        this.y = y;
+    }
+    
+    // Method (can be overridden in subclasses)
+    public int distance() {
+        return (int) Math.sqrt(x*x + y*y);
+    }
+    
+    // Method overloading (same name, different signatures)
+    public void move(int dx, int dy) { x += dx; y += dy; }
+    public void move(int d) { x += d; y += d; }
+}
+
+// Inheritance creates is-a relationship
+class Point3D extends Point {
+    private int z;
+    
+    @Override  // Virtual dispatch through vtable
+    public int distance() {
+        return (int) Math.sqrt(x*x + y*y + z*z);
+    }
+}
+
+// Usage: new keyword, implicit heap allocation
+Point p = new Point(10, 20);  // Always a reference
+```
+
+**Class characteristics:**
+1. **Implicit `this`/`self`** - Methods have hidden receiver pointer
+2. **Constructors** - Special methods that run on object creation
+3. **Inheritance** - is-a relationships, method overriding
+4. **Virtual methods** - Runtime dispatch through vtable
+5. **Method overloading** - Multiple methods with same name
+6. **Access modifiers** - public/private/protected on each member
+7. **Always heap-allocated** - `new` returns reference
+
+### What Structs Provide (Go)
+
+```go
+// Go: Struct with methods
+type Point struct {
+    X, Y int  // Capitalization controls visibility (package-level)
+}
+
+// NOT a constructor - just a function that returns a struct
+func NewPoint(x, y int) Point {
+    return Point{X: x, Y: y}  // Struct literal
+}
+
+// Method with explicit receiver
+func (p Point) Distance() int {
+    return int(math.Sqrt(float64(p.X*p.X + p.Y*p.Y)))
+}
+
+// No method overloading - must use different names
+func (p Point) Move(dx, dy int) {
+    p.X += dx
+    p.Y += dy
+}
+func (p Point) MoveUniform(d int) {
+    p.X += d
+    p.Y += d
+}
+
+// No inheritance - composition through embedding
+type Point3D struct {
+    Point  // Embedded (not inherited)
+    Z int
+}
+
+// Not overriding - defining new method on different type
+func (p Point3D) Distance() int {
+    return int(math.Sqrt(float64(p.X*p.X + p.Y*p.Y + p.Z*p.Z)))
+}
+
+// Usage: No 'new' keyword needed
+p1 := Point{10, 20}        // Stack-allocated value
+p2 := NewPoint(10, 20)     // Stack-allocated value
+p3 := &Point{10, 20}       // Explicit heap allocation (pointer)
+```
+
+**Struct characteristics:**
+1. **Explicit receiver** - `(p Point)` is visible in signature
+2. **No constructors** - Just regular functions (by convention `New...`)
+3. **No inheritance** - Composition via embedding (has-a, not is-a)
+4. **No virtual methods** - Methods bound to concrete types at compile time
+5. **No method overloading** - Each method needs unique name
+6. **Package-level visibility** - Capitalization (not per-member)
+7. **Value by default** - Stack allocation unless you use `&` (explicit pointer)
+
+### What Rust Provides (Middle Ground)
+
+```rust
+// Rust: Struct with methods
+struct Point {
+    x: i32,
+    y: i32,  // No visibility on fields (controlled at module level)
+}
+
+impl Point {
+    // Associated function (like constructor, but not special)
+    fn new(x: i32, y: i32) -> Point {
+        Point { x, y }
+    }
+    
+    // Method with explicit receiver
+    fn distance(&self) -> i32 {  // &self = borrowed reference
+        ((self.x * self.x + self.y * self.y) as f64).sqrt() as i32
+    }
+    
+    // Mutable receiver (explicit mutation)
+    fn move_by(&mut self, dx: i32, dy: i32) {
+        self.x += dx;
+        self.y += dy;
+    }
+}
+
+// No inheritance - composition via fields
+struct Point3D {
+    point: Point,  // Embedded explicitly (not inheritance)
+    z: i32,
+}
+
+impl Point3D {
+    fn distance(&self) -> i32 {  // Different type, not overriding
+        let base = self.point.distance();
+        ((base * base + self.z * self.z) as f64).sqrt() as i32
+    }
+}
+
+// Usage: Stack by default
+let p1 = Point::new(10, 20);       // Stack-allocated
+let p2 = Box::new(Point::new(10, 20));  // Explicit heap via Box
+```
+
+**Rust characteristics:**
+1. **Explicit receiver with borrowing** - `&self`, `&mut self`, `self` (shows ownership)
+2. **Associated functions** - Not special constructors (by convention `::new`)
+3. **No inheritance** - Composition explicit
+4. **No virtual methods** - Unless using trait objects (`dyn Trait`)
+5. **No method overloading** - Different names required
+6. **Module-level visibility** - `pub` at module boundary
+7. **Stack by default** - Heap requires explicit `Box<T>`
+
+### The Key Difference: Explicitness
+
+**Classes hide complexity:**
+- `this` is implicit
+- Heap allocation is implicit (`new`)
+- Virtual dispatch is implicit (unless `final`)
+- Reference semantics are implicit
+
+**Structs expose complexity:**
+- Receiver is explicit in signature
+- Heap allocation is explicit (`&` in Go, `Box` in Rust)
+- Dispatch is explicit (concrete type vs interface/trait)
+- Value semantics are default (pointer is explicit)
+
+{{< callout type="info" >}}
+**Why This Matters for Concurrency**
+
+When everything is explicit:
+- You can see where sharing happens (`&` in Go, `Arc<T>` in Rust)
+- You can see where mutation happens (`&mut` in Rust)
+- You can see where allocation happens (value vs pointer)
+- Compiler can enforce safety (Rust's borrow checker)
+
+This explicitness is what makes concurrent programming safer. It's not just about value semantics - it's about **making sharing and mutation visible** in the code.
+{{< /callout >}}
+
+### What They Share: Methods on Data
+
+Despite differences, Go/Rust structs and Java/Python classes all support:
+- Attaching behavior to data (methods)
+- Encapsulation (controlling visibility)
+- Polymorphism (interfaces/traits)
+
+**They're still object-oriented** - they just use **composition** (has-a) instead of **inheritance** (is-a), and **explicit sharing** instead of **implicit references**.
+
+This is why saying "Go/Rust rejected OOP" is misleading. They rejected **classical OOP's specific implementation choices** (inheritance, implicit references, hidden allocation), not the core idea of bundling data with behavior.
+
+---
+
 ## The Lock Bottleneck: How Mutexes Kill Parallelism
 
 Let's look concretely at why locks defeat the purpose of multicore CPUs.
@@ -1709,23 +1906,37 @@ Post-OOP solves concurrency and performance, but introduces verbosity and requir
 
 ## Conclusion
 
-Object-oriented programming wasn't killed by bad design or theoretical flaws. It was killed by hardware evolution.
+Object-oriented programming wasn't killed - it evolved. The multicore revolution forced a fundamental rethinking of OOP's implementation, not its core principles.
 
-When CPUs went multicore in 2005, OOP's fundamental design choice - **shared mutable state through references** - went from "convenient but confusing" to "catastrophic for concurrency."
+When CPUs went multicore in 2005, a specific implementation pattern - **shared mutable state through implicit references** - went from "convenient but confusing" to "catastrophic for concurrency."
 
-Modern languages (Go, Rust) chose value semantics specifically to make concurrent programming safe by default:
+Modern languages (Go, Rust) didn't abandon OOP. They **refined it**:
 
-- Values are independent copies (no shared state)
-- No shared state = no locks needed
+**What they kept:**
+- Methods on data (structs with methods)
+- Encapsulation (visibility control)
+- Polymorphism (interfaces/traits)
+
+**What they changed:**
+- Inheritance → Composition (has-a instead of is-a)
+- Implicit references → Explicit sharing (`&`, `*`, `Box`, `Arc`)
+- Hidden allocation → Visible allocation (value by default)
+- Implicit `this` → Explicit receivers
+
+**The result:** Object-oriented programming with safe concurrency built in.
+
+- Values are independent copies (no shared state by default)
+- Sharing is explicit and visible in the code
+- No shared state = no locks needed (for most code)
 - No locks = true parallelism (full CPU utilization)
 
-The performance benefits (cache locality, stack allocation) were a bonus. The driver was concurrency.
+The performance benefits (cache locality, stack allocation) were a bonus. **The driver was concurrency safety through explicitness.**
 
-After 30 years of OOP dominance, the pendulum has swung. Value semantics are the new default. References still exist, but they're explicit - you opt into sharing rather than opting out.
+After 30 years of classical OOP dominance, the paradigm has matured. Value semantics are the new default. References still exist, but they're explicit - you opt into sharing rather than opting out. Inheritance still exists (via traits/interfaces), but composition is preferred.
 
-**The lesson:** Language design is shaped by hardware constraints. As hardware evolves (multicore, SIMD, GPUs), language design evolves to match.
+**The lesson:** Language design is shaped by hardware realities. As multicore CPUs made concurrency essential, languages evolved to make concurrent programming safe by default. OOP didn't die - it adapted.
 
-OOP served us well for three decades. But the multicore era demands a different approach. Value semantics aren't perfect, but they're better suited to the hardware reality of 2020s and beyond.
+Classical OOP (Java, Python, C++) served us well for three decades and continues to serve millions of applications. Modern OOP (Go, Rust) takes those lessons and adds safety guarantees for the concurrent, multicore era. Both have their place.
 
 ---
 
