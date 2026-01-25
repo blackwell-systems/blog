@@ -531,6 +531,52 @@ let handle1 = thread::spawn(move || {
 The borrow checker enforces memory safety and prevents data races at compile time.
 {{< /callout >}}
 
+### The Alternative Path: Erlang's Actor Model (1986)
+
+**Important:** Value semantics and ownership aren't the only solutions to shared mutable state. Erlang solved the concurrency problem decades before multicore CPUs existed.
+
+**Erlang/Elixir approach: Process isolation + message passing**
+
+```erlang
+% Each process has isolated memory
+spawn(fun() ->
+    Counter = 0,  % Private to this process
+    loop(Counter)
+end)
+
+% Processes communicate via messages (copied between heaps)
+Pid ! {increment, 5}
+```
+
+**How it differs from Go/Rust:**
+
+- **Enforced isolation:** Processes cannot share memory (even if you try)
+- **Message copying:** Data is copied between process heaps
+- **Preemptive scheduling:** BEAM VM manages millions of lightweight processes
+- **Immutable by default:** All data structures are immutable
+
+**Why it works:**
+
+Erlang's actor model eliminates shared mutable state through architectural enforcement. Each process has independent memory. Communication happens via message passing, where data is copied. No locks needed because sharing is impossible.
+
+**Real-world scale:**
+
+- **WhatsApp:** 2+ billion users, 900M concurrent connections (Erlang)
+- **Discord:** 2.5+ trillion messages, 5M+ concurrent WebSockets (Elixir)
+- **RabbitMQ:** Message broker handling millions of messages/second (Erlang)
+
+{{< callout type="info" >}}
+**Multiple Paths to Safety**
+
+The core insight: **eliminate shared mutable state**. Different mechanisms:
+
+- **Go:** Value copies + channels (shared discouraged)
+- **Rust:** Ownership rules (shared controlled)  
+- **Erlang:** Process isolation (shared impossible)
+
+All three avoid OOP's reference-everywhere model. The solution isn't specifically "value semantics" - it's "no shared mutable state."
+{{< /callout >}}
+
 ---
 
 ## The Performance Bonus: Cache Locality
@@ -1457,20 +1503,20 @@ When this works: 99% of web apps
 Go's advantage shines at **extreme scale**:
 
 ```
-Discord (Go-based):
-- 2.5+ trillion messages
-- 5+ million concurrent WebSocket connections
-- Millions of goroutines across cluster
-- GC pauses: <1ms (critical for real-time)
+Uber (migrated to Go):
+- Highest queries per second microservice
+- 95th percentile: 40ms
+- Value semantics enable lock-free processing
 
 Twitter timeline service (rewritten in Go):
 - Reduced infrastructure by 80%
 - Latency: 200ms → 30ms
 - Memory: 90% reduction
 
-Uber (migrated to Go):
-- Highest queries per second microservice
-- 95th percentile: 40ms
+Cloudflare (Go-based):
+- 25+ million HTTP requests/second
+- Global edge network
+- Low-latency performance critical
 ```
 
 ### When Value Semantics Matter Most
