@@ -50,13 +50,13 @@ print(p1.x)  # 10 - p1 affected! Both reference same object
 
 ```
 Stack:                        Heap:
-            
- p1: 0x1000   > Point object 
-     > x: 10, y: 2  
-                           
-     
- p2: 0x1000   
-
++--------------+            +--------------+
+| p1: 0x1000   |----------->| Point object |
++--------------+     +----->| x: 10, y: 2  |
+                     |      +--------------+
++--------------+     |
+| p2: 0x1000   |-----+
++--------------+
 
 Both variables point to same object (shared state)
 ```
@@ -405,10 +405,10 @@ fmt.Println(p1.X)  // 1 - p1 unchanged!
 
 ```
 Stack:
-    
- p1                p2           
- X: 1, Y: 2        X: 10, Y: 2  
-    
++--------------+    +--------------+
+| p1           |    | p2           |
+| X: 1, Y: 2   |    | X: 10, Y: 2  |
++--------------+    +--------------+
 
 Two independent copies (no shared state)
 ```
