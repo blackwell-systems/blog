@@ -24,6 +24,90 @@ This hardware shift exposed a fundamental flaw in OOP's design: **shared mutable
 
 This post explores how the need for safe, efficient concurrency drove modern languages to abandon OOP's reference semantics in favor of value semantics.
 
+{{< callout type="warning" >}}
+**A Note on "Object-Oriented"**
+
+Go and Rust are still object-oriented - they have methods on data, encapsulation, and polymorphism (via interfaces/traits). This article uses "classical OOP" to refer to a specific implementation pattern dominant from 1980-2010: **reference semantics by default, inheritance-based polymorphism, and implicit heap allocation**.
+
+The argument isn't "multicore killed OOP" - it's "multicore forced OOP to evolve." What changed: reference-everywhere became value-by-default. What stayed: methods, encapsulation, abstraction.
+
+Alan Kay (who coined "object-oriented") originally envisioned isolated objects communicating via messages. Go's channels and Rust's ownership are arguably closer to this vision than Java's shared mutable objects. The title is provocative, but the thesis is precise: **the implementation changed, not the paradigm**.
+{{< /callout >}}
+
+---
+
+## Threads Existed Before Multicore
+
+A common misconception: threads were invented for multicore CPUs. Actually, threads predate multicore by **decades**. This context is critical to understanding why multicore specifically changed everything.
+
+**Timeline:**
+- **1960s-1970s:** Threads invented for single-core mainframes
+- **1995:** Java ships with threading API (Pentium era - single core)
+- **2005:** Intel Pentium D - first mainstream multicore
+- **Gap:** 30+ years of threads on single-core systems
+
+**Why threads on single core?**
+
+Threads solved **concurrency** (I/O multiplexing), not parallelism:
+
+```python
+# Web server on single Pentium (1995)
+def handle_client(client):
+    request = client.recv()         # I/O wait (10ms)
+    data = database.query(request)  # I/O wait (50ms)
+    client.send(data)               # I/O wait (10ms)
+
+# While Thread 1 waits for I/O, Thread 2 runs
+# CPU never idle despite I/O delays
+# 100 threads serve 100 clients on 1 core
+```
+
+**Time-slicing visualization:**
+
+```
+Single Core (1995):
+Time:  0ms   10ms  20ms  30ms  40ms
+CPU:   [T1]  [T2]  [T3]  [T1]  [T2]
+       ↑ Rapid switching (only one executes at a time)
+
+All threads make progress, but not simultaneously
+```
+
+**This worked fine with reference semantics** because:
+- Only one thread executing at any moment (time-slicing)
+- Context switches at predictable points
+- Race conditions possible but rare
+- Locks needed, but contention low
+
+**Multicore changed everything:**
+
+```
+Dual Core (2005):
+Time:  0ms──────────────────────40ms
+Core 1: [Thread 1 continuously]
+Core 2: [Thread 2 continuously]
+        ↑ True simultaneous execution
+
+NOW threads run truly parallel
+```
+
+**The paradigm shift:**
+
+| Era | Hardware | Threads For | Locks |
+|-----|----------|-------------|-------|
+| Pre-2005 | Single core | I/O concurrency | Nice to have |
+| Post-2005 | Multicore | CPU parallelism | **Mandatory** |
+
+{{< callout type="warning" >}}
+**Threads Weren't the Problem**
+
+Threads worked fine for 30+ years on single-core systems. The crisis emerged when:
+
+**Threads + Multicore + Reference Semantics** = Data races everywhere
+
+OOP languages designed in the single-core era (1980s-1990s) assumed sequential execution with occasional context switches. Multicore exposed hidden shared state that had always existed but was protected by time-slicing serialization.
+{{< /callout >}}
+
 ---
 
 ## The OOP Design Choice: References by Default
@@ -119,94 +203,25 @@ timeline
 
 **The software problem:** OOP's reference semantics, which were merely "confusing" in single-threaded code, became **catastrophic** in concurrent code.
 
----
-
-## Threads Existed Before Multicore
-
-A common misconception: threads were invented for multicore CPUs. Actually, threads predate multicore by **decades**.
-
-**Timeline:**
-- **1960s-1970s:** Threads invented for single-core mainframes
-- **1995:** Java ships with threading API (Pentium era - single core)
-- **2005:** Intel Pentium D - first mainstream multicore
-- **Gap:** 30+ years of threads on single-core systems
-
-**Why threads on single core?**
-
-Threads solved **concurrency** (I/O multiplexing), not parallelism:
-
-```python
-# Web server on single Pentium (1995)
-def handle_client(client):
-    request = client.recv()         # I/O wait (10ms)
-    data = database.query(request)  # I/O wait (50ms)
-    client.send(data)               # I/O wait (10ms)
-
-# While Thread 1 waits for I/O, Thread 2 runs
-# CPU never idle despite I/O delays
-# 100 threads serve 100 clients on 1 core
-```
-
-**Time-slicing visualization:**
-
-```
-Single Core (1995):
-Time:  0ms   10ms  20ms  30ms  40ms
-CPU:   [T1]  [T2]  [T3]  [T1]  [T2]
-       ↑ Rapid switching (only one executes at a time)
-
-All threads make progress, but not simultaneously
-```
-
-**This worked fine with reference semantics** because:
-- Only one thread executing at any moment (time-slicing)
-- Context switches at predictable points
-- Race conditions possible but rare
-- Locks needed, but contention low
-
-**Multicore changed everything:**
-
-```
-Dual Core (2005):
-Time:  0ms──────────────────────40ms
-Core 1: [Thread 1 continuously]
-Core 2: [Thread 2 continuously]
-        ↑ True simultaneous execution
-
-NOW threads run truly parallel
-```
-
-**The paradigm shift:**
-
-| Era | Hardware | Threads For | Locks |
-|-----|----------|-------------|-------|
-| Pre-2005 | Single core | I/O concurrency | Nice to have |
-| Post-2005 | Multicore | CPU parallelism | **Mandatory** |
-
-{{< callout type="warning" >}}
-**Threads Weren't the Problem**
-
-Threads worked fine for 30+ years on single-core systems. The crisis emerged when:
-
-**Threads + Multicore + Reference Semantics** = Data races everywhere
-
-OOP languages designed in the single-core era (1980s-1990s) assumed sequential execution with occasional context switches. Multicore exposed hidden shared state that had always existed but was protected by time-slicing serialization.
-{{< /callout >}}
-
 **Why does Python have a GIL?**
 
 **The GIL (Global Interpreter Lock)** is a mutex lock on the CPython interpreter process. Only one thread can hold the GIL at a time, which means only one thread can execute Python bytecode at any moment - even on multicore CPUs.
 
-The GIL was created in 1991 - the **single-core era**. Guido van Rossum's design assumption:
+The GIL was created in 1991 - the **single-core era**. This was a **reasonable design choice** for the time. Guido van Rossum's design assumption:
 
 > "Only one thread needs to execute Python bytecode at a time"
 
-This made perfect sense when CPUs had one core! The single mutex lock simplified:
-- **Memory management:** Reference counting without per-object locks (all mutations serialized by GIL)
-- **C extension compatibility:** C extensions don't need thread-safety (GIL protects them)
-- **Implementation complexity:** Simpler interpreter (one global lock vs thousands of fine-grained locks)
+**Why this made sense in 1991:**
+- CPUs had one core - no true parallelism anyway
+- Threads were for I/O concurrency (waiting for disk/network), not CPU parallelism
+- The single mutex lock simplified:
+  - **Memory management:** Reference counting without per-object locks (simpler, faster for single-core)
+  - **C extension compatibility:** C extensions don't need thread-safety (huge ecosystem benefit)
+  - **Implementation complexity:** One global lock vs thousands of fine-grained locks (easier to maintain, fewer bugs)
 
-**Problem:** This assumption broke in 2005 when multicore arrived.
+**This wasn't a mistake** - it was optimizing for the hardware reality of 1991. No one predicted multicore would become universal 15 years later.
+
+**The problem emerged in 2005:** Multicore CPUs arrived, changing the constraints.
 
 ```python
 # Two CPU-bound threads on dual-core
@@ -329,12 +344,17 @@ Point p1 = {1, 2};
 // Safe by default (unless using pointers explicitly)
 ```
 
-**C programmers already knew:**
-- Assignment copies values
-- Pointers are explicit (`*`, `&`)
-- Sharing is visible in the code
+**C programmers with value-oriented code handled multicore better:**
+- Assignment copies values (safe by default)
+- Pointers are explicit (`*`, `&`) making sharing visible
+- Multicore meant "use fewer global variables, more thread-local copies"
+- The mental model didn't fundamentally change
 
-**Multicore just meant "use fewer global variables and more thread-local copies."** The mental model didn't change.
+**But C codebases with global mutable state suffered too:**
+- Globals accessed by multiple threads still need locks
+- Manual memory management added another complexity layer
+- CPython (written in C) still struggles with thread-safety due to globals
+- The difference: C's explicit pointers let you **see** where problems were
 
 **OOP languages had the opposite problem:**
 
@@ -1906,11 +1926,13 @@ Post-OOP solves concurrency and performance, but introduces verbosity and requir
 
 ## Conclusion
 
-Object-oriented programming wasn't killed - it evolved. The multicore revolution forced a fundamental rethinking of OOP's implementation, not its core principles.
+**Object-oriented programming didn't die - it evolved to fit new hardware realities.**
+
+The multicore revolution forced a fundamental rethinking of OOP's **implementation**, not its core principles. Go and Rust are still object-oriented: they bundle data with methods, provide encapsulation, and support polymorphism. What changed wasn't "OOP vs something else" - it was which implementation patterns work for concurrent programming.
 
 When CPUs went multicore in 2005, a specific implementation pattern - **shared mutable state through implicit references** - went from "convenient but confusing" to "catastrophic for concurrency."
 
-Modern languages (Go, Rust) didn't abandon OOP. They **refined it**:
+Modern languages didn't abandon OOP. They **refined its implementation** for the multicore era:
 
 **What they kept:**
 - Methods on data (structs with methods)
