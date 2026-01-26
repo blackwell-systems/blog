@@ -32,6 +32,19 @@ Before diving into continuous fuzzing setup, let's establish what fuzzing is and
 
 **Continuous fuzzing** runs fuzzing 24/7 in CI, with the corpus persisting across runs. Each run builds on previous discoveries, creating compound growth in test effectiveness.
 
+{{< callout type="success" >}}
+**Why Continuous Fuzzing Works**
+
+Traditional tests stay static - you write 200 assertions and coverage plateaus at 80%. Continuous fuzzing improves over time:
+
+- **Day 1**: Corpus has 10 seed inputs, finds obvious bugs
+- **Week 1**: Corpus grows to 500+ inputs covering edge cases
+- **Month 1**: Corpus reaches 2,000+ inputs, coverage increases from 80% → 85%
+- **Ongoing**: Every run explores from a larger, smarter starting point
+
+The fuzzer runs when you're sleeping, exploring combinations humans wouldn't think to test. It found both bugs in goldenthread within the first hour of running.
+{{< /callout >}}
+
 {{< callout type="info" >}}
 **What This Article Covers**
 
