@@ -103,17 +103,34 @@ As a technical writer (3x AWS Certified, 225,000+ lines of documentation), I've 
 
 ---
 
-## Contact
+## Consulting & Services
 
-I'm available for contract work, consulting, speaking engagements, and podcast interviews. I specialize in distributed systems architecture, event-driven patterns, serverless AWS, API design, language design trade-offs, developer tooling, and JSON ecosystem architecture (author of *You Don't Know JSON*).
+I'm available for contract work, consulting, speaking engagements, and podcast interviews.
 
-**Reach out for:**
-- Contract development work on distributed systems, event-driven architectures, or AWS serverless platforms
-- Architecture consulting and technical advisory
-- Technical speaking engagements (conferences, meetups, corporate events)
-- Podcast interviews on systems design, language design, developer productivity, or JSON/API architecture
-- Book talks and workshops on *You Don't Know JSON*
-- Open source collaboration and sponsorship inquiries
+### Cloud Infrastructure Consulting
+
+Expert consulting on cloud-native architecture, distributed systems design, and comprehensive testing strategies:
+
+- **Cloud Architecture:** Event-driven systems, serverless AWS (Lambda, EventBridge, DynamoDB), GCP service integration
+- **Testing Strategy:** Local emulation for hermetic testing, CI/CD pipeline optimization, cost reduction through local development
+- **Distributed Systems:** Idempotent message handling, observability patterns, reliability engineering at scale
+- **Infrastructure as Code:** CDK, Terraform, architecture reviews
+
+### Technical Writing & Documentation
+
+Comprehensive technical documentation for engineering teams and developer-facing products:
+
+- **Documentation Projects:** API references, architecture guides, CLI documentation, developer onboarding
+- **Documentation Strategy:** Docs-as-code workflows, information architecture, style guides, quality audits
+- **Content Creation:** Technical blog articles, ADRs, conference talks, workshop materials
+- **Portfolio:** 225,000+ lines of documentation, published author (*You Don't Know JSON*), 11 OSS projects with comprehensive docs
+
+### Other Services
+
+- **Technical speaking engagements** (conferences, meetups, corporate events)
+- **Podcast interviews** on systems design, language design, developer productivity, JSON/API architecture
+- **Book talks and workshops** on *You Don't Know JSON*
+- **Open source collaboration** and sponsorship inquiries
 
 **Contact:**
 - Email: dayna@blackwell-systems.com
