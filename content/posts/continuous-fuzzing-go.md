@@ -240,22 +240,22 @@ func ProcessName(name string) string {
 ```
 Run 1: "Alice"
   Branches: len > 0, return camelCase
-  Result: "alice" ✓
+  Result: "alice" (pass)
   Coverage: 2/2 branches
   
 Run 2: "" (mutation: delete all bytes)
   Branches: len == 0, return "Anonymous"
-  Result: "Anonymous" ✓
+  Result: "Anonymous" (pass)
   Coverage: 2/2 branches (no new coverage)
   
 Run 3: "Alice\x00" (mutation: append null)
   Branches: len > 0, return camelCase
-  Result: "alice\x00" ✓
+  Result: "alice\x00" (pass)
   Coverage: 2/2 branches (no new coverage)
   
 Run 444,553: "フィールド" (mutation: splice UTF-8 from dictionary)
   Branches: len > 0, return camelCase
-  Result: INVALID UTF-8 OUTPUT ✗
+  Result: INVALID UTF-8 OUTPUT (FAIL)
   Coverage: New execution path (UTF-8 edge case)
   BUG FOUND!
 ```
