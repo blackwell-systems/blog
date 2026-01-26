@@ -2,13 +2,15 @@
 title: "How Continuous Fuzzing Finds Bugs Traditional Testing Misses"
 date: 2026-01-26
 draft: false
-tags: ["fuzzing", "go", "testing", "property-based-testing", "continuous-integration", "github-actions", "coverage-guided-fuzzing", "go-fuzzing", "software-testing", "test-automation", "bug-detection", "edge-cases", "mutation-testing", "corpus-evolution", "ci-cd", "devops", "quality-assurance", "go-test", "automated-testing", "regression-testing"]
+tags: ["fuzzing", "go", "testing", "github-actions", "coverage-guided-fuzzing", "continuous-integration", "ci-cd", "devops", "quality-assurance", "bug-detection"]
 categories: ["programming", "testing", "best-practices"]
 description: "Coverage-guided fuzzing runs continuously in CI, exploring millions of input combinations and evolving test cases over time. Learn how to set up continuous fuzzing in Go with GitHub Actions, understand corpus evolution, and see real bugs discovered through automated fuzzing."
 summary: "Traditional tests check examples you think of. Fuzzing explores millions of combinations you don't. Coverage-guided fuzzing found two production bugs in goldenthread before release - a UTF-8 corruption issue and a regex escaping bug. Here's how continuous fuzzing works and how to set it up."
 ---
 
 You wrote comprehensive tests. Your code has 80% test coverage. All 200 assertions pass. Ship it?
+
+I shipped twice with that confidence. Continuous fuzzing found two bugs in the first hour - bugs my test suite would never have exercised.
 
 Traditional testing has a problem: you only test what you think to test. Empty strings, negative numbers, boundary values - these are good. But what about:
 
@@ -342,10 +344,10 @@ Human test writer:
   20 test cases × 1 minute each = 20 minutes
   Tests check known edge cases only
 
-Continuous fuzzing (actual numbers from one 10-minute run):
-  FuzzEmit: 52 million executions
+Continuous fuzzing (based on goldenthread's observed CI performance):
+  Single target (10m): 52 million executions
   12 targets total: ~250 million executions per run
-  Runs every 30 minutes: ~12 billion executions per day
+  If schedules run reliably: billions of executions per day
   Compounds over time as corpus grows
 ```
 
@@ -382,15 +384,15 @@ func camelCase(s string) string {
 
 ### Why This Failed
 
-Japanese text uses multi-byte UTF-8 encoding:
+Japanese text uses multi-byte UTF-8 encoding. The string `"フィールド"` (field) is 5 Unicode characters but 15 bytes in UTF-8:
 
 ```
 "フィールド" in UTF-8:
-[0xE3, 0x83, 0x95, 0xE3, 0x82, 0xA3, 0xE3, 0x83, 0xBC, 0xE3, 0x83, 0xAB, 0xE3, 0x83, 0x89]
- └─ "フ" (3 bytes)─┘  └─ "ィ" (3 bytes)─┘  └─ "ー" (3 bytes)─┘  └─ "ル" (3 bytes)─┘  └─ "ド" (3 bytes)─┘
+[0xE3, 0x83, 0x95] [0xE3, 0x82, 0xA3] [0xE3, 0x83, 0xBC] [0xE3, 0x83, 0xAB] [0xE3, 0x83, 0x89]
+ └─ "フ" (3 bytes) └─ "ィ" (3 bytes) └─ "ー" (3 bytes) └─ "ル" (3 bytes) └─ "ド" (3 bytes)
 ```
 
-`s[:1]` slices **bytes**, not characters. It returns `[0xE3]` - an incomplete UTF-8 sequence - producing invalid output: `"�\x83\x95ィールド"`.
+`s[:1]` slices **bytes**, not characters (runes). It returns `[0xE3]` - the first byte of a 3-byte character - which is an incomplete UTF-8 sequence. The output fails `utf8.ValidString()` validation.
 
 ### How Fuzzing Caught It
 
@@ -524,7 +526,7 @@ pattern = strings.ReplaceAll(pattern, "\r", "\\r")   // Carriage return
 pattern = strings.ReplaceAll(pattern, "\t", "\\t")   // Tab
 ```
 
-We now escape the delimiter (`/`), control characters (`\n`, `\r`, `\t`), and backslashes. This handles the common cases for JavaScript regex literals.
+We now escape backslashes, the delimiter (`/` - required because we're emitting `.regex(/pattern/)` literals), and control characters (`\n`, `\r`, `\t`). This handles the common cases for JavaScript regex literal context. Other embedding contexts (like `new RegExp("...")`) have different escaping requirements.
 
 ### Why Manual Testing Missed This
 
@@ -604,6 +606,12 @@ jobs:
             -v 2>&1 | tee fuzz-output.log
           echo "exit_code=${PIPESTATUS[0]}" >> $GITHUB_OUTPUT
       
+      - name: Check for failures
+        if: steps.fuzz.outputs.exit_code != '0'
+        run: |
+          echo "::error::Fuzzing found a bug in ${{ matrix.target.test }}"
+          exit 1
+      
       - name: Upload failure artifacts
         if: failure()
         uses: actions/upload-artifact@v4
@@ -611,7 +619,7 @@ jobs:
           name: fuzz-failure-${{ matrix.target.test }}-${{ github.run_id }}
           path: |
             fuzz-output.log
-            internal/**/testdata/fuzz/${{ matrix.target.test }}
+            internal/**/testdata/fuzz/${{ matrix.target.test }}/**
           retention-days: 30
       
       - name: Create GitHub issue on failure
@@ -675,19 +683,19 @@ schedule:
 Runs continuously on a schedule. Each run builds on the previous corpus.
 
 {{< callout type="warning" >}}
-**GitHub Actions Scheduled Workflows: Known Limitations**
+**GitHub Actions Scheduled Workflows: Reliability Note**
 
-GitHub Actions scheduled workflows can be unreliable:
-- May fail silently without errors or notifications
-- Can pause on repositories with infrequent activity
-- Lower priority than push/pull_request triggers during high platform load
+In practice, GitHub Actions scheduled workflows can be less reliable than push-triggered workflows:
+- Schedules may be delayed or skipped during high platform load
+- Repositories with infrequent activity sometimes have schedules paused
+- No notifications when schedules fail to run
 
 If your scheduled workflow stops running:
-1. Manually trigger via workflow_dispatch (often reactivates the schedule)
+1. Manually trigger via workflow_dispatch (often reactivates it)
 2. Check Settings → Actions → General to ensure workflows are enabled
-3. Consider self-hosted runners or OSS-Fuzz for production-critical fuzzing
+3. For production-critical fuzzing, consider self-hosted runners or OSS-Fuzz
 
-The workflow configuration shown here is correct, but GitHub's scheduled workflow infrastructure has known limitations.
+The workflow configuration shown here is correct - the limitation is with GitHub's scheduling infrastructure, not the workflow itself.
 {{< /callout >}}
 
 **2. Parallel execution**
@@ -973,34 +981,26 @@ This prevents regression and documents the fix.
 
 ## Cost and Resource Management
 
-### GitHub Actions Free Tier
+### GitHub Actions Costs
 
 **Public repositories:**
-- Unlimited minutes
-- 20 concurrent jobs
-- 500MB artifact storage
 
-**goldenthread fuzzing:**
-- 48 runs/day × 12 targets × 10 minutes = 5,760 minutes/day
-- Uses ~12 concurrent jobs (below limit)
-- Corpus cache: ~50MB (well below limit)
+GitHub-hosted runners for public repos are generally generous enough that continuous fuzzing is often feasible at no cost. However, fair-use policies apply and specifics can change.
 
-**Cost:** $0 (free for open source)
+**Private repositories:**
 
-### Private Repositories
+For private repositories, continuous fuzzing can become expensive. With 12 targets running for 10 minutes every 30 minutes:
 
-**GitHub Actions pricing:**
-- $0.008/minute (Linux)
-- 2,000 free minutes/month
-
-**Cost calculation:**
 ```
-5,760 minutes/day × 30 days = 172,800 minutes/month
-172,800 - 2,000 (free) = 170,800 minutes
-170,800 × $0.008 = $1,366.40/month
+5,760 minutes/day × 30 days = ~172,000 minutes/month
+At ~$0.008/minute (Linux runners) = ~$1,400/month
 ```
 
-This is why continuous fuzzing is primarily used by open source projects or companies with GitHub Enterprise.
+This is why production continuous fuzzing often requires:
+- Self-hosted GitHub Actions runners
+- Dedicated fuzzing infrastructure (OSS-Fuzz)
+- GitHub Enterprise with higher quotas
+- Reduced frequency/duration (trade-offs below)
 
 ### Optimization Strategies
 
@@ -1063,19 +1063,19 @@ Coverage should increase as corpus grows (but will plateau eventually).
 
 **3. Executions are consistent:**
 
-Check GitHub Actions logs for execution counts:
+Check GitHub Actions logs for execution counts. Here's what I observed on goldenthread's CI:
 
 ```
-Recent CI run (actual numbers):
+Recent goldenthread CI run (GitHub-hosted runners):
 FuzzEmit (10m):           52,278,168 executions
 FuzzEmitFieldName (5m):   24,345,196 executions
 FuzzEmitValidation (5m):  23,007,683 executions
-FuzzEmitPattern (10m):    ~50M executions (typical)
 
-Average rate: ~87,000 executions per second (GitHub Actions runners)
+Average observed rate: ~87,000 executions/second
+Per 10-minute run: ~50 million executions per target
 ```
 
-Execution rates vary based on test complexity, corpus size, and runner specifications. GitHub Actions provides significantly more workers than local machines, resulting in higher throughput.
+Your mileage will vary based on test complexity, corpus size, and runner specifications. GitHub Actions runners typically provide more workers (22 in my case) than local machines, resulting in higher throughput.
 
 ### When Finding Nothing Means Success
 
