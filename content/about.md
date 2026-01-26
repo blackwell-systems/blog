@@ -61,7 +61,7 @@ Each language represents a fundamentally different way of thinking about memory,
 
 ## Open Source & Technical Writing
 
-Outside the Python/Java enterprise world, I build developer tools and libraries in Go and Rust. My open source work includes build-time schema compilation from Go to TypeScript (goldenthread), unified secret management across multiple vault backends (vaultmux), profile management for Claude Code with automatic context detection (dotclaude), type-safe validation with automatic TypeScript schema generation (domainstack), and structured error handling that works across different web frameworks (error-envelope, err-envelope).
+Outside the Python/Java enterprise world, I build developer tools and libraries in Go and Rust. My open source work includes build-time schema compilation from Go to TypeScript (goldenthread), the de facto standard GCP Secret Manager emulator filling a gap Google left unfilled (gcp-secret-manager-emulator), unified secret management across multiple vault backends (vaultmux), profile management for Claude Code with automatic context detection (dotclaude), type-safe validation with automatic TypeScript schema generation (domainstack), and structured error handling that works across different web frameworks (error-envelope, err-envelope).
 
 As a technical writer (3x AWS Certified, 225,000+ lines of documentation), I've authored **You Don't Know JSON** (127,000 words) - a comprehensive guide to JSON's ecosystem: from schema validation to binary formats (MessagePack, CBOR, Protocol Buffers), streaming architectures, security patterns, API design, data pipelines, and testing strategies. Learn when JSON works, when it doesn't, and what to use instead.
 
@@ -83,7 +83,7 @@ As a technical writer (3x AWS Certified, 225,000+ lines of documentation), I've 
 
 **[dotclaude](https://blackwell-systems.github.io/dotclaude/#/)** - Profile manager for Claude Code. Switch between work/personal contexts, multi-backend routing.
 
-**[gcp-secret-manager-emulator](https://github.com/blackwell-systems/gcp-secret-manager-emulator)** - Lightweight gRPC emulator for Google Cloud Secret Manager API. Local testing and CI/CD without GCP credentials.
+**[gcp-secret-manager-emulator](https://github.com/blackwell-systems/gcp-secret-manager-emulator)** - The de facto standard emulator for Google Cloud Secret Manager API (11/12 methods, 90.8% test coverage). Fills a gap Google left unfilled - unlike Firestore or Pub/Sub, Google provides no Secret Manager emulator. Enables local testing and CI/CD without GCP credentials or cloud costs.
 
 ### Libraries
 
