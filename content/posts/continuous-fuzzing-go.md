@@ -442,12 +442,19 @@ func camelCase(s string) string {
 
 No human test writer thinks: "Let me test Japanese field names with empty JSON names to verify UTF-8 handling in camelCase conversion."
 
-This is a **combination of three independent factors**:
-1. Multi-byte UTF-8 input
-2. Empty JSON name (fallback to camelCase)
-3. Byte slicing instead of rune slicing
+{{< callout type="info" >}}
+**Three Independent Factors**
 
-Fuzzing explored this combination automatically.
+This bug required the intersection of three separate conditions:
+
+1. **Multi-byte UTF-8 input** - Field name starts with Japanese character
+2. **Empty JSON name** - Triggers fallback to camelCase conversion
+3. **Byte slicing in implementation** - Code uses `s[:1]` instead of rune slicing
+
+Any two of these alone wouldn't trigger the bug. All three together = corrupted output.
+
+Fuzzing explored this combination automatically after 444,553 executions. Manual testing would likely never discover this specific intersection.
+{{< /callout >}}
 
 ---
 
