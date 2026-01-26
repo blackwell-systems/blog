@@ -14,9 +14,8 @@ I shipped twice with that confidence. Continuous fuzzing found two bugs in the f
 
 Traditional testing has a problem: you only test what you think to test. Empty strings, negative numbers, boundary values - these are good. But what about:
 
-- Japanese field names with empty JSON tags (UTF-8 byte slicing)
-- Regex patterns containing newline characters (broken JavaScript output)
-- Struct fields named "UserID" and "UserId" both mapping to "userId" (JSON collision)
+- Japanese field names with empty JSON tags triggering UTF-8 byte slicing bugs
+- Regex patterns containing newline characters producing broken JavaScript output
 
 These aren't bugs you'd write tests for. They're bugs you discover by **exploring the input space automatically**.
 
@@ -26,9 +25,15 @@ This is what fuzzing does. And when you run it continuously in CI - generating m
 
 Before diving into continuous fuzzing setup, let's establish what fuzzing is and how it differs from traditional testing.
 
+### What Fuzzing Is
+
 **Fuzzing** is automated testing that generates random inputs to find bugs. Instead of writing specific test cases, you write **fuzz targets** - functions that accept random inputs and verify properties (invariants) about your code.
 
+### Coverage-Guided Fuzzing
+
 **Coverage-guided fuzzing** uses code coverage feedback to guide input generation toward unexplored code paths. When an input triggers a new branch, it's saved to the **corpus** (collection of interesting inputs) for future mutation.
+
+### Continuous Fuzzing
 
 **Continuous fuzzing** runs fuzzing 24/7 in CI, with the corpus persisting across runs. Each run builds on previous discoveries, creating compound growth in test effectiveness.
 
@@ -407,7 +412,9 @@ func camelCase(s string) string {
 
 ### Why This Failed
 
-Japanese text uses multi-byte UTF-8 encoding. The string `"フィールド"` (field) is 5 Unicode characters but 15 bytes in UTF-8:
+**In Go, strings are byte slices; indexing and slicing operate on bytes, not characters (runes). Runes are Unicode code points.**
+
+Japanese text uses multi-byte UTF-8 encoding. The string `"フィールド"` (field) is 5 Unicode characters (runes) but 15 bytes in UTF-8:
 
 ```
 "フィールド" in UTF-8:
@@ -415,7 +422,7 @@ Japanese text uses multi-byte UTF-8 encoding. The string `"フィールド"` (fi
  └─ "フ" (3 bytes) └─ "ィ" (3 bytes) └─ "ー" (3 bytes) └─ "ル" (3 bytes) └─ "ド" (3 bytes)
 ```
 
-`s[:1]` slices **bytes**, not characters (runes). It returns `[0xE3]` - the first byte of a 3-byte character - which is an incomplete UTF-8 sequence. The output fails `utf8.ValidString()` validation.
+`s[:1]` slices **bytes**, not runes. It returns `[0xE3]` - the first byte of a 3-byte character - which is an incomplete UTF-8 sequence, corrupting the output (often as replacement characters `�`). The output fails `utf8.ValidString()` validation.
 
 ### How Fuzzing Caught It
 
@@ -455,9 +462,9 @@ The fuzzer mutated seed inputs, eventually splicing UTF-8 characters into field 
 
 ```go
 func camelCase(s string) string {
-    runes := []rune(s)  // Convert to Unicode code points
+    runes := []rune(s)
     if len(runes) > 0 {
-        runes[0] = []rune(strings.ToLower(string(runes[0])))[0]
+        runes[0] = unicode.ToLower(runes[0])
     }
     return string(runes)  // Rune slicing preserves UTF-8
 }
@@ -659,6 +666,7 @@ jobs:
             // Extract failure details
             const caseMatch = output.match(/Failing input written to testdata\/fuzz\/([^/]+\/[a-f0-9]+)/);
             const caseId = caseMatch ? caseMatch[1] : 'unknown';
+            const caseHash = caseId.includes('/') ? caseId.split('/').pop() : caseId;
             
             await github.rest.issues.create({
               owner: context.repo.owner,
@@ -673,7 +681,7 @@ jobs:
 ### How to Reproduce
 
 \`\`\`bash
-go test ${pkg} -run=${testName}/${caseId}
+go test ${pkg} -run=${testName}/${caseHash}
 \`\`\`
 
 ### Failing Input
@@ -708,7 +716,7 @@ Runs continuously on a schedule. Each run builds on the previous corpus.
 {{< callout type="warning" >}}
 **GitHub Actions Scheduled Workflows: Reliability Note**
 
-In practice, GitHub Actions scheduled workflows can be less reliable than push-triggered workflows:
+In my experience, GitHub Actions scheduled workflows can be less reliable than push-triggered workflows:
 - Schedules may be delayed or skipped during high platform load
 - Repositories with infrequent activity sometimes have schedules paused
 - No notifications when schedules fail to run
@@ -1012,12 +1020,14 @@ GitHub-hosted runners for public repos are generally generous enough that contin
 
 **Private repositories:**
 
-For private repositories, continuous fuzzing can become expensive. With 12 targets running for 10 minutes every 30 minutes:
+For private repositories, continuous fuzzing can become expensive. Example calculation with 12 targets running for 10 minutes every 30 minutes:
 
 ```
 5,760 minutes/day × 30 days = ~172,000 minutes/month
-At ~$0.008/minute (Linux runners) = ~$1,400/month
+At ~$0.008/minute (Linux runners, rates vary) = ~$1,400/month
 ```
+
+Note: Rates and policies change. Check current GitHub Actions pricing for accurate costs.
 
 This is why production continuous fuzzing often requires:
 - Self-hosted GitHub Actions runners
