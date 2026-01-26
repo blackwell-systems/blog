@@ -22,6 +22,16 @@ These aren't bugs you'd write tests for. They're bugs you discover by **explorin
 
 This is what fuzzing does. And when you run it continuously in CI - generating millions of test cases every day, building on discoveries from previous runs - it finds bugs traditional testing misses.
 
+## Fuzzing Fundamentals
+
+Before diving into continuous fuzzing setup, let's establish what fuzzing is and how it differs from traditional testing.
+
+**Fuzzing** is automated testing that generates random inputs to find bugs. Instead of writing specific test cases, you write **fuzz targets** - functions that accept random inputs and verify properties (invariants) about your code.
+
+**Coverage-guided fuzzing** uses code coverage feedback to guide input generation toward unexplored code paths. When an input triggers a new branch, it's saved to the **corpus** (collection of interesting inputs) for future mutation.
+
+**Continuous fuzzing** runs fuzzing 24/7 in CI, with the corpus persisting across runs. Each run builds on previous discoveries, creating compound growth in test effectiveness.
+
 {{< callout type="info" >}}
 **What This Article Covers**
 
