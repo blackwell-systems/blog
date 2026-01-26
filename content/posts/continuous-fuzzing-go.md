@@ -1048,7 +1048,7 @@ Average rate: ~87,000 executions per second (GitHub Actions runners)
 
 Execution rates vary based on test complexity, corpus size, and runner specifications. GitHub Actions provides significantly more workers than local machines, resulting in higher throughput.
 
-### When No Bugs Is Good
+### When Finding Nothing Means Success
 
 ```
 Week 1: 2 bugs found
