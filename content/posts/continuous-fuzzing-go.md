@@ -287,7 +287,7 @@ Run 3: "Alice\x00" (mutation: append null)
   
 Run 444,553: "フィールド" (mutation: splice UTF-8 from dictionary)
   Branches: len > 0, return camelCase
-  Result: INVALID UTF-8 OUTPUT (FAIL)
+  Result: CORRUPTED OUTPUT (FAIL)
   Coverage: New execution path (UTF-8 edge case)
   BUG FOUND!
 ```
@@ -424,7 +424,7 @@ Japanese text uses multi-byte UTF-8 encoding. `"フィールド"` is 5 runes but
  └─ "フ" (3 bytes) └─ "ィ" (3 bytes) └─ "ー" (3 bytes) └─ "ル" (3 bytes) └─ "ド" (3 bytes)
 ```
 
-`s[:1]` returns `[0xE3]` — the first byte of a 3-byte character — producing a broken prefix and corrupting the output. In goldenthread, that corruption surfaced as invalid UTF-8 emitted output and failed `utf8.ValidString()`.
+`s[:1]` returns `[0xE3]` — the first byte of a 3-byte character — producing a broken prefix and corrupting the output. In goldenthread, that corruption surfaced as invalid UTF-8 in the emitted output and failed `utf8.ValidString()`.
 
 ### How Fuzzing Caught It
 
@@ -610,9 +610,10 @@ jobs:
       - uses: actions/checkout@v4
       
       - name: Set up Go
+        # Use your project's Go version (1.22+)
         uses: actions/setup-go@v5
         with:
-          go-version: '1.25'
+          go-version: '1.23'
       
       # Go fuzz corpora live under testdata/fuzz/<FuzzFunc>/...
       - name: Restore fuzz corpus
