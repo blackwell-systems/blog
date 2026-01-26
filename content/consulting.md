@@ -133,7 +133,7 @@ Available for:
 **Ready to discuss your project?**
 
 - **Email:** dayna@blackwell-systems.com
-- **LinkedIn:** [linkedin.com/in/daynablackwell](https://linkedin.com/in/daynablackwell)
+- **LinkedIn:** [linkedin.com/in/dayna-blackwell](https://linkedin.com/in/dayna-blackwell)
 - **GitHub:** [@blackwell-systems](https://github.com/blackwell-systems)
 - **Blog:** [blog.blackwell-systems.com](https://blog.blackwell-systems.com)
 
