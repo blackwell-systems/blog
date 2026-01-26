@@ -8,7 +8,7 @@ description: "Coverage-guided fuzzing runs continuously in CI, exploring million
 summary: "Traditional tests check examples you think of. Fuzzing explores millions of combinations you don't. Coverage-guided fuzzing found two production bugs in goldenthread before release - a UTF-8 corruption issue and a regex escaping bug. Here's how continuous fuzzing works and how to set it up."
 ---
 
-You wrote 47 test functions. Your code has 80% test coverage. All tests pass. Ship it?
+You wrote comprehensive tests. Your code has 80% test coverage. All 200 assertions pass. Ship it?
 
 Traditional testing has a problem: you only test what you think to test. Empty strings, negative numbers, boundary values - these are good. But what about:
 
