@@ -61,7 +61,7 @@ Each language represents a fundamentally different way of thinking about memory,
 
 ## Open Source & Technical Writing
 
-Outside the Python/Java enterprise world, I build developer tools and libraries in Go and Rust. My open source work includes unified secret management across multiple vault backends (vaultmux), profile management for Claude Code with automatic context detection (dotclaude), type-safe validation with automatic TypeScript schema generation (domainstack), and structured error handling that works across different web frameworks (error-envelope, err-envelope).
+Outside the Python/Java enterprise world, I build developer tools and libraries in Go and Rust. My open source work includes build-time schema compilation from Go to TypeScript (goldenthread), unified secret management across multiple vault backends (vaultmux), profile management for Claude Code with automatic context detection (dotclaude), type-safe validation with automatic TypeScript schema generation (domainstack), and structured error handling that works across different web frameworks (error-envelope, err-envelope).
 
 As a technical writer (3x AWS Certified, 225,000+ lines of documentation), I've authored **You Don't Know JSON** (127,000 words) - a comprehensive guide to JSON's ecosystem: from schema validation to binary formats (MessagePack, CBOR, Protocol Buffers), streaming architectures, security patterns, API design, data pipelines, and testing strategies. Learn when JSON works, when it doesn't, and what to use instead.
 
@@ -77,6 +77,8 @@ As a technical writer (3x AWS Certified, 225,000+ lines of documentation), I've 
 
 ### Developer Tools
 
+**[goldenthread](https://github.com/blackwell-systems/goldenthread)** - Build-time schema compiler generating TypeScript Zod schemas from Go struct tags. Single source of truth for validation with automatic drift detection in CI.
+
 **[blackdot](https://blackwell-systems.github.io/blackdot/#/)** - Modular development framework with multi-vault secrets, Claude Code integration, extensible hooks, and health checks.
 
 **[dotclaude](https://blackwell-systems.github.io/dotclaude/#/)** - Profile manager for Claude Code. Switch between work/personal contexts, multi-backend routing.
@@ -87,7 +89,7 @@ As a technical writer (3x AWS Certified, 225,000+ lines of documentation), I've 
 
 **[domainstack](https://github.com/blackwell-systems/domainstack)** ([Rust crate](https://crates.io/crates/domainstack)) - Full-stack validation ecosystem for Rust: Type-safe validation with automatic TypeScript/Zod schema generation, serde integration, OpenAPI schemas, and web framework adapters (Axum, Actix, Rocket).
 
-**[error-envelope](https://github.com/blackwell-systems/error-envelope)** ([Rust crate](https://crates.io/crates/error-envelope)) - Consistent, traceable, retry-aware HTTP error responses for Rust APIs — no framework required.
+**[error-envelope](https://github.com/blackwell-systems/error-envelope)** ([Rust crate](https://crates.io/crates/error-envelope)) - Consistent, traceable, retry-aware HTTP error responses for Rust APIs - no framework required.
 
 **[vaultmux](https://github.com/blackwell-systems/vaultmux)** ([Go pkg](https://pkg.go.dev/github.com/blackwell-systems/vaultmux) | [Rust crate](https://crates.io/crates/vaultmux-rs)) - Unified secret management across Bitwarden, 1Password, and pass. Available in both Go and Rust with interface-first design and 95%+ test coverage.
 
@@ -116,4 +118,4 @@ I'm available for contract work, consulting, speaking engagements, and podcast i
 **Contact:**
 - Email: dayna@blackwell-systems.com
 - GitHub: [@blackwell-systems](https://github.com/blackwell-systems)
-- Project issues: [blackdot](https://github.com/blackwell-systems/blackdot/issues) | [dotclaude](https://github.com/blackwell-systems/dotclaude/issues) | [gcp-secret-manager-emulator](https://github.com/blackwell-systems/gcp-secret-manager-emulator/issues) | [domainstack](https://github.com/blackwell-systems/domainstack/issues) | [error-envelope](https://github.com/blackwell-systems/error-envelope/issues) | [vaultmux](https://github.com/blackwell-systems/vaultmux/issues) | [err-envelope](https://github.com/blackwell-systems/err-envelope/issues) | [mdfx](https://github.com/blackwell-systems/mdfx/issues) | [pipeboard](https://github.com/blackwell-systems/pipeboard/issues)
+- Project issues: [goldenthread](https://github.com/blackwell-systems/goldenthread/issues) | [blackdot](https://github.com/blackwell-systems/blackdot/issues) | [dotclaude](https://github.com/blackwell-systems/dotclaude/issues) | [gcp-secret-manager-emulator](https://github.com/blackwell-systems/gcp-secret-manager-emulator/issues) | [domainstack](https://github.com/blackwell-systems/domainstack/issues) | [error-envelope](https://github.com/blackwell-systems/error-envelope/issues) | [vaultmux](https://github.com/blackwell-systems/vaultmux/issues) | [err-envelope](https://github.com/blackwell-systems/err-envelope/issues) | [mdfx](https://github.com/blackwell-systems/mdfx/issues) | [pipeboard](https://github.com/blackwell-systems/pipeboard/issues)
