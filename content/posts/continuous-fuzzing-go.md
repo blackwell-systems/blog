@@ -610,10 +610,9 @@ jobs:
       - uses: actions/checkout@v4
       
       - name: Set up Go
-        # Use your project's Go version (1.22+)
         uses: actions/setup-go@v5
         with:
-          go-version: '1.23'
+          go-version: '1.25'
       
       # Go fuzz corpora live under testdata/fuzz/<FuzzFunc>/...
       - name: Restore fuzz corpus
