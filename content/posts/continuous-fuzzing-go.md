@@ -10,7 +10,7 @@ summary: "Traditional tests check examples you think of. Fuzzing explores millio
 
 You wrote comprehensive tests. Your code has 80% test coverage. All 200 assertions pass. Ship it?
 
-I shipped twice with that confidence. Continuous fuzzing found two bugs in the first hour - bugs my test suite would never have exercised.
+I shipped twice with that confidence. Continuous fuzzing found two bugs in the first hour — bugs my test suite would never have exercised.
 
 Traditional testing has a problem: you only test what you think to test. Empty strings, negative numbers, boundary values - these are good. But what about:
 
@@ -19,7 +19,7 @@ Traditional testing has a problem: you only test what you think to test. Empty s
 
 These aren't bugs you'd write tests for. They're bugs you discover by **exploring the input space automatically**.
 
-This is what fuzzing does. And when you run it continuously in CI - generating millions of test cases every day, building on discoveries from previous runs - it finds bugs traditional testing misses.
+This is what fuzzing does. And when you run it continuously in CI — generating millions of test cases every day, building on discoveries from previous runs — it finds bugs traditional testing misses.
 
 ## Fuzzing Fundamentals
 
@@ -27,7 +27,7 @@ Before diving into continuous fuzzing setup, let's establish what fuzzing is and
 
 ### What Fuzzing Is
 
-**Fuzzing** is automated testing that generates random inputs to find bugs. Instead of writing specific test cases, you write **fuzz targets** - functions that accept random inputs and verify properties (invariants) about your code.
+**Fuzzing** is automated testing that generates random inputs to find bugs. Instead of writing specific test cases, you write **fuzz targets** — functions that accept random inputs and verify properties (invariants) about your code.
 
 ### Coverage-Guided Fuzzing
 
@@ -40,7 +40,7 @@ Before diving into continuous fuzzing setup, let's establish what fuzzing is and
 {{< callout type="success" >}}
 **Why Continuous Fuzzing Works**
 
-Traditional tests stay static - you write 200 assertions and coverage plateaus at 80%. Continuous fuzzing improves over time:
+Traditional tests stay static — you write 200 assertions and coverage plateaus at 80%. Continuous fuzzing improves over time:
 
 - **Day 1**: Corpus has 10 seed inputs, finds obvious bugs
 - **Week 1**: Corpus grows to 500+ inputs covering edge cases
@@ -260,10 +260,12 @@ func ProcessName(name string) string {
         return "Anonymous"
     }
     
-    // BUG: Byte slicing breaks UTF-8
+    // BUG: Byte slicing breaks UTF-8 (strings slice by byte, not rune)
     return strings.ToLower(name[:1]) + name[1:]
 }
 ```
+
+If `name` starts with a multi-byte UTF-8 character, `name[:1]` produces an invalid byte prefix. In practice, this corrupts output (often via replacement characters), even if it doesn't always produce an "invalid string" at the end — either way, it's a bug.
 
 **Fuzzing execution**:
 
@@ -412,9 +414,9 @@ func camelCase(s string) string {
 
 ### Why This Failed
 
-**In Go, strings are byte slices; indexing and slicing operate on bytes, not characters (runes). Runes are Unicode code points.**
+**In Go, strings are byte sequences; indexing and slicing operate on bytes, not characters (runes). Runes are Unicode code points.**
 
-Japanese text uses multi-byte UTF-8 encoding. The string `"フィールド"` (field) is 5 Unicode characters (runes) but 15 bytes in UTF-8:
+Japanese text uses multi-byte UTF-8 encoding. `"フィールド"` is 5 runes but 15 bytes in UTF-8:
 
 ```
 "フィールド" in UTF-8:
@@ -422,7 +424,7 @@ Japanese text uses multi-byte UTF-8 encoding. The string `"フィールド"` (fi
  └─ "フ" (3 bytes) └─ "ィ" (3 bytes) └─ "ー" (3 bytes) └─ "ル" (3 bytes) └─ "ド" (3 bytes)
 ```
 
-`s[:1]` slices **bytes**, not runes. It returns `[0xE3]` - the first byte of a 3-byte character - which is an incomplete UTF-8 sequence, corrupting the output (often as replacement characters `�`). The output fails `utf8.ValidString()` validation.
+`s[:1]` returns `[0xE3]` — the first byte of a 3-byte character — producing a broken prefix and corrupting the output. In goldenthread, that corruption surfaced as invalid UTF-8 emitted output and failed `utf8.ValidString()`.
 
 ### How Fuzzing Caught It
 
@@ -456,7 +458,7 @@ func FuzzEmit(f *testing.F) {
 }
 ```
 
-The fuzzer mutated seed inputs, eventually splicing UTF-8 characters into field names. After 444,553 executions (~10 seconds), it generated the specific combination (Japanese name + empty JSON name) that triggered the bug.
+The fuzzer mutated seed inputs, eventually splicing UTF-8 characters into field names. After 444,553 executions, it generated the specific combination (Japanese field name + empty JSON name) that triggered the bug.
 
 ### The Fix
 
@@ -485,7 +487,7 @@ This bug required the intersection of three separate conditions:
 
 Any two of these alone wouldn't trigger the bug. All three together = corrupted output.
 
-Fuzzing explored this combination automatically after 444,553 executions. Manual testing would likely never discover this specific intersection.
+Manual testing would likely never discover this specific intersection.
 {{< /callout >}}
 
 ---
@@ -612,12 +614,12 @@ jobs:
         with:
           go-version: '1.25'
       
+      # Go fuzz corpora live under testdata/fuzz/<FuzzFunc>/...
       - name: Restore fuzz corpus
         uses: actions/cache@v4
         with:
           path: |
-            internal/**/testdata/fuzz/**/corpus
-          # Key on branch + target so corpus persists across commits
+            **/testdata/fuzz
           key: fuzz-corpus-${{ github.ref_name }}-${{ matrix.target.package }}-${{ matrix.target.test }}
           restore-keys: |
             fuzz-corpus-${{ github.ref_name }}-${{ matrix.target.package }}-
@@ -649,7 +651,7 @@ jobs:
           name: fuzz-failure-${{ matrix.target.test }}-${{ github.run_id }}
           path: |
             fuzz-output.log
-            internal/**/testdata/fuzz/${{ matrix.target.test }}/**
+            **/testdata/fuzz
           retention-days: 30
       
       - name: Create GitHub issue on failure
@@ -663,7 +665,7 @@ jobs:
             
             const output = fs.readFileSync('fuzz-output.log', 'utf8');
             
-            // Extract failure details
+            // Go prints: "Failing input written to testdata/fuzz/<FuzzFunc>/<hash>"
             const caseMatch = output.match(/Failing input written to testdata\/fuzz\/([^/]+\/[a-f0-9]+)/);
             const caseId = caseMatch ? caseMatch[1] : 'unknown';
             const caseHash = caseId.includes('/') ? caseId.split('/').pop() : caseId;
@@ -681,21 +683,16 @@ jobs:
 ### How to Reproduce
 
 \`\`\`bash
-go test ${pkg} -run=${testName}/${caseHash}
+go test ${pkg} -run=${testName}/${caseHash} -v
 \`\`\`
 
-### Failing Input
-
-Download the failing test case from the workflow run artifacts.
-
-### Output
+### Output (last 100 lines)
 
 \`\`\`
 ${output.split('\n').slice(-100).join('\n')}
 \`\`\`
 
 ---
-
 This issue was created automatically by continuous fuzzing.
 `,
               labels: ['bug', 'fuzzing', 'automated']
