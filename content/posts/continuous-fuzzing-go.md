@@ -584,26 +584,35 @@ jobs:
         uses: actions/cache@v4
         with:
           path: |
-            internal/*/testdata/fuzz/*/corpus
-          key: fuzz-corpus-${{ github.sha }}
-          restore-keys: fuzz-corpus-
+            internal/**/testdata/fuzz/**/corpus
+          # Key on branch + target so corpus persists across commits
+          key: fuzz-corpus-${{ github.ref_name }}-${{ matrix.target.package }}-${{ matrix.target.test }}
+          restore-keys: |
+            fuzz-corpus-${{ github.ref_name }}-${{ matrix.target.package }}-
+            fuzz-corpus-${{ github.ref_name }}-
+            fuzz-corpus-
       
       - name: Run fuzzing
+        id: fuzz
+        continue-on-error: true
+        shell: bash
         run: |
+          set -o pipefail
           go test ${{ matrix.target.package }} \
-            -fuzz=${{ matrix.target.test }} \
+            -fuzz=^${{ matrix.target.test }}$ \
             -fuzztime=${{ matrix.target.time }} \
-            -v \
-            2>&1 | tee fuzz-output.txt
+            -v 2>&1 | tee fuzz-output.log
+          echo "exit_code=${PIPESTATUS[0]}" >> $GITHUB_OUTPUT
       
-      - name: Upload corpus on failure
+      - name: Upload failure artifacts
         if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: fuzz-failure-${{ matrix.target.test }}-${{ github.sha }}
+          name: fuzz-failure-${{ matrix.target.test }}-${{ github.run_id }}
           path: |
-            ${{ matrix.target.package }}/testdata/fuzz/${{ matrix.target.test }}/*
-          retention-days: 90
+            fuzz-output.log
+            internal/**/testdata/fuzz/${{ matrix.target.test }}
+          retention-days: 30
       
       - name: Create GitHub issue on failure
         if: failure() && github.event_name == 'schedule'
@@ -614,16 +623,11 @@ jobs:
             const testName = '${{ matrix.target.test }}';
             const pkg = '${{ matrix.target.package }}';
             
-            let output = '';
-            try {
-              output = fs.readFileSync('fuzz-output.txt', 'utf8');
-            } catch (e) {
-              output = 'Output not available';
-            }
+            const output = fs.readFileSync('fuzz-output.log', 'utf8');
             
-            // Extract failing case ID
-            const match = output.match(/Failing input stored in: .*\/([a-f0-9]+)/);
-            const caseId = match ? match[1] : 'unknown';
+            // Extract failure details
+            const caseMatch = output.match(/Failing input written to testdata\/fuzz\/([^/]+\/[a-f0-9]+)/);
+            const caseId = caseMatch ? caseMatch[1] : 'unknown';
             
             await github.rest.issues.create({
               owner: context.repo.owner,
@@ -697,20 +701,38 @@ strategy:
 
 Runs 12 targets simultaneously. Wall-clock time: ~10 minutes (not 120 minutes).
 
-**3. Corpus caching**
+**3. Corpus caching (critical for continuous growth)**
 
 ```yaml
 - name: Restore fuzz corpus
   uses: actions/cache@v4
   with:
-    path: internal/*/testdata/fuzz/*/corpus
-    key: fuzz-corpus-${{ github.sha }}
-    restore-keys: fuzz-corpus-
+    path: internal/**/testdata/fuzz/**/corpus
+    # Key on branch + target so corpus persists across commits
+    key: fuzz-corpus-${{ github.ref_name }}-${{ matrix.target.package }}-${{ matrix.target.test }}
+    restore-keys: |
+      fuzz-corpus-${{ github.ref_name }}-${{ matrix.target.package }}-
+      fuzz-corpus-${{ github.ref_name }}-
+      fuzz-corpus-
 ```
 
-Restores corpus from previous run. New discoveries persist across runs.
+Cache key uses branch name (not commit SHA) so the corpus persists across commits. This is what enables compound growth - each run builds on the previous corpus, even after you push new code.
 
-**4. Automatic issue creation**
+**4. Exit code capture (critical for reliability)**
+
+```yaml
+- name: Run fuzzing
+  id: fuzz
+  shell: bash
+  run: |
+    set -o pipefail
+    go test ... | tee fuzz-output.log
+    echo "exit_code=${PIPESTATUS[0]}" >> $GITHUB_OUTPUT
+```
+
+Using `PIPESTATUS[0]` captures the exit code of `go test`, not `tee`. Without this, the workflow would always see exit code 0 from `tee` even when fuzzing fails.
+
+**5. Automatic issue creation**
 
 ```yaml
 - name: Create GitHub issue on failure
