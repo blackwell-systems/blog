@@ -18,17 +18,18 @@ Personal reference for pursuing technical writing opportunities while maintainin
 - [Why Your Background is Valuable](#why-your-background-is-valuable)
 - [Building Your Portfolio](#building-your-portfolio)
   - [Published Articles](#published-articles-27-total)
-  - [Open Source Projects](#open-source-projects-10-production-tools)
-    - [1. blackdot](#1-blackdot)
-    - [2. dotclaude](#2-dotclaude)
-    - [3. error-envelope (Rust)](#3-error-envelope-rust)
-    - [4. err-envelope (Go)](#4-err-envelope-go)
-    - [5. vaultmux](#5-vaultmux)
-    - [6. pipeboard](#6-pipeboard)
-    - [7. gcp-secret-manager-emulator](#7-gcp-secret-manager-emulator)
-    - [8. mdfx](#8-mdfx)
-    - [9. domainstack](#9-domainstack)
-    - [10. prettychars](#10-prettychars)
+  - [Open Source Projects](#open-source-projects-11-production-tools)
+    - [1. goldenthread](#1-goldenthread)
+    - [2. blackdot](#2-blackdot)
+    - [3. dotclaude](#3-dotclaude)
+    - [4. error-envelope (Rust)](#4-error-envelope-rust)
+    - [5. err-envelope (Go)](#5-err-envelope-go)
+    - [6. vaultmux](#6-vaultmux)
+    - [7. pipeboard](#7-pipeboard)
+    - [8. gcp-secret-manager-emulator](#8-gcp-secret-manager-emulator)
+    - [9. mdfx](#9-mdfx)
+    - [10. domainstack](#10-domainstack)
+    - [11. prettychars](#11-prettychars)
 - [Interview Preparation](#interview-preparation)
 - [Next Steps](#next-steps)
 - [Resources](#resources)
@@ -43,7 +44,7 @@ Personal reference for pursuing technical writing opportunities while maintainin
 - Created API and system documentation for technical and non-technical stakeholders
 - Extensive experience writing integration documentation relied upon by external partners
 - Founder, Blackwell Systems (OSS + future proprietary developer tools)
-- 10 open-source projects with comprehensive documentation
+- 11 open-source projects with comprehensive documentation
 - Published technical blog: 94,152 lines (27 articles)
 - Book manuscript near-publication: "You Don't Know JSON" - 107,424 words (27,387 lines, ~835 pages formatted), content complete
 - Total documentation: ~239,000 lines across all work
@@ -578,14 +579,48 @@ You understand:
 - Status: Content and cover complete, ready for final publishing setup
 - Target: January 2026 launch
 
-**Open Source Projects (10 Production Tools):**
+**Open Source Projects (11 Production Tools):**
 
-### 1. blackdot
+### 1. goldenthread
+**GitHub:** https://github.com/blackwell-systems/goldenthread
+
+goldenthread is a **build-time schema compiler** that generates TypeScript Zod schemas from Go struct tags. Write validation rules once in Go, get type-safe TypeScript validation automatically.
+
+**Technical Architecture:**
+- **Type-aware parsing**: Uses go/packages and go/types for accurate type resolution and cross-package references
+- **Language-agnostic IR**: Intermediate representation decouples parsing from code generation, enabling future emitters (OpenAPI, JSON Schema)
+- **Hash-based drift detection**: SHA-256 hashing with .goldenthread.json metadata catches schema mismatches in CI
+- **Production-ready output**: Generates readable TypeScript that looks hand-written, not machine-generated
+
+**Supported Validation:**
+- **Type support**: Primitives, arrays, maps, enums, nested objects, pointers, embedded structs
+- **String validation**: Length bounds, regex patterns, format validators (email, UUID, URL, IPv4/IPv6, datetime)
+- **Numeric validation**: Min/max ranges with proper handling of integer vs float types
+- **Array validation**: Length constraints (min/max items)
+- **Enum generation**: Converts Go string fields to z.enum() with comma-separated values
+- **Map support**: Generates z.record() for Go map types
+
+**Key Features:**
+- **Embedded struct flattening**: Anonymous fields promoted automatically to parent schema
+- **Collision detection**: Duplicate JSON names caught at compile time with clear error messages
+- **No runtime dependencies**: Generated code only depends on Zod npm package
+- **CI integration**: goldenthread check command fails builds if schemas drift from source
+
+**Quality Assurance:**
+- **Continuous fuzzing**: GitHub Actions runs coverage-guided fuzzing every 30 minutes
+- **Automatic bug reports**: Fuzzing failures create GitHub issues with exact reproduction commands
+- **53.4% test coverage**: Across unit tests, integration tests with real Go packages, and 12 fuzz targets
+- **UTF-8 safety**: Fuzzing discovered and fixed multi-byte character handling bugs
+
+**Real-World Example:**
+Created comprehensive e-commerce example (9 interconnected schemas with 60+ validated fields) demonstrating production usage: Customer records with E.164 phone validation, Product SKUs with regex patterns, Order workflows with nested objects and array constraints. All generated schemas maintain type safety from Go structs through Zod validation to TypeScript interfaces.
+
+**Value:** Eliminates entire class of bugs where frontend accepts invalid data that backend rejects. Teams ship faster with confidence that validation stays synchronized across the stack without manual coordination or runtime overhead.
+
+### 2. blackdot
 **GitHub:** https://github.com/blackwell-systems/blackdot
 
-**Problem:** Maintaining consistent development environments across multiple machines and platforms is a nightmare of manual syncing, platform-specific quirks, and configuration drift.
-
-**Solution:** blackdot is a modular dotfiles framework that reimagines environment management for the era of AI-assisted coding and multi-platform workflows. Unlike traditional dotfiles relying on symlinks and shell scripts, blackdot implements a **feature registry architecture** where developers activate only needed components through an interactive wizard or granular presets (minimal, developer, Claude, full).
+blackdot is a modular dotfiles framework with a **feature registry architecture**. Instead of monolithic configurations, developers activate only needed components through an interactive wizard or granular presets (minimal, developer, Claude, full).
 
 **5-Layer Configuration System:**
 1. **Environment** (`BLACKDOT_*` vars): Session-only overrides for testing/CI
@@ -619,12 +654,10 @@ Each layer overrides lower priority layers, enabling work laptop using 1Password
 
 **Self-Healing Architecture:** Continuous monitoring of configuration drift, missing dependencies, and secrets availability with automatic repair—transforming static dotfiles into an intelligent, self-maintaining development environment orchestration system that provides comprehensive toolchain integration across 9 developer ecosystems.
 
-### 2. dotclaude
+### 3. dotclaude
 **GitHub:** https://github.com/blackwell-systems/dotclaude
 
-**Problem:** Working across multiple projects with different coding standards, tech stacks, and compliance requirements means constantly switching Claude Code contexts manually—or worse, using the wrong standards for the current project and getting inappropriate AI guidance.
-
-**Solution:** dotclaude implements a **layered profile management system** built specifically for Claude Code configuration. A universal "base" configuration provides foundational standards (git workflows, security practices, tool usage) while project-specific "profiles" overlay contextual details without duplication. One-command switching between work environments via automatic `.dotclaude` file detection.
+dotclaude implements a **layered profile management system** built specifically for Claude Code configuration. A universal "base" configuration provides foundational standards (git workflows, security practices, tool usage) while project-specific "profiles" overlay contextual details without duplication. One-command switching between work environments via automatic `.dotclaude` file detection.
 
 **Technical Architecture:**
 - **Layered inheritance model**: Base configuration + profile overrides eliminate content duplication
@@ -653,12 +686,10 @@ Each layer overrides lower priority layers, enabling work laptop using 1Password
 
 **Value:** Transforms Claude Code from a static AI assistant into a context-aware development partner that automatically adapts guidance to specific project requirements, preventing inappropriate suggestions and maintaining consistency across team members.
 
-### 3. error-envelope (Rust)
+### 4. error-envelope (Rust)
 **GitHub:** https://github.com/blackwell-systems/error-envelope
 
-**Problem:** Rust web APIs need three layers of error handling—domain logic (thiserror), application propagation (anyhow), and HTTP responses—but nothing bridges anyhow to structured HTTP contracts. Every endpoint reinvents JSON error formatting, trace IDs, and retry logic.
-
-**Solution:** error-envelope completes the Rust error handling ecosystem as the **HTTP boundary layer**. Sits between anyhow (propagation) and web frameworks (Axum), implementing a predictable JSON envelope with 18 type-safe HTTP error codes that automatically convert from anyhow::Error while preserving semantic meaning.
+error-envelope completes the Rust error handling ecosystem as the **HTTP boundary layer**. Sits between anyhow (propagation) and web frameworks (Axum), implementing a predictable JSON envelope with 18 type-safe HTTP error codes that automatically convert from anyhow::Error while preserving semantic meaning.
 
 **The Rust Error Handling Stack:**
 - **thiserror** (domain layer): Typed errors for business logic with pattern matching (`PaymentError::InsufficientFunds`)
@@ -690,12 +721,10 @@ async fn handler() -> Result<Json<User>, Error> {
 
 **Value:** Completes the Rust error handling story by providing the missing HTTP layer. Eliminates per-endpoint error formatting while maintaining type safety from domain logic to HTTP responses. Published on crates.io with comprehensive docs showing integration patterns across the entire error handling stack.
 
-### 4. err-envelope (Go)
+### 5. err-envelope (Go)
 **GitHub:** https://github.com/blackwell-systems/err-envelope
 
-**Problem:** Standard Go error handling results in inconsistent JSON responses and poor observability across microservices—every service invents its own error format.
-
-**Solution:** err-envelope provides a **standardized error envelope** with predefined fields (code, message, details, trace_id, retryable status) accessible through a single `Write()` method handling status codes, headers, and JSON encoding automatically.
+err-envelope provides a **standardized error envelope** with predefined fields (code, message, details, trace_id, retryable status) accessible through a single `Write()` method handling status codes, headers, and JSON encoding automatically.
 
 **Technical Architecture:**
 - **Trace middleware**: Generates request IDs, propagates X-Request-Id headers, adds trace context for downstream services
@@ -711,12 +740,10 @@ async fn handler() -> Result<Json<User>, Error> {
 
 **Value:** Transforms Go's simple error interface into a rich, traceable system without sacrificing performance or idiomaticity.
 
-### 5. vaultmux
+### 6. vaultmux
 **GitHub:** https://github.com/blackwell-systems/vaultmux
 
-**Problem:** Teams use different secret providers (Bitwarden, 1Password, AWS, GCP, Azure, pass) requiring provider-specific code in every application—vendor lock-in, painful migrations, and duplicate secret management logic across services.
-
-**Solution:** vaultmux implements a **unified Backend interface** abstracting 7+ secret management systems behind consistent Go method signatures. Write your secret management code once, users choose their preferred backend without you changing application code.
+vaultmux implements a **unified Backend interface** abstracting 7+ secret management systems behind consistent Go method signatures. Write your secret management code once, users choose their preferred backend without you changing application code.
 
 **Supported Backends:**
 - **CLI-based**: Bitwarden (bw), 1Password (op), pass (GPG), Windows Credential Manager (PowerShell)
@@ -750,12 +777,10 @@ async fn handler() -> Result<Json<User>, Error> {
 
 **Value:** Eliminates vendor lock-in, enables customer choice of secret provider, prevents secret management code duplication, and supports testing without production credentials—transforming fragmented provider-specific implementations into a unified, testable abstraction.
 
-### 6. pipeboard
+### 7. pipeboard
 **GitHub:** https://github.com/blackwell-systems/pipeboard
 
-**Problem:** Traditional clipboard managers treat clipboards as ephemeral, single-device state—useless for developers working across multiple machines who need persistent, synchronized, programmable clipboard workflows.
-
-**Solution:** pipeboard reimagines clipboard management as a **programmable, networked data pipeline** for terminal-centric developers. Implements persistent named slots with searchable history and bidirectional real-time synchronization across devices.
+pipeboard reimagines clipboard management as a **programmable, networked data pipeline** for terminal-centric developers. Implements persistent named slots with searchable history and bidirectional real-time synchronization across devices.
 
 **Technical Architecture:**
 - **Three backend modes**: Local storage (offline), S3 buckets (team sharing), hosted backends (mobile sync)
@@ -773,12 +798,10 @@ async fn handler() -> Result<Json<User>, Error> {
 
 **Architectural Sophistication:** Zero-telemetry design (all data on your machines), slot management treating clipboard history as queryable state, and programmable workflows. Built in Go (92.2%) with modular separation of clipboard management, authentication, encryption, and synchronization—systems thinking applied to a tool most never considered programmable.
 
-### 7. gcp-secret-manager-emulator
+### 8. gcp-secret-manager-emulator
 **GitHub:** https://github.com/blackwell-systems/gcp-secret-manager-emulator
 
-**Problem:** Testing GCP Secret Manager code requires cloud connectivity, authentication, and expensive resources—slowing down local development and CI/CD pipelines.
-
-**Solution:** A complete **Secret Manager v1 API-compatible gRPC emulator** supporting core operations (secret creation, version management, access control) that runs locally in milliseconds without GCP credentials.
+A complete **Secret Manager v1 API-compatible gRPC emulator** supporting core operations (secret creation, version management, access control) that runs locally in milliseconds without GCP credentials.
 
 **Technical Architecture:**
 - **gRPC implementation**: Full API compatibility with official `cloud.google.com/go/secretmanager` client
@@ -798,12 +821,10 @@ async fn handler() -> Result<Json<User>, Error> {
 
 **Value:** Transforms GCP Secret Manager development from cloud-dependent (auth + network) into fast, reliable local experience enabling offline work, reduced CI/CD costs, and consistent testing environments.
 
-### 8. mdfx
+### 9. mdfx
 **GitHub:** https://github.com/blackwell-systems/mdfx
 
-**Problem:** External README enhancement services (shields.io) have limited customization, require network access, and break documentation builds when they go down.
-
-**Solution:** A comprehensive **Rust library for local SVG generation** creating rich, customizable components (progress bars, gauges, sparklines, tech badges) entirely offline with zero external dependencies.
+A comprehensive **Rust library for local SVG generation** creating rich, customizable components (progress bars, gauges, sparklines, tech badges) entirely offline with zero external dependencies.
 
 **Technical Architecture:**
 - **Local SVG rendering**: Complex visual elements external services can't create
@@ -824,12 +845,10 @@ async fn handler() -> Result<Json<User>, Error> {
 
 **Value:** Transforms README creation from external service dependence into a powerful, flexible toolset with zero-dependency reliability.
 
-### 9. domainstack
+### 10. domainstack
 **GitHub:** https://github.com/blackwell-systems/domainstack
 
-**Problem:** Business rules duplicated across frontend TypeScript, backend validation, and API docs lead to drift, bugs, and massive maintenance overhead.
-
-**Solution:** domainstack implements **"valid-by-construction domain objects"** through Rust's type system with a two-stage validation approach: Serde handles shape/type, Domain validation enforces semantic business rules. Define once, validate everywhere.
+domainstack implements **"valid-by-construction domain objects"** through Rust's type system with a two-stage validation approach: Serde handles shape/type, Domain validation enforces semantic business rules. Define once, validate everywhere.
 
 **Technical Architecture:**
 - **Derive macro system**: `#[derive(Validate)]` with 37+ built-in rules (strings, numerics, collections)
@@ -846,12 +865,10 @@ async fn handler() -> Result<Json<User>, Error> {
 
 **Value:** Eliminates validation duplication across the stack while maintaining compile-time guarantees and precise user feedback.
 
-### 10. prettychars
+### 11. prettychars
 **GitHub:** https://github.com/blackwell-systems/prettychars
 
-**Problem:** Terminal applications need Unicode glyphs, but runtime string matching creates latency bottlenecks and inconsistent rendering frustrates UIs.
-
-**Solution:** prettychars leverages **Perfect Hash Functions (PHF)** achieving O(1) lookup for 531 named glyphs with compile-time hash map generation—eliminating runtime computation entirely.
+prettychars leverages **Perfect Hash Functions (PHF)** achieving O(1) lookup for 531 named glyphs with compile-time hash map generation—eliminating runtime computation entirely.
 
 **Technical Architecture:**
 - **Compile-time optimization**: Perfect hash functions generate static data, zero runtime allocation
@@ -873,12 +890,13 @@ async fn handler() -> Result<Json<User>, Error> {
 **Value:** Transforms terminal UI development from manual Unicode hunting into declarative glyph usage maintaining high performance and consistent presentation.
 
 **What These Projects Demonstrate:**
-- **Systems-level thinking**: Each tool addresses developer friction at different layers (environment, configuration, errors, secrets, validation)
-- **Abstraction design**: vaultmux, error-envelope, and domainstack eliminate repetitive code through elegant interfaces
+- **Systems-level thinking**: Each tool addresses developer friction at different layers (schema generation, environment, configuration, errors, secrets, validation)
+- **Abstraction design**: goldenthread, vaultmux, error-envelope, and domainstack eliminate repetitive code through elegant interfaces
 - **Performance engineering**: prettychars and domainstack show compile-time optimization and zero-cost abstractions
 - **Security-first approach**: pipeboard encryption, vaultmux secrets management, zero-telemetry designs
-- **Developer experience**: Local-first tools (utf8fx, gcp-emulator), cross-platform consistency (dotfiles, dotclaude)
+- **Developer experience**: Local-first tools (gcp-emulator), cross-platform consistency (blackdot, dotclaude)
 - **Production readiness**: Trace IDs, structured logging, comprehensive error handling, testing infrastructure
+- **Build-time code generation**: goldenthread demonstrates compiler architecture with AST parsing, IR design, and deterministic code emission
 
 **Documentation Volume:**
 - Blog: 94,152 lines (verified)
