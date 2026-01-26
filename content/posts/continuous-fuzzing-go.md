@@ -1143,6 +1143,10 @@ Fuzzing found two production bugs in goldenthread before release. Both were edge
 - [The Complete Guide to Rust Testing](/posts/rust-testing-comprehensive-guide/) - Property-based testing with proptest
 - [How Multicore CPUs Changed Object-Oriented Programming](/posts/multicore-killed-oop/) - Why value semantics matter for concurrent code
 
+**Real-World Examples:**
+- [goldenthread Fuzzing Bug Log](https://github.com/blackwell-systems/goldenthread/blob/main/docs/FUZZING_BUGS.md) - Detailed analysis of both bugs found by fuzzing, including trigger conditions, root cause analysis, and fixes
+- [goldenthread Continuous Fuzzing Setup](https://github.com/blackwell-systems/goldenthread/blob/main/docs/CONTINUOUS_FUZZING.md) - Complete implementation guide for the fuzzing system described in this article
+
 **Tools and Resources:**
 - [go-fuzz](https://github.com/dvyukov/go-fuzz) - Alternative Go fuzzing tool
 - [AFL (American Fuzzy Lop)](https://github.com/google/AFL) - Industry-standard fuzzer
