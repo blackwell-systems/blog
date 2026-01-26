@@ -1114,18 +1114,18 @@ Traditional testing checks examples you think of. Fuzzing explores combinations 
 
 **When to use fuzzing:**
 
-- + Parsers, serializers, encoders (lots of edge cases)
-- + String processing (UTF-8, escape sequences, control characters)
-- + Format validation (emails, URLs, regex patterns)
-- + Mathematical operations (overflow, division by zero)
-- + Anything with complex input space
++ Parsers, serializers, encoders (lots of edge cases)
++ String processing (UTF-8, escape sequences, control characters)
++ Format validation (emails, URLs, regex patterns)
++ Mathematical operations (overflow, division by zero)
++ Anything with complex input space
 
 **When to skip fuzzing:**
 
-- - Simple business logic (example-based tests are clearer)
-- - Code with no invariants to test
-- - UI interactions (fuzzing doesn't work well with stateful UIs)
-- - Database migrations (specific sequences matter)
+- Simple business logic (example-based tests are clearer)
+- Code with no invariants to test
+- UI interactions (fuzzing doesn't work well with stateful UIs)
+- Database migrations (specific sequences matter)
 
 The best testing strategy uses multiple approaches: unit tests for known cases, integration tests for workflows, property-based tests for algorithmic properties, and fuzzing for continuous exploration.
 
