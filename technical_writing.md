@@ -18,7 +18,7 @@ Personal reference for pursuing technical writing opportunities while maintainin
 - [Why Your Background is Valuable](#why-your-background-is-valuable)
 - [Building Your Portfolio](#building-your-portfolio)
   - [Published Articles](#published-articles-27-total)
-  - [Open Source Projects](#open-source-projects-11-production-tools)
+  - [Open Source Projects](#open-source-projects-12-production-tools)
     - [1. goldenthread](#1-goldenthread)
     - [2. blackdot](#2-blackdot)
     - [3. dotclaude](#3-dotclaude)
@@ -26,10 +26,11 @@ Personal reference for pursuing technical writing opportunities while maintainin
     - [5. err-envelope (Go)](#5-err-envelope-go)
     - [6. vaultmux](#6-vaultmux)
     - [7. pipeboard](#7-pipeboard)
-    - [8. gcp-secret-manager-emulator](#8-gcp-secret-manager-emulator)
-    - [9. mdfx](#9-mdfx)
-    - [10. domainstack](#10-domainstack)
-    - [11. prettychars](#11-prettychars)
+    - [8. vaultmux-server](#8-vaultmux-server)
+    - [9. GCP Emulator Ecosystem](#9-gcp-emulator-ecosystem)
+    - [10. mdfx](#10-mdfx)
+    - [11. domainstack](#11-domainstack)
+    - [12. prettychars](#12-prettychars)
 - [Interview Preparation](#interview-preparation)
 - [Next Steps](#next-steps)
 - [Resources](#resources)
@@ -579,7 +580,7 @@ You understand:
 - Status: Content and cover complete, ready for final publishing setup
 - Target: January 2026 launch
 
-**Open Source Projects (11 Production Tools):**
+**Open Source Projects (12 Production Tools + GCP Emulator Ecosystem):**
 
 ### 1. goldenthread
 **GitHub:** https://github.com/blackwell-systems/goldenthread
@@ -798,10 +799,43 @@ pipeboard reimagines clipboard management as a **programmable, networked data pi
 
 **Architectural Sophistication:** Zero-telemetry design (all data on your machines), slot management treating clipboard history as queryable state, and programmable workflows. Built in Go (92.2%) with modular separation of clipboard management, authentication, encryption, and synchronization—systems thinking applied to a tool most never considered programmable.
 
-### 8. gcp-secret-manager-emulator
+### 8. vaultmux-server
+**GitHub:** https://github.com/blackwell-systems/vaultmux-server
+
+**Language-agnostic secrets control plane for Kubernetes and cloud-native systems**. HTTP REST API wrapping the vaultmux library, enabling polyglot environments to use unified secret management without language-specific SDK dependencies.
+
+**Technical Architecture:**
+- REST API with standardized JSON responses
+- Kubernetes deployment patterns (sidecar and cluster service)
+- Multi-backend support (AWS Secrets Manager, GCP Secret Manager, Azure Key Vault)
+- Backend validation enforcing production cloud providers only
+- Health checks, graceful shutdown, structured logging
+
+**Deployment Patterns:**
+- **Sidecar:** Per-pod isolation, localhost latency (~1ms), different backends per namespace
+- **Cluster Service:** Centralized management, 2-3 replicas total, shared across applications
+
+**Use Cases:**
+- Multi-language teams (Python, Node.js, Go, Rust) needing secrets via HTTP
+- Environment-based backend switching (staging uses AWS, prod uses GCP)
+- CI/CD testing with emulators (LocalStack, GCP Secret Manager Emulator)
+- Teams avoiding Kubernetes Secret storage for security reasons
+
+**Differentiation from Kubernetes Operators:**
+- Runtime API access (on-demand fetching) vs declarative sync (External Secrets Operator)
+- No CRDs, no etcd storage, no reconciliation loops
+- Complements External Secrets Operator rather than competing
+
+**Value:** Solves the polyglot secret management problem in Kubernetes without requiring native language ports or complex operator deployments. Change backends cluster-wide via ConfigMap without touching application code.
+
+### 9. GCP Emulator Ecosystem
+
+A comprehensive **local emulation stack for Google Cloud Platform services**, providing production-grade implementations that fill gaps Google left unfilled. Unlike Firestore or Pub/Sub which have official emulators, many GCP services (Secret Manager, IAM, KMS) had no viable emulation until this project ecosystem.
+
+#### gcp-secret-manager-emulator
 **GitHub:** https://github.com/blackwell-systems/gcp-secret-manager-emulator
 
-The **de facto standard local emulator** for Google Cloud Secret Manager API - filling a gap Google left unfilled. Unlike Firestore or Pub/Sub which have official emulators, Secret Manager had no first-party or viable third-party emulation until this project. Complete Secret Manager v1 API-compatible gRPC implementation (11/12 methods, 92% coverage) that runs locally in milliseconds without GCP credentials.
+The **de facto standard local emulator** for Google Cloud Secret Manager API. Complete Secret Manager v1 API-compatible dual-protocol implementation (gRPC + REST, 11/12 methods, 92% coverage) that runs locally in milliseconds without GCP credentials.
 
 **Market Position:**
 - **Only production-grade implementation**: Top result on pkg.go.dev for "secret manager emulator"
@@ -822,7 +856,54 @@ The **de facto standard local emulator** for Google Cloud Secret Manager API - f
 
 **Value:** Transforms GCP Secret Manager development from cloud-dependent (auth + network + costs) into fast, reliable local experience. Enables offline development, eliminates CI/CD GCP auth complexity, and provides consistent testing environments without production credentials. Solves a problem most developers don't realize they have until they're fighting with service accounts in GitHub Actions.
 
-### 9. mdfx
+#### gcp-iam-emulator
+**GitHub:** https://github.com/blackwell-systems/gcp-iam-emulator
+
+Local **IAM policy enforcement for GCP emulators**, providing TestIamPermissions checks against in-memory policy bindings. Enables permission testing without cloud connectivity.
+
+**Technical Architecture:**
+- Implements IAM Policy v1 with role bindings and conditional policies
+- REST API compatible with GCP IAM policy structure
+- In-memory policy storage with atomic updates
+- Integration layer for other emulators (Secret Manager, KMS)
+
+**Integration Pattern:**
+- Emulators call IAM emulator for permission checks
+- Three enforcement modes: off (no checks), permissive (fail-open), strict (fail-closed)
+- Principal injection via headers for testing different identities
+
+**Value:** Completes the hermetic testing story - test not just API functionality but also permission boundaries without GCP credentials.
+
+#### gcp-kms-emulator
+**GitHub:** https://github.com/blackwell-systems/gcp-kms-emulator
+
+Local **Key Management Service emulator** supporting cryptographic operations (encrypt/decrypt/sign/verify) with KeyRing, CryptoKey, and CryptoKeyVersion lifecycle management.
+
+**Technical Architecture:**
+- Complete KMS v1 resource hierarchy (KeyRing → CryptoKey → CryptoKeyVersion)
+- Real cryptographic operations using standard algorithms (AES-GCM, RSA, ECDSA)
+- Version state machine (pending → enabled → disabled → destroyed)
+- Autokey provisioning simulation for KeyHandle workflows
+
+**Complexity:** Significantly more sophisticated than Secret Manager (50+ methods vs 12, actual encryption vs simple storage).
+
+**Value:** Enables local testing of encryption workflows, key rotation, and cryptographic operations without cloud connectivity or KMS costs.
+
+#### gcp-emulator-control-plane
+**GitHub:** https://github.com/blackwell-systems/gcp-emulator-control-plane
+
+**Orchestration layer for the complete GCP emulator stack**, managing lifecycle of Secret Manager, IAM, and KMS emulators as a unified system.
+
+**Technical Architecture:**
+- Process management for multiple emulator services
+- Health checking and automatic restart
+- Port coordination and conflict resolution
+- Configuration management across emulators
+- Unified logging and observability
+
+**Value:** Transforms manual emulator startup into single-command infrastructure, mirroring how GCP services interact in production.
+
+### 10. mdfx
 **GitHub:** https://github.com/blackwell-systems/mdfx
 
 A comprehensive **Rust library for local SVG generation** creating rich, customizable components (progress bars, gauges, sparklines, tech badges) entirely offline with zero external dependencies.
@@ -846,7 +927,7 @@ A comprehensive **Rust library for local SVG generation** creating rich, customi
 
 **Value:** Transforms README creation from external service dependence into a powerful, flexible toolset with zero-dependency reliability.
 
-### 10. domainstack
+### 11. domainstack
 **GitHub:** https://github.com/blackwell-systems/domainstack
 
 domainstack implements **"valid-by-construction domain objects"** through Rust's type system with a two-stage validation approach: Serde handles shape/type, Domain validation enforces semantic business rules. Define once, validate everywhere.
@@ -866,7 +947,7 @@ domainstack implements **"valid-by-construction domain objects"** through Rust's
 
 **Value:** Eliminates validation duplication across the stack while maintaining compile-time guarantees and precise user feedback.
 
-### 11. prettychars
+### 12. prettychars
 **GitHub:** https://github.com/blackwell-systems/prettychars
 
 prettychars leverages **Perfect Hash Functions (PHF)** achieving O(1) lookup for 531 named glyphs with compile-time hash map generation—eliminating runtime computation entirely.
