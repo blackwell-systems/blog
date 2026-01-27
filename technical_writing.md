@@ -804,29 +804,48 @@ pipeboard reimagines clipboard management as a **programmable, networked data pi
 
 **Language-agnostic secrets control plane for Kubernetes and cloud-native systems**. HTTP REST API wrapping the vaultmux library, enabling polyglot environments to use unified secret management without language-specific SDK dependencies.
 
+**The Problem It Solves:**
+
+Kubernetes teams running polyglot stacks (Python, Java, Node.js, Go, Rust) face a fundamental secret management challenge. Traditional approaches require either:
+- Language-specific SDKs per cloud provider (boto3, AWS SDK for Java, @google-cloud/secret-manager) creating dependency sprawl and version conflicts
+- Syncing secrets into Kubernetes Secrets/etcd via operators (External Secrets Operator), which means your cluster becomes part of your secret system of record with two sources of truth, blast radius concerns (anyone with cluster access potentially reaches secrets), and secrets tied to cluster lifecycle
+
+**The Solution:**
+
+vaultmux-server provides runtime secret access without storing secrets in cluster state. Secrets stay in the cloud vault; the cluster is just compute.
+
+**Architecture Model:**
+- Traditional operators: K8s API → etcd → operator → external vault (secrets stored in cluster state)
+- vaultmux-server: App → vaultmux-server → external vault (no cluster storage, runtime fetching only)
+
+**Security Model - Sidecar Pattern:**
+
+Namespace isolation via cloud provider IAM, not cluster RBAC:
+- Each namespace has its own vaultmux-server pod with separate Kubernetes service account
+- Service accounts map to cloud IAM identities (AWS IRSA, GCP Workload Identity, Azure Managed Identity)
+- Cloud provider enforces authorization: `test` namespace → `test` IAM role → `test/*` secrets only
+- Hard isolation at the cloud boundary: test pods cannot access prod secrets, even if Kubernetes RBAC is misconfigured
+- No HTTP-level authentication needed; cloud provider is the security boundary
+
 **Technical Architecture:**
 - REST API with standardized JSON responses
-- Kubernetes deployment patterns (sidecar and cluster service)
+- Kubernetes deployment patterns (sidecar for isolation, shared service for centralized management)
 - Multi-backend support (AWS Secrets Manager, GCP Secret Manager, Azure Key Vault)
 - Backend validation enforcing production cloud providers only
+- Comprehensive RBAC setup guides (AWS IRSA, GCP Workload Identity, Azure Managed Identity)
 - Health checks, graceful shutdown, structured logging
 
 **Deployment Patterns:**
-- **Sidecar:** Per-pod isolation, localhost latency (~1ms), different backends per namespace
-- **Cluster Service:** Centralized management, 2-3 replicas total, shared across applications
-
-**Use Cases:**
-- Multi-language teams (Python, Node.js, Go, Rust) needing secrets via HTTP
-- Environment-based backend switching (staging uses AWS, prod uses GCP)
-- CI/CD testing with emulators (LocalStack, GCP Secret Manager Emulator)
-- Teams avoiding Kubernetes Secret storage for security reasons
+- **Sidecar:** Per-pod isolation, localhost latency (~1ms), cloud IAM enforcement, recommended for multi-tenant production
+- **Shared Service:** Centralized management, 2-3 replicas total, network isolation only, suitable for dev/test or single-tenant
 
 **Differentiation from Kubernetes Operators:**
-- Runtime API access (on-demand fetching) vs declarative sync (External Secrets Operator)
-- No CRDs, no etcd storage, no reconciliation loops
-- Complements External Secrets Operator rather than competing
 
-**Value:** Solves the polyglot secret management problem in Kubernetes without requiring native language ports or complex operator deployments. Change backends cluster-wide via ConfigMap without touching application code.
+Intentionally not a CRD/operator. Operators inject external state into the Kubernetes control plane (data lives in etcd, operators reconcile). vaultmux-server takes the opposite approach: keep secrets outside cluster state entirely. Kubernetes is just one runtime it can live in (also works in VMs, CI, local development), not the system of record.
+
+Runtime API access vs declarative sync. No CRDs, no etcd storage, no reconciliation loops. Complements External Secrets Operator (use ESO for declarative sync, vaultmux-server for runtime access) rather than competing.
+
+**Value:** Solves the polyglot secret management problem while maintaining cloud provider as the security boundary. Reduces blast radius (secrets never in cluster state), eliminates dual source-of-truth sync issues, and provides hard isolation via cloud IAM rather than relying on cluster RBAC configuration. Change backends cluster-wide via ConfigMap without touching application code.
 
 ### 9. GCP Emulator Ecosystem
 

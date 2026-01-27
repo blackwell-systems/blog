@@ -579,7 +579,7 @@ name: Continuous Fuzzing
 
 on:
   schedule:
-    - cron: '*/30 * * * *'  # Every 30 minutes
+    - cron: '0 * * * *'  # Every hour
   push:
     branches:
       - main
@@ -705,7 +705,7 @@ This issue was created automatically by continuous fuzzing.
 
 ```yaml
 schedule:
-  - cron: '*/30 * * * *'  # Every 30 minutes
+  - cron: '0 * * * *'  # Every hour
 ```
 
 Runs continuously on a schedule. Each run builds on the previous corpus.
@@ -1058,7 +1058,7 @@ Halves cost, still runs frequently.
 # Only fuzz on main branch, not PRs
 on:
   schedule:
-    - cron: '*/30 * * * *'
+    - cron: '0 * * * *'
   # Remove push/pull_request triggers
 ```
 
@@ -1168,7 +1168,7 @@ Traditional testing checks examples you think of. Fuzzing explores combinations 
 - Corpus evolution compounds over time - each run builds on previous discoveries
 - Continuous fuzzing runs 24/7 in CI, exploring billions of input combinations
 - Real bugs: UTF-8 corruption (444,553 executions) and regex escaping (180 executions)
-- GitHub Actions workflow runs every 30 minutes with automatic issue creation
+- GitHub Actions workflow runs hourly with automatic issue creation
 - Fuzz targets test properties (invariants), not exact outputs
 
 **When to use fuzzing:**
