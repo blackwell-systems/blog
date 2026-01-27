@@ -91,44 +91,17 @@ The secret is now part of cluster state.
 
 ### When Kubernetes Secrets Work Well
 
-Kubernetes Secrets are simple and effective for many use cases:
+Kubernetes Secrets work fine at small scale. If you have fewer than 10 engineers running 50 pods, everyone with cluster access is already trusted, and you run separate clusters per environment (dev/staging/prod), the simplicity wins. RBAC is manageable, secrets are static configuration, and GitOps works natively.
 
-**Small scale (< 10 engineers, < 50 pods)**
-- Everyone with cluster access is trusted
-- Operational simplicity beats security paranoia
-- RBAC is manageable at this scale
-
-**Single environment per cluster**
-- Separate clusters for dev/staging/prod
-- No namespace isolation concerns
-- Blast radius limited to one environment
-
-**Static configuration**
-- Database connection strings
-- Service endpoints
-- Configuration that rarely changes
-
-**Teams prioritizing simplicity**
-- Native Kubernetes consumption
-- No external dependencies
-- Declarative everything (GitOps friendly)
-
-At this scale and security posture, Kubernetes Secrets are often the right choice. The trade-offs don't matter yet.
+At this scale, the trade-offs don't matter yet.
 
 ### The Architectural Consequence
 
-Here's what you're committing to when you use Kubernetes Secrets:
+Here's what you're committing to: **your cluster is now compute + secret storage.**
 
-**Your cluster is now compute + secret storage.**
+Secrets live in etcd. Cluster access control becomes secret access control. Cluster backup/restore handles secrets. Cluster lifecycle is secret lifecycle. Anyone with sufficient cluster permissions can reach secrets.
 
-This means:
-- Secrets live in etcd (even if encrypted at rest)
-- Cluster access control = secret access control
-- Cluster backup/restore must handle secrets
-- Cluster lifecycle is secret lifecycle
-- Anyone with sufficient cluster access can potentially reach secrets
-
-For many teams, this is acceptable. For others, it becomes uncomfortable as scale increases.
+For small teams, this is acceptable. For larger organizations with compliance requirements, shared clusters, or rotating credentials, it becomes uncomfortable.
 
 ---
 
