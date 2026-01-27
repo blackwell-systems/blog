@@ -148,20 +148,9 @@ Reconciles on interval (checks for changes)
 
 ### Why Teams Adopt Operators
 
-**1. Declarative management**
-- Secrets defined in Git (GitOps workflows)
-- Version control for secret metadata (not values)
-- Automated sync and rotation
+Operators appeal because they feel like the best of both worlds: secrets live in AWS Secrets Manager or GCP Secret Manager (source of truth), but applications consume them as native Kubernetes Secrets. No code changes. GitOps workflows keep working. You get declarative secret references version-controlled in Git, while actual secret values stay in the vault. Rotation happens automatically through reconciliation loops.
 
-**2. Native Kubernetes consumption**
-- Applications don't know secrets are synced
-- Standard volume mounts and env vars
-- No code changes from pure K8s Secrets
-
-**3. Centralized source**
-- Secrets live in AWS/GCP/Azure
-- ESO just replicates to cluster
-- "Best of both worlds" - external vault + K8s native consumption
+The promise is simple: external storage with Kubernetes-native consumption.
 
 ### The Architectural Consequence: Dual Sources of Truth
 
@@ -450,23 +439,7 @@ flowchart LR
 
 ### What You're Depending On
 
-When you use Kubernetes Secrets, you're depending on:
-
-**etcd security:**
-- Encryption at rest (if enabled)
-- Network encryption between API server and etcd
-- etcd access controls (who can read the database directly)
-- Backup security (secrets in backups)
-
-**Cluster access controls:**
-- RBAC policies (who can `get` secrets)
-- Namespace isolation (can test access prod?)
-- Admission controllers (prevent privilege escalation)
-
-**Operational procedures:**
-- Secret rotation (manual or automated)
-- Backup/restore including secrets
-- Cluster migrations (secrets move with cluster)
+When you use Kubernetes Secrets, you're depending on etcd security (encryption at rest, network encryption, access controls), cluster RBAC policies (who can `get` secrets, namespace isolation), and operational procedures (rotation, backup security, cluster migrations that include secrets). Your security posture is tied to cluster security posture.
 
 ### When This Works Well
 
@@ -494,29 +467,9 @@ Breach impact is limited
 
 ### When Teams Get Uncomfortable
 
-As scale increases, the architectural consequences become harder to ignore:
+As scale increases, the architectural consequences become harder to ignore. At 10 namespaces with 50 secrets each, you have 500 secrets in etcd. Any cluster admin can read all 500. Any RBAC misconfiguration potentially exposes all.
 
-**Problem 1: Blast radius**
-```
-10 namespaces × 50 secrets each = 500 secrets in etcd
-Any cluster admin can read all 500
-Any RBAC misconfiguration potentially exposes all
-```
-
-**Problem 2: Cluster coupling**
-```
-Want to migrate cluster? Must migrate secrets.
-Want to backup cluster? Must secure secret backups.
-Want to restore cluster? Must handle secret restoration.
-```
-
-**Problem 3: Audit complexity**
-```
-Who accessed which secret when?
-  - Check K8s audit logs (pod accessed secret)
-  - Check etcd logs (if enabled)
-  - No cloud provider audit trail
-```
+Cluster coupling becomes operational burden: migrating clusters means migrating secrets, backups must secure secrets, restores must handle secret restoration. Auditing becomes fragmented: who accessed which secret requires checking Kubernetes audit logs for pod access, etcd logs if enabled, with no cloud provider audit trail to cross-reference.
 
 At 100+ namespaces and 50+ engineers, many teams start looking for alternatives.
 
@@ -601,32 +554,11 @@ After ESO syncs, secrets live in etcd. Everything from the Kubernetes Secrets se
 - Cluster backup/restore must handle secrets
 - Blast radius: cluster access = secret access
 
-**Plus, you've added complexity:**
+**Plus, you've added complexity:** Two sources of truth means AWS Secrets Manager might say `password123` while the Kubernetes Secret still has `password-old`. ESO syncs every 5 minutes, so they'll converge eventually, but for 5 minutes they differ. Which is correct?
 
-**Problem 1: Two sources of truth**
-```
-AWS Secrets Manager: password123
-Kubernetes Secret: password-old
+Sync loop failures create staleness: ESO pod crashes and sync stops, credentials expire and sync fails, network partitions leave the cluster with old secrets while the vault has new ones.
 
-Which is correct?
-ESO syncs every 5 minutes - they'll converge eventually
-But for 5 minutes, they differ
-```
-
-**Problem 2: Sync loop failure modes**
-```
-ESO pod crashes → no sync
-ESO credentials expire → sync fails, K8s Secret becomes stale
-Network partition → cluster has old secrets, vault has new
-```
-
-**Problem 3: Who can modify secrets?**
-```
-Source of truth: AWS Secrets Manager
-But I can also: kubectl edit secret db-creds
-Result: ESO overwrites my change on next sync
-Confusion: Which system should I use?
-```
+And there's operational confusion: the source of truth is AWS Secrets Manager, but you can also `kubectl edit secret db-creds`. ESO overwrites your change on the next sync. Which system should you use?
 
 ### CRDs as Control Plane State Injection
 
@@ -792,69 +724,23 @@ response = requests.get('http://localhost:8080/v1/secrets/prod/database-password
 
 ### What You Gain
 
-**1. Single source of truth**
-```
-Secrets live: AWS Secrets Manager (or GCP, Azure)
-Secrets cached: Nowhere
-Who controls secrets: Cloud IAM
-```
+You get a single source of truth: secrets live in AWS Secrets Manager (or GCP, Azure), cached nowhere, controlled by cloud IAM. No sync loop, no eventual consistency, no "which copy is correct?"
 
-No sync loop, no eventual consistency, no "which copy is correct?"
+Blast radius shrinks: cluster admin access lets you deploy pods, read logs, exec into containers, but you cannot read secrets without matching IAM policy. Cluster compromise doesn't automatically mean secret compromise.
 
-**2. Reduced blast radius**
-```
-Cluster admin access: Can deploy pods, read logs, exec into containers
-But cannot: Read secrets without matching IAM policy
-```
+Cluster lifecycle decouples: backups contain no secrets, restores don't need secret restoration, migrations just point the new cluster at the same vault. Secrets and compute are separate systems.
 
-Cluster compromise doesn't automatically mean secret compromise.
-
-**3. Cluster lifecycle decoupling**
-```
-Backup cluster: No secrets in backup
-Restore cluster: No secret restoration needed
-Migrate cluster: Secrets stay in vault, new cluster just accesses them
-```
-
-Secrets and compute are separate systems.
-
-**4. Cloud-native audit**
-```
-Who accessed prod/database-password at 2026-01-27 10:05:23?
-  - Check AWS CloudTrail (definitive log)
-  - Not buried in Kubernetes audit logs
-  - Tamper-proof audit trail outside cluster
-```
+Cloud-native audit trails become definitive: who accessed `prod/database-password` at 10:05:23? Check AWS CloudTrail. Not buried in Kubernetes audit logs. Tamper-proof audit trail outside the cluster.
 
 ### What You Lose
 
-**1. Not declarative**
-```
-Secrets aren't in Git
-Can't see "what secrets exist" from YAML files
-Less GitOps-friendly
-```
+The runtime pattern isn't declarative: secrets aren't in Git, you can't see "what secrets exist" from YAML files, and it's less GitOps-friendly.
 
-**2. Runtime dependency**
-```
-Application must make HTTP request on startup
-Network hop (even if localhost with sidecar)
-Failure mode: if sidecar fails, app can't start
-```
+You add runtime dependency: applications must make HTTP requests on startup (network hop even to localhost sidecar), and if the sidecar fails, the app can't start.
 
-**3. Setup complexity**
-```
-Must configure IAM roles per namespace
-Must set up service account annotations
-More cloud provider knowledge required
-```
+Setup complexity increases: you must configure IAM roles per namespace, set up service account annotations, and understand cloud provider IAM models.
 
-**4. No Kubernetes-native consumption**
-```
-Can't use volumeMounts for secrets
-Can't use envFrom secretRefs
-Must write code to fetch secrets
-```
+You lose Kubernetes-native consumption: no `volumeMounts` for secrets, no `envFrom` secretRefs, and you must write code to fetch secrets via HTTP.
 
 ---
 
