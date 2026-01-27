@@ -61,7 +61,7 @@ Each language represents a fundamentally different way of thinking about memory,
 
 ## Open Source & Technical Writing
 
-Outside the Python/Java enterprise world, I build developer tools and libraries in Go and Rust. My open source work includes build-time schema compilation from Go to TypeScript (goldenthread), the de facto standard GCP Secret Manager emulator filling a gap Google left unfilled (gcp-secret-manager-emulator), unified secret management across multiple vault backends (vaultmux), profile management for Claude Code with automatic context detection (dotclaude), type-safe validation with automatic TypeScript schema generation (domainstack), and structured error handling that works across different web frameworks (error-envelope, err-envelope).
+Outside the Python/Java enterprise world, I build cloud-native infrastructure and developer tools in Go and Rust. My open source work includes a language-agnostic Kubernetes secrets control plane (vaultmux-server), a complete GCP emulator ecosystem for local testing (Secret Manager, IAM, KMS, control plane), build-time schema compilation from Go to TypeScript (goldenthread), unified secret management across multiple vault backends (vaultmux, vaultmux-rs), profile management for Claude Code (dotclaude), type-safe validation with automatic TypeScript schema generation (domainstack), and structured error handling that works across different web frameworks (error-envelope, err-envelope).
 
 As a technical writer (3x AWS Certified, 225,000+ lines of documentation), I've authored **You Don't Know JSON** (127,000 words) - a comprehensive guide to JSON's ecosystem: from schema validation to binary formats (MessagePack, CBOR, Protocol Buffers), streaming architectures, security patterns, API design, data pipelines, and testing strategies. Learn when JSON works, when it doesn't, and what to use instead.
 
@@ -75,6 +75,20 @@ As a technical writer (3x AWS Certified, 225,000+ lines of documentation), I've 
 
 ## Open Source Projects
 
+### Cloud Infrastructure
+
+**[vaultmux-server](https://github.com/blackwell-systems/vaultmux-server)** - Language-agnostic secrets control plane for Kubernetes. HTTP REST API enabling polyglot teams (Python, Node.js, Go, Rust) to fetch secrets from AWS, GCP, or Azure without SDK dependencies. Deploy as sidecar or cluster service.
+
+**[GCP Emulator Ecosystem](https://github.com/blackwell-systems?q=gcp)** - Complete local emulation stack for Google Cloud Platform:
+- **[gcp-secret-manager-emulator](https://github.com/blackwell-systems/gcp-secret-manager-emulator)** - The de facto standard Secret Manager emulator (dual gRPC + REST, 11/12 methods, 90.8% test coverage, enterprise adoption)
+- **[gcp-iam-emulator](https://github.com/blackwell-systems/gcp-iam-emulator)** - IAM policy enforcement for permission testing
+- **[gcp-kms-emulator](https://github.com/blackwell-systems/gcp-kms-emulator)** - Key Management Service with real cryptographic operations
+- **[gcp-emulator-control-plane](https://github.com/blackwell-systems/gcp-emulator-control-plane)** - Orchestration layer for the complete emulator stack
+
+Fills gaps Google left unfilled - enables hermetic testing and CI/CD without GCP credentials.
+
+**[vaultmux](https://github.com/blackwell-systems/vaultmux)** ([Go pkg](https://pkg.go.dev/github.com/blackwell-systems/vaultmux) | [Rust crate](https://crates.io/crates/vaultmux-rs)) - Unified secret management across Bitwarden, 1Password, pass, AWS, GCP, Azure. Write once, support 7+ backends. Available in Go and Rust.
+
 ### Developer Tools
 
 **[goldenthread](https://github.com/blackwell-systems/goldenthread)** - Build-time schema compiler generating TypeScript Zod schemas from Go struct tags. Single source of truth for validation with automatic drift detection in CI.
@@ -83,15 +97,13 @@ As a technical writer (3x AWS Certified, 225,000+ lines of documentation), I've 
 
 **[dotclaude](https://blackwell-systems.github.io/dotclaude/#/)** - Profile manager for Claude Code. Switch between work/personal contexts, multi-backend routing.
 
-**[gcp-secret-manager-emulator](https://github.com/blackwell-systems/gcp-secret-manager-emulator)** - The de facto standard emulator for Google Cloud Secret Manager API (11/12 methods, 90.8% test coverage). Fills a gap Google left unfilled - unlike Firestore or Pub/Sub, Google provides no Secret Manager emulator. Enables local testing and CI/CD without GCP credentials or cloud costs.
-
 ### Libraries
 
 **[domainstack](https://github.com/blackwell-systems/domainstack)** ([Rust crate](https://crates.io/crates/domainstack)) - Full-stack validation ecosystem for Rust: Type-safe validation with automatic TypeScript/Zod schema generation, serde integration, OpenAPI schemas, and web framework adapters (Axum, Actix, Rocket).
 
 **[error-envelope](https://github.com/blackwell-systems/error-envelope)** ([Rust crate](https://crates.io/crates/error-envelope)) - Consistent, traceable, retry-aware HTTP error responses for Rust APIs - no framework required.
 
-**[vaultmux](https://github.com/blackwell-systems/vaultmux)** ([Go pkg](https://pkg.go.dev/github.com/blackwell-systems/vaultmux) | [Rust crate](https://crates.io/crates/vaultmux-rs)) - Unified secret management across Bitwarden, 1Password, and pass. Available in both Go and Rust with interface-first design and 95%+ test coverage.
+**[vaultmux](https://github.com/blackwell-systems/vaultmux)** ([Go pkg](https://pkg.go.dev/github.com/blackwell-systems/vaultmux) | [Rust crate](https://crates.io/crates/vaultmux-rs)) - Unified secret management library across Bitwarden, 1Password, pass, AWS, GCP, Azure. Available in Go and Rust with 95%+ test coverage. Powers vaultmux-server.
 
 **[err-envelope](https://github.com/blackwell-systems/err-envelope)** ([Go pkg](https://pkg.go.dev/github.com/blackwell-systems/err-envelope)) - Structured HTTP error responses for Go. Works with net/http, Chi, Gin, and Echo. Machine-readable codes, field validation, trace IDs.
 
@@ -123,7 +135,7 @@ Comprehensive technical documentation for engineering teams and developer-facing
 - **Documentation Projects:** API references, architecture guides, CLI documentation, developer onboarding
 - **Documentation Strategy:** Docs-as-code workflows, information architecture, style guides, quality audits
 - **Content Creation:** Technical blog articles, ADRs, conference talks, workshop materials
-- **Portfolio:** 225,000+ lines of documentation, published author (*You Don't Know JSON*), 11 OSS projects with comprehensive docs
+- **Portfolio:** 225,000+ lines of documentation, published author (*You Don't Know JSON*), 12+ OSS projects with comprehensive docs
 
 ### Other Services
 
