@@ -10,7 +10,7 @@ I'm a software architect specializing in event-driven architectures at scale. Cu
 
 My work focuses on making distributed systems predictable: idempotent message handling, content-based deduplication, selective semantic hashing, and observability patterns that make production failures understandable when they happen. The goal is systems where 3 AM pages are rare and debuggable.
 
-The tech stack spans serverless AWS (Lambda, EventBridge, DynamoDB, Glue, Redshift), backend services (Python FastAPI, Java Jakarta EE), and infrastructure-as-code (CDK, Terraform). My career path - from operations leadership through backend architecture - shapes how I think about systems: they have to work for the people maintaining them at 3 AM, not just the people designing them at 3 PM.
+The tech stack spans AWS (Lambda, EventBridge, DynamoDB, Step Functions, ECR, VPC networking, Glue, Redshift), backend services (Python FastAPI, Java Jakarta EE, Go microservices), infrastructure-as-code (CDK, Terraform), and Rust for performance-critical components. Deep AWS expertise across compute, networking, orchestration, and data layers. My career path - from operations leadership through backend architecture - shapes how I think about systems: they have to work for the people maintaining them at 3 AM, not just the people designing them at 3 PM.
 
 ---
 
