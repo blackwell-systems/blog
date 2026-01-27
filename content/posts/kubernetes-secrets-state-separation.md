@@ -8,9 +8,16 @@ description: "Should your Kubernetes cluster store secrets or just access them? 
 summary: "Kubernetes Secrets are simple and often sufficient. But at scale, some teams separate compute from secret storage. Understanding the trade-offs: etcd vs cloud vaults, cluster RBAC vs cloud IAM, sync patterns vs runtime access, and when each pattern makes sense."
 ---
 
-A test pod in your Kubernetes cluster just accessed production database credentials. The misconfiguration wasn't in your application code or cloud IAM policies - it was in cluster RBAC, buried in a RoleBinding that granted broader access than intended.
+A test pod just accessed production database credentials.
 
-This happens more often than teams admit. Not because Kubernetes RBAC is broken, but because the blast radius of cluster access extends to every secret stored in etcd.
+The bug wasn't in application code.
+It wasn't in cloud IAM.
+
+It was a Kubernetes RoleBinding - buried, overly broad, and easy to miss.
+
+This happens more often than teams like to admit. Not because Kubernetes RBAC is bad, but because once secrets live in etcd, cluster access becomes secret access. The blast radius is the cluster itself.
+
+That's the trade-off most teams don't think about until it bites them.
 
 The fundamental question isn't "should I use Kubernetes Secrets?" - they're valid and often the simplest solution. The question is: **should your cluster store secrets, or just access them?**
 
