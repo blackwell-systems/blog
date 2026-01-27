@@ -83,7 +83,7 @@ As a technical writer (3x AWS Certified, 225,000+ lines of documentation), I've 
 - **[gcp-secret-manager-emulator](https://github.com/blackwell-systems/gcp-secret-manager-emulator)** - The de facto standard Secret Manager emulator (dual gRPC + REST, 11/12 methods, 90.8% test coverage, enterprise adoption)
 - **[gcp-iam-emulator](https://github.com/blackwell-systems/gcp-iam-emulator)** - IAM policy enforcement for permission testing
 - **[gcp-kms-emulator](https://github.com/blackwell-systems/gcp-kms-emulator)** - Key Management Service with real cryptographic operations
-- **[gcp-emulator-control-plane](https://github.com/blackwell-systems/gcp-emulator-control-plane)** - CLI tool for orchestrating the complete emulator stack (start/stop/health checks)
+- **[gcp-emulator-control-plane](https://github.com/blackwell-systems/gcp-emulator-control-plane)** - CLI tool for orchestrating the complete emulator stack with IAM enforcement. Single `policy.yaml` drives authorization across all emulators (start/stop, logs, policy validation, principal injection)
 
 Fills gaps Google left unfilled - enables hermetic testing and CI/CD without GCP credentials.
 
