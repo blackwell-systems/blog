@@ -26,6 +26,19 @@ There's no universally correct answer. The choice depends on scale, security req
 This article examines three patterns for secret management in Kubernetes: native Kubernetes Secrets (cluster stores secrets), operators with CRDs (sync from external vault to cluster), and runtime APIs (cluster accesses secrets without storage). We'll analyze trust boundaries, blast radius, operational complexity, and when each pattern makes sense.
 
 {{< callout type="info" >}}
+**Key Terms**
+
+- **etcd:** Kubernetes' backing store where cluster state (including Secrets) is stored
+- **Operators:** Kubernetes controllers that extend the API with custom resources
+- **ESO (External Secrets Operator):** Syncs secrets from external vaults into Kubernetes Secrets
+- **CRD (Custom Resource Definition):** Extends Kubernetes API with new resource types
+- **Trust boundary:** Where access control is enforced (cluster RBAC vs cloud IAM)
+- **Blast radius:** Scope of impact when access controls are breached or misconfigured
+- **IRSA (IAM Roles for Service Accounts):** AWS mechanism to map K8s service accounts to IAM roles
+- **Workload Identity:** GCP equivalent of IRSA for service account to cloud identity mapping
+{{< /callout >}}
+
+{{< callout type="info" >}}
 **What This Article Covers**
 
 This is an architectural deep-dive into Kubernetes secret management patterns. We'll examine:
@@ -215,187 +228,6 @@ If cluster RBAC is misconfigured (a `RoleBinding` grants too much), secrets are 
 **The uncomfortable reality:**
 
 Operators solve the "sync from external vault" problem. They don't solve the "secrets live in cluster state" problem.
-
----
-
-## Trust Boundaries: Cluster RBAC vs Cloud IAM
-
-Let's examine who can access secrets in each pattern and what happens when things go wrong.
-
-### Kubernetes Secrets: Cluster RBAC Boundary
-
-**Access control:**
-```yaml
-apiVersion: rbac.authorization.k8s.io/v1
-kind: Role
-metadata:
-  name: secret-reader
-  namespace: prod
-rules:
-  - apiGroups: [""]
-    resources: ["secrets"]
-    verbs: ["get", "list"]
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: RoleBinding
-metadata:
-  name: dev-team-secrets
-  namespace: prod
-subjects:
-  - kind: User
-    name: alice@example.com
-roleRef:
-  kind: Role
-  name: secret-reader
-```
-
-**Who can access prod secrets:**
-- Anyone with `get secrets` permission in prod namespace
-- Cluster admins (have all permissions)
-- Anyone with etcd direct access (if security is weak)
-
-**Blast radius of RBAC misconfiguration:**
-```yaml
-# Oops - granted ClusterRole instead of Role
-kind: ClusterRoleBinding  # Grants across ALL namespaces
-# Result: Alice can now read secrets in test, staging, prod
-```
-
-One misconfiguration = access to all secrets in all namespaces.
-
-### Operator Pattern: Still Cluster RBAC
-
-With External Secrets Operator, the trust boundary is identical:
-
-**Access control:**
-```yaml
-# Control who can create ExternalSecret CRDs
-apiVersion: rbac.authorization.k8s.io/v1
-kind: Role
-metadata:
-  name: externalsecret-creator
-rules:
-  - apiGroups: ["external-secrets.io"]
-    resources: ["externalsecrets"]
-    verbs: ["create", "get", "list"]
-```
-
-**Who can access secrets:**
-- Anyone who can create ExternalSecret CRDs
-- Anyone who can read Kubernetes Secrets (after sync)
-- Cluster admins
-- Anyone with etcd access
-
-**Blast radius:** Same as Kubernetes Secrets - secrets live in etcd, cluster RBAC is the boundary.
-
-### Runtime Pattern: Cloud IAM Boundary
-
-With runtime access (no etcd storage), the trust boundary shifts to the cloud provider.
-
-**Architecture:**
-```
-Pod → Kubernetes Service Account → Cloud IAM Identity → Vault
-```
-
-**Example: AWS IRSA (IAM Roles for Service Accounts)**
-
-**Test namespace configuration:**
-```yaml
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  name: test-vaultmux-sa
-  namespace: test
-  annotations:
-    eks.amazonaws.com/role-arn: arn:aws:iam::123456789012:role/test-secrets-role
-```
-
-**IAM role policy:**
-```json
-{
-  "Version": "2012-10-17",
-  "Statement": [{
-    "Effect": "Allow",
-    "Action": ["secretsmanager:GetSecretValue"],
-    "Resource": "arn:aws:secretsmanager:*:*:secret:test/*"
-  }]
-}
-```
-
-**Who can access test secrets:**
-- Only pods using `test-vaultmux-sa` service account in test namespace
-- IAM role is scoped to `test/*` prefix
-- Cannot access `prod/*` secrets even if Kubernetes RBAC is misconfigured
-
-**Blast radius of RBAC misconfiguration:**
-```yaml
-# Even if cluster RBAC grants too much:
-kind: ClusterRoleBinding
-subjects:
-  - kind: ServiceAccount
-    name: test-vaultmux-sa
-    namespace: test
-# The pod STILL cannot access prod secrets
-# Because cloud IAM enforces the boundary, not cluster RBAC
-```
-
-{{< mermaid >}}
-flowchart TB
-    subgraph k8s["Kubernetes Cluster"]
-        subgraph test["Test Namespace"]
-            testpod[Test Pod]
-            testsa[Service Account: test-sa]
-        end
-        
-        subgraph prod["Prod Namespace"]
-            prodpod[Prod Pod]
-            prodsa[Service Account: prod-sa]
-        end
-    end
-    
-    subgraph iam["Cloud IAM (Trust Boundary)"]
-        testrole[IAM Role: test-role]
-        prodrole[IAM Role: prod-role]
-    end
-    
-    subgraph vault["Secret Vault"]
-        testsecrets["test/* secrets"]
-        prodsecrets["prod/* secrets"]
-    end
-    
-    testpod --> testsa
-    testsa -.->|IRSA mapping| testrole
-    testrole --> testsecrets
-    
-    prodpod --> prodsa
-    prodsa -.->|IRSA mapping| prodrole
-    prodrole --> prodsecrets
-    
-    testpod -.->|BLOCKED by IAM| prodsecrets
-    prodpod -.->|BLOCKED by IAM| testsecrets
-    
-    style k8s fill:#3A4A5C,stroke:#6b7280,color:#f0f0f0
-    style iam fill:#3A4C43,stroke:#6b7280,color:#f0f0f0
-    style vault fill:#4C4538,stroke:#6b7280,color:#f0f0f0
-{{< /mermaid >}}
-
-### The Key Difference
-
-**Kubernetes RBAC boundary:**
-- Trust: Cluster administrators configured RBAC correctly
-- Failure mode: Misconfiguration grants access to all secrets
-- Blast radius: Entire cluster
-
-**Cloud IAM boundary:**
-- Trust: Cloud provider enforces IAM policies (outside cluster)
-- Failure mode: Misconfigured IAM grants access to specific IAM role's secrets only
-- Blast radius: Scoped to IAM policy
-
-**Put differently:**
-
-With cluster RBAC, you're trusting that every `RoleBinding`, `ClusterRoleBinding`, and RBAC configuration in your cluster is correct. One mistake anywhere = potential access to all secrets.
-
-With cloud IAM, you're trusting the cloud provider's IAM enforcement (battle-tested, audited, outside cluster control). Cluster RBAC misconfigurations don't matter for secret access.
 
 ---
 
