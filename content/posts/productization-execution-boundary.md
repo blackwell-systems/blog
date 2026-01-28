@@ -1,7 +1,7 @@
 ---
 title: "The Execution Boundary: When Your Feature Becomes a Product"
 date: 2026-01-28
-draft: true
+draft: false
 tags: ["architecture", "product-design", "open-source", "platform-engineering", "software-design", "boundaries", "separation-of-concerns", "tooling", "devtools", "infrastructure", "oss", "commercial", "licensing", "compiler-design", "control-plane", "intelligence-plane", "observability", "tracing", "analysis", "artifacts"]
 categories: ["architecture", "product-design"]
 description: "Understanding the execution boundary: why features that provide value after the system stops belong in products, not platforms. A framework for clean OSS/commercial separation."
