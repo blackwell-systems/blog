@@ -26,30 +26,20 @@ There's no universally correct answer. The choice depends on scale, security req
 This article examines three patterns for secret management in Kubernetes: native Kubernetes Secrets (cluster stores secrets), operators with CRDs (sync from external vault to cluster), and runtime APIs (cluster accesses secrets without storage). We'll analyze trust boundaries, blast radius, operational complexity, and when each pattern makes sense.
 
 {{< callout type="info" >}}
+**What This Article Covers**
+
+An architectural deep-dive into Kubernetes secret management patterns: native Kubernetes Secrets (cluster stores secrets), operators with CRDs (sync from external vault), and runtime APIs (cluster accesses secrets without storage). We'll examine trust boundaries, blast radius, and decision frameworks.
+{{< /callout >}}
+
+{{< callout type="info" >}}
 **Key Terms**
 
 - **etcd:** Kubernetes' backing store where cluster state (including Secrets) is stored
 - **Operators:** Kubernetes controllers that extend the API with custom resources
 - **ESO (External Secrets Operator):** Syncs secrets from external vaults into Kubernetes Secrets
-- **CRD (Custom Resource Definition):** Extends Kubernetes API with new resource types
 - **Trust boundary:** Where access control is enforced (cluster RBAC vs cloud IAM)
 - **Blast radius:** Scope of impact when access controls are breached or misconfigured
-- **IRSA (IAM Roles for Service Accounts):** AWS mechanism to map K8s service accounts to IAM roles
-- **Workload Identity:** GCP equivalent of IRSA for service account to cloud identity mapping
-{{< /callout >}}
-
-{{< callout type="info" >}}
-**What This Article Covers**
-
-This is an architectural deep-dive into Kubernetes secret management patterns. We'll examine:
-- How Kubernetes Secrets work and when they're appropriate
-- Why operators create dual source-of-truth problems
-- Trust boundary differences between cluster RBAC and cloud IAM
-- The runtime access pattern (sidecar + IAM)
-- Decision frameworks for choosing between patterns
-- Real implementation with code examples
-
-If you're running Kubernetes in production and wondering "should we move secrets out of etcd?", this article is for you.
+- **IRSA:** AWS IAM Roles for Service Accounts (GCP: Workload Identity, Azure: Managed Identity)
 {{< /callout >}}
 
 ---
@@ -593,18 +583,7 @@ db_password = get_secret('prod/database-password')
 
 ### GCP and Azure Work Similarly
 
-**GCP Workload Identity:**
-- Kubernetes service account annotated with `iam.gke.io/gcp-service-account`
-- GCP service account has Secret Manager permissions
-- Same sidecar pattern, different annotation
-
-**Azure Managed Identity:**
-- Pod labeled with `aadpodidbinding` selector
-- AzureIdentity resource maps to Managed Identity
-- Managed Identity has Key Vault permissions
-- Same sidecar pattern, different Azure primitives
-
-All three follow the same model: **service account → cloud identity → vault**, enforced by cloud provider.
+**GCP Workload Identity** uses `iam.gke.io/gcp-service-account` annotation, **Azure Managed Identity** uses `aadpodidbinding` selector. All three clouds follow the same model: **service account → cloud identity → vault**, enforced by the cloud provider. See the [complete setup guide](https://github.com/blackwell-systems/vaultmux-server/blob/main/docs/SIDECAR_RBAC.md) for GCP and Azure configuration.
 
 ---
 
@@ -863,54 +842,7 @@ prod-secrets-role can access:
 
 ### Polyglot Access
 
-All languages use the same HTTP endpoint:
-
-**Python:**
-```python
-import requests
-
-def get_secret(name):
-    response = requests.get(f'http://localhost:8080/v1/secrets/{name}')
-    return response.json()['value']
-```
-
-**Java:**
-```java
-public String getSecret(String name) throws IOException {
-    HttpClient client = HttpClient.newHttpClient();
-    HttpRequest request = HttpRequest.newBuilder()
-        .uri(URI.create("http://localhost:8080/v1/secrets/" + name))
-        .build();
-    HttpResponse<String> response = client.send(request, BodyHandlers.ofString());
-    return parseJson(response.body()).get("value");
-}
-```
-
-**Node.js:**
-```javascript
-async function getSecret(name) {
-    const response = await fetch(`http://localhost:8080/v1/secrets/${name}`)
-    const { value } = await response.json()
-    return value
-}
-```
-
-**Go:**
-```go
-func getSecret(name string) (string, error) {
-    resp, err := http.Get("http://localhost:8080/v1/secrets/" + name)
-    if err != nil {
-        return "", err
-    }
-    defer resp.Body.Close()
-    
-    var result struct {
-        Value string `json:"value"`
-    }
-    json.NewDecoder(resp.Body).Decode(&result)
-    return result.Value, nil
-}
-```
+All languages use the same HTTP endpoint. Python: `requests.get('http://localhost:8080/v1/secrets/name').json()['value']`, Java: `HttpClient` with JSON parsing, Node.js: `fetch()` with `await response.json()`, Go: `http.Get()` with `json.Decoder`.
 
 Zero SDK dependencies. One API. Any language.
 
@@ -965,18 +897,7 @@ App → HTTP API → external vault
 ```
 No reconciliation, no cluster storage, runtime fetching only
 
-They're complementary. Use operators for declarative sync, runtime APIs for on-demand access without etcd storage.
-
-### Complete Setup Guides
-
-vaultmux-server includes comprehensive guides for setting up sidecar + IAM:
-- AWS IRSA step-by-step
-- GCP Workload Identity configuration
-- Azure Managed Identity setup
-- Troubleshooting common issues
-- Testing isolation
-
-See: https://github.com/blackwell-systems/vaultmux-server/blob/main/docs/SIDECAR_RBAC.md
+They're complementary. Use operators for declarative sync, runtime APIs for on-demand access without etcd storage. Complete setup guides for [AWS, GCP, and Azure](https://github.com/blackwell-systems/vaultmux-server/blob/main/docs/SIDECAR_RBAC.md) are available in the repository.
 
 ---
 
@@ -1142,139 +1063,19 @@ encrypted = encrypt(customer_data, encryption_key)
 
 ---
 
-## Real-World Example: Migrating from Kubernetes Secrets
+## Real-World Migration Example
 
-Let's walk through a realistic migration scenario.
+**Problem:** Test pods accessed prod secrets (RBAC misconfiguration), secrets in backups (compliance), no audit trail.
 
-### Starting State
+**Migration steps:**
+1. Create secrets in AWS Secrets Manager (`prod/database-password`, `test/database-password`)
+2. Set up IAM roles with namespace-scoped policies using IRSA
+3. Update application code: `os.environ['DB_PASSWORD']` → `requests.get('http://localhost:8080/v1/secrets/prod/database-password')`
+4. Deploy with vaultmux-server sidecar using appropriate service account
+5. Verify isolation: test pod calling prod secret returns 403 (AWS IAM denies)
+6. Delete Kubernetes Secrets
 
-**Current setup:**
-```yaml
-apiVersion: v1
-kind: Secret
-metadata:
-  name: database-credentials
-  namespace: prod
-data:
-  password: base64-encoded-password
----
-apiVersion: apps/v1
-kind: Deployment
-spec:
-  template:
-    spec:
-      containers:
-        - name: app
-          env:
-            - name: DB_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: database-credentials
-                  key: password
-```
-
-**Problems encountered:**
-- Test namespace pods accessed prod secrets (RBAC misconfiguration)
-- Secrets in cluster backups (compliance issue)
-- No audit trail for secret access (security team concern)
-
-**Decision:** Move to runtime access with cloud IAM boundary.
-
-### Migration Plan
-
-**Phase 1: Move secrets to AWS Secrets Manager**
-```bash
-# Create secrets in AWS
-aws secretsmanager create-secret \
-  --name prod/database-password \
-  --secret-string "actual-password"
-
-aws secretsmanager create-secret \
-  --name test/database-password \
-  --secret-string "test-password"
-```
-
-**Phase 2: Set up IAM roles**
-```bash
-# Create policies (test and prod)
-aws iam create-policy --policy-name test-secrets-policy --policy-document file://test-policy.json
-aws iam create-policy --policy-name prod-secrets-policy --policy-document file://prod-policy.json
-
-# Create service accounts with IRSA
-eksctl create iamserviceaccount \
-  --name test-vaultmux-sa \
-  --namespace test \
-  --cluster my-cluster \
-  --attach-policy-arn arn:aws:iam::123456789012:policy/test-secrets-policy \
-  --approve
-
-eksctl create iamserviceaccount \
-  --name prod-vaultmux-sa \
-  --namespace prod \
-  --cluster my-cluster \
-  --attach-policy-arn arn:aws:iam::123456789012:policy/prod-secrets-policy \
-  --approve
-```
-
-**Phase 3: Update application code**
-
-**Before:**
-```python
-import os
-db_password = os.environ['DB_PASSWORD']
-```
-
-**After:**
-```python
-import requests
-
-def get_secret(name):
-    response = requests.get(f'http://localhost:8080/v1/secrets/{name}')
-    return response.json()['value']
-
-db_password = get_secret('prod/database-password')
-```
-
-**Phase 4: Deploy with sidecar**
-```yaml
-apiVersion: apps/v1
-kind: Deployment
-spec:
-  template:
-    spec:
-      serviceAccountName: prod-vaultmux-sa
-      containers:
-        - name: app
-          image: myapp:latest
-          # No secretKeyRef anymore
-        
-        - name: vaultmux-server
-          image: ghcr.io/blackwell-systems/vaultmux-server:v0.1.0
-          env:
-            - name: VAULTMUX_BACKEND
-              value: awssecrets
-```
-
-**Phase 5: Verify isolation**
-```bash
-# Test: can test pod access prod secrets?
-kubectl exec -n test test-app-xxx -- \
-  curl http://localhost:8080/v1/secrets/prod/database-password
-
-# Expected: 403 Forbidden (AWS IAM denies)
-```
-
-**Phase 6: Remove Kubernetes Secrets**
-```bash
-kubectl delete secret database-credentials -n prod
-kubectl delete secret database-credentials -n test
-```
-
-**Result:**
-- Secrets no longer in etcd
-- Cloud IAM enforces namespace boundaries
-- Audit trail in AWS CloudTrail
-- Cluster backups contain no secrets
+**Result:** Secrets no longer in etcd, cloud IAM enforces boundaries, audit trail in CloudTrail, cluster backups contain no secrets.
 
 ---
 
@@ -1307,27 +1108,9 @@ The best architecture acknowledges trade-offs and chooses deliberately, not by d
 
 ## Further Reading
 
-**Kubernetes Security:**
-- [Kubernetes Secrets Documentation](https://kubernetes.io/docs/concepts/configuration/secret/)
-- [Encrypting Secret Data at Rest](https://kubernetes.io/docs/tasks/administer-cluster/encrypt-data/)
-- [RBAC Good Practices](https://kubernetes.io/docs/concepts/security/rbac-good-practices/)
+**Official Documentation:** [Kubernetes Secrets](https://kubernetes.io/docs/concepts/configuration/secret/), [AWS IRSA](https://docs.aws.amazon.com/eks/latest/userguide/iam-roles-for-service-accounts.html), [GCP Workload Identity](https://cloud.google.com/kubernetes-engine/docs/how-to/workload-identity), [Azure Workload Identity](https://learn.microsoft.com/en-us/azure/aks/workload-identity-overview)
 
-**Cloud IAM for Kubernetes:**
-- [AWS IAM Roles for Service Accounts](https://docs.aws.amazon.com/eks/latest/userguide/iam-roles-for-service-accounts.html)
-- [GCP Workload Identity](https://cloud.google.com/kubernetes-engine/docs/how-to/workload-identity)
-- [Azure Workload Identity](https://learn.microsoft.com/en-us/azure/aks/workload-identity-overview)
-
-**Secret Management Operators:**
-- [External Secrets Operator](https://external-secrets.io/)
-- [Sealed Secrets](https://github.com/bitnami-labs/sealed-secrets)
-
-**Runtime Access Implementation:**
-- [vaultmux-server](https://github.com/blackwell-systems/vaultmux-server) - HTTP API for polyglot secret access
-- [vaultmux-server Sidecar RBAC Guide](https://github.com/blackwell-systems/vaultmux-server/blob/main/docs/SIDECAR_RBAC.md) - Complete setup instructions
-
-**Related Articles on This Blog:**
-- [How Multicore CPUs Killed Object-Oriented Programming](/posts/multicore-killed-oop/) - Understanding architectural trade-offs
-- [API Communication Patterns Guide](/posts/api-communication-patterns-guide/) - Choosing the right pattern for your use case
+**Tools:** [External Secrets Operator](https://external-secrets.io/), [vaultmux-server](https://github.com/blackwell-systems/vaultmux-server), [Sealed Secrets](https://github.com/bitnami-labs/sealed-secrets)
 
 ---
 
