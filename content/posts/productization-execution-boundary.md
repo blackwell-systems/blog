@@ -41,20 +41,38 @@ The repo boundary wasn't wrong when you started. It's wrong *now* because the ar
 
 ---
 
+## Key Terms
+
+Before exploring the pattern, let's define the core concepts:
+
+**Platform** - The runtime system that does the work. Emulators, databases, CI runners, service meshes. The platform is trusted, typically open source, and provides value during execution.
+
+**Product** - The analysis tooling that interprets outcomes. Policy generators, compliance reporters, performance analyzers. Products operate on artifacts and provide value after execution.
+
+**Execution** - The period when the system is alive, making decisions, affecting outcomes. Services are running, requests are flowing, authorization decisions are being made, state is mutating. For a database, it's queries running. For a CI system, it's builds executing. The specific domain doesn't matter - the pattern is the same.
+
+**Artifacts** - Stable outputs produced during execution. Logs, traces, test results, build outputs. These files survive after the system stops and serve as the contract between platform and product.
+
+**Data Plane** - The layer that does the actual work. Runs services, processes requests, executes business logic. In an emulator system, this is the service emulators (Secret Manager, KMS, Pub/Sub). In a database, it's the query engine. Pure execution with no governance logic.
+
+**Control Plane** - The layer that makes runtime decisions. Authorization, routing, policy enforcement, resource allocation. In Kubernetes, this is the API server and scheduler. In an emulator system, it's the IAM emulator and auth proxies. These components affect whether operations succeed or fail.
+
+**Intelligence Plane** - The layer that analyzes outcomes after execution. Policy generators, compliance reports, performance analyzers, drift detection. This plane operates on artifacts and never participates in runtime decisions. Always post-execution.
+
+---
+
 ## The Execution Boundary
 
 Here's the pattern that resolves the confusion:
 
-**Execution** = the period when the system is alive, making decisions, affecting outcomes.
-
-For a testing/emulator system, execution means services are running, requests are flowing, authorization decisions are being made, tests are executing, and state is mutating. For a database, it's queries running and transactions committing. For a CI system, it's builds executing and tests running. The specific domain doesn't matter - the pattern is the same.
+For a testing/emulator system, execution means services are running, requests are flowing, authorization decisions are being made, tests are executing, and state is mutating. For a database, it's queries running and transactions committing. For a CI system, it's builds executing and tests running.
 
 **Execution ends when:**
 - The test run finishes
 - Services shut down
 - No more decisions are being made
 
-After that point, you have **artifacts** (logs, traces, results). The system is stopped, but analysis can continue.
+After that point, you have artifacts (logs, traces, results). The system is stopped, but analysis can continue.
 
 ---
 
