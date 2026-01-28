@@ -2,6 +2,7 @@
 title: "Consulting Services"
 date: 2026-01-26
 draft: false
+showReadingTime: false
 ---
 
 I provide expert consulting on cloud infrastructure architecture and technical documentation for engineering teams and developer-facing products.
