@@ -1063,22 +1063,6 @@ encrypted = encrypt(customer_data, encryption_key)
 
 ---
 
-## Real-World Migration Example
-
-**Problem:** Test pods accessed prod secrets (RBAC misconfiguration), secrets in backups (compliance), no audit trail.
-
-**Migration steps:**
-1. Create secrets in AWS Secrets Manager (`prod/database-password`, `test/database-password`)
-2. Set up IAM roles with namespace-scoped policies using IRSA
-3. Update application code: `os.environ['DB_PASSWORD']` → `requests.get('http://localhost:8080/v1/secrets/prod/database-password')`
-4. Deploy with vaultmux-server sidecar using appropriate service account
-5. Verify isolation: test pod calling prod secret returns 403 (AWS IAM denies)
-6. Delete Kubernetes Secrets
-
-**Result:** Secrets no longer in etcd, cloud IAM enforces boundaries, audit trail in CloudTrail, cluster backups contain no secrets.
-
----
-
 ## Conclusion
 
 Kubernetes Secrets are simple and often sufficient. But at scale or in high-security environments, some teams separate compute from secret storage.
