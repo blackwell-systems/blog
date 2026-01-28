@@ -70,30 +70,13 @@ If its value survives after the system stops, it belongs in the product.
 
 Let's apply this:
 
-**Tracing (platform feature):**
-- Collected *during* execution
-- Primary value is explaining runtime behavior
-- Produced as a platform responsibility
-- **Belongs in:** OSS platform
+Consider tracing as a platform feature. Traces are collected while the system runs - during service requests, authorization checks, and state mutations. Their primary value is explaining what happened in that specific execution window. When services shut down, trace collection stops. This is a platform responsibility: the runtime must emit structured data about its decisions. Tracing belongs in the OSS platform because it's inseparable from execution.
 
-**Policy generation (product feature):**
-- Requires execution to have completed
-- Operates on trace artifacts
-- Can run tomorrow, on a different machine
-- Value increases with accumulated traces
-- **Belongs in:** Commercial product
+Policy generation, by contrast, is a product feature. It requires execution to have already completed. The policy generator operates on trace artifacts - files written to disk that survive after services stop. You can run policy generation tomorrow, on a different machine, using last week's traces. Value actually increases with accumulated traces: more execution history produces better policies. This post-execution nature makes it a commercial product boundary.
 
-**Debug logging (platform feature):**
-- Records runtime behavior
-- Explains control flow
-- Value tied to execution window
-- **Belongs in:** OSS platform
+Debug logging follows the platform pattern. It records runtime behavior - function calls, decision branches, state transitions. The logs explain control flow while it's happening. Once execution ends, debug logging stops producing value. Like tracing, it's tied to the execution window and belongs in the OSS platform.
 
-**Compliance reports (product feature):**
-- Aggregates outcomes after execution
-- Used for review and audit
-- Generated in separate CI step
-- **Belongs in:** Commercial product
+Compliance reports show the product pattern. They aggregate outcomes after execution completes - summarizing which permissions were used, which services were called, which policies would grant least privilege. These reports are used for review and audit, typically generated in a separate CI step after tests finish. They don't need the system to be alive. Compliance reports belong in the commercial product.
 
 ---
 
@@ -128,13 +111,13 @@ flowchart TB
     style intelligence fill:#4C4538,stroke:#6b7280,color:#f0f0f0
 {{< /mermaid >}}
 
-**Data Plane:** Does the work (runs services, processes requests)
+The data plane does the work - it runs services, processes requests, mutates state. This is where your application logic lives: the emulated services, the database queries, the business logic. It's pure execution.
 
-**Control Plane:** Makes decisions (authorization, routing, policy enforcement)
+The control plane makes decisions. It handles authorization, routing, policy enforcement - all the runtime governance that affects whether operations succeed or fail. The IAM emulator sits here, along with auth proxies and control CLIs. These components participate in control flow: they affect outcomes while the system is alive.
 
-**Intelligence Plane:** Analyzes outcomes (reports, policies, insights)
+The intelligence plane analyzes outcomes. Policy generators, trace diff tools, compliance reports, drift analysis - all of these operate on what the other planes produced. They don't make runtime decisions. They interpret results, find patterns, generate insights. This plane can run hours or days after execution completes.
 
-The intelligence plane is *always* post-execution. That's why it's the natural commercial boundary.
+The intelligence plane is always post-execution. That's what makes it the natural commercial boundary. It doesn't participate in control flow, so it can't affect the trustworthiness of the platform. It consumes artifacts that the platform produces, making the separation clean and architectural rather than cosmetic.
 
 ---
 
@@ -190,26 +173,19 @@ What makes this separation work: **a stable artifact schema**.
 
 In your case: the trace format (JSONL with versioned schema).
 
-**Requirements for clean separation:**
+Clean separation requires four properties in your artifact schema.
 
-1. **Schema stability:** Traces have version tags, backward compatibility
-2. **Self-contained:** Trace files include all context needed for analysis
-3. **No callbacks:** Analysis tools can't call back into runtime
-4. **File-based:** Analysis operates on files, not live state
+Schema stability means traces carry version tags and maintain backward compatibility. When you add fields or change formats, old analysis tools still work with new traces. Version negotiation happens at the schema level, not through runtime coupling. This lets the platform evolve its trace format without breaking every analysis tool.
 
-**When you have this:**
-- Platform evolves independently
-- Product evolves independently
-- Boundary never blurs
-- Trust is preserved
+Self-contained artifacts include all context needed for analysis. A trace file shouldn't require lookups to external services or runtime state. Everything an analysis tool needs - timestamps, resource identifiers, operation results, metadata - must be embedded in the artifact. This ensures analysis tools can operate completely offline.
 
-**When you don't:**
-- Analysis needs "just one runtime hook"
-- Platform needs "just one analysis callback"
-- Coupling creeps in
-- Separation collapses
+No callbacks means analysis tools cannot call back into the runtime. They consume artifacts but never invoke platform APIs during analysis. The dependency graph flows one direction: platform produces artifacts, product consumes them. Breaking this rule - adding "just one runtime hook for enrichment" - starts the collapse.
 
-The artifact contract is what prevents decay.
+File-based operation means analysis works on files, not live state. You can tar up a directory of traces, copy it somewhere else, and run all your analysis tools. No network calls to running services, no shared memory, no runtime coordination. The filesystem is the only contract.
+
+When you have these properties, the platform and product evolve independently. Platform developers add trace fields without coordinating with product teams. Product developers build new analysis features without touching platform code. The boundary never blurs because the contract is stable and enforced by the artifact schema. Trust is preserved because users can verify the platform produces artifacts without calling product code.
+
+When you don't have these properties, decay begins immediately. Analysis tools need "just one runtime hook" to get extra context. Platform developers add "just one analysis callback" to enable a product feature. Coupling creeps in through convenience functions and shared state. Eventually the separation becomes cosmetic - different repositories with runtime dependencies between them. The artifact contract is what prevents this decay.
 
 ---
 
@@ -245,33 +221,19 @@ The boundary isn't just technical - it's about trust.
 
 ### Step 1: Identify Execution Window
 
-**Ask:** When does the system need to be alive for this feature to work?
-
-- During test runs → Platform feature
-- During service requests → Platform feature
-- After shutdown, operating on files → Product feature
+Start by asking when the system needs to be alive for this feature to work. If the feature requires services to be running - during test runs, during service requests, while handling authorization checks - it's a platform feature. It depends on execution being active. If the feature operates after shutdown, consuming files that execution produced, it's a product feature. The execution window tells you which side of the boundary the feature belongs on.
 
 ### Step 2: Check Dependencies
 
-**Ask:** Could this run on a different machine with only artifact files?
-
-- Yes → Product boundary
-- No → Platform boundary
+Ask whether this feature could run on a different machine with only artifact files. If you could copy trace files, logs, or results to your laptop and run the feature there - completely disconnected from the original system - it belongs in the product layer. It's decoupled from runtime. If the feature requires live access to running services or runtime state, it belongs in the platform layer. This test reveals whether you've achieved true artifact-based separation.
 
 ### Step 3: Value Timing
 
-**Ask:** When does value increase?
-
-- While running → Platform
-- After running → Product
-- Both → Split into two features
+Ask when value increases. Platform features provide value while the system is running - faster requests, better authorization decisions, clearer runtime logs. Product features provide value after the system stops - accumulated analysis, historical trend reports, insights that span multiple executions. If a feature provides value both during and after execution, that's a signal to split it into two features: one that participates in runtime (platform) and one that analyzes outcomes (product).
 
 ### Step 4: Control Flow
 
-**Ask:** Does this participate in decisions?
-
-- Yes (affects outcomes) → Platform
-- No (analyzes outcomes) → Product
+Ask whether this feature participates in runtime decisions. Does it affect outcomes - authorization results, routing decisions, which services get called? If yes, it's a platform feature. It's part of the control plane and must be trusted. If it only analyzes outcomes - generating reports, suggesting optimizations, finding patterns - it's a product feature. It interprets results but doesn't influence them. Control flow participation is the ultimate test: features that affect execution must stay in the platform.
 
 ---
 
@@ -279,48 +241,21 @@ The boundary isn't just technical - it's about trust.
 
 ### Pattern 1: Emulator + Analysis
 
-**Platform (OSS):**
-- Database emulator
-- Request trace emission
+The platform provides a database emulator that runs queries and emits request traces. These traces capture query patterns, table access, and performance characteristics during execution. This is OSS: the emulator must be trustworthy and the trace format must be stable.
 
-**Product (Commercial):**
-- Query optimizer suggestions
-- Performance reports
-- Migration guides
-
-**Boundary:** Trace schema
-
----
+The product layer analyzes those traces to generate query optimizer suggestions, performance reports, and migration guides. These tools run after the database stops - often as part of CI pipelines or developer workflows. They don't affect query results, so they can be proprietary without eroding platform trust. The boundary is the trace schema: a versioned, stable contract that both sides depend on.
 
 ### Pattern 2: CI System + Intelligence
 
-**Platform (OSS):**
-- Test runner
-- Build system
-- Artifact storage
+The platform runs tests, executes builds, and stores artifacts. The test runner orchestrates execution, the build system compiles code, and artifact storage preserves outputs (logs, results, coverage data). This is compute infrastructure - it must be reliable and fast. OSS ensures transparency and trust.
 
-**Product (Commercial):**
-- Flaky test detection
-- Build time optimization
-- Failure pattern analysis
-
-**Boundary:** Build artifacts (logs, results, metrics)
-
----
+The product layer detects flaky tests, optimizes build times, and analyzes failure patterns. These features operate on build artifacts after execution completes. Flaky test detection accumulates results across multiple runs. Build optimization analyzes historical timing data. Failure pattern analysis correlates errors across test suites. None of these require the CI system to be running. The boundary is build artifacts: logs, test results, timing metrics, and coverage reports.
 
 ### Pattern 3: Runtime + Post-Mortem
 
-**Platform (OSS):**
-- Service mesh
-- Distributed tracing
-- Metric collection
+The platform operates the service mesh, collects distributed traces, and gathers metrics during production traffic. This is runtime observability - it must have minimal overhead and must never drop data. The mesh routes requests, the tracer captures spans, the collector aggregates metrics. This layer stays OSS because it's part of the critical path.
 
-**Product (Commercial):**
-- Root cause analysis
-- Capacity planning
-- Cost optimization
-
-**Boundary:** Observability data
+The product layer performs root cause analysis, capacity planning, and cost optimization. These tools consume observability data after incidents occur or as part of planning cycles. Root cause analysis correlates traces and metrics to explain outages. Capacity planning projects resource needs based on historical patterns. Cost optimization identifies expensive operations and suggests alternatives. The boundary is observability data: traces, metrics, and logs written to storage systems where analysis tools can consume them independently.
 
 ---
 
@@ -328,39 +263,17 @@ The boundary isn't just technical - it's about trust.
 
 Not every project needs this distinction.
 
-**Skip separation when:**
+Skip separation when you're building a single-purpose tool with one clear feature and no obvious follow-ons. If there's no commercial intent and the scope is limited, adding architectural boundaries creates unnecessary complexity. The code stays simpler, the deployment stays simpler, and you avoid premature abstraction.
 
-**1. Single-purpose tool:**
-- One clear feature
-- No obvious follow-ons
-- No commercial intent
+Homogeneous teams with full access don't need trust boundaries. If everyone can see and modify everything, and the team values simplicity over isolation, keeping everything in one repo makes collaboration easier. The overhead of separate repositories and deployment patterns doesn't pay for itself.
 
-**2. Homogeneous team:**
-- Everyone has full access
-- No trust boundaries needed
-- Simplicity > isolation
+Early-stage projects - MVPs and prototypes - shouldn't separate until the architecture settles. When you're still figuring out what the system should do, rigid boundaries slow down iteration. It's premature to split before you understand where the natural seams are. Get the feature working first, then extract boundaries when they become obvious.
 
-**3. Early stage:**
-- MVP / prototype
-- Architecture not settled
-- Premature to split
+Separation matters when you're mixing OSS and commercial code. Users must trust the OSS core, which means they need a clear licensing boundary. Commercial features must be genuinely optional - not feature flags in the OSS codebase, but separate products that consume platform artifacts. This architectural separation preserves trust: users can audit the platform and verify it doesn't contain proprietary dependencies.
 
-**When separation matters:**
+Multiple analysis features sharing a common artifact format signal that a product boundary is emerging. When you find yourself building a second or third tool that operates on the same traces or logs, that's the moment to extract the analysis suite. The shared artifact format becomes the contract, and the product boundary becomes architecturally obvious.
 
-**1. OSS + commercial mix:**
-- Need clear licensing boundary
-- Users must trust OSS core
-- Commercial features are optional
-
-**2. Multiple analysis features:**
-- Shared artifact format
-- Analysis suite emerges
-- Product boundary becomes obvious
-
-**3. Multi-tenant or security-critical:**
-- Trust boundaries are explicit
-- Isolation is architectural
-- Blast radius must be contained
+Multi-tenant or security-critical systems need explicit trust boundaries and architectural isolation. When different teams or customers share infrastructure, blast radius must be contained. Compromising one namespace shouldn't expose another namespace's secrets. Architectural separation enforces isolation that configuration-based approaches can't guarantee.
 
 ---
 
@@ -437,38 +350,11 @@ fmt.Println("pro-suite v1.0.0")
 
 ## Why Most Teams Get This Wrong
 
-**Common mistake 1: Premium features in OSS repo**
+The first common mistake is putting premium features in the OSS repository. Teams create a monorepo with `core/` (OSS), `premium/` (commercial), and `enterprise/` (commercial) directories. This creates mixed licensing within a single codebase. Users who want to audit the OSS portions must read through the entire repository to verify which code paths are actually open source. Boundaries become unclear - does the core call premium code? Are there feature flags gating enterprise features? Trust erodes because the separation is organizational (directories) rather than architectural (separate artifacts and dependencies). Feature flags proliferate as the team tries to conditionally enable premium features, making the codebase harder to reason about and test.
 
-```
-my-oss-tool/
-├── core/           (OSS)
-├── premium/        (Commercial) ← mixed licensing
-└── enterprise/     (Commercial) ← trust erosion
-```
+The second mistake is putting analysis in the runtime hot path. Developers add a configuration flag that enables report generation during execution - something like `if config.EnableAnalysis { generateReport() }` in the request handler. This creates performance coupling: the runtime now carries the weight of analysis code even when it's not needed. Users start questioning whether the analysis code affects runtime behavior, creating trust issues. Architectural debt accumulates as analysis features need more runtime hooks, more shared state, more coupling. What started as "optional analysis" becomes a mandatory dependency that slows down the platform.
 
-Problem: Users must audit entire codebase, unclear boundaries, feature flags everywhere.
-
-**Common mistake 2: Analysis in runtime**
-
-```go
-// In the hot path
-if config.EnableAnalysis {
-    generateReport()  // ← post-execution feature in execution path
-}
-```
-
-Problem: Performance coupling, trust issues, architectural debt.
-
-**Common mistake 3: No artifact contract**
-
-```
-Analysis tool calls back into runtime APIs
-→ Can't run offline
-→ Can't run on different machine
-→ Boundary collapses
-```
-
-Problem: Separation is cosmetic, not architectural.
+The third mistake is having no artifact contract at all. Analysis tools call back into runtime APIs to fetch additional context or enrich data. This prevents offline analysis - you can't run the analysis tool without the platform being alive. You can't run it on a different machine - it needs network access to the original system. The boundary collapses because the separation is only cosmetic: separate repositories or separate binaries, but with runtime dependencies between them. This is the worst outcome because it looks like clean separation from the outside while being fully coupled underneath.
 
 ---
 
@@ -497,27 +383,15 @@ Problem: Separation is cosmetic, not architectural.
 
 ## Testing Your Boundary
 
-Ask these questions about any feature:
+Test any feature against these questions to verify your boundary is clean.
 
-**1. Air-gap test:**
-"Could this run on a different machine with only artifact files?"
-- Yes → Product
-- No → Platform
+The air-gap test asks whether the feature could run on a different machine with only artifact files. Imagine copying traces to a laptop with no network access - no connection to the original cluster, no access to running services. If the feature still works, it's a product feature with proper separation. If it fails because it needs runtime access, it's coupled to the platform and belongs there.
 
-**2. Shutdown test:**
-"If execution stopped forever, could this still produce new value?"
-- Yes → Product
-- No → Platform
+The shutdown test asks whether the feature could produce new value if execution stopped forever. If you captured one final snapshot of traces and then shut down the entire system permanently, could this feature still generate insights, reports, or recommendations? If yes, it's a product feature - its value survives execution. If no, it's a platform feature whose value depends on the system being alive.
 
-**3. Control flow test:**
-"Does this affect runtime decisions or outcomes?"
-- Yes → Platform
-- No → Product
+The control flow test asks whether the feature affects runtime decisions or outcomes. Does it participate in authorization checks, routing logic, or state mutations? Does it influence which operations succeed or fail? If yes, it must be in the platform - it's part of the critical path and must be trusted. If it only observes and analyzes without affecting outcomes, it belongs in the product layer.
 
-**4. Trust test:**
-"If this were proprietary, would users trust the platform?"
-- Yes (independent) → Good separation
-- No (coupled) → Bad separation
+The trust test asks whether users would trust the platform if this feature were proprietary. Imagine the feature is closed-source and licensed. Would OSS users feel comfortable running the platform? If yes, you have good separation - the feature is genuinely independent and optional. If no, the feature is coupled to platform trust and shouldn't be separated. This test catches features that claim to be "analysis only" but actually have hooks into runtime behavior.
 
 ---
 
