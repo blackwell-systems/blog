@@ -28,21 +28,21 @@ enableRobotsTXT = true
 
 [menu]
   [[menu.header]]
-    name = "POSTS"
-    weight = 0
-    url = "/posts"
-  [[menu.header]]
     name = "ABOUT"
-    weight = 1
+    weight = 0
     url = "/about"
   [[menu.header]]
-    name = "CONSULTING"
-    weight = 2
-    url = "/consulting"
+    name = "POSTS"
+    weight = 1
+    url = "/posts"
   [[menu.header]]
     name = "PRODUCTS"
-    weight = 3
+    weight = 2
     url = "/products"
+  [[menu.header]]
+    name = "CONSULTING"
+    weight = 3
+    url = "/consulting"
 
 [markup]
   [markup.highlight]
