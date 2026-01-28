@@ -39,6 +39,10 @@ enableRobotsTXT = true
     name = "CONSULTING"
     weight = 2
     url = "/consulting"
+  [[menu.header]]
+    name = "PRODUCTS"
+    weight = 3
+    url = "/products"
 
 [markup]
   [markup.highlight]
