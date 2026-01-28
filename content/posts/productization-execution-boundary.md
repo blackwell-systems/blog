@@ -384,7 +384,7 @@ least-privilege-generator/
 ### Phase 1: Product Repository
 
 ```
-emulator-pro/
+pro-suite/
 ├── cmd/
 │   └── main.go
 ├── internal/
@@ -397,9 +397,9 @@ emulator-pro/
 
 **Structure:**
 ```bash
-emulator-pro policy generate <trace-file>
-emulator-pro trace summarize <trace-file>
-emulator-pro compliance report <trace-file>
+pro-suite policy generate <trace-file>
+pro-suite trace summarize <trace-file>
+pro-suite compliance report <trace-file>
 ```
 
 One CLI, multiple subcommands, shared infrastructure.
@@ -410,7 +410,7 @@ One CLI, multiple subcommands, shared infrastructure.
 
 **Step 1: Rename repository**
 ```bash
-least-privilege-generator → emulator-pro
+least-privilege-generator → pro-suite
 ```
 
 **Step 2: Reframe as product**
