@@ -1096,8 +1096,6 @@ Kubernetes Secrets are simple and often sufficient. But at scale or in high-secu
 - Operational model (GitOps = declarative, dynamic = runtime)
 - Team preferences (trust cluster RBAC vs trust cloud IAM)
 
-**The key insight:** Understand where secrets live and who controls access. Kubernetes RBAC and cloud IAM are different trust boundaries with different blast radii. Choose the boundary that matches your security posture.
-
 **For most teams:** Start with Kubernetes Secrets. When you outgrow them (scale, security requirements, operational complexity), you'll know it's time to separate compute from state.
 
 **For platform teams:** Offer multiple patterns. Let application teams choose based on their security needs. Static config can live in K8s Secrets while high-security credentials use runtime access.
