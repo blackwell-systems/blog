@@ -31,7 +31,7 @@
     </div>
 
     <div class="filter-stats">
-      <span id="visible-count">{{ len .Paginator.Pages }}</span> of {{ len .Paginator.Pages }} posts on this page
+      <span id="visible-count">{{ len .Paginator.Pages }}</span> of {{ .Paginator.TotalNumberOfElements }} total posts (showing page {{ .Paginator.PageNumber }} of {{ .Paginator.TotalPages }})
     </div>
   </div>
 
