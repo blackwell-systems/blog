@@ -2,7 +2,7 @@
 title: "About"
 date: 2025-12-01
 draft: false
-showReadingTime: false
+showMetadata: false
 ---
 
 **Dayna Blackwell** builds reliable distributed systems at scale.
