@@ -59,6 +59,10 @@ Before exploring the pattern, let's define the core concepts:
 
 **Intelligence Plane** - The layer that analyzes outcomes after execution. Policy generators, compliance reports, performance analyzers, drift detection. This plane operates on artifacts and never participates in runtime decisions. Always post-execution.
 
+**Platform Boundary** - The separation line between runtime features and analysis features. Features on the platform side participate in execution - they affect outcomes, make decisions, or enable the system to run. Features on the product side consume artifacts and provide insights after execution completes.
+
+**Product Boundary** - The point where a feature-scoped repository becomes a product. This happens when multiple analysis features share a common artifact format, signaling that you're building an analysis suite rather than a single tool. The product boundary is where you extract the intelligence plane into its own repository with its own identity.
+
 ---
 
 ## The Execution Boundary
