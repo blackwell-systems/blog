@@ -71,9 +71,9 @@ If its value survives after the system stops, it belongs in the product.
 Let's apply this:
 
 **Tracing (platform feature):**
-- Provides value *during* execution
-- Used to understand failures as they happen
-- Stops producing value when execution stops
+- Collected *during* execution
+- Primary value is explaining runtime behavior
+- Produced as a platform responsibility
 - **Belongs in:** OSS platform
 
 **Policy generation (product feature):**
@@ -427,7 +427,7 @@ mv cmd/generate cmd/policy
 **Step 4: Update binary name**
 ```go
 // main.go
-fmt.Println("gcp-emulator-pro v1.0.0")
+fmt.Println("pro-suite v1.0.0")
 // Subcommands: policy, trace, compliance
 ```
 
@@ -549,7 +549,7 @@ When you see a feature that provides more value after execution completes, you'v
 
 ## Further Reading
 
-**Platform Engineering:** [Kubernetes Architecture](https://kubernetes.io/docs/concepts/architecture/), [HashiCorp's Open Source Strategy](https://www.hashicorp.com/resources)
+**Platform Engineering:** [Kubernetes Architecture](https://kubernetes.io/docs/concepts/architecture/), [Terraform State and Plans](https://developer.hashicorp.com/terraform/language/state)
 
 **Compiler Design:** [Engineering a Compiler](https://www.elsevier.com/books/engineering-a-compiler/cooper/978-0-12-088478-0), [LLVM Architecture](https://llvm.org/docs/)
 
