@@ -290,6 +290,8 @@ Secrets are fetched when needed, not stored for later.
 
 Applications can't call AWS/GCP/Azure APIs directly (requires SDK, authentication, backend-specific logic). Instead, run a sidecar container that provides an HTTP API for secret access.
 
+This is where a runtime API server becomes necessary. The examples below use [vaultmux-server](https://github.com/blackwell-systems/vaultmux-server), which wraps the vaultmux library to provide a unified HTTP interface for AWS Secrets Manager, GCP Secret Manager, and Azure Key Vault. The pattern works with any similar implementation.
+
 **Deployment:**
 ```yaml
 apiVersion: apps/v1
@@ -779,28 +781,9 @@ flowchart TD
 
 ---
 
-## Implementation: vaultmux-server
+## Runtime Pattern Implementation Details
 
-The patterns described above are architectural - let's examine a concrete implementation of the runtime API pattern.
-
-{{< callout type="info" >}}
-**Open Source Implementation**
-
-The examples below use [vaultmux-server](https://github.com/blackwell-systems/vaultmux-server), an open-source HTTP API I built for the runtime pattern. It wraps the vaultmux library to enable polyglot secret access without language-specific SDKs. You can use it as-is or adapt the pattern for your own implementation.
-{{< /callout >}}
-
-### What vaultmux-server Does
-
-vaultmux-server is an HTTP API that wraps the vaultmux library (unified Go interface for multiple secret backends). It enables polyglot Kubernetes environments to fetch secrets without language-specific SDKs.
-
-**Supported backends:**
-- AWS Secrets Manager
-- GCP Secret Manager
-- Azure Key Vault
-
-**Deployment patterns:**
-- Sidecar (recommended for multi-tenant)
-- Shared service (for dev/test or single-tenant)
+The runtime pattern requires an HTTP API server that applications can call. This server handles the complexity of authenticating with different cloud providers and fetching secrets on demand.
 
 ### Example: Multi-Tenant Production Deployment
 
@@ -960,11 +943,13 @@ env:
 
 Application code unchanged. Backend configuration determines where secrets come from.
 
-### Why Not a Kubernetes Operator?
+This flexibility is what makes the runtime pattern portable across environments. The same application code works in development (using local pass), staging (using GCP), and production (using AWS) - only the backend configuration changes.
 
-vaultmux-server is intentionally not an operator. Operators inject external state into the Kubernetes control plane - data lives in etcd, operators reconcile it.
+### Why Runtime APIs Instead of Operators?
 
-Runtime APIs take the opposite approach: keep secrets outside cluster state entirely. Kubernetes is just one runtime they can work in (VMs, CI, local development), not the system of record.
+Runtime API servers like vaultmux-server are intentionally not operators. Operators inject external state into the Kubernetes control plane - data lives in etcd, operators reconcile it.
+
+Runtime APIs take the opposite approach: keep secrets outside cluster state entirely. Kubernetes becomes just one runtime among many (VMs, CI, local development), not the system of record.
 
 **The architectural difference:**
 
