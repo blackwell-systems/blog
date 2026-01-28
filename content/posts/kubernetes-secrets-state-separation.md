@@ -781,6 +781,12 @@ flowchart TD
 
 The patterns described above are architectural - let's examine a concrete implementation of the runtime API pattern.
 
+{{< callout type="info" >}}
+**Open Source Implementation**
+
+The examples below use [vaultmux-server](https://github.com/blackwell-systems/vaultmux-server), an open-source HTTP API I built for the runtime pattern. It wraps the vaultmux library to enable polyglot secret access without language-specific SDKs. You can use it as-is or adapt the pattern for your own implementation.
+{{< /callout >}}
+
 ### What vaultmux-server Does
 
 vaultmux-server is an HTTP API that wraps the vaultmux library (unified Go interface for multiple secret backends). It enables polyglot Kubernetes environments to fetch secrets without language-specific SDKs.
