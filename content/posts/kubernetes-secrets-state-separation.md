@@ -110,7 +110,7 @@ flowchart LR
 
 ### What You're Depending On
 
-When you use Kubernetes Secrets, you're depending on etcd security (encryption at rest, network encryption, access controls), cluster RBAC policies (who can `get` secrets, namespace isolation), and operational procedures (rotation, backup security, cluster migrations that include secrets). Your security posture is tied to cluster security posture.
+When you use Kubernetes Secrets, you're depending on etcd security (encryption at rest, network encryption, access controls), cluster RBAC policies (who can `get` secrets, namespace isolation), and operational procedures (rotation, backup security, cluster migrations that include secrets). **Your security posture is tied to cluster security posture.**
 
 ### When This Works Well
 
@@ -242,7 +242,9 @@ This is powerful for Kubernetes-native resources (Deployments, Services). But fo
 - etcd becomes secret storage (even if "just a cache")
 - Control plane is now coupled to secret lifecycle
 
+{{< callout type="warning" >}}
 **The consequence:** Your cluster isn't just compute anymore. It's compute + secret storage + secret sync orchestration.
+{{< /callout >}}
 
 For some teams, this is fine. For others, it feels wrong - why should the cluster be involved in secret storage at all?
 
