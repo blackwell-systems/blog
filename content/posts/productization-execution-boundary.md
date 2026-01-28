@@ -24,9 +24,9 @@ That boundary determines everything.
 
 ## The Problem: When Naming Stops Working
 
-You're building a least-privilege policy generator. It analyzes trace files from GCP IAM emulator runs and generates minimal IAM policies.
+You're building a least-privilege policy generator. It analyzes trace files from emulator runs and generates minimal IAM policies. The specific domain doesn't matter - the same pattern appears in databases, CI systems, and compilers.
 
-The repo is named `gcp-least-privilege-policy-generator`. Clear scope, obvious purpose.
+The repo is named after the feature: `least-privilege-generator`. Clear scope, obvious purpose.
 
 Then you realize:
 - The trace format is stable
@@ -47,12 +47,7 @@ Here's the pattern that resolves the confusion:
 
 **Execution** = the period when the system is alive, making decisions, affecting outcomes.
 
-For a testing/emulator system:
-- Services are running
-- Requests are flowing
-- Authorization decisions are being made
-- Tests are executing
-- State is mutating
+For a testing/emulator system, execution means services are running, requests are flowing, authorization decisions are being made, tests are executing, and state is mutating. For a database, it's queries running and transactions committing. For a CI system, it's builds executing and tests running. The specific domain doesn't matter - the pattern is the same.
 
 **Execution ends when:**
 - The test run finishes
@@ -374,7 +369,7 @@ Not every project needs this distinction.
 ### Phase 0: Feature Repository
 
 ```
-gcp-least-privilege-policy-generator/
+least-privilege-generator/
 ├── cmd/generate/
 ├── internal/parser/
 └── README.md
@@ -389,7 +384,7 @@ gcp-least-privilege-policy-generator/
 ### Phase 1: Product Repository
 
 ```
-gcp-emulator-pro/
+emulator-pro/
 ├── cmd/
 │   └── main.go
 ├── internal/
@@ -402,9 +397,9 @@ gcp-emulator-pro/
 
 **Structure:**
 ```bash
-gcp-emulator-pro policy generate <trace-file>
-gcp-emulator-pro trace summarize <trace-file>
-gcp-emulator-pro compliance report <trace-file>
+emulator-pro policy generate <trace-file>
+emulator-pro trace summarize <trace-file>
+emulator-pro compliance report <trace-file>
 ```
 
 One CLI, multiple subcommands, shared infrastructure.
@@ -415,11 +410,11 @@ One CLI, multiple subcommands, shared infrastructure.
 
 **Step 1: Rename repository**
 ```bash
-gcp-least-privilege-policy-generator → gcp-emulator-pro
+least-privilege-generator → emulator-pro
 ```
 
 **Step 2: Reframe as product**
-- README: "Analysis suite for GCP emulator traces"
+- README: "Analysis suite for emulator traces"
 - Not: "Policy generator"
 
 **Step 3: Restructure (minimal):**
