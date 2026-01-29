@@ -250,13 +250,28 @@ main table th:first-child {
 /* Ensure code blocks are not affected */
 pre table,
 code table,
-pre code table {
+pre code table,
+.highlight table,
+div[class*="highlight"] table,
+.chroma table {
   all: revert !important;
+  width: auto !important;
+  margin: 0 !important;
 }
 
 pre table td,
 code table td,
-pre code table td {
+pre code table td,
+.highlight table td,
+div[class*="highlight"] table td,
+.chroma table td,
+pre table th,
+code table th,
+pre code table th,
+.highlight table th,
+div[class*="highlight"] table th,
+.chroma table th {
   padding: 0 !important;
   border: none !important;
+  background: none !important;
 }
