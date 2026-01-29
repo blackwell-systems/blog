@@ -1,7 +1,7 @@
 ---
 title: "Artifact-Boundary Productization: Clean OSS/Commercial Separation"
 date: 2026-01-28
-draft: false
+draft: true
 tags: ["architecture", "product-design", "open-source", "platform-engineering", "software-design", "boundaries", "separation-of-concerns", "tooling", "devtools", "infrastructure", "oss", "commercial", "licensing", "control-plane", "intelligence-plane", "observability", "tracing", "analysis", "artifacts"]
 categories: ["architecture", "product-design"]
 description: "Understanding the execution boundary: why features that provide value after the system stops belong in products, not platforms. A framework for clean OSS/commercial separation."
