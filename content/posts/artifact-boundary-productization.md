@@ -429,34 +429,6 @@ One CLI, multiple subcommands, shared infrastructure.
 
 ---
 
-## The Migration Path (Zero Drama)
-
-**Step 1: Rename repository**
-```bash
-least-privilege-generator → pro-suite
-```
-
-**Step 2: Reframe as product**
-- README: "Analysis suite for execution traces"
-- Not: "Policy generator"
-
-**Step 3: Restructure (minimal):**
-```bash
-mkdir internal/policygen
-mv internal/parser internal/policygen/
-mv cmd/generate cmd/policy
-```
-
-**Step 4: Update binary name**
-```go
-// main.go
-fmt.Println("pro-suite v1.0.0")
-// Subcommands: policy, trace, compliance
-```
-
-**Impact:** You've promoted a feature into a product. Future features slot in naturally.
-
----
 
 ## When Teams Violate the Execution Boundary
 
