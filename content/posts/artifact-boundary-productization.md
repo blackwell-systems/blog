@@ -2,10 +2,10 @@
 title: "Artifact-Boundary Productization: Clean OSS/Commercial Separation"
 date: 2026-01-28
 draft: false
-tags: ["architecture", "product-design", "open-source", "platform-engineering", "software-design", "boundaries", "separation-of-concerns", "tooling", "devtools", "infrastructure", "oss", "commercial", "licensing", "control-plane", "intelligence-plane", "observability", "tracing", "analysis", "artifacts"]
+tags: ["architecture", "product-design", "product-engineering", "product-development", "open-source", "platform-engineering", "software-design", "boundaries", "separation-of-concerns", "tooling", "devtools", "infrastructure", "oss", "commercial", "licensing", "control-plane", "intelligence-plane", "observability", "tracing", "analysis", "artifacts"]
 categories: ["architecture", "product-design"]
 description: "Understanding the execution boundary: why features that provide value after the system stops belong in products, not platforms. A framework for clean OSS/commercial separation."
-summary: "Most teams blur the line between platform features and analysis tools. Understanding the execution boundary - when the system is alive vs when it's stopped - reveals a clean separation: runtime features stay OSS, post-execution analysis becomes the product."
+summary: "The execution boundary determines everything: features that need the system alive belong in the platform (OSS). Features that analyze artifacts after shutdown become the product (commercial). A framework for clean OSS/commercial separation."
 ---
 
 {{< callout type="info" >}}
