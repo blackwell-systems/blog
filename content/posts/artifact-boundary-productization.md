@@ -557,7 +557,7 @@ Imagine the feature is closed-source and licensed. Would OSS users feel comforta
 
 ## Conclusion
 
-The execution boundary is the line between making decisions and analyzing them.
+The artifact boundary is the line between making decisions and analyzing them.
 
 Platform features participate in control flow. They must be fast, trusted, and deterministic. They provide value while the system is alive.
 
@@ -573,9 +573,9 @@ If its value survives after the system stops, it belongs in the product.
 
 This isn't just about OSS vs commercial licensing. It's about clean architecture: separate observation from control, analysis from enforcement, interpretation from execution.
 
-Most teams blur this boundary and end up with premium logging, gated debuggers, and licensed enforcement paths. That creates trust erosion and architectural debt.
+When teams blur this boundary, they end up with premium logging, gated debuggers, and licensed enforcement paths. That creates trust erosion and architectural debt.
 
-The execution boundary prevents that. It's not just cleaner code - it's a different trust model.
+The artifact boundary prevents that. It's not just cleaner code - it's a different trust model.
 
 Every system eventually produces artifacts.
 
