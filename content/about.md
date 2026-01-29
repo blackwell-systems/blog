@@ -17,7 +17,7 @@ The tech stack spans AWS (Lambda, EventBridge, DynamoDB, Step Functions, ECR, VP
 
 ## What I Write About
 
-This blog provides comprehensive technical deep-dives into programming language fundamentals and distributed systems architecture. I write to build strong mental models - the kind you can't get from framework documentation or tutorials. When you understand *why* Go chose value semantics, or *why* multicore CPUs exposed OOP's flaws, you're not just learning syntax - you're understanding fundamental tradeoffs that apply across all languages and systems.
+This blog provides comprehensive technical deep-dives into programming language fundamentals and distributed systems architecture. I write to build strong mental models - the kind you can't get from framework documentation or tutorials.
 
 **Language Design & Mental Models:**
 - Value semantics vs reference semantics (Go, Rust vs Python, Java)
