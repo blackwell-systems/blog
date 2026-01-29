@@ -7,6 +7,12 @@ body {
   background-attachment: fixed;
 }
 
+/* Navigation spacing */
+.headerMenu a {
+  margin-left: 2rem !important;
+  margin-right: 2rem !important;
+}
+
 /* Left-align post titles within their centered containers */
 .postTitle {
   text-align: left !important;
