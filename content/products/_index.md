@@ -73,18 +73,5 @@ gcp-emulator-pro is the intelligence layer. It consumes authorization traces pro
 
 ---
 
-## Why This Architecture?
-
-The execution boundary creates a clean trust model:
-
-- **OSS emulators** run your tests, make authorization decisions, emit traces. They're trusted, transparent, and required for execution.
-- **gcp-emulator-pro** analyzes traces after execution completes. It's optional, offline, and never affects runtime behavior.
-
-This separation preserves trust: you can audit the OSS platform and verify it doesn't depend on proprietary code. The commercial layer is purely analytical.
-
-[Read: The Execution Boundary](/posts/productization-execution-boundary/)
-
----
-
 **Blackwell Systems**  
 Builders of open, trustworthy infrastructure tooling.
