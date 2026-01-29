@@ -151,13 +151,19 @@ If its value survives after the system stops, it belongs in the product.
 
 Let's apply this:
 
-Consider tracing as a platform feature. Traces are collected while the system runs - during service requests, authorization checks, and state mutations. Their primary value is explaining what happened in that specific execution window. When services shut down, trace collection stops. This is a platform responsibility: the runtime must emit structured data about its decisions. Tracing belongs in the OSS platform because it's inseparable from execution.
+**Tracing** is a platform feature. Traces are collected while the system runs - during service requests, authorization checks, and state mutations. Their primary value is explaining what happened in that specific execution window. When services shut down, trace collection stops. 
 
-Policy generation, by contrast, is a product feature. It requires execution to have already completed. The policy generator operates on trace artifacts - files written to disk that survive after services stop. You can run policy generation tomorrow, on a different machine, using last week's traces. Value actually increases with accumulated traces: more execution history produces better policies. This post-execution nature makes it a commercial product boundary.
+This is a platform responsibility: the runtime must emit structured data about its decisions. Tracing belongs in the OSS platform because it's inseparable from execution.
 
-Debug logging follows the platform pattern. It records runtime behavior - function calls, decision branches, state transitions. The logs explain control flow while it's happening. Once execution ends, debug logging stops producing value. Like tracing, it's tied to the execution window and belongs in the OSS platform.
+**Policy generation**, by contrast, is a product feature. It requires execution to have already completed. The policy generator operates on trace artifacts - files written to disk that survive after services stop. 
 
-Compliance reports show the product pattern. They aggregate outcomes after execution completes - summarizing which permissions were used, which services were called, which policies would grant least privilege. These reports are used for review and audit, typically generated in a separate CI step after tests finish. They don't need the system to be alive. Compliance reports belong in the commercial product.
+You can run policy generation tomorrow, on a different machine, using last week's traces. Value actually increases with accumulated traces: more execution history produces better policies. This post-execution nature makes it a commercial product boundary.
+
+**Debug logging** follows the platform pattern. It records runtime behavior - function calls, decision branches, state transitions. The logs explain control flow while it's happening. Once execution ends, debug logging stops producing value. Like tracing, it's tied to the execution window and belongs in the OSS platform.
+
+**Compliance reports** show the product pattern. They aggregate outcomes after execution completes - summarizing which permissions were used, which services were called, which policies would grant least privilege. 
+
+These reports are used for review and audit, typically generated in a separate CI step after tests finish. They don't need the system to be alive. Compliance reports belong in the commercial product.
 
 ---
 
