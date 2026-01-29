@@ -59,9 +59,9 @@ Before exploring the pattern, let's define the core concepts:
 
 **Artifacts** - Stable outputs produced during execution. Logs, traces, test results, build outputs. These files survive after the system stops and serve as the contract between platform and product.
 
-**Data Plane** - The layer that does the actual work. Runs services, processes requests, executes business logic. In an emulator system, this is the service emulators (Secret Manager, KMS, Pub/Sub). In a database, it's the query engine. Pure execution with no governance logic.
+**Data Plane** - The layer that does the actual work. Runs services, processes requests, executes business logic. In a distributed system, this is the application services. In a database, it's the query engine. Pure execution with no governance logic.
 
-**Control Plane** - The layer that makes runtime decisions. Authorization, routing, policy enforcement, resource allocation. In Kubernetes, this is the API server and scheduler. In an emulator system, it's the IAM emulator and auth proxies. These components affect whether operations succeed or fail.
+**Control Plane** - The layer that makes runtime decisions. Authorization, routing, policy enforcement, resource allocation. In Kubernetes, this is the API server and scheduler. In a distributed system, it's the auth service and API gateway. These components affect whether operations succeed or fail.
 
 **Intelligence Plane** - The layer that analyzes outcomes after execution. Policy generators, compliance reports, performance analyzers, drift detection. This plane operates on artifacts and never participates in runtime decisions. Always post-execution.
 
@@ -120,7 +120,7 @@ Here's the pattern that resolves the confusion:
 
 This is the architectural moment that triggers artifact-boundary productization.
 
-For a testing/emulator system, execution means services are running, requests are flowing, authorization decisions are being made, tests are executing, and state is mutating. For a database, it's queries running and transactions committing. For a CI system, it's builds executing and tests running.
+For a distributed system, execution means services are running, requests are flowing, authorization decisions are being made, and state is mutating. For a database, it's queries running and transactions committing. For a CI system, it's builds executing and tests running.
 
 **Execution ends when:**
 - The test run finishes
@@ -174,12 +174,12 @@ Systems naturally decompose into three layers:
 {{< mermaid >}}
 flowchart TB
     subgraph data["Data Plane"]
-        services[Service Emulators<br/>Secret Manager, KMS, Pub/Sub]
+        services[Application Services<br/>API, Storage, Messaging]
     end
     
     subgraph control["Control Plane"]
-        iam[IAM Emulator]
-        proxy[Auth Proxy]
+        auth[Auth Service]
+        proxy[API Gateway]
         cli[Control CLI]
     end
     
@@ -204,7 +204,7 @@ It's pure execution.
 
 **The control plane** makes decisions. It handles authorization, routing, policy enforcement - all the runtime governance that affects whether operations succeed or fail. 
 
-The IAM emulator sits here, along with auth proxies and control CLIs. These components participate in control flow: they affect outcomes while the system is alive.
+The auth service sits here, along with API gateways and control CLIs. These components participate in control flow: they affect outcomes while the system is alive.
 
 **The intelligence plane** analyzes outcomes. Policy generators, trace diff tools, compliance reports, drift analysis - all of these operate on what the other planes produced. They don't make runtime decisions. They interpret results, find patterns, generate insights. 
 
@@ -241,7 +241,7 @@ Analysis tools:
 ```
 Test execution (runtime)
     ↓
-Emulator + tracer → produces trace files
+Runtime + tracer → produces trace files
     ↓
 Trace files (artifacts)
     ↓
@@ -299,7 +299,7 @@ Why separation matters for OSS/commercial splits:
 "I can run the entire platform without touching proprietary code."
 
 **With clean separation:**
-- Emulators: OSS
+- Platform runtime: OSS
 - Trace emission: OSS
 - Policy generator: Commercial (optional)
 
@@ -436,7 +436,7 @@ least-privilege-generator → pro-suite
 ```
 
 **Step 2: Reframe as product**
-- README: "Analysis suite for emulator traces"
+- README: "Analysis suite for execution traces"
 - Not: "Policy generator"
 
 **Step 3: Restructure (minimal):**
