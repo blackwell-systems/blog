@@ -57,9 +57,10 @@ This document describes the infrastructure and tooling that powers the Blackwell
 
 **Root domain (blackwell-systems.com):**
 - Type: A Record
-- Value: `192.0.2.1`
+- Value: `192.0.2.1` (dummy origin)
 - Proxy: Enabled (orange cloud)
-- Note: Dummy IP, likely used with Cloudflare Worker/redirect
+- Purpose: Edge-only redirect topology (never hits origin)
+- Redirects: Cloudflare Redirect Rules route all traffic to blog subdomain
 
 **Blog subdomain (blog.blackwell-systems.com):**
 - Type: CNAME
@@ -68,9 +69,29 @@ This document describes the infrastructure and tooling that powers the Blackwell
 - Target: GitHub Pages
 
 **Proxy status (orange cloud):**
-- Traffic routes through Cloudflare
-- Provides: DDOS protection, SSL/HTTPS, CDN caching, Cloudflare Workers capability
+- Traffic routes through Cloudflare edge
+- Provides: DDOS protection, SSL/HTTPS, CDN caching, Redirect Rules
 - Masks origin server IP
+
+**Cloudflare Redirect Rules:**
+
+Rule 1 - OSS namespace passthrough (301):
+```
+When: (http.host eq "blackwell-systems.com" and
+       (http.request.uri.path eq "/oss" or
+        starts_with(http.request.uri.path, "/oss/")))
+Then: concat("https://blog.blackwell-systems.com", http.request.uri.path)
+```
+- Preserves `/oss` and `/oss/*` paths
+- Query strings preserved
+
+Rule 2 - Catch-all fallback (301):
+```
+When: (http.host eq "blackwell-systems.com")
+Then: https://blog.blackwell-systems.com/
+```
+- Redirects all other traffic to blog root
+- Prevents origin 522 errors (redirect-only domain)
 
 ### Email (Zoho Mail)
 
@@ -245,6 +266,7 @@ Content here
 - Global CDN
 - DNS management
 - Email configuration
+- Redirect Rules (edge routing without origin)
 
 **GitHub Pages advantages:**
 - Free for public repos
@@ -268,6 +290,27 @@ Content here
 | **Content** | Markdown | Posts, pages, products |
 | **Diagrams** | Mermaid.js | Architecture diagrams |
 | **Version Control** | Git + GitHub | Source control |
+
+---
+
+## Total Cost
+
+**One-time:**
+- Domain registration: $10/year (Cloudflare)
+
+**Recurring:**
+- Email (Zoho Mail): $1/month
+
+**Zero cost:**
+- Hosting (GitHub Pages): Free
+- CDN/HTTPS (Cloudflare): Free
+- DNS (Cloudflare): Free
+- CI/CD (GitHub Actions): Free
+- SSL certificates: Free
+
+**Total: $22/year ($10 domain + $12 email)**
+
+No hosting costs, no variable costs, no bandwidth charges.
 
 ---
 
