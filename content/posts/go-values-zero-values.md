@@ -195,9 +195,32 @@ The method can be called on nil. The method checks if the receiver is nil and ha
 
 **Value semantics vs reference semantics:**
 
-The nil distinction maps to Go's deeper type system. Types like int, bool, string, and structs use **value semantics** - variables hold the value directly. These types are never nil because the variable *is* the value.
+The nil distinction maps to Go's deeper type system, which divides types into two categories based on how assignment and copying work.
 
-Types like pointers, slices, maps, channels, and interfaces use **reference semantics** - variables hold references to underlying storage. These types can be nil because the reference can point to nothing. But unlike Java (where everything is a reference) or Python (where everything is a reference to an object), Go makes the distinction explicit in the type system.
+**Value semantics:** When you assign or pass a variable, you copy the entire value. The variable contains the data directly, not a reference to data stored elsewhere. Modifying the copy doesn't affect the original because they're independent values occupying separate memory.
+
+```go
+type Point struct { X, Y int }
+p1 := Point{X: 1, Y: 2}
+p2 := p1  // Copies the entire struct
+p2.X = 10
+fmt.Println(p1.X)  // Still 1 (independent copy)
+```
+
+Types with value semantics: int, bool, string, arrays, structs. These are never nil - the variable *is* the value, not a reference to the value.
+
+**Reference semantics:** When you assign or pass a variable, you copy a reference (pointer) to shared underlying storage. Multiple variables can reference the same underlying data. Modifying through one reference affects all references because they point to the same storage.
+
+```go
+s1 := []int{1, 2, 3}
+s2 := s1  // Copies the slice header (pointer to backing array)
+s2[0] = 10
+fmt.Println(s1[0])  // Now 10 (shared backing array)
+```
+
+Types with reference semantics: pointers, slices, maps, channels, interfaces, functions. These can be nil because the reference can point to nothing (no underlying storage allocated yet).
+
+Go makes this distinction explicit in the type system. Unlike Java (where everything is a reference) or Python (where everything is a reference to an object), Go's type tells you whether assignment copies the value or copies a reference. This clarity eliminates entire classes of bugs around unexpected sharing.
 
 **The design choice:**
 
