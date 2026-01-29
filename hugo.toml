@@ -16,7 +16,7 @@ enableRobotsTXT = true
   description = 'Technical writing on developer tools, automation, and systems programming'
   github = 'blackwell-systems'
   keywords = ['blackdot', 'dotfiles', 'claude code', 'developer tools', 'secret management', 'go', 'shell scripting', 'automation']
-  showTags = true
+  showTags = false  # Hide tags on individual post pages
   showRelated = true
   footerHtml = '© 2026 Blackwell Systems'
 
