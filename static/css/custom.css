@@ -7,10 +7,17 @@ body {
   background-attachment: fixed;
 }
 
-/* Navigation spacing */
+/* Navigation spacing and separators */
 .headerMenu a {
-  margin-left: 2rem !important;
-  margin-right: 2rem !important;
+  margin-left: 1.5rem !important;
+  margin-right: 1.5rem !important;
+  padding-left: 1.5rem !important;
+  border-left: 1px solid rgba(107, 114, 128, 0.3) !important;
+}
+
+.headerMenu a:first-child {
+  border-left: none !important;
+  padding-left: 0 !important;
 }
 
 /* Left-align post titles within their centered containers */
