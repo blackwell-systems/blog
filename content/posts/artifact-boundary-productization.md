@@ -30,22 +30,19 @@ That boundary determines everything.
 
 ## When Naming Stops Working
 
-You're building an analysis tool. It consumes artifacts produced during system execution and generates insights. The specific domain doesn't matter - this pattern appears everywhere: databases, CI systems, observability platforms, compilers, test frameworks.
+You start with a feature. An analysis tool that consumes artifacts produced during system execution and generates insights. The repo is named after what it does. Clear scope, obvious purpose.
 
-The repo is named after the feature because you started with the feature in mind. The feature matured. Its potential became clear and it outgrew its previous domain boundary. Furthermore, it began crossing over from feature into product.
+The feature matures. You realize the trace format is stable. Multiple analysis features become obvious - summarization, diffing, compliance reports. This isn't one tool anymore. It's becoming an analysis suite.
+
+Suddenly the repo name feels wrong.
+
+The feature outgrew its domain boundary. It crossed from feature into product. You're no longer building a tool that does one thing. You're building a product that happens to have one feature as its entry point.
+
+The repo boundary wasn't wrong when you started. It's wrong *now* because the architecture evolved.
 
 **The feature/product boundary seems obvious in retrospect.** But this clarity is the result of post-hoc analysis - a huge amount of thought and organizational work went into preparing and protecting that boundary. It's a case of expertise being mistaken for simplicity.
 
-Then you realize:
-- The trace format is stable
-- Multiple analysis features are obvious (summarization, diffing, compliance reports)
-- This isn't "a feature" anymore - it's an analysis suite
-
-Suddenly the repo name feels wrong. But why?
-
-You're no longer building a feature. You're building a product that happens to have one feature as its entry point.
-
-The repo boundary wasn't wrong when you started. It's wrong *now* because the architecture evolved.
+The specific domain doesn't matter - this pattern appears everywhere: databases, CI systems, observability platforms, compilers, test frameworks.
 
 ---
 
