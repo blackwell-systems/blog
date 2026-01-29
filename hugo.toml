@@ -40,8 +40,12 @@ enableRobotsTXT = true
     weight = 2
     url = "/products"
   [[menu.header]]
-    name = "CONSULTING"
+    name = "OPEN SOURCE SOFTWARE"
     weight = 3
+    url = "/oss"
+  [[menu.header]]
+    name = "CONSULTING"
+    weight = 4
     url = "/consulting"
 
 [markup]
