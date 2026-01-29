@@ -61,7 +61,7 @@ gcp-emulator-pro is the intelligence layer. It consumes authorization traces pro
 ### Architecture Fit
 
 | Layer | Role | License |
-| --- | --- | --- |
+|-------|------|---------|
 | **Data Plane** | GCP service emulation | Open Source |
 | **Control Plane** | Authorization decisions & trace emission | Open Source |
 | **Intelligence Plane** | Post-execution analysis & insight | **Commercial** |
