@@ -54,7 +54,7 @@ In Go, declaration creates a value. When you write `var x int`, you don't get an
 
 Every type in Go has a zero value - the state a variable holds from the moment it's declared. No null, no undefined, no uninitialized memory. Declaration equals instantiation.
 
-This simple design choice eliminates entire classes of bugs and enables API designs impossible in languages where variables can be uninitialized or null.
+This simple design choice removes entire classes of null-related runtime failures and enables API designs impossible in languages where variables can be uninitialized or null.
 {{< /callout >}}
 
 ---
@@ -97,10 +97,10 @@ void method() {
 ```
 
 {{< callout type="info" >}}
-**The key distinction:** Go has no concept of "uninitialized variables." Declaration creates a value in memory. The zero value IS the value, not a placeholder for a future value.
+**The key distinction:** In Go, `var` is itself an initialization. Local variables must still be definitely assigned along all control paths - but the `var` form guarantees that assignment happens at declaration. The zero value IS the value, not a placeholder for a future value.
 {{< /callout >}}
 
-### The Nil Paradox: Valid by Default?
+### The Nil Paradox: How "Valid" Still Includes nil
 
 **Wait - if Go is "valid by default," why does `nil` exist?**
 
@@ -136,15 +136,15 @@ NullPointerException is the most common production error in Java. Every null ref
 - Nil maps can be read (returns zero value) but not written to
 - Methods can be called on nil receivers (if the method handles it)
 
-In Go, collections (slices, maps) can be nil and still safely queried. In Java, any operation on a null collection crashes. This eliminates the majority of null-related production errors.
+In Go, collections (slices, maps) can be nil and still safely queried. In Java, any operation on a null collection crashes. This removes entire classes of null-related runtime failures.
 
-**"Valid by default" means:** Every declared variable can be safely used in some way. For value types (int, bool, string, struct), all operations work. For types with nil zero values (pointers, slices, maps, channels), read operations work - only mutation requires initialization.
+Because declaration equals initialization, every variable can be safely used from the moment it's declared. Value types support all operations. Types with nil zero values support read operations - only mutation requires explicit initialization.
 
 ## What Are Zero Values?
 
-**Zero value** is the value a variable holds from the moment it's declared. It's not "default" or "initial" - it's simply what the value IS until you assign something else.
+Because declaration equals initialization, every type needs a concrete value to hold at the moment of declaration. This is the **zero value**.
 
-For most types, the zero value supports all operations. For types whose zero value is `nil` (pointers, slices, maps, channels, interfaces, functions), read operations work but write operations may require initialization.
+For most types, zero values support all operations. For types with `nil` as their zero value (pointers, slices, maps, channels, interfaces, functions), read operations work but writes may require explicit initialization.
 
 ### Built-in Types
 
@@ -158,7 +158,7 @@ For most types, the zero value supports all operations. For types whose zero val
 | `pointer` | `nil` | Safe to check, unsafe to dereference |
 | `slice` | `nil` | Safe to read (length 0), can append |
 | `map` | `nil` | Safe to read, must initialize to write |
-| `channel` | `nil` | Blocks forever on operations |
+| `channel` | `nil` | Blocks forever on send/receive; `close(nil)` panics |
 | `interface` | `nil` | Safe to check, unsafe to call methods |
 | `function` | `nil` | Safe to check, unsafe to call |
 
@@ -297,7 +297,7 @@ fmt.Println(strings.ToUpper(name))  // "" (works fine, no panic)
 // No nil checks needed for value types
 ```
 
-**The pattern:** Some types have `nil` as their zero value: pointers, slices, maps, channels, interfaces, and functions. Other types (int, bool, string, structs) are never nil - they always have concrete zero values.
+Because declaration equals initialization, value types like int, bool, string, and structs are never nil - they hold concrete zero values from the moment they're declared.
 
 ### 2. Simpler Struct Initialization
 
@@ -669,7 +669,13 @@ String name = "";
 
 ## When Zero Values Don't Suffice
 
-Not all types can be useful with zero values:
+Zero values work when the default state is genuinely useful - an empty string, a count of zero, an unlocked mutex. But not all types have a meaningful default. Some types exist to wrap external resources (database connections, file handles). Others represent domain concepts that require specific values to be valid (email addresses, API keys). Still others need configuration before they can do anything useful (HTTP clients, loggers).
+
+For these types, the zero value exists but isn't usable. An HTTP client with no endpoint can't make requests. A database wrapper with no connection can't query. An email address that's an empty string violates business logic.
+
+When zero values don't suffice, Go provides constructors - functions (typically named `New*`) that return properly initialized values. This preserves Go's zero value model while acknowledging that some types need explicit setup.
+
+The decision comes down to: **Can this type do something useful with all fields set to their zero values?** If yes, make it work. If no, require a constructor.
 
 ### Requires Configuration
 
