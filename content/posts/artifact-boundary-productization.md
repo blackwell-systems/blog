@@ -211,7 +211,9 @@ The auth service sits here, along with API gateways and control CLIs. These comp
 
 This plane can run hours or days after execution completes.
 
+{{< callout type="info" >}}
 The intelligence plane is always post-execution. That's what makes it the natural commercial boundary. It doesn't participate in control flow, so it can't affect the trustworthiness of the platform. It consumes artifacts that the platform produces, making the separation clean and architectural rather than cosmetic.
+{{< /callout >}}
 
 Because the intelligence plane cannot affect execution, it cannot compromise correctness - even if it is buggy, slow, or proprietary.
 
