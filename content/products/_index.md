@@ -1,38 +1,45 @@
 ---
 title: "Products"
-description: "Open-source execution layer and commercial intelligence tools"
+description: "Hermetic cloud testing, end to end"
 showMetadata: false
 ---
 
 ## Blackwell GCP Emulator Ecosystem
 
-A two-layer architecture for hermetic cloud testing: open-source emulators that execute reality, and commercial analysis tools that explain it.
+**Hermetic cloud testing, end to end.**  
+Open-source emulators that execute reality, plus commercial tools that explain it.
+
+Blackwell Systems provides a clean, two-layer architecture for production-accurate GCP testing - fully offline, deterministic, and auditable.
 
 ---
 
 ## Blackwell GCP Emulators (Open Source)
 
-**Hermetic, production-like local testing for GCP services - including optional IAM enforcement so permission bugs fail in CI, not prod.**
+**Hermetic, production-like local testing for GCP services.**
 
-Unlike standard emulators that allow everything, Blackwell can enforce real IAM policies locally so tests fail like production would. **This closes the hermetic seal:** your tests run fully offline, with deterministic behavior, and real authorization enforcement.
+Unlike standard emulators that allow everything, Blackwell emulators can enforce real IAM policies locally, so permission bugs fail in CI - not in production.
 
-### Key Features
+**This closes the hermetic seal:** tests run fully offline, behave deterministically, and fail exactly like production would.
 
-- **Run fully offline** - No GCP credentials needed
-- **Hermetic Seal** - Optional pre-flight IAM enforcement (Off / Permissive / Strict modes)
-- **Protocol support** - gRPC + REST/HTTP where relevant
-- **Deterministic** - Same inputs produce same outputs, always
-- **Production-like failures** - Permission denied locally means permission denied in prod
+### Key Capabilities
+
+- **Runs fully offline** - no GCP credentials required
+- **Hermetic Seal** - optional pre-flight IAM enforcement (Off / Permissive / Strict modes)
+- **Protocol support** - gRPC and REST/HTTP where relevant
+- **Deterministic execution** - same inputs, same results
+- **Production-like failures** - permission denied locally means denied in prod
 
 ### The Security Paradox
 
-Most emulators bypass authorization entirely. Tests pass locally, then fail in production when IAM rejects the request. Blackwell solves this by making IAM enforcement optional but available - so you can test permissions as rigorously as you test logic.
+Most emulators bypass authorization entirely. Tests pass locally, then fail in production when IAM rejects the request.
+
+Blackwell makes IAM enforcement optional but available - so you can test permissions as rigorously as logic, without breaking hermeticity.
 
 ### Available Emulators
 
 - **[gcp-secret-manager-emulator](https://github.com/blackwell-systems/gcp-secret-manager-emulator)** - Secret Manager with optional IAM enforcement
 - **[gcp-kms-emulator](https://github.com/blackwell-systems/gcp-kms-emulator)** - Cloud KMS with cryptographic operations and IAM
-- **gcp-iam-emulator** (control plane) - Authorization decisions and trace emission
+- **gcp-iam-emulator (control plane)** - Authorization decisions and trace emission
 
 [View Documentation](https://github.com/blackwell-systems) · [GitHub Organization](https://github.com/blackwell-systems)
 
@@ -40,16 +47,17 @@ Most emulators bypass authorization entirely. Tests pass locally, then fail in p
 
 ## gcp-emulator-pro (Commercial)
 
-**Post-execution analysis for emulator trace artifacts. Turns what happened into actionable security artifacts.**
+**Post-execution analysis for emulator trace artifacts.**
 
-gcp-emulator-pro is the intelligence layer. It consumes authorization traces produced during test execution and performs offline analysis - generating policies, detecting drift, and providing audit evidence.
+gcp-emulator-pro is the intelligence layer of the ecosystem.  
+It consumes authorization traces produced during test execution and performs offline, post-execution analysis - turning what happened into actionable security artifacts.
 
-### Key Features
+### Key Capabilities
 
-- **Offline + deterministic** - No cloud calls, works in air-gapped CI
-- **Least-privilege policy generation (v1.0)** - Minimal IAM policies from observed behavior
-- **Post-execution only** - Never participates in runtime decisions
-- **File-based** - Consumes trace artifacts, produces reviewable outputs
+- **Offline & deterministic** - no cloud calls, works in air-gapped CI
+- **Least-privilege policy generation (v1.0)** - minimal IAM policies from observed behavior
+- **Post-execution only** - never participates in runtime decisions
+- **File-based workflows** - trace artifacts in, reviewable outputs out
 
 ### Planned Analysis Capabilities
 
