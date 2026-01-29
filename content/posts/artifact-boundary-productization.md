@@ -552,6 +552,4 @@ When you realize those artifacts are more valuable after execution than during i
 
 **Platform Engineering:** [Kubernetes Architecture](https://kubernetes.io/docs/concepts/architecture/), [Terraform State and Plans](https://developer.hashicorp.com/terraform/language/state)
 
-**Compiler Design:** [Engineering a Compiler](https://www.elsevier.com/books/engineering-a-compiler/cooper/978-0-12-088478-0), [LLVM Architecture](https://llvm.org/docs/)
-
 **Related Articles:** [API Communication Patterns](/posts/api-communication-patterns-guide/), [Kubernetes Secrets: State Separation](/posts/kubernetes-secrets-state-separation/)
