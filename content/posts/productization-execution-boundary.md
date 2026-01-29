@@ -78,6 +78,14 @@ For a testing/emulator system, execution means services are running, requests ar
 
 After that point, you have artifacts (logs, traces, results). The system is stopped, but analysis can continue.
 
+### Execution Produces Irreversible Facts
+
+Once execution completes, the system's decisions are immutable. A request was allowed or denied. A secret was accessed. A permission was exercised. You can replay analysis, but you cannot change what happened.
+
+This is why execution demands trust - and why interpretation can be optional.
+
+The intelligence plane reasons about irreversible history. The platform creates that history.
+
 ---
 
 ## The Rule: Value Timing Determines Placement
@@ -141,6 +149,8 @@ The intelligence plane analyzes outcomes. Policy generators, trace diff tools, c
 
 The intelligence plane is always post-execution. That's what makes it the natural commercial boundary. It doesn't participate in control flow, so it can't affect the trustworthiness of the platform. It consumes artifacts that the platform produces, making the separation clean and architectural rather than cosmetic.
 
+Because the intelligence plane cannot affect execution, it cannot compromise correctness - even if it is buggy, slow, or proprietary.
+
 ---
 
 ## Compiler Architecture as a Model
@@ -179,9 +189,11 @@ Analysis tools:
 - drift detector
 ```
 
-**Key insight:** Analysis tools are separate products. No one puts `gprof` inside `gcc`.
+Analysis tools are separate products. No one puts `gprof` inside `gcc`.
 
-Why?
+Crucially, compilers do not call profilers - and profilers cannot influence compilation.
+
+Why this separation works:
 - Different release cycles
 - Different trust requirements
 - Different licensing opportunities
@@ -370,6 +382,22 @@ fmt.Println("pro-suite v1.0.0")
 
 ---
 
+## When Teams Violate the Execution Boundary
+
+Most systems that blur the execution boundary follow predictable patterns. These violations look different but share a common failure: interpretation leaks into execution, and trust collapses.
+
+### What Boundary Violations Look Like
+
+**Premium tracing that only works when enabled at runtime.** The platform emits basic traces for free users, but detailed traces require a license key checked during execution. Now the tracing system participates in commercial decisions - it must validate licenses, phone home for verification, or gate features based on subscription tier. Execution behavior differs based on payment status. Trust erodes because users can't verify the platform's behavior without a commercial relationship.
+
+**Licensed "enforcement modes" that change authorization behavior.** The OSS version allows everything. The paid version enforces policies. This makes policy enforcement a commercial feature, which means execution correctness depends on payment. Users can't trust test results from the free tier because production uses different authorization logic. The platform's core promise - accurate testing - becomes pay-gated.
+
+**Analysis tools that require live API access.** The analysis tool doesn't consume artifact files. Instead, it queries the running platform for additional context, metadata, or enrichment data. This prevents offline analysis and creates runtime dependencies between the intelligence layer and the platform. The tool can't run in air-gapped environments. It can't analyze historical traces after the platform is gone. The separation is cosmetic.
+
+In all cases, interpretation leaks into execution - and trust collapses.
+
+---
+
 ## Why Most Teams Get This Wrong
 
 The first common mistake is putting premium features in the OSS repository. Teams create a monorepo with `core/` (OSS), `premium/` (commercial), and `enterprise/` (commercial) directories. This creates mixed licensing within a single codebase. Users who want to audit the OSS portions must read through the entire repository to verify which code paths are actually open source. Boundaries become unclear - does the core call premium code? Are there feature flags gating enterprise features? Trust erodes because the separation is organizational (directories) rather than architectural (separate artifacts and dependencies). Feature flags proliferate as the team tries to conditionally enable premium features, making the codebase harder to reason about and test.
@@ -439,7 +467,9 @@ Most teams blur this boundary and end up with premium logging, gated debuggers, 
 
 The execution boundary prevents that. It's not just cleaner code - it's a different trust model.
 
-When you see a feature that provides more value after execution completes, you've found your product boundary.
+Every system eventually produces artifacts.
+
+When you realize those artifacts are more valuable after execution than during it, you've discovered your product.
 
 ---
 
