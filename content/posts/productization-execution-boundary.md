@@ -198,11 +198,17 @@ flowchart TB
     style intelligence fill:#4C4538,stroke:#6b7280,color:#f0f0f0
 {{< /mermaid >}}
 
-The data plane does the work - it runs services, processes requests, mutates state. This is where your application logic lives: the emulated services, the database queries, the business logic. It's pure execution.
+**The data plane** does the work - it runs services, processes requests, mutates state. This is where your application logic lives: the emulated services, the database queries, the business logic. 
 
-The control plane makes decisions. It handles authorization, routing, policy enforcement - all the runtime governance that affects whether operations succeed or fail. The IAM emulator sits here, along with auth proxies and control CLIs. These components participate in control flow: they affect outcomes while the system is alive.
+It's pure execution.
 
-The intelligence plane analyzes outcomes. Policy generators, trace diff tools, compliance reports, drift analysis - all of these operate on what the other planes produced. They don't make runtime decisions. They interpret results, find patterns, generate insights. This plane can run hours or days after execution completes.
+**The control plane** makes decisions. It handles authorization, routing, policy enforcement - all the runtime governance that affects whether operations succeed or fail. 
+
+The IAM emulator sits here, along with auth proxies and control CLIs. These components participate in control flow: they affect outcomes while the system is alive.
+
+**The intelligence plane** analyzes outcomes. Policy generators, trace diff tools, compliance reports, drift analysis - all of these operate on what the other planes produced. They don't make runtime decisions. They interpret results, find patterns, generate insights. 
+
+This plane can run hours or days after execution completes.
 
 The intelligence plane is always post-execution. That's what makes it the natural commercial boundary. It doesn't participate in control flow, so it can't affect the trustworthiness of the platform. It consumes artifacts that the platform produces, making the separation clean and architectural rather than cosmetic.
 
