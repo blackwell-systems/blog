@@ -8,9 +8,11 @@ description: "Understanding the execution boundary: why features that provide va
 summary: "Most teams blur the line between platform features and analysis tools. Understanding the execution boundary - when the system is alive vs when it's stopped - reveals a clean separation: runtime features stay OSS, post-execution analysis becomes the product."
 ---
 
+{{< callout type="info" >}}
 This post emerged from repeatedly asking: How do I create quality open source software that can remain open and uncorrupted, and transform that into a clean, trustworthy commercial layer?
 
 The answer isn't about licenses or pricing. It's about boundaries.
+{{< /callout >}}
 
 You build a feature. It works. Then you realize it doesn't belong in the repo you're building it in.
 
