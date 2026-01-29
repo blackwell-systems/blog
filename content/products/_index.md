@@ -39,7 +39,7 @@ Blackwell makes IAM enforcement optional but available - so you can test permiss
 
 - **[gcp-secret-manager-emulator](https://github.com/blackwell-systems/gcp-secret-manager-emulator)** - Secret Manager with optional IAM enforcement
 - **[gcp-kms-emulator](https://github.com/blackwell-systems/gcp-kms-emulator)** - Cloud KMS with cryptographic operations and IAM
-- **gcp-iam-emulator (control plane)** - Authorization decisions and trace emission
+- **[gcp-iam-emulator](https://github.com/blackwell-systems/gcp-iam-emulator)** - Authorization decisions and trace emission
 
 [View Documentation](https://github.com/blackwell-systems) · [GitHub Organization](https://github.com/blackwell-systems)
 
