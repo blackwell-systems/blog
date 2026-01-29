@@ -7,6 +7,12 @@ body {
   background-attachment: fixed;
 }
 
+/* Make content area fill full width */
+.main {
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
 /* Navigation spacing */
 .headerLinks li {
   margin-left: 0.75rem !important;
