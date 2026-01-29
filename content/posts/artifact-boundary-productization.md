@@ -32,16 +32,16 @@ That boundary determines everything.
 
 You're building an analysis tool. It consumes artifacts produced during system execution and generates insights. The specific domain doesn't matter - this pattern appears everywhere: databases, CI systems, observability platforms, compilers, test frameworks.
 
-The repo is named after the feature: `least-privilege-generator`. Clear scope, obvious purpose.
+The repo is named after the feature because you started with the feature in mind. The feature matured. Its potential became clear and it outgrew its previous domain boundary. Furthermore, it began crossing over from feature into product.
 
 Then you realize:
 - The trace format is stable
 - Multiple analysis features are obvious (summarization, diffing, compliance reports)
-- This isn't "a generator" anymore - it's an analysis suite
+- This isn't "a feature" anymore - it's an analysis suite
 
 Suddenly the repo name feels wrong. But why?
 
-You're no longer building a feature. You're building a product that happens to have policy generation as its first capability.
+You're no longer building a feature. You're building a product that happens to have one feature as its entry point.
 
 The repo boundary wasn't wrong when you started. It's wrong *now* because the architecture evolved.
 
