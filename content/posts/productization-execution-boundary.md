@@ -2,7 +2,7 @@
 title: "The Execution Boundary: When Your Feature Becomes a Product"
 date: 2026-01-28
 draft: false
-tags: ["architecture", "product-design", "open-source", "platform-engineering", "software-design", "boundaries", "separation-of-concerns", "tooling", "devtools", "infrastructure", "oss", "commercial", "licensing", "compiler-design", "control-plane", "intelligence-plane", "observability", "tracing", "analysis", "artifacts"]
+tags: ["architecture", "product-design", "open-source", "platform-engineering", "software-design", "boundaries", "separation-of-concerns", "tooling", "devtools", "infrastructure", "oss", "commercial", "licensing", "control-plane", "intelligence-plane", "observability", "tracing", "analysis", "artifacts"]
 categories: ["architecture", "product-design"]
 description: "Understanding the execution boundary: why features that provide value after the system stops belong in products, not platforms. A framework for clean OSS/commercial separation."
 summary: "Most teams blur the line between platform features and analysis tools. Understanding the execution boundary - when the system is alive vs when it's stopped - reveals a clean separation: runtime features stay OSS, post-execution analysis becomes the product."
@@ -71,15 +71,43 @@ Before exploring the pattern, let's define the core concepts:
 
 ---
 
+## Naming the Pattern: Artifact-Boundary Productization
+
+The pattern described in this article is not new, but it is rarely named explicitly.
+
+I'll refer to it as **artifact-boundary productization**.
+
+**Artifact-boundary productization** is the moment a feature becomes a product because its value is realized entirely through artifacts produced by execution, rather than through participation in execution itself.
+
+In other words:
+
+> When execution produces durable artifacts, and interpretation of those artifacts becomes the primary source of value, a product boundary has emerged.
+
+This is not a business decision. It is an architectural fact.
+
+The boundary is defined by:
+- **Execution** (systems making decisions, mutating state)
+- **Artifacts** (immutable records of what happened)
+- **Interpretation** (analysis that can occur after execution ends)
+
+When interpretation dominates value, the system has crossed from platform feature into product.
+
+The rest of this article explores how that boundary appears, why it matters, and how to recognize it early.
+
+---
+
 {{< callout type="info" >}}
 **When These Rules Apply**
 
-+ These rules are especially powerful for OSS + commercial infrastructure
-+ They give you a true bright line, not a fuzzy policy
-+ They do not apply to every system
-- They are not appropriate for consumer apps or fully proprietary systems
++ These rules are most effective when systems produce durable execution artifacts
++ They are especially powerful for OSS + commercial infrastructure
++ They create a true bright line grounded in architecture, not policy
 
-This pattern works when trust boundaries matter and when artifact-based separation is architecturally natural.
+- They do not apply to consumer apps with continuous execution
+- They are not useful where artifacts are ephemeral or irrelevant
+- They are unnecessary in fully proprietary, closed systems
+
+Artifact-boundary productization applies when interpretation outlives execution.
 {{< /callout >}}
 
 ---
@@ -87,6 +115,8 @@ This pattern works when trust boundaries matter and when artifact-based separati
 ## The Execution Boundary
 
 Here's the pattern that resolves the confusion:
+
+This is the architectural moment that triggers artifact-boundary productization.
 
 For a testing/emulator system, execution means services are running, requests are flowing, authorization decisions are being made, tests are executing, and state is mutating. For a database, it's queries running and transactions committing. For a CI system, it's builds executing and tests running.
 
@@ -222,6 +252,8 @@ Why this separation works:
 
 ## The Artifact Contract
 
+Artifact-boundary productization only works if artifacts are treated as a first-class contract.
+
 What makes this separation work: **a stable artifact schema**.
 
 In your case: the trace format (JSONL with versioned schema).
@@ -243,6 +275,8 @@ When you don't have these properties, decay begins immediately. Analysis tools n
 ---
 
 ## Trust and Licensing Implications
+
+Artifact-boundary productization gives you a bright licensing line that does not rely on feature flags or enforcement.
 
 Why separation matters for OSS/commercial splits:
 
@@ -327,6 +361,14 @@ Separation matters when you're mixing OSS and commercial code. Users must trust 
 Multiple analysis features sharing a common artifact format signal that a product boundary is emerging. When you find yourself building a second or third tool that operates on the same traces or logs, that's the moment to extract the analysis suite. The shared artifact format becomes the contract, and the product boundary becomes architecturally obvious.
 
 Multi-tenant or security-critical systems need explicit trust boundaries and architectural isolation. When different teams or customers share infrastructure, blast radius must be contained. Compromising one namespace shouldn't expose another namespace's secrets. Architectural separation enforces isolation that configuration-based approaches can't guarantee.
+
+### Not Every Post-Execution Feature Should Be a Product
+
+Not every post-execution feature justifies productization.
+
+Artifact-boundary productization identifies where a boundary exists, not whether it is worth exploiting. Some analysis features are trivial, commodity, or tightly coupled to a single workflow. In those cases, extracting a product adds overhead without leverage.
+
+The pattern identifies architectural possibility, not commercial necessity.
 
 ---
 
