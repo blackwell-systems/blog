@@ -67,6 +67,19 @@ Before exploring the pattern, let's define the core concepts:
 
 ---
 
+{{< callout type="info" >}}
+**When These Rules Apply**
+
++ These rules are especially powerful for OSS + commercial infrastructure
++ They give you a true bright line, not a fuzzy policy
++ They do not apply to every system
+- They are not appropriate for consumer apps or fully proprietary systems
+
+This pattern works when trust boundaries matter and when artifact-based separation is architecturally natural.
+{{< /callout >}}
+
+---
+
 ## The Execution Boundary
 
 Here's the pattern that resolves the confusion:
