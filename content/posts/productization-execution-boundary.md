@@ -1,5 +1,5 @@
 ---
-title: "The Execution Boundary: When Your Feature Becomes a Product"
+title: "Artifact-Boundary Productization: Clean OSS/Commercial Separation"
 date: 2026-01-28
 draft: false
 tags: ["architecture", "product-design", "open-source", "platform-engineering", "software-design", "boundaries", "separation-of-concerns", "tooling", "devtools", "infrastructure", "oss", "commercial", "licensing", "control-plane", "intelligence-plane", "observability", "tracing", "analysis", "artifacts"]
