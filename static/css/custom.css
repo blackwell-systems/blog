@@ -8,14 +8,14 @@ body {
 }
 
 /* Navigation spacing and separators */
-.headerMenu a {
+.headerLinks li {
   margin-left: 1.5rem !important;
   margin-right: 1.5rem !important;
   padding-left: 1.5rem !important;
-  border-left: 1px solid rgba(107, 114, 128, 0.3) !important;
+  border-left: 1px solid rgba(107, 114, 128, 0.5) !important;
 }
 
-.headerMenu a:first-child {
+.headerLinks li:first-child {
   border-left: none !important;
   padding-left: 0 !important;
 }
