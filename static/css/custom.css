@@ -20,6 +20,42 @@ body {
   padding-left: 0 !important;
 }
 
+/* Navigation link hover effects */
+.headerLinks a {
+  text-decoration: none;
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.headerLinks a::before,
+.headerLinks a::after {
+  content: "";
+  position: absolute;
+  background-color: #A6A6A6;
+  width: 100%;
+  height: 2px;
+  transform: scaleX(0);
+  transition: transform 0.4s;
+}
+
+.headerLinks a::before {
+  top: 0;
+  left: 0;
+  transform-origin: left;
+}
+
+.headerLinks a::after {
+  bottom: 0;
+  right: 0;
+  transform-origin: right;
+}
+
+.headerLinks a:hover::before,
+.headerLinks a:hover::after {
+  transform: scaleX(1);
+}
+
 /* Left-align post titles within their centered containers */
 .postTitle {
   text-align: left !important;
