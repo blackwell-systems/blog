@@ -81,9 +81,9 @@ I'll refer to it as **artifact-boundary productization**.
 
 **Artifact-boundary productization** is the moment a feature becomes a product because its value is realized entirely through artifacts produced by execution, rather than through participation in execution itself.
 
-In other words:
-
-> When execution produces durable artifacts, and interpretation of those artifacts becomes the primary source of value, a product boundary has emerged.
+{{< callout type="info" >}}
+When execution produces durable artifacts, and interpretation of those artifacts becomes the primary source of value, a product boundary has emerged.
+{{< /callout >}}
 
 This is not a business decision. It is an architectural fact.
 
