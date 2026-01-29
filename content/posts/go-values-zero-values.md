@@ -149,7 +149,7 @@ List<String> list = null;
 int size = list.size();  // NullPointerException!
 ```
 
-Java's null is universally invalid. Any operation - even queries like `.size()` or `.length()` - throws NullPointerException. Every null reference forces defensive nil checks throughout the codebase. The absence of an object means the variable is completely unusable.
+Java's null is universally invalid. Any method call or field access on null throws NullPointerException. Every null reference forces defensive nil checks throughout the codebase. The absence of an object means the variable is completely unusable.
 
 **Why this matters:**
 
@@ -193,7 +193,42 @@ sum := tree.Sum()  // Works! Returns 0
 
 The method can be called on nil. The method checks if the receiver is nil and handles it. This pattern is impossible in Java (calling methods on null throws NullPointerException) and Python (calling methods on None throws AttributeError).
 
-**Value semantics vs reference semantics:**
+**The typed nil interface trap:**
+
+Interfaces add a critical nuance to Go's nil handling. An interface value consists of two components: a dynamic type and a dynamic value. An interface is nil only when both are nil. This creates a trap:
+
+```go
+var p *Tree = nil  // nil pointer
+
+var i any = p
+fmt.Println(i == nil)  // false! Interface is non-nil (has dynamic type *Tree)
+
+type Sumer interface{ Sum() int }
+var s Sumer = p  // s holds (*Tree, nil)
+fmt.Println(s == nil)  // false! Interface has type, even though value is nil
+sum := s.Sum()  // Works if Sum() handles nil receiver, panics otherwise
+```
+
+Interfaces are about the pair (dynamic type, dynamic value). A non-nil dynamic type with a nil dynamic value is not a nil interface. This is a classic Go sharp edge - an interface can be non-nil even though it holds a nil pointer.
+
+The practical impact: when returning interfaces from functions, returning a typed nil pointer creates a non-nil interface. Return an explicit nil interface instead:
+
+```go
+func GetTree() *Tree {
+    return nil  // Returns nil pointer
+}
+
+func GetSumer() Sumer {
+    var t *Tree = nil
+    return t  // Returns non-nil interface holding (*Tree, nil)
+}
+
+func GetSumerCorrect() Sumer {
+    return nil  // Returns nil interface
+}
+```
+
+**Value semantics vs shared backing storage:**
 
 The nil distinction maps to Go's deeper type system, which divides types into two categories based on how assignment and copying work.
 
@@ -209,7 +244,7 @@ fmt.Println(p1.X)  // Still 1 (independent copy)
 
 Types with value semantics: int, bool, string, arrays, structs. These are never nil - the variable *is* the value, not a reference to the value.
 
-**Reference semantics:** When you assign or pass a variable, you copy a reference (pointer) to shared underlying storage. Multiple variables can reference the same underlying data. Modifying through one reference affects all references because they point to the same storage.
+**Shared backing storage:** When you assign or pass a variable, you copy a descriptor (slice header, map descriptor, channel descriptor) that references shared underlying storage. Multiple variables can reference the same backing storage. Modifying through one variable affects others because they share the same underlying data.
 
 ```go
 s1 := []int{1, 2, 3}
@@ -234,7 +269,7 @@ Because declaration equals initialization, every variable can be safely used fro
 
 ## What Are Zero Values?
 
-Because declaration equals initialization, every type needs a concrete value to hold at the moment of declaration. This is the **zero value**.
+Every type has a **zero value** - the state a variable holds from the moment it's declared.
 
 For most types, zero values support all operations. For types with `nil` as their zero value (pointers, slices, maps, channels, interfaces, functions), read operations work but writes may require explicit initialization.
 
@@ -250,8 +285,8 @@ For most types, zero values support all operations. For types with `nil` as thei
 | `pointer` | `nil` | Safe to check, unsafe to dereference |
 | `slice` | `nil` | Safe to read (length 0), can append |
 | `map` | `nil` | Safe to read, must initialize to write |
-| `channel` | `nil` | Blocks forever on send/receive; `close(nil)` panics |
-| `interface` | `nil` | Safe to check, unsafe to call methods |
+| `channel` | `nil` | Send/receive block forever; len/cap return 0; `close(nil)` panics |
+| `interface` | `nil` | Safe to compare; calling methods on nil interface panics |
 | `function` | `nil` | Safe to check, unsafe to call |
 
 **Example:**
@@ -389,7 +424,7 @@ fmt.Println(strings.ToUpper(name))  // "" (works fine, no panic)
 // No nil checks needed for value types
 ```
 
-Because declaration equals initialization, value types like int, bool, string, and structs are never nil - they hold concrete zero values from the moment they're declared.
+Value types (int, bool, string, structs) are never nil - they always hold concrete zero values.
 
 ### 2. Simpler Struct Initialization
 
@@ -458,61 +493,9 @@ sb.append("hello");
 
 ---
 
-## The Nil Exception
+## Nil Types Summary
 
-Not all zero values are non-nil. Some types have `nil` as their zero value:
-
-**Types with nil zero values:**
-- Pointers: `*T`
-- Slices: `[]T`
-- Maps: `map[K]V`
-- Channels: `chan T`
-- Interfaces: `interface{}`
-- Functions: `func()`
-
-### Safe Nil Behavior
-
-Go's nil has predictable behavior:
-
-```go
-// Nil slice: safe to read, can append
-var s []int  // nil
-fmt.Println(len(s))  // 0 (safe)
-s = append(s, 1)     // Works! (allocates backing array)
-
-// Nil map: safe to read, panics on write
-var m map[string]int  // nil
-fmt.Println(m["key"])  // 0 (safe, returns zero value)
-m["key"] = 1          // PANIC! Must initialize first
-
-// Must initialize maps explicitly
-m = make(map[string]int)
-m["key"] = 1  // Works
-```
-
-### Nil Receivers
-
-Methods can be called on nil receivers:
-
-```go
-type Tree struct {
-    value int
-    left  *Tree
-    right *Tree
-}
-
-func (t *Tree) Sum() int {
-    if t == nil {  // Nil check
-        return 0
-    }
-    return t.value + t.left.Sum() + t.right.Sum()
-}
-
-var tree *Tree  // nil
-sum := tree.Sum()  // Works! Returns 0
-```
-
-This pattern is impossible in Java (NullPointerException) and Python (AttributeError).
+As covered in the "Nil Paradox" section above, some types have nil as their zero value: pointers, slices, maps, channels, interfaces, and functions. These types can represent "not yet allocated" while still being usable for query operations. Slices and maps support reads on nil. Channels block on nil. Interfaces require both type and value to be nil. Methods can be called on nil pointers if the method handles it.
 
 ---
 
