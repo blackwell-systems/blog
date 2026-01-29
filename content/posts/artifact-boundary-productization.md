@@ -128,13 +128,15 @@ For a distributed system, execution means services are running, requests are flo
 
 After that point, you have artifacts (logs, traces, results). The system is stopped, but analysis can continue.
 
-### Execution Produces Irreversible Facts
+### Execution Produces Artifacts
 
-Once execution completes, the system's decisions are immutable. A request was allowed or denied. A secret was accessed. A permission was exercised. You can replay analysis, but you cannot change what happened.
+Once execution completes, the system's decisions are immutable. A request was allowed or denied. A secret was accessed. A permission was exercised. These facts become artifacts - logs, traces, results written to disk.
+
+You can replay analysis, but you cannot change what happened.
 
 This is why execution demands trust - and why interpretation can be optional.
 
-The intelligence plane reasons about irreversible history. The platform creates that history.
+The intelligence plane reasons about artifacts. The platform creates them.
 
 ---
 
