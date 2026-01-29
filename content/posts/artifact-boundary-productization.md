@@ -107,7 +107,7 @@ The rest of this article explores how that boundary appears, why it matters, and
 
 - They do not apply to consumer apps with continuous execution
 - They are not useful where artifacts are ephemeral or irrelevant
-- They are unnecessary in fully proprietary, closed systems
+- **They are unnecessary in fully proprietary, closed systems**
 
 Artifact-boundary productization applies when interpretation outlives execution.
 {{< /callout >}}

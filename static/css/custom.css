@@ -7,17 +7,10 @@ body {
   background-attachment: fixed;
 }
 
-/* Navigation spacing and separators */
+/* Navigation spacing */
 .headerLinks li {
   margin-left: 0.75rem !important;
   margin-right: 0.75rem !important;
-  padding-left: 0.75rem !important;
-  border-left: 1px solid rgba(107, 114, 128, 0.5) !important;
-}
-
-.headerLinks li:first-child {
-  border-left: none !important;
-  padding-left: 0 !important;
 }
 
 /* Navigation link hover effects */
