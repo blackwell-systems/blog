@@ -545,11 +545,11 @@ If a feature's value depends on the system being alive, it belongs in the platfo
 
 If its value survives after the system stops, it belongs in the product.
 
-This isn't just about OSS vs commercial licensing. It's about clean architecture: separate observation from control, analysis from enforcement, interpretation from execution.
+The pattern applies beyond OSS/commercial splits. Clean architecture demands separating observation from control, analysis from enforcement, interpretation from execution.
 
 When teams blur this boundary, they end up with premium logging, gated debuggers, and licensed enforcement paths. That creates trust erosion and architectural debt.
 
-The artifact boundary prevents that. It's not just cleaner code - it's a different trust model.
+The artifact boundary prevents that by enforcing architectural separation, which creates a different trust model.
 
 Every system eventually produces artifacts.
 
