@@ -33,13 +33,13 @@ body {
 }
 
 .headerLinks a::before {
-  top: -1px;
+  top: -2px;
   left: 0;
   transform-origin: left;
 }
 
 .headerLinks a::after {
-  bottom: -1px;
+  bottom: -2px;
   right: 0;
   transform-origin: right;
 }
