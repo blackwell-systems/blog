@@ -34,7 +34,7 @@ You're building an analysis tool. It consumes artifacts produced during system e
 
 The repo is named after the feature because you started with the feature in mind. The feature matured. Its potential became clear and it outgrew its previous domain boundary. Furthermore, it began crossing over from feature into product.
 
-The feature/product boundary seems obvious in retrospect. But this clarity is the result of post-hoc analysis - a huge amount of thought and organizational work went into preparing and protecting that boundary. It's a case of expertise being mistaken for simplicity.
+**The feature/product boundary seems obvious in retrospect.** But this clarity is the result of post-hoc analysis - a huge amount of thought and organizational work went into preparing and protecting that boundary. It's a case of expertise being mistaken for simplicity.
 
 Then you realize:
 - The trace format is stable
