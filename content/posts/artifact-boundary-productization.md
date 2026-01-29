@@ -8,7 +8,7 @@ description: "Understanding the execution boundary: why features that provide va
 summary: "The execution boundary determines everything: features that need the system alive belong in the platform (OSS). Features that analyze artifacts after shutdown become the product (commercial). A framework for clean OSS/commercial separation."
 ---
 
-{{< callout type="info" >}}
+{{< callout type="success" >}}
 This post emerged from repeatedly asking: How do I create quality open source software that can remain open and uncorrupted, and transform that into a clean, trustworthy commercial layer?
 
 The answer isn't about licenses or pricing. It's about **boundaries**.
