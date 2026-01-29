@@ -41,7 +41,7 @@ Then you realize:
 
 Suddenly the repo name feels wrong. But why?
 
-**The insight:** You're no longer building a feature. You're building a product that happens to have policy generation as its first capability.
+You're no longer building a feature. You're building a product that happens to have policy generation as its first capability.
 
 The repo boundary wasn't wrong when you started. It's wrong *now* because the architecture evolved.
 
