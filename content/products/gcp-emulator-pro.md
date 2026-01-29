@@ -3,6 +3,7 @@ title: "gcp-emulator-pro"
 description: "Post-execution, hermetic analysis of GCP authorization behavior"
 weight: 10
 showMetadata: false
+draft: true
 ---
 
 ## gcp-emulator-pro
