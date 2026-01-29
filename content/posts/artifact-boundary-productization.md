@@ -30,7 +30,7 @@ That boundary determines everything.
 
 ## When Naming Stops Working
 
-You're building a least-privilege policy generator. It analyzes authorization trace files produced during system execution and generates minimal IAM policies. The specific domain doesn't matter - the same pattern appears in databases, CI systems, and observability platforms.
+You're building an analysis tool. It consumes artifacts produced during system execution and generates insights. The specific domain doesn't matter - this pattern appears everywhere: databases, CI systems, observability platforms, compilers, test frameworks.
 
 The repo is named after the feature: `least-privilege-generator`. Clear scope, obvious purpose.
 
