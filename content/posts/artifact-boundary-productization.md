@@ -546,10 +546,3 @@ Every system eventually produces artifacts.
 
 When you realize those artifacts are more valuable after execution than during it, you've discovered your product.
 
----
-
-## Further Reading
-
-**Platform Engineering:** [Kubernetes Architecture](https://kubernetes.io/docs/concepts/architecture/), [Terraform State and Plans](https://developer.hashicorp.com/terraform/language/state)
-
-**Related Articles:** [API Communication Patterns](/posts/api-communication-patterns-guide/), [Kubernetes Secrets: State Separation](/posts/kubernetes-secrets-state-separation/)
