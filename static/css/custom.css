@@ -144,7 +144,9 @@ body {
 .postWrapper > table,
 .postWrapper p + table,
 .postWrapper h2 + table,
-.postWrapper h3 + table {
+.postWrapper h3 + table,
+article table,
+main table {
   width: 100% !important;
   border-collapse: collapse !important;
   margin: 2rem 0 !important;
@@ -158,7 +160,11 @@ body {
 .postWrapper h2 + table th,
 .postWrapper h2 + table td,
 .postWrapper h3 + table th,
-.postWrapper h3 + table td {
+.postWrapper h3 + table td,
+article table th,
+article table td,
+main table th,
+main table td {
   padding: 1rem 2rem !important;
   text-align: left !important;
   border: 1px solid rgba(107, 114, 128, 0.3) !important;
@@ -167,7 +173,9 @@ body {
 .postWrapper > table th,
 .postWrapper p + table th,
 .postWrapper h2 + table th,
-.postWrapper h3 + table th {
+.postWrapper h3 + table th,
+article table th,
+main table th {
   font-weight: 600 !important;
   background: rgba(58, 74, 92, 0.4) !important;
   border-bottom: 2px solid rgba(107, 114, 128, 0.5) !important;
@@ -176,7 +184,9 @@ body {
 .postWrapper > table tr:hover,
 .postWrapper p + table tr:hover,
 .postWrapper h2 + table tr:hover,
-.postWrapper h3 + table tr:hover {
+.postWrapper h3 + table tr:hover,
+article table tr:hover,
+main table tr:hover {
   background: rgba(58, 74, 92, 0.2) !important;
 }
 
@@ -187,7 +197,11 @@ body {
 .postWrapper h2 + table td:first-child,
 .postWrapper h2 + table th:first-child,
 .postWrapper h3 + table td:first-child,
-.postWrapper h3 + table th:first-child {
+.postWrapper h3 + table th:first-child,
+article table td:first-child,
+article table th:first-child,
+main table td:first-child,
+main table th:first-child {
   font-weight: 600 !important;
 }
 
