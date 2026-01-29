@@ -1,6 +1,6 @@
 baseURL = 'https://blog.blackwell-systems.com/'
 languageCode = 'en-us'
-title = 'Blackwell Systems Blog'
+title = 'Blackwell Systems'
 theme = 'nightfall'
 enableRobotsTXT = true
 
