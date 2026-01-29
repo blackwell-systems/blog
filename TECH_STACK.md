@@ -73,6 +73,31 @@ This document describes the infrastructure and tooling that powers the Blackwell
 - Provides: DDOS protection, SSL/HTTPS, CDN caching, Redirect Rules
 - Masks origin server IP
 
+**Architecture: Edge-Only Redirect Topology**
+
+The root domain uses a "ghost origin" strategy - redirects happen entirely at Cloudflare's edge without ever contacting an origin server:
+
+- **Control plane:** Cloudflare edge (DNS + Redirect Rules)
+- **Data plane:** Cloudflare global network (330+ locations)
+- **Origin:** None (192.0.2.1 dummy IP from TEST-NET-1, never contacted)
+- **Latency:** 10-50ms (edge decision only, no origin roundtrip)
+
+**Performance comparison:**
+
+Traditional redirect topology:
+```
+Client → Origin (200ms+ roundtrip) → 301 response → Redirect to blog
+Total: 200-500ms depending on origin distance
+```
+
+Edge redirect topology:
+```
+Client → Cloudflare edge (10-50ms) → 301 response → Redirect to blog
+Total: 10-50ms (nearest edge node)
+```
+
+The redirect decision happens at the edge node closest to the user. No origin server involvement means no origin latency, no origin failures, and global performance regardless of where users connect from.
+
 **Cloudflare Redirect Rules:**
 
 Rule 1 - OSS namespace passthrough (301):
@@ -84,6 +109,7 @@ Then: concat("https://blog.blackwell-systems.com", http.request.uri.path)
 ```
 - Preserves `/oss` and `/oss/*` paths
 - Query strings preserved
+- **Design benefit:** Maintains product-like URL structure (`blackwell-systems.com/oss`) while keeping content management in the Hugo blog repo. Users see the clean apex domain, content lives in the existing static site pipeline.
 
 Rule 2 - Catch-all fallback (301):
 ```
