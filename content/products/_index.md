@@ -14,7 +14,7 @@ A two-layer architecture for hermetic cloud testing: open-source emulators that 
 
 **Hermetic, production-like local testing for GCP services - including optional IAM enforcement so permission bugs fail in CI, not prod.**
 
-Unlike standard emulators that allow everything, Blackwell can enforce real IAM policies locally so tests fail like production would. This closes the hermetic seal: your tests run fully offline, with deterministic behavior, and real authorization enforcement.
+Unlike standard emulators that allow everything, Blackwell can enforce real IAM policies locally so tests fail like production would. **This closes the hermetic seal:** your tests run fully offline, with deterministic behavior, and real authorization enforcement.
 
 ### Key Features
 
