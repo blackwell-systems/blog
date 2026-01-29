@@ -18,6 +18,7 @@ enableRobotsTXT = true
   keywords = ['blackdot', 'dotfiles', 'claude code', 'developer tools', 'secret management', 'go', 'shell scripting', 'automation']
   showTags = true
   showRelated = true
+  footerHtml = '© 2026 Blackwell Systems'
 
 [params.author]
   name = 'Blackwell Systems'
