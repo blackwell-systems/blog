@@ -1253,7 +1253,7 @@ This is impossible with OOP's shared mutable state through references.
 
 ---
 
-## The Three Factors: Why Multicore Killed OOP
+## The Three Factors: Why Multicore Changed OOP
 
 The multicore crisis wasn't caused by one thing - it was the **collision of three independent factors**:
 
@@ -1364,15 +1364,6 @@ Post-2005 Reality:
 - Easy to forget, wrong order, error paths
 - No compiler help
 
-{{< callout type="success" >}}
-**The Key Insight**
-
-Threads existed for 30+ years before multicore without major problems. Reference semantics existed for 20+ years without breaking everything.
-
-**Multicore + References = Crisis**
-
-This is why Go's value semantics were the right solution. Not just performance optimization - **fundamental correctness** in the parallel era.
-{{< /callout >}}
 
 ---
 
