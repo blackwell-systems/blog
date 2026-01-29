@@ -9,9 +9,9 @@ body {
 
 /* Navigation spacing and separators */
 .headerLinks li {
-  margin-left: 1.5rem !important;
-  margin-right: 1.5rem !important;
-  padding-left: 1.5rem !important;
+  margin-left: 0.75rem !important;
+  margin-right: 0.75rem !important;
+  padding-left: 0.75rem !important;
   border-left: 1px solid rgba(107, 114, 128, 0.5) !important;
 }
 
