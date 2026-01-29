@@ -77,7 +77,7 @@ It consumes authorization traces produced during test execution and performs off
 > Anything that participates in execution must be open source.  
 > Anything that interprets artifacts after execution may be commercial.
 
-[Learn More](/products/gcp-emulator-pro/) · [Request Trial](mailto:support@blackwell-systems.com)
+[Learn More](mailto:support@blackwell-systems.com) · [Request Trial](mailto:support@blackwell-systems.com)
 
 ---
 
