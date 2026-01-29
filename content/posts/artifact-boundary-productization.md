@@ -11,12 +11,12 @@ summary: "Most teams blur the line between platform features and analysis tools.
 {{< callout type="info" >}}
 This post emerged from repeatedly asking: How do I create quality open source software that can remain open and uncorrupted, and transform that into a clean, trustworthy commercial layer?
 
-The answer isn't about licenses or pricing. It's about boundaries.
+The answer isn't about licenses or pricing. It's about **boundaries**.
 {{< /callout >}}
 
 You build a feature. It works. Then you realize it doesn't belong in the repo you're building it in.
 
-Not because the code is wrong. Because the *boundary* is wrong.
+Not because the code is wrong. Because the **boundary** is wrong.
 
 This happens when a feature-scoped repository grows into a product. The code stays the same, but the framing changes. What started as "a policy generator" becomes "analysis toolchain with policy generation as the first feature."
 
