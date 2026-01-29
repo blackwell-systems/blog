@@ -81,10 +81,10 @@ As a technical writer (3x AWS Certified, 225,000+ lines of documentation), I've 
 **[vaultmux-server](https://github.com/blackwell-systems/vaultmux-server)** - Language-agnostic secrets control plane for Kubernetes. HTTP REST API enabling polyglot teams (Python, Node.js, Go, Rust) to fetch secrets from AWS, GCP, or Azure without SDK dependencies. Deploy as sidecar or cluster service.
 
 **[GCP Emulator Ecosystem](https://github.com/blackwell-systems?q=gcp)** - Complete local emulation stack for Google Cloud Platform:
-- **[gcp-secret-manager-emulator](https://github.com/blackwell-systems/gcp-secret-manager-emulator)** - The de facto standard Secret Manager emulator (dual gRPC + REST, 11/12 methods, 90.8% test coverage, enterprise adoption)
-- **[gcp-iam-emulator](https://github.com/blackwell-systems/gcp-iam-emulator)** - IAM policy enforcement for permission testing
-- **[gcp-kms-emulator](https://github.com/blackwell-systems/gcp-kms-emulator)** - Key Management Service with real cryptographic operations
-- **[gcp-emulator-control-plane](https://github.com/blackwell-systems/gcp-emulator-control-plane)** - CLI tool and orchestration layer for the complete GCP emulator ecosystem. Single `policy.yaml` drives IAM enforcement across all emulators. Start/stop services, manage policies, view logs, and test principal-based authorization locally and in CI
+- **[gcp-secret-manager-emulator](https://github.com/blackwell-systems/gcp-secret-manager-emulator)** - Production-grade Secret Manager emulator with dual gRPC + REST APIs. Integrated with gcp-iam-emulator for authorization enforcement and trace generation. Enterprise-ready for local development and CI/CD pipelines.
+- **[gcp-iam-emulator](https://github.com/blackwell-systems/gcp-iam-emulator)** - Authoritative IAM policy engine providing real-time permission evaluation with ALLOW/DENY decisions. Powers authorization across all Blackwell emulators via policy.yaml configuration. Generates machine-readable authorization traces for security analysis and policy generation with gcp-emulator-pro.
+- **[gcp-kms-emulator](https://github.com/blackwell-systems/gcp-kms-emulator)** - Key Management Service emulator with authentic cryptographic operations using real key material. Integrated with gcp-iam-emulator for fine-grained permission enforcement on encrypt/decrypt/sign operations. Supports key versioning, rotation, and destruction with full trace generation.
+- **[gcp-emulator-control-plane](https://github.com/blackwell-systems/gcp-emulator-control-plane)** - Unified orchestration CLI for the complete GCP emulator ecosystem. Single policy.yaml drives IAM enforcement across Secret Manager, KMS, and future emulators. Start/stop services, manage policies, view real-time authorization traces, and test principal-based access control in local development and CI environments.
 
 Fills gaps Google left unfilled - enables hermetic testing and CI/CD without GCP credentials.
 
