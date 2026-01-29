@@ -472,11 +472,29 @@ In all cases, interpretation leaks into execution - and trust collapses.
 
 ## Common Mistakes
 
-The first common mistake is putting premium features in the OSS repository. Teams create a monorepo with `core/` (OSS), `premium/` (commercial), and `enterprise/` (commercial) directories. This creates mixed licensing within a single codebase. Users who want to audit the OSS portions must read through the entire repository to verify which code paths are actually open source. Boundaries become unclear - does the core call premium code? Are there feature flags gating enterprise features? Trust erodes because the separation is organizational (directories) rather than architectural (separate artifacts and dependencies). Feature flags proliferate as the team tries to conditionally enable premium features, making the codebase harder to reason about and test.
+### Mistake 1: Premium Features in OSS Repository
 
-The second mistake is putting analysis in the runtime hot path. Developers add a configuration flag that enables report generation during execution - something like `if config.EnableAnalysis { generateReport() }` in the request handler. This creates performance coupling: the runtime now carries the weight of analysis code even when it's not needed. Users start questioning whether the analysis code affects runtime behavior, creating trust issues. Architectural debt accumulates as analysis features need more runtime hooks, more shared state, more coupling. What started as "optional analysis" becomes a mandatory dependency that slows down the platform.
+Teams create a monorepo with `core/` (OSS), `premium/` (commercial), and `enterprise/` (commercial) directories. This creates mixed licensing within a single codebase.
 
-The third mistake is having no artifact contract at all. Analysis tools call back into runtime APIs to fetch additional context or enrich data. This prevents offline analysis - you can't run the analysis tool without the platform being alive. You can't run it on a different machine - it needs network access to the original system. The boundary collapses because the separation is only cosmetic: separate repositories or separate binaries, but with runtime dependencies between them. This is the worst outcome because it looks like clean separation from the outside while being fully coupled underneath.
+Users who want to audit the OSS portions must read through the entire repository to verify which code paths are actually open source. Boundaries become unclear - does the core call premium code? Are there feature flags gating enterprise features? 
+
+Trust erodes because the separation is organizational (directories) rather than architectural (separate artifacts and dependencies). Feature flags proliferate as the team tries to conditionally enable premium features, making the codebase harder to reason about and test.
+
+### Mistake 2: Analysis in the Runtime Hot Path
+
+Developers add a configuration flag that enables report generation during execution - something like `if config.EnableAnalysis { generateReport() }` in the request handler.
+
+This creates performance coupling: the runtime now carries the weight of analysis code even when it's not needed. Users start questioning whether the analysis code affects runtime behavior, creating trust issues. 
+
+Architectural debt accumulates as analysis features need more runtime hooks, more shared state, more coupling. What started as "optional analysis" becomes a mandatory dependency that slows down the platform.
+
+### Mistake 3: No Artifact Contract
+
+Analysis tools call back into runtime APIs to fetch additional context or enrich data.
+
+This prevents offline analysis - you can't run the analysis tool without the platform being alive. You can't run it on a different machine - it needs network access to the original system. 
+
+The boundary collapses because the separation is only cosmetic: separate repositories or separate binaries, but with runtime dependencies between them. This is the worst outcome because it looks like clean separation from the outside while being fully coupled underneath.
 
 ---
 
