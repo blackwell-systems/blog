@@ -510,13 +510,29 @@ The third mistake is having no artifact contract at all. Analysis tools call bac
 
 Test any feature against these questions to verify your boundary is clean.
 
-The air-gap test asks whether the feature could run on a different machine with only artifact files. Imagine copying traces to a laptop with no network access - no connection to the original cluster, no access to running services. If the feature still works, it's a product feature with proper separation. If it fails because it needs runtime access, it's coupled to the platform and belongs there.
+### The Air-Gap Test
 
-The shutdown test asks whether the feature could produce new value if execution stopped forever. If you captured one final snapshot of traces and then shut down the entire system permanently, could this feature still generate insights, reports, or recommendations? If yes, it's a product feature - its value survives execution. If no, it's a platform feature whose value depends on the system being alive.
+Could the feature run on a different machine with only artifact files?
 
-The control flow test asks whether the feature affects runtime decisions or outcomes. Does it participate in authorization checks, routing logic, or state mutations? Does it influence which operations succeed or fail? If yes, it must be in the platform - it's part of the critical path and must be trusted. If it only observes and analyzes without affecting outcomes, it belongs in the product layer.
+Imagine copying traces to a laptop with no network access - no connection to the original cluster, no access to running services. If the feature still works, it's a product feature with proper separation. If it fails because it needs runtime access, it's coupled to the platform and belongs there.
 
-The trust test asks whether users would trust the platform if this feature were proprietary. Imagine the feature is closed-source and licensed. Would OSS users feel comfortable running the platform? If yes, you have good separation - the feature is genuinely independent and optional. If no, the feature is coupled to platform trust and shouldn't be separated. This test catches features that claim to be "analysis only" but actually have hooks into runtime behavior.
+### The Shutdown Test
+
+Could the feature produce new value if execution stopped forever?
+
+If you captured one final snapshot of traces and then shut down the entire system permanently, could this feature still generate insights, reports, or recommendations? If yes, it's a product feature - its value survives execution. If no, it's a platform feature whose value depends on the system being alive.
+
+### The Control Flow Test
+
+Does the feature affect runtime decisions or outcomes?
+
+Does it participate in authorization checks, routing logic, or state mutations? Does it influence which operations succeed or fail? If yes, it must be in the platform - it's part of the critical path and must be trusted. If it only observes and analyzes without affecting outcomes, it belongs in the product layer.
+
+### The Trust Test
+
+Would users trust the platform if this feature were proprietary?
+
+Imagine the feature is closed-source and licensed. Would OSS users feel comfortable running the platform? If yes, you have good separation - the feature is genuinely independent and optional. If no, the feature is coupled to platform trust and shouldn't be separated. This test catches features that claim to be "analysis only" but actually have hooks into runtime behavior.
 
 ---
 
