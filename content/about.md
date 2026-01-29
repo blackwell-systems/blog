@@ -80,7 +80,7 @@ As a technical writer (3x AWS Certified, 225,000+ lines of documentation), I've 
 
 **[vaultmux-server](https://github.com/blackwell-systems/vaultmux-server)** - Language-agnostic secrets control plane for Kubernetes. HTTP REST API enabling polyglot teams (Python, Node.js, Go, Rust) to fetch secrets from AWS, GCP, or Azure without SDK dependencies. Deploy as sidecar or cluster service.
 
-**[GCP Emulator Ecosystem](https://github.com/blackwell-systems?q=gcp)** - Complete local emulation stack for Google Cloud Platform:
+**[GCP Emulator Ecosystem](https://github.com/blackwell-systems?q=gcp)** - Local emulation stack for Google Cloud Platform:
 - **[gcp-secret-manager-emulator](https://github.com/blackwell-systems/gcp-secret-manager-emulator)** - Production-grade Secret Manager emulator with dual gRPC + REST APIs. Integrated with gcp-iam-emulator for authorization enforcement and trace generation. Enterprise-ready for local development and CI/CD pipelines.
 - **[gcp-iam-emulator](https://github.com/blackwell-systems/gcp-iam-emulator)** - Authoritative IAM policy engine providing real-time permission evaluation with ALLOW/DENY decisions. Powers authorization across all Blackwell emulators via policy.yaml configuration. Generates machine-readable authorization traces for security analysis and policy generation with gcp-emulator-pro.
 - **[gcp-kms-emulator](https://github.com/blackwell-systems/gcp-kms-emulator)** - Key Management Service emulator with authentic cryptographic operations using real key material. Integrated with gcp-iam-emulator for fine-grained permission enforcement on encrypt/decrypt/sign operations. Supports key versioning, rotation, and destruction with full trace generation.
