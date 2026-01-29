@@ -254,30 +254,6 @@ Content here
 
 ---
 
-## Monitoring & Analytics
-
-**TODO:** Add analytics solution (privacy-respecting)
-
-Options:
-- Plausible Analytics
-- GoatCounter
-- Self-hosted Matomo
-
----
-
-## Future Enhancements
-
-**Potential additions:**
-- RSS feed (Hugo built-in)
-- Search functionality
-- Related posts
-- Series navigation
-- Table of contents widget
-- Dark/light mode toggle (currently dark-only)
-- Comments system (optional)
-
----
-
 ## Stack Summary
 
 | Component | Technology | Purpose |
