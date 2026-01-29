@@ -470,7 +470,7 @@ In all cases, interpretation leaks into execution - and trust collapses.
 
 ---
 
-## Why Most Teams Get This Wrong
+## Common Mistakes
 
 The first common mistake is putting premium features in the OSS repository. Teams create a monorepo with `core/` (OSS), `premium/` (commercial), and `enterprise/` (commercial) directories. This creates mixed licensing within a single codebase. Users who want to audit the OSS portions must read through the entire repository to verify which code paths are actually open source. Boundaries become unclear - does the core call premium code? Are there feature flags gating enterprise features? Trust erodes because the separation is organizational (directories) rather than architectural (separate artifacts and dependencies). Feature flags proliferate as the team tries to conditionally enable premium features, making the codebase harder to reason about and test.
 
