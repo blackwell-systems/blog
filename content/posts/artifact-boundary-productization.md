@@ -269,8 +269,6 @@ Artifact-boundary productization only works if artifacts are treated as a first-
 
 What makes this separation work: **a stable artifact schema**.
 
-In your case: the trace format (JSONL with versioned schema).
-
 Clean separation requires four properties in your artifact schema.
 
 Schema stability means traces carry version tags and maintain backward compatibility. When you add fields or change formats, old analysis tools still work with new traces. Version negotiation happens at the schema level, not through runtime coupling. This lets the platform evolve its trace format without breaking every analysis tool.
