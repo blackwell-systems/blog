@@ -36,7 +36,9 @@ The feature matures. You realize the trace format is stable. Multiple analysis f
 
 Suddenly the repo name feels wrong.
 
+{{< callout type="info" >}}
 The feature outgrew its domain boundary. It crossed from feature into product. You're no longer building a tool that does one thing. You're building a product that happens to have one feature as its entry point.
+{{< /callout >}}
 
 The repo boundary wasn't wrong when you started. It's wrong *now* because the architecture evolved.
 
