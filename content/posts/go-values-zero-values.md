@@ -123,6 +123,8 @@ for _, v := range s {} // Works! (iterates zero times)
 
 A nil slice behaves like an empty slice for read operations. You can check its length, iterate over it (which completes immediately), and append to it (which allocates storage on first append). The nil state is the zero state - it's not an error condition requiring defensive checks everywhere.
 
+Nil slices and empty slices often behave the same for reads, but they're not identical: nil slices compare equal to nil, and some encoders may serialize them differently.
+
 **Go's nil map - safe for reading, panics on write:**
 ```go
 var m map[string]int  // nil map
@@ -206,7 +208,7 @@ fmt.Println(i == nil)  // false! Interface is non-nil (has dynamic type *Tree)
 type Sumer interface{ Sum() int }
 var s Sumer = p  // s holds (*Tree, nil)
 fmt.Println(s == nil)  // false! Interface has type, even though value is nil
-sum := s.Sum()  // Works if Sum() handles nil receiver, panics otherwise
+sum := s.Sum()  // Safe only if concrete method handles nil receiver
 ```
 
 Interfaces are about the pair (dynamic type, dynamic value). A non-nil dynamic type with a nil dynamic value is not a nil interface. This is a classic Go sharp edge - an interface can be non-nil even though it holds a nil pointer.
@@ -253,7 +255,7 @@ s2[0] = 10
 fmt.Println(s1[0])  // Now 10 (shared backing array)
 ```
 
-Types with reference semantics: pointers, slices, maps, channels, interfaces, functions. These can be nil because the reference can point to nothing (no underlying storage allocated yet).
+Types with indirect/descriptor semantics (pointers, slices, maps, channels, interfaces, functions) can be nil because the descriptor can point to no underlying storage.
 
 Go makes this distinction explicit in the type system. Unlike Java (where everything is a reference) or Python (where everything is a reference to an object), Go's type tells you whether assignment copies the value or copies a reference. This clarity eliminates entire classes of bugs around unexpected sharing.
 
@@ -495,7 +497,13 @@ sb.append("hello");
 
 ## Nil Types Summary
 
-As covered in the "Nil Paradox" section above, some types have nil as their zero value: pointers, slices, maps, channels, interfaces, and functions. These types can represent "not yet allocated" while still being usable for query operations. Slices and maps support reads on nil. Channels block on nil. Interfaces require both type and value to be nil. Methods can be called on nil pointers if the method handles it.
+Some types have `nil` as their zero value: pointers, slices, maps, channels, interfaces, and functions. They're valid zero states with predictable behavior:
+
+- **Slices:** Reads work; `len/cap` are 0; `append` allocates
+- **Maps:** Reads work; writes require `make`
+- **Channels:** Send/receive block; `len/cap` are 0; `close(nil)` panics
+- **Interfaces:** Nil only when both dynamic type and value are nil (watch typed nils)
+- **Functions:** Must nil-check before call
 
 ---
 
