@@ -94,7 +94,7 @@ The boundary is defined by:
 
 When interpretation dominates value, the system has crossed from platform feature into product.
 
-The rest of this article explores how that boundary appears, why it matters, and how to recognize it early.
+The rest of this article explores how that boundary appears, why it matters, and how to recognize it early. If you don't recognize it early, it results in architectural mistakes that are difficult to back out later.
 
 ---
 
