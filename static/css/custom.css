@@ -14,22 +14,6 @@ body {
   margin-right: 0.75rem !important;
 }
 
-/* Responsive navigation - reduce spacing on smaller screens */
-@media screen and (max-width: 1200px) {
-  .headerLinks li {
-    margin-left: 0.5rem !important;
-    margin-right: 0.5rem !important;
-  }
-}
-
-@media screen and (max-width: 992px) {
-  .headerLinks li {
-    margin-left: 0.35rem !important;
-    margin-right: 0.35rem !important;
-    font-size: 0.9rem;
-  }
-}
-
 /* Navigation link hover effects */
 .headerLinks a {
   text-decoration: none;
@@ -276,3 +260,4 @@ main table th:first-child {
   width: auto !important;
   font-weight: normal !important;
 }
+

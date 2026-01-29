@@ -46,12 +46,8 @@ enableRobotsTXT = true
     weight = 4
     url = "/consulting"
   [[menu.header]]
-    name = "BOOKS"
-    weight = 5
-    url = "https://leanpub.com/you-dont-know-json"
-  [[menu.header]]
     name = "ABOUT"
-    weight = 6
+    weight = 5
     url = "/about"
 
 [markup]
