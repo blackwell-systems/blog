@@ -63,6 +63,8 @@ Before exploring the pattern, let's define the core concepts:
 
 **Product Boundary** - The point where a feature-scoped repository becomes a product. This happens when multiple analysis features share a common artifact format, signaling that you're building an analysis suite rather than a single tool. The product boundary is where you extract the intelligence plane into its own repository with its own identity.
 
+**Bright-Line Rule** - A clear, objective test that produces unambiguous results. The execution boundary is a bright-line rule: if a feature needs the system alive, it's platform; if it works on artifacts after shutdown, it's product. No judgment calls, no gray areas.
+
 ---
 
 ## The Execution Boundary
