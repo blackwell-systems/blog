@@ -30,7 +30,7 @@ That boundary determines everything.
 
 ## The Problem: When Naming Stops Working
 
-You're building a least-privilege policy generator. It analyzes trace files from emulator runs and generates minimal IAM policies. The specific domain doesn't matter - the same pattern appears in databases, CI systems, and compilers.
+You're building a least-privilege policy generator. It analyzes trace files from emulator runs and generates minimal IAM policies. The specific domain doesn't matter - the same pattern appears in databases, CI systems, and observability platforms.
 
 The repo is named after the feature: `least-privilege-generator`. Clear scope, obvious purpose.
 
