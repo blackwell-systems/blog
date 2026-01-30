@@ -11,7 +11,7 @@ I provide expert consulting on cloud infrastructure architecture and technical d
 
 ## Cloud Infrastructure Consulting
 
-**Specialization:** Cloud-native architecture, distributed systems design, and comprehensive testing strategies for GCP and AWS environments.
+**Specialization:** Cloud-native architecture, distributed systems design, comprehensive testing strategies for GCP and AWS environments, and architecture patterns including REST APIs, gRPC/Protocol Buffers, event-driven systems (SNS/SQS/EventBridge), pub-sub, message queues, and distributed caching.
 
 ### Services Offered
 
