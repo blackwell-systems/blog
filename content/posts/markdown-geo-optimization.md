@@ -124,11 +124,11 @@ If ChatGPT cites your documentation 1,000 times in a month but only 50 users cli
 
 | SEO Strategy | Why It Fails for GEO |
 |--------------|----------------------|
-| **Backlinks** | AI doesn't use PageRank - it retrieves based on semantic relevance |
+| **Backlinks** | AI retrieves by semantic relevance, not PageRank |
 | **Keyword density** | AI uses embeddings, not keyword matching |
-| **Long-tail SEO** | AI combines multiple sources, doesn't need exhaustive single-page coverage |
-| **Click-through optimization** | AI citation ≠ traffic - user never visits your site |
-| **Featured snippets** | AI **is** the snippet - your content feeds its answer |
+| **Long-tail SEO** | AI synthesizes multiple sources per answer |
+| **Click-through optimization** | AI citation ≠ traffic (zero-click answers) |
+| **Featured snippets** | AI generates the snippet from your content |
 
 **The fundamental shift:** SEO was about **ranking higher in results**. GEO is about **being retrieved into context windows**.
 
@@ -144,9 +144,9 @@ If ChatGPT cites your documentation 1,000 times in a month but only 50 users cli
 
 | Metric | What It Measures |
 |--------|------------------|
-| **Citation Frequency** | How often AI systems reference your content |
-| **Context Inclusion Rate** | Percentage of queries where your content is retrieved into RAG |
-| **Token Efficiency** | How much of your content fits into context windows |
+| **Citation Frequency** | How often AI references your content |
+| **Context Inclusion Rate** | % of queries that retrieve your content |
+| **Token Efficiency** | How much content fits in context windows |
 
 *Note: Synthesis Quality (how well AI extracts structured information) is a derivative score calculated from these three core metrics.*
 
@@ -653,7 +653,17 @@ graph LR
     <span class="language-label">JavaScript</span>
     <button class="copy-button">Copy</button>
   </div>
-  <pre class="language-javascript"><code class="language-javascript"><span class="keyword">const</span> <span class="variable">result</span> <span class="operator">=</span> <span class="function">fetchData</span><span class="punctuation">(</span><span class="punctuation">)</span><span class="punctuation">;</span></code></pre>
+  <pre class="language-javascript">
+    <code class="language-javascript">
+      <span class="keyword">const</span> 
+      <span class="variable">result</span> 
+      <span class="operator">=</span> 
+      <span class="function">fetchData</span>
+      <span class="punctuation">(</span>
+      <span class="punctuation">)</span>
+      <span class="punctuation">;</span>
+    </code>
+  </pre>
 </div>
 ```
 
