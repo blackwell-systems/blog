@@ -18,9 +18,11 @@ showMetadata: false
 - **[gcp-kms-emulator](https://github.com/blackwell-systems/gcp-kms-emulator)** - Key Management Service emulator with real cryptographic operations using local key material. Integrated with [gcp-iam-emulator](https://github.com/blackwell-systems/gcp-iam-emulator) for permission enforcement on encrypt/decrypt and key-management operations. Supports key versioning, rotation, and destruction with trace output.
 - **[gcp-iam-control-plane](https://github.com/blackwell-systems/gcp-iam-control-plane)** - Unified orchestration CLI for the Blackwell GCP emulator ecosystem. A single policy.yaml drives IAM enforcement across Secret Manager, KMS, and future emulators. Start and stop services, manage policies, inspect authorization traces, and test principal-based access control locally and in CI.
 
+{{< callout type="info" >}}
 **Why This Architecture Exists**
 
 Google Cloud provides service emulators, but local IAM enforcement is not part of the standard emulator workflow. Blackwell fills this gap by enabling hermetic, deterministic authorization testing — no cloud credentials, no network calls, no propagation delays.
+{{< /callout >}}
 
 **[gcp-emulator-pro](https://blackwell-systems.github.io/blog/products/)** (Commercial) - Post-execution analysis for emulator trace artifacts. Consumes authorization traces to generate least-privilege IAM policies, compliance reports, and drift detection. Coming soon.
 
