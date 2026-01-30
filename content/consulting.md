@@ -21,6 +21,9 @@ I provide expert consulting on cloud infrastructure architecture and technical d
 - GCP service integration and testing patterns
 - Infrastructure-as-code review (CDK, Terraform)
 - Microservices architecture and API design
+- Database architecture (sharding, replication, consistency models)
+- API protocol selection (REST, GraphQL, gRPC, WebSocket)
+- Secret management and security boundaries
 
 #### Testing & CI/CD
 - Local emulation for hermetic testing
