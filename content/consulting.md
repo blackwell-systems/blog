@@ -20,8 +20,10 @@ I provide expert consulting on cloud infrastructure architecture and technical d
 - Serverless systems (Lambda, Step Functions, DynamoDB)
 - Data pipeline design (ingestion, transformation, warehousing)
 - Real-time processing (Redis caching, stream filtering)
+- Microservices architecture and API design
 - API design (REST, GraphQL, gRPC, JSON-RPC)
 - Database architecture (SQL/NoSQL selection, single-table design)
+- Secret management and security boundaries
 - Infrastructure-as-code (CDK, Terraform)
 - ETL pipeline architecture (Glue, Redshift, Athena)
 - Legacy modernization to cloud-native patterns
