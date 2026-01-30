@@ -1,0 +1,97 @@
+# Blackwell Systems™
+
+> Developer tools, AI workflows, and systems architecture. Technical deep-dives on Go, Rust, Kubernetes, database design, and distributed systems.
+
+## Core Documentation
+
+- [Blog - Programming Series](/posts/): Technical articles on Go values, OOP evolution, error handling patterns, and system design
+- [Open Source Projects](#open-source-projects): GCP emulators, developer tools, and infrastructure frameworks
+
+## Popular Articles
+
+### Programming Languages & Paradigms
+- [How Multicore CPUs Changed Object-Oriented Programming](/posts/multicore-killed-oop/): Why modern languages chose value semantics over reference semantics - the concurrency revolution that forced OOP to evolve
+- [Go Values Are Not Objects](/posts/go-values-not-objects/): Understanding Go's value-oriented design and why it differs from classical OOP
+- [Go Interfaces and Accidental Implementation](/posts/go-interfaces-accidental-implementation/): How Go's structural typing enables loose coupling
+- [Go Values: Escape Analysis](/posts/go-values-escape-analysis/): Understanding stack vs heap allocation and compiler optimization
+- [Go Values: Zero Values](/posts/go-values-zero-values/): Why Go's zero values enable safe initialization
+
+### Error Handling & Reliability
+- [Rust Error Handling: The ? Operator](/posts/rust-error-handling-question-mark-operator/): Syntactic sugar for error propagation in Rust
+- [Rust Error Handling: thiserror, anyhow, and Error Envelopes](/posts/rust-error-handling-thiserror-anyhow-error-envelope/): Library-driven error handling patterns
+- [Error Envelope Pattern for HTTP APIs](/posts/err-envelope-http-errors/): Structured error responses with context
+
+### Data Formats & Protocols
+- [You Don't Know JSON - Part 1: Origins](/posts/you-dont-know-json-part-1-origins/): How JavaScript's object literals became the web's data format
+- [You Don't Know JSON - Part 2: JSON Schema](/posts/you-dont-know-json-part-2-json-schema/): Validation and contract enforcement
+- [You Don't Know JSON - Part 3: Binary Databases](/posts/you-dont-know-json-part-3-binary-databases/): BSON, MessagePack, CBOR performance trade-offs
+- [You Don't Know JSON - Part 4: Binary APIs](/posts/you-dont-know-json-part-4-binary-apis/): Protocol Buffers, gRPC, Thrift
+- [You Don't Know JSON - Part 5: JSON-RPC](/posts/you-dont-know-json-part-5-json-rpc/): Request-response protocol over JSON
+- [You Don't Know JSON - Part 6: JSON Lines](/posts/you-dont-know-json-part-6-json-lines/): Streaming newline-delimited JSON
+- [You Don't Know JSON - Part 7: Security](/posts/you-dont-know-json-part-7-security/): JWT, JWS, JWE, and canonicalization attacks
+- [You Don't Know JSON - Part 8: Lessons](/posts/you-dont-know-json-part-8-lessons/): What JSON teaches about protocol design
+- [Understanding Protocol Buffers - Part 1](/posts/understanding-protobuf-part-1/): Wire format, encoding, and performance characteristics
+- [API Communication Patterns Guide](/posts/api-communication-patterns-guide/): REST, GraphQL, WebSocket, gRPC comparison with decision frameworks
+
+### Infrastructure & DevOps
+- [Kubernetes Secrets and State Separation](/posts/kubernetes-secrets-state-separation/): Control plane vs data plane security boundaries
+- [GCP Secret Manager Emulator](/posts/gcp-secret-manager-emulator/): Local development without cloud dependencies
+- [Continuous Fuzzing in Go](/posts/continuous-fuzzing-go/): Coverage-guided testing for production systems
+
+### AI & Optimization
+- [Markdown is the Native Language of AI - GEO Optimization Guide](/posts/markdown-geo-optimization/): How to optimize content for generative engine visibility
+- [Managing Claude Code Contexts](/posts/managing-claude-code-contexts/): Effective prompt engineering for AI-assisted development
+
+### Testing & Quality
+- [Rust Testing: Comprehensive Guide](/posts/rust-testing-comprehensive-guide/): Unit tests, integration tests, doc tests, property-based testing
+
+### Open Source Licensing
+- [Choosing the MIT License](/posts/choosing-mit-license/): When permissive licensing makes sense
+- [Apache 2.0 License Guide](/posts/apache-2-license-guide/): Patent protection and corporate-friendly terms
+- [GPL and AGPL Copyleft Guide](/posts/gpl-agpl-copyleft-guide/): Strong copyleft and network service loophole
+
+### System Design & Architecture
+- [Artifact Boundary Productization](/posts/artifact-boundary-productization/): Execution boundaries and product definition
+- [README as Landing Page](/posts/readme-as-landing-page/): Documentation-first product marketing
+
+### Shell & Developer Tools
+- [Glob Patterns: Complete Syntax Reference](/posts/glob-patterns-complete-syntax-reference/): Wildcards, character classes, brace expansion
+- [Glob Patterns: The Invisible Abstraction](/posts/glob-patterns-invisible-abstraction/): Why file matching patterns are everywhere
+- [Zsh Completion System Explained](/posts/zsh-completion-system-explained/): How shell autocomplete works
+- [Zsh Hooks Guide](/posts/zsh-hooks-guide/): precmd, preexec, chpwd event systems
+- [Zsh Prompts Explained](/posts/zsh-prompts-explained/): PROMPT, RPROMPT customization
+- [Zsh ZLE Custom Widgets](/posts/zsh-zle-custom-widgets/): Building custom keybindings
+
+### Performance & Optimization
+- [Python GIL and the Big Data Paradox](/posts/python-gil-big-data-paradox/): Why Python dominates data science despite single-core execution
+- [Python Object Overhead](/posts/python-object-overhead/): Memory costs of PyObject structure
+
+## Open Source Projects
+
+### Infrastructure & Cloud Development
+- [gcp-iam-emulator](https://github.com/blackwell-Systems/gcp-iam-emulator): Local GCP IAM testing without cloud dependencies - emulate Google Cloud IAM policies offline
+- [gcp-secret-manager-emulator](https://github.com/blackwell-Systems/gcp-secret-manager-emulator): Local GCP Secret Manager emulator for development without cloud access
+- [vaultmux](https://github.com/blackwell-Systems/vaultmux): HashiCorp Vault abstraction for Go - unified interface for secret management
+- [domainstack](https://github.com/blackwell-Systems/domainstack): Infrastructure-as-code framework for domain-driven architecture
+
+### Developer Tools & Productivity
+- [goldenthread](https://github.com/blackwell-Systems/goldenthread): Context preservation tool for AI-assisted development - maintain conversation continuity across sessions
+- [blackdot](https://github.com/blackwell-Systems/blackdot): Dotfiles management system with semantic versioning and cross-platform support
+
+
+## Products
+
+- [GCP Emulator Pro](/products/gcp-emulator-pro/): Enterprise-grade local development environment for Google Cloud Platform
+
+## About
+
+- [About Blackwell Systems](/about/): Company background and technical philosophy
+- [Open Source Contributions](/oss/): Projects and community involvement
+- [Consulting Services](/consulting/): Architecture review, technical training, system design
+
+---
+
+**Last updated:** 2026-01-30
+**Content license:** Original content © Blackwell Systems™
+**AI-friendly endpoints:** All blog posts available as raw markdown via GitHub
+**Repository:** https://github.com/blackwell-Systems/blog
