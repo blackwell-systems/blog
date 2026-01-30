@@ -16,14 +16,13 @@ I provide expert consulting on cloud infrastructure architecture and technical d
 ### Services Offered
 
 #### Architecture & Design
-- Event-driven system design for scale
-- Serverless architecture (AWS Lambda, EventBridge, DynamoDB)
-- GCP service integration and testing patterns
-- Infrastructure-as-code review (CDK, Terraform)
-- Microservices architecture and API design
-- Database architecture (sharding, replication, consistency models)
-- API protocol selection (REST, GraphQL, gRPC, WebSocket)
-- Secret management and security boundaries
+- Event-driven architecture (SNS, SQS, EventBridge pipelines)
+- Serverless systems (Lambda, Step Functions, DynamoDB)
+- Data pipeline design (ingestion, transformation, warehousing)
+- Real-time processing (Redis caching, stream filtering)
+- API design (REST, GraphQL, gRPC, JSON-RPC)
+- Database architecture (SQL/NoSQL selection, single-table design)
+- Infrastructure-as-code (CDK, Terraform)
 
 #### Testing & CI/CD
 - Local emulation for hermetic testing
@@ -41,11 +40,14 @@ I provide expert consulting on cloud infrastructure architecture and technical d
 
 ### Experience Highlights
 
-- Architect for global loyalty platform serving millions of customers
+- Backend developer for global hospitality loyalty platform serving millions of customers
+- Designed serverless event-driven promotion system (Lambda, EventBridge, DynamoDB, Redis)
+- Built data pipelines processing millions of events/day (Redshift, Glue, S3)
+- Migrated legacy systems to cloud-native architecture (AWS, Terraform, CDK)
 - Built production-grade GCP Secret Manager emulator with enterprise adoption
-- Author of 11 production open-source infrastructure tools
-- Deep expertise: Go, Python, Rust, Java
-- 4 years enterprise backend engineering at scale
+- Author of "You Don't Know JSON" (107,000 words on JSON architecture and streaming)
+- 11 production open-source tools (Go, Rust, TypeScript)
+- 5 years enterprise backend engineering, 3x AWS Certified
 
 ### Ideal For
 
