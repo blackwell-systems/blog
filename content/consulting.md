@@ -23,6 +23,10 @@ I provide expert consulting on cloud infrastructure architecture and technical d
 - API design (REST, GraphQL, gRPC, JSON-RPC)
 - Database architecture (SQL/NoSQL selection, single-table design)
 - Infrastructure-as-code (CDK, Terraform)
+- ETL pipeline architecture (Glue, Redshift, Athena)
+- Legacy modernization to cloud-native patterns
+- Authentication/authorization design (Lambda authorizers, IAM policies)
+- Cost optimization strategies (instance selection, caching patterns)
 
 #### Testing & CI/CD
 - Local emulation for hermetic testing
