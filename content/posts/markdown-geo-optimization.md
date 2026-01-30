@@ -1,7 +1,7 @@
 ---
 title: "Markdown is the Native Language of AI - GEO Optimization Guide"
 date: 2026-01-30
-draft: false
+draft: true
 tags: ["geo", "generative-engine-optimization", "markdown", "ai", "llm", "seo", "content-optimization", "rag", "perplexity", "searchgpt", "claude", "gpt", "tokens", "context-window", "llms-txt", "documentation", "technical-writing", "web-optimization"]
 categories: ["ai", "web", "optimization"]
 description: "Markdown is the native language AI models use internally. Optimizing your content for GEO means understanding token efficiency, semantic hierarchy, and the llms.txt standard. This guide shows how to make your content AI-friendly without sacrificing human readability."
