@@ -531,7 +531,10 @@ AI models are **optimized for tabular data**. A comparison in paragraph form req
 
 **Bad (paragraph form):**
 ```markdown
-PostgreSQL supports ACID transactions, scales vertically, and uses SQL. MongoDB supports eventual consistency, scales horizontally, and uses JSON-like documents. Cassandra supports tunable consistency, scales horizontally, and uses CQL.
+PostgreSQL supports ACID transactions, scales vertically, and uses SQL. 
+MongoDB supports eventual consistency, scales horizontally, and uses 
+JSON-like documents. Cassandra supports tunable consistency, scales 
+horizontally, and uses CQL.
 ```
 
 **Good (table form):**
