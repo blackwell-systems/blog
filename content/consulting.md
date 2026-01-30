@@ -52,7 +52,7 @@ I provide expert consulting on cloud infrastructure architecture and technical d
 - Migrated legacy systems to cloud-native architecture (AWS, Terraform, CDK)
 - Built production-grade GCP Secret Manager emulator with enterprise adoption
 - Author of "You Don't Know JSON" (107,000 words on JSON architecture and streaming)
-- 11 production open-source tools (Go, Rust, TypeScript)
+- **Creator and maintainer of 11 open-source tools (Go, Rust, TypeScript) for cloud, security, and distributed systems.**
 - 5 years enterprise backend engineering, 3x AWS Certified
 
 ### Ideal For
