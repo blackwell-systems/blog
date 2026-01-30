@@ -13,13 +13,10 @@ showMetadata: false
 
 **GCP Emulator Ecosystem** - Hermetic local emulation stack for Google Cloud Platform services.
 
-**[gcp-iam-emulator](https://github.com/blackwell-systems/gcp-iam-emulator)** - Deterministic IAM policy engine that evaluates authorization decisions (ALLOW/DENY) based on explicit policy definitions. Acts as the control plane for all Blackwell emulators via policy.yaml. Emits machine-readable authorization traces for analysis and policy refinement with gcp-emulator-pro.
-
-**[gcp-secret-manager-emulator](https://github.com/blackwell-systems/gcp-secret-manager-emulator)** - Local Secret Manager emulator with dual gRPC + REST APIs. Integrates with [gcp-iam-emulator](https://github.com/blackwell-systems/gcp-iam-emulator) for pre-flight authorization enforcement and trace generation. Designed for deterministic local development and CI/CD testing workflows.
-
-**[gcp-kms-emulator](https://github.com/blackwell-systems/gcp-kms-emulator)** - Key Management Service emulator with real cryptographic operations using local key material. Integrated with [gcp-iam-emulator](https://github.com/blackwell-systems/gcp-iam-emulator) for permission enforcement on encrypt/decrypt and key-management operations. Supports key versioning, rotation, and destruction with trace output.
-
-**[gcp-iam-control-plane](https://github.com/blackwell-systems/gcp-iam-control-plane)** - Unified orchestration CLI for the Blackwell GCP emulator ecosystem. A single policy.yaml drives IAM enforcement across Secret Manager, KMS, and future emulators. Start and stop services, manage policies, inspect authorization traces, and test principal-based access control locally and in CI.
+- **[gcp-iam-emulator](https://github.com/blackwell-systems/gcp-iam-emulator)** - Deterministic IAM policy engine that evaluates authorization decisions (ALLOW/DENY) based on explicit policy definitions. Acts as the control plane for all Blackwell emulators via policy.yaml. Emits machine-readable authorization traces for analysis and policy refinement with gcp-emulator-pro.
+- **[gcp-secret-manager-emulator](https://github.com/blackwell-systems/gcp-secret-manager-emulator)** - Local Secret Manager emulator with dual gRPC + REST APIs. Integrates with [gcp-iam-emulator](https://github.com/blackwell-systems/gcp-iam-emulator) for pre-flight authorization enforcement and trace generation. Designed for deterministic local development and CI/CD testing workflows.
+- **[gcp-kms-emulator](https://github.com/blackwell-systems/gcp-kms-emulator)** - Key Management Service emulator with real cryptographic operations using local key material. Integrated with [gcp-iam-emulator](https://github.com/blackwell-systems/gcp-iam-emulator) for permission enforcement on encrypt/decrypt and key-management operations. Supports key versioning, rotation, and destruction with trace output.
+- **[gcp-iam-control-plane](https://github.com/blackwell-systems/gcp-iam-control-plane)** - Unified orchestration CLI for the Blackwell GCP emulator ecosystem. A single policy.yaml drives IAM enforcement across Secret Manager, KMS, and future emulators. Start and stop services, manage policies, inspect authorization traces, and test principal-based access control locally and in CI.
 
 **Why This Architecture Exists**
 
