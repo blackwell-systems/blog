@@ -5,6 +5,10 @@ draft: false
 showMetadata: false
 ---
 
+<!-- meta:author=Dayna Blackwell -->
+<!-- meta:topic=cloud-architecture,distributed-systems,technical-documentation -->
+<!-- meta:last-updated=2026-01-30 -->
+
 I provide expert consulting on cloud infrastructure architecture and technical documentation for engineering teams and developer-facing products.
 
 ---
