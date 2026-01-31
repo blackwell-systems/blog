@@ -547,47 +547,6 @@ Violating these principles breaks the architecture's guarantees.
 
 ---
 
-## Comparison to Alternatives
-
-### vs ALIAS/ANAME Records
-
-**ALIAS/ANAME pros:**
-- Simpler DNS setup (no dummy IP)
-
-**ALIAS/ANAME cons:**
-- Proprietary (not universal DNS standard)
-- Locks you into specific DNS provider
-- No redirect logic (can't preserve legacy paths)
-
-**This pattern wins on:** Portability, flexibility, SEO preservation
-
-### vs Cloudflare Workers
-
-**Workers pros:**
-- More flexibility (custom JavaScript logic)
-- Can transform content, not just redirect
-
-**Workers cons:**
-- More complex (code instead of declarative rules)
-- Higher cost at scale (CPU time billing)
-- Requires deployment pipeline
-
-**This pattern wins on:** Simplicity, cost, declarative config
-
-### vs Origin-Based Redirects
-
-**Origin redirects pros:**
-- Traditional, well-understood pattern
-
-**Origin redirects cons:**
-- Requires running a server (cost + maintenance)
-- Origin latency (200-500ms vs 10-50ms)
-- Origin failures affect redirects
-
-**This pattern wins on:** Performance, cost, reliability
-
----
-
 ## Further Reading
 
 **Cloudflare:**
