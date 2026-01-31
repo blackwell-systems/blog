@@ -167,4 +167,4 @@ All consulting work is informed by real production experience. View my open sour
 - [domainstack](https://github.com/blackwell-systems/domainstack) - Full-stack validation (Rust → TypeScript)
 - [error-envelope](https://github.com/blackwell-systems/error-envelope) - Structured HTTP errors for Rust APIs
 
-[View all projects →](https://blog.blackwell-systems.com/about/#open-source-projects)
+[View all projects →](/oss/)
