@@ -257,9 +257,11 @@ By pointing the apex at a non-routable IP and enabling proxy mode, this creates 
 User → Cloudflare Edge → Redirect Rules → Real Origin (GitHub)
 ```
 
-Cloudflare handles identity, legacy paths, and TLS. GitHub only serves the final content.
+Cloudflare handles identity (which hostnames exist and where they route), path preservation, and TLS termination for apex/www. GitHub only serves content for the canonical hostname.
 
-#### Legacy Path Preservation
+**Important:** This does not create double CDN. Redirected hostnames (`blackwell-systems.com`, `www.blackwell-systems.com`) never serve content—Cloudflare only sends 301 responses. The canonical hostname (`blog.blackwell-systems.com`) is DNS-only and served directly through Fastly. Only one CDN delivers HTML: Fastly.
+
+#### Path Preservation
 
 Path-specific rules for `/oss` and `/consulting` do real SEO work.
 
