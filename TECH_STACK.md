@@ -122,7 +122,27 @@ THEN 301 redirect to
   concat("https://blog.blackwell-systems.com", http.request.uri.path)
 ```
 
-**Rule 4 - Apex catch-all (301):**
+**Rule 4 - Product canonicalization (301):**
+```
+IF Hostname equals blackwell-systems.com
+AND (
+  URI Path equals /gcp-emulator-pro
+  OR URI Path equals /gcp-emulator-pro/
+  OR URI Path starts with /gcp-emulator-pro/
+)
+THEN 301 redirect to
+  https://blog.blackwell-systems.com/products/gcp-emulator-pro/
+```
+
+**Why this exists:**
+- Preserves external links shared before the `/products/` hierarchy existed
+- Consolidates SEO authority onto a single canonical page
+- Prevents content identity fragmentation
+- Allows product URLs to change without breaking public references
+
+This rule replaces an earlier Cloudflare Worker and keeps all routing logic declarative and centralized in the edge policy engine.
+
+**Rule 5 - Apex catch-all (301):**
 ```
 IF Hostname equals blackwell-systems.com
 THEN 301 redirect to
@@ -151,6 +171,7 @@ blog.blackwell-systems.com
 |---------|--------|
 | `https://blackwell-systems.com` | → `https://blog.blackwell-systems.com/` |
 | `https://blackwell-systems.com/oss` | → `https://blog.blackwell-systems.com/oss` |
+| `https://blackwell-systems.com/gcp-emulator-pro` | → `https://blog.blackwell-systems.com/products/gcp-emulator-pro/` |
 | `https://www.blackwell-systems.com/oss?x=1` | → `https://blog.blackwell-systems.com/oss?x=1` |
 | `https://blog.blackwell-systems.com` | Served by GitHub |
 

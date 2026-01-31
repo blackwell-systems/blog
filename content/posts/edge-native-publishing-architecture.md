@@ -200,7 +200,34 @@ THEN 301 redirect to
 
 Same pattern as Rule 2, preserves consulting namespace.
 
-### Rule 4: Apex Catch-All (301 Permanent)
+### Rule 4: Product Canonicalization (301 Permanent)
+
+```
+IF Hostname equals blackwell-systems.com
+AND (
+  URI Path equals /gcp-emulator-pro
+  OR URI Path equals /gcp-emulator-pro/
+  OR URI Path starts with /gcp-emulator-pro/
+)
+THEN 301 redirect to
+  https://blog.blackwell-systems.com/products/gcp-emulator-pro/
+```
+
+**Why this exists:**
+
+In addition to section-based legacy paths, the edge layer performs **product-level canonicalization** for deep links that don't follow the general site structure.
+
+This ensures that historical, marketing, or shortened product URLs resolve to the correct canonical content location.
+
+**Benefits:**
+- Preserves external links shared before the `/products/` hierarchy existed
+- Consolidates SEO authority onto a single canonical page
+- Prevents content identity fragmentation
+- Allows product URLs to change without breaking public references
+
+This rule replaces an earlier Cloudflare Worker and keeps all routing logic declarative and centralized in the edge policy engine.
+
+### Rule 5: Apex Catch-All (301 Permanent)
 
 ```
 IF Hostname equals blackwell-systems.com
@@ -214,7 +241,7 @@ This ensures no request ever reaches the fake IP origin. Cloudflare must redirec
 
 ### Rule Processing Order
 
-Rules execute in order until a match. If Rule 2 or 3 matches, Rule 4 never runs.
+Rules execute in order until a match. If Rules 2, 3, or 4 match, Rule 5 never runs.
 
 This is critical for namespace preservation—specific paths must be checked before the catch-all.
 
@@ -227,6 +254,7 @@ This is critical for namespace preservation—specific paths must be checked bef
 | `https://blackwell-systems.com` | → `https://blog.blackwell-systems.com/` |
 | `https://blackwell-systems.com/oss` | → `https://blog.blackwell-systems.com/oss` |
 | `https://blackwell-systems.com/oss/vaultmux` | → `https://blog.blackwell-systems.com/oss/vaultmux` |
+| `https://blackwell-systems.com/gcp-emulator-pro` | → `https://blog.blackwell-systems.com/products/gcp-emulator-pro/` |
 | `https://www.blackwell-systems.com/consulting?x=1` | → `https://blog.blackwell-systems.com/consulting?x=1` |
 | `https://blog.blackwell-systems.com/posts/` | Served directly by GitHub Pages |
 
