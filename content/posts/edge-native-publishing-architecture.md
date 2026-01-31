@@ -8,7 +8,7 @@ description: "A reference architecture for building edge-native publishing syste
 summary: "A production-grade architecture pattern for static publishing that uses Cloudflare's edge network for routing and GitHub Pages for content delivery. Complete with DNS setup, redirect rules, and step-by-step implementation guide."
 ---
 
-This is a reference architecture for **edge-native static publishing**: routing decisions happen at the edge (Cloudflare), content is served from a zero-maintenance origin (GitHub Pages), and the entire system costs ~$10-27/year.
+This is a reference architecture for **edge-native static publishing**: routing decisions happen at the edge (Cloudflare), content is served from a zero-maintenance origin (GitHub Pages), and the entire system costs ~$24/year ($12 domain + $12 email).
 
 ## Architecture Overview
 
@@ -301,21 +301,24 @@ Adding Cloudflare between user and Fastly provides minimal benefit and breaks Gi
 
 | Component | Cost |
 |-----------|------|
-| Domain registration | $10-15/year |
+| Domain registration | $12/year |
+| Email (Zoho Mail) | $12/year ($1/month) |
 | Cloudflare Free | $0/month |
 | GitHub Pages | $0/month (public repos) |
-| **Total** | **$10-15/year** |
+| **Total** | **$24/year** |
 
 **What you get:**
 - Global CDN (Cloudflare + Fastly)
 - Automatic HTTPS (Let's Encrypt)
 - DDoS protection (Cloudflare)
+- Professional email (@yourdomain.com)
 - Zero server maintenance
 - Unlimited bandwidth (within GitHub Pages limits)
 
 Compare to:
 - VPS hosting: $60-600/year
 - Managed static hosting: $240-2400/year
+- Email hosting alone: $60-120/year (Google Workspace, Microsoft 365)
 
 ---
 
@@ -482,7 +485,7 @@ This architecture provides:
 - **SEO preservation** (301 redirects with path preservation)
 - **TLS isolation** (no coordination between providers)
 - **Origin portability** (swap hosting without DNS changes)
-- **~$10-15/year cost** (domain only, everything else free)
+- **$24/year cost** (domain + email, everything else free)
 
 The pattern is production-ready, scales to millions of requests, and requires no server maintenance. It's the same architectural approach used by modern documentation platforms and open-source project sites.
 
