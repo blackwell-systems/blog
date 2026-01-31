@@ -55,20 +55,28 @@ This document describes the infrastructure and tooling that powers the Blackwell
 
 ### Edge-Controlled Static Architecture
 
-This site uses Cloudflare as the edge router and GitHub Pages as the static origin.
+This site uses two global CDN networks in specialized collaboration: Cloudflare for edge routing and Fastly (via GitHub Pages) for content delivery.
 
 ```text
               ┌────────────────────────┐
-              │      Cloudflare Edge   │
-User ───────▶ │  TLS • Identity • Rules│
+              │ Cloudflare Edge (330+) │
+User ───────▶ │ Routing • TLS • Rules  │
               └──────────┬─────────────┘
-                         │
+                         │ (301 redirect)
                          ▼
               ┌────────────────────────┐
-              │    GitHub Pages (CDN)  │
-              │     Static Origin      │
+              │  Fastly Edge (Global)  │
+              │ Content CDN via GitHub │
               └────────────────────────┘
 ```
+
+**Dual-edge architecture:**
+
+**Cloudflare's edge (330+ nodes)** handles routing decisions in 10-50ms globally. Triggered by a dummy IP (192.0.2.1), redirect rules execute at every edge node with zero origin infrastructure.
+
+**Fastly's edge (via GitHub Pages)** caches and delivers pre-rendered HTML from geographically distributed points of presence. Pure content acceleration with no routing logic.
+
+The two networks specialize without coordination: Cloudflare sends tiny 301 responses (<1KB), Fastly serves actual HTML files from cache.
 
 **Architecture goals:**
 - One canonical public site (`blog.blackwell-systems.com`)
@@ -251,15 +259,19 @@ In Cloudflare, a **proxied** DNS record isn't just name resolution—it's a sign
 
 Without a proxied record, redirect rules would never run. The browser would fail DNS lookup before Cloudflare ever saw the request.
 
-By pointing the apex at a non-routable IP and enabling proxy mode, this creates a **serverless routing layer**:
+By pointing the apex at a non-routable IP and enabling proxy mode, this creates a **routing fabric with zero origin infrastructure**:
 
 ```
-User → Cloudflare Edge → Redirect Rules → Real Origin (GitHub)
+User → Cloudflare Edge (routing) → 301 redirect → Fastly Edge (content) → GitHub
 ```
 
-Cloudflare handles identity (which hostnames exist and where they route), path preservation, and TLS termination for apex/www. GitHub only serves content for the canonical hostname.
+Cloudflare's 330+ edge nodes handle identity (which hostnames exist and where they route), path preservation, and TLS termination for apex/www. Fastly's edge network caches and delivers content for the canonical hostname. GitHub Pages provides the stateless origin.
 
-**Important:** This does not create double CDN. Redirected hostnames (`blackwell-systems.com`, `www.blackwell-systems.com`) never serve content—Cloudflare only sends 301 responses. The canonical hostname (`blog.blackwell-systems.com`) is DNS-only and served directly through Fastly. Only one CDN delivers HTML: Fastly.
+**Two CDN networks, specialized roles:**
+
+Redirected hostnames (`blackwell-systems.com`, `www.blackwell-systems.com`) use Cloudflare's edge network exclusively for routing—301 responses without content. The canonical hostname (`blog.blackwell-systems.com`) bypasses Cloudflare entirely (DNS-only) and uses Fastly's edge network exclusively for content delivery.
+
+This is specialized collaboration, not redundant CDN stacking. Each network does what it's optimized for: Cloudflare for sub-50ms routing decisions at 330+ global nodes, Fastly for content caching and delivery.
 
 #### Path Preservation
 
@@ -285,9 +297,9 @@ https://blog.blackwell-systems.com/oss/project-alpha
 
 **TLS Conflict:** GitHub Pages issues its own Let's Encrypt certificates. If you proxy the domain, GitHub's ACME validation can fail because it sees Cloudflare's IP instead of its own.
 
-**Performance Tradeoff:** You lose Cloudflare edge caching, but GitHub Pages is already served via **Fastly** (a global CDN). The latency difference is negligible.
+**No performance tradeoff:** GitHub Pages is already served via **Fastly** (a global CDN with edge caching). The blog subdomain gets edge-cached content delivery without Cloudflare because Fastly already provides that capability.
 
-Result: Cloudflare handles routing, GitHub handles hosting + TLS, no certificate deadlocks.
+Result: Cloudflare handles routing at its edge, Fastly handles content delivery at its edge, GitHub manages origin + TLS. No certificate deadlocks, no coordination overhead.
 
 #### Email Deliverability
 
