@@ -158,6 +158,56 @@ User ────────►│  TLS • Identity • Rules  │
 
 Cloudflare intercepts traffic at the edge and makes routing decisions before any origin request. The origin (GitHub Pages) only serves the canonical hostname.
 
+### How This Architecture Works
+
+**The core insight:** Separate identity (which hostnames exist) from content delivery (what gets served).
+
+**Identity lives at the edge:**
+- Cloudflare handles `example.com` and `www.example.com` (both proxied)
+- These hostnames never contact an origin—Cloudflare redirects immediately
+- Users see these domains in their browser, but they're routing constructs, not content hosts
+
+**Content lives at the origin:**
+- GitHub Pages handles only `blog.example.com` (DNS-only)
+- This is the single canonical hostname that actually serves HTML
+- No redirect logic—just static file delivery via Fastly CDN
+
+**Request flow for apex domain:**
+```
+1. User types: example.com
+2. DNS returns: Cloudflare IP (because apex is proxied)
+3. Browser connects: Nearest Cloudflare edge node
+4. Cloudflare terminates TLS: Issues its own certificate
+5. Cloudflare evaluates redirect rules: Matches catch-all rule
+6. Cloudflare responds: 301 → https://blog.example.com/
+7. Browser follows redirect: Connects to blog.example.com
+8. DNS returns: GitHub Pages IP (because blog is DNS-only)
+9. GitHub Pages serves: Pre-built HTML file
+```
+
+**Request flow for canonical domain:**
+```
+1. User types: blog.example.com
+2. DNS returns: GitHub Pages IP (DNS-only, no Cloudflare)
+3. Browser connects: Fastly edge node (GitHub's CDN)
+4. Fastly terminates TLS: GitHub's Let's Encrypt certificate
+5. Fastly serves: Cached HTML file from GitHub origin
+```
+
+**Why this separation matters:**
+
+**Origin never makes routing decisions:**
+- GitHub Pages doesn't know about `example.com` or `www.example.com`
+- It only serves `blog.example.com`—one hostname, one job
+- Routing policy (which domains redirect where) is enforced at the edge, not the origin
+
+**Edge never serves content:**
+- Cloudflare doesn't cache or serve HTML for redirected hostnames
+- It evaluates rules and sends 301 responses (tiny, fast)
+- Content delivery happens at the origin's CDN (Fastly), not Cloudflare
+
+**Result:** Clean separation of concerns. Routing is global (Cloudflare's 330+ nodes), content is cached (Fastly's network), and origin is stateless (GitHub's static files).
+
 ### The Three Planes
 
 | Plane | Owner | Responsibility |
