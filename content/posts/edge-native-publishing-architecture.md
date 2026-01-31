@@ -200,7 +200,7 @@ The result: clean separation of concerns. Routing happens globally at Cloudflare
 
 | Plane | Owner | Responsibility |
 |-------|-------|----------------|
-| **Edge Plane** | Cloudflare | TLS termination, identity (apex/www), redirects, legacy paths |
+| **Edge Plane** | Cloudflare | TLS termination, identity (apex/www), redirects, path preservation |
 | **Content Plane** | GitHub Pages | Static HTML delivery, CDN (Fastly), origin TLS |
 | **Authoring Plane** | Hugo/Jekyll/etc + Git | Content creation, templating, version control |
 
@@ -254,7 +254,7 @@ https://www.example.com/about?ref=home
   → https://blog.example.com/about?ref=home
 ```
 
-### Rule 2: Section Namespace Preservation
+### Rule 2: Path Preservation
 
 ```
 IF Hostname equals example.com
@@ -263,7 +263,7 @@ THEN 301 redirect to
   concat("https://blog.example.com", http.request.uri.path)
 ```
 
-**Repeat for each legacy section** (`/consulting`, `/docs`, `/api`, etc.)
+**Repeat for each section** (`/consulting`, `/docs`, `/api`, etc.)
 
 **Purpose:** Preserves SEO for old section URLs. Search engines transfer authority from `example.com/oss` to `blog.example.com/oss`.
 
@@ -318,7 +318,7 @@ The catch-all never runs if a more specific rule matches first.
 - More powerful (can transform content, not just redirect)
 - Higher cost at scale (CPU time billing)
 
-**Use Redirect Rules when:** Simple path-based redirects, canonicalization, legacy URL preservation.
+**Use Redirect Rules when:** Simple path-based redirects, canonicalization, path preservation.
 
 **Use Workers when:** Complex logic (geolocation routing, A/B testing, header manipulation), content transformation at edge.
 
@@ -431,7 +431,7 @@ The blog subdomain is DNS-only for three reasons. First, GitHub Pages needs dire
 
 **Target:** 1 hop maximum for apex/www redirects.
 
-**Acceptable:** 2 hops maximum for legacy paths.
+**Acceptable:** 2 hops maximum for path preservation.
 
 **Why this matters:**
 
@@ -454,7 +454,7 @@ example.com/product
   → 301 to blog.example.com/products/product
 ```
 
-Each legacy input should have a single, direct path to its canonical target.
+Each redirect should have a single, direct path to its canonical target.
 
 ### Why Path-Preserving Redirects?
 

@@ -106,7 +106,7 @@ THEN 301 redirect to
 ```
 Preserves path and query strings.
 
-**Rule 2 - /oss legacy path (301):**
+**Rule 2 - /oss path preservation (301):**
 ```
 IF Hostname equals blackwell-systems.com
 AND (URI Path equals /oss OR starts with /oss/)
@@ -114,7 +114,7 @@ THEN 301 redirect to
   concat("https://blog.blackwell-systems.com", http.request.uri.path)
 ```
 
-**Rule 3 - /consulting legacy path (301):**
+**Rule 3 - /consulting path preservation (301):**
 ```
 IF Hostname equals blackwell-systems.com
 AND (URI Path equals /consulting OR starts with /consulting/)
@@ -135,7 +135,7 @@ THEN 301 redirect to
 ```
 
 **Why this exists:**
-- Preserves external links shared before the `/products/` hierarchy existed
+- Preserves external links to historical product URLs
 - Consolidates SEO authority onto a single canonical page
 - Prevents content identity fragmentation
 - Allows product URLs to change without breaking public references
