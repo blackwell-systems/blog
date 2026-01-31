@@ -51,73 +51,118 @@ This document describes the infrastructure and tooling that powers the Blackwell
 
 **Domain Registrar:** Cloudflare
 
-**DNS Configuration:**
+**Canonical site:** https://blog.blackwell-systems.com
 
-### Website Traffic
+### Network Architecture: Cloudflare → GitHub Pages Edge Redirect
 
-**Root domain (blackwell-systems.com):**
-- Type: A Record
-- Value: `192.0.2.1` (dummy origin)
-- Proxy: Enabled (orange cloud)
-- Purpose: Edge-only redirect topology (never hits origin)
-- Redirects: Cloudflare Redirect Rules route all traffic to blog subdomain
+This site uses Cloudflare as the edge router and GitHub Pages as the static origin.
 
-**Blog subdomain (blog.blackwell-systems.com):**
-- Type: CNAME
-- Value: `blackwell-systems.github.io`
-- Proxy: Enabled (orange cloud)
-- Target: GitHub Pages
+**Architecture goals:**
+- One canonical public site (`blog.blackwell-systems.com`)
+- Preserve legacy links (`blackwell-systems.com/...`)
+- Support marketing www alias (`www.blackwell-systems.com`)
+- Avoid multi-level TLS failures (`www.blog...`)
+- Never expose origin IP
+- All traffic terminated at edge and redirected safely
 
-**Proxy status (orange cloud):**
-- Traffic routes through Cloudflare edge
-- Provides: DDOS protection, SSL/HTTPS, CDN caching, Redirect Rules
-- Masks origin server IP
+### DNS Layer (Cloudflare)
 
-**Architecture: Edge-Only Redirect Topology**
+| Host | Record | Target | Proxy |
+|------|--------|--------|-------|
+| `blackwell-systems.com` | A | `192.0.2.1` (dummy) | Proxied |
+| `www.blackwell-systems.com` | CNAME | `blackwell-systems.com` | Proxied |
+| `blog.blackwell-systems.com` | CNAME | `blackwell-systems.github.io` | DNS only |
 
-The root domain uses a "ghost origin" strategy - redirects happen entirely at Cloudflare's edge without ever contacting an origin server:
+**Why this works:**
 
-- **Control plane:** Cloudflare edge (DNS + Redirect Rules)
-- **Data plane:** Cloudflare global network (330+ locations)
-- **Origin:** None (192.0.2.1 dummy IP from TEST-NET-1, never contacted)
-- **Latency:** 10-50ms (edge decision only, no origin roundtrip)
+- **`blackwell-systems.com`** - Never fetched from origin, Cloudflare always intercepts
+- **`www.blackwell-systems.com`** - Cloudflare-only alias that terminates TLS and redirects
+- **`blog.blackwell-systems.com`** - Served directly by GitHub Pages (GitHub issues/manages TLS cert)
 
-**Performance comparison:**
+This avoids double-TLS and multi-subdomain certificate traps.
 
-Traditional redirect topology:
+### Redirect Rules (Cloudflare Edge)
+
+Cloudflare handles all routing **before** any origin request is made.
+
+**Rule 1 - www → canonical blog (301):**
 ```
-Client → Origin (200ms+ roundtrip) → 301 response → Redirect to blog
-Total: 200-500ms depending on origin distance
+IF Hostname equals www.blackwell-systems.com
+THEN 301 redirect to
+  concat("https://blog.blackwell-systems.com", http.request.uri)
+```
+Preserves path and query strings.
+
+**Rule 2 - /oss legacy path (301):**
+```
+IF Hostname equals blackwell-systems.com
+AND (URI Path equals /oss OR starts with /oss/)
+THEN 301 redirect to
+  concat("https://blog.blackwell-systems.com", http.request.uri.path)
 ```
 
-Edge redirect topology:
+**Rule 3 - /consulting legacy path (301):**
 ```
-Client → Cloudflare edge (10-50ms) → 301 response → Redirect to blog
-Total: 10-50ms (nearest edge node)
+IF Hostname equals blackwell-systems.com
+AND (URI Path equals /consulting OR starts with /consulting/)
+THEN 301 redirect to
+  concat("https://blog.blackwell-systems.com", http.request.uri.path)
 ```
 
-The redirect decision happens at the edge node closest to the user. No origin server involvement means no origin latency, no origin failures, and global performance regardless of where users connect from.
+**Rule 4 - Apex catch-all (301):**
+```
+IF Hostname equals blackwell-systems.com
+THEN 301 redirect to
+  https://blog.blackwell-systems.com/
+```
 
-**Cloudflare Redirect Rules:**
+This ensures no request ever reaches the fake IP origin.
 
-Rule 1 - OSS namespace passthrough (301):
-```
-When: (http.host eq "blackwell-systems.com" and
-       (http.request.uri.path eq "/oss" or
-        starts_with(http.request.uri.path, "/oss/")))
-Then: concat("https://blog.blackwell-systems.com", http.request.uri.path)
-```
-- Preserves `/oss` and `/oss/*` paths
-- Query strings preserved
-- **Design benefit:** Maintains product-like URL structure (`blackwell-systems.com/oss`) while keeping content management in the Hugo blog repo. Users see the clean apex domain, content lives in the existing static site pipeline.
+### Request Flow
 
-Rule 2 - Catch-all fallback (301):
 ```
-When: (http.host eq "blackwell-systems.com")
-Then: https://blog.blackwell-systems.com/
+User → blackwell-systems.com
+        ↓
+    Cloudflare Edge
+        ↓
+   Redirect Rules
+        ↓
+blog.blackwell-systems.com
+        ↓
+   GitHub Pages
 ```
-- Redirects all other traffic to blog root
-- Prevents origin 522 errors (redirect-only domain)
+
+**Example flows:**
+
+| Request | Result |
+|---------|--------|
+| `https://blackwell-systems.com` | → `https://blog.blackwell-systems.com/` |
+| `https://blackwell-systems.com/oss` | → `https://blog.blackwell-systems.com/oss` |
+| `https://www.blackwell-systems.com/oss?x=1` | → `https://blog.blackwell-systems.com/oss?x=1` |
+| `https://blog.blackwell-systems.com` | Served by GitHub |
+
+### Why This Architecture Is Correct
+
+**Avoids TLS traps:**
+- No `www.blog...` multi-level subdomain
+- Cloudflare only terminates TLS for one-level hosts
+
+**Edge-first:**
+- Redirects happen at Cloudflare, not origin
+- No unnecessary origin requests
+
+**Zero origin exposure:**
+- Apex IP is fake (`192.0.2.1`)
+- Cloudflare must redirect, or nothing loads
+
+**Host portability:**
+- Can move from GitHub Pages to Netlify, S3, etc.
+- Only the blog CNAME changes
+
+**Performance:**
+- Edge decision: 10-50ms (nearest edge node)
+- Traditional origin redirect: 200-500ms
+- No origin latency, no origin failures
 
 ### Email (Zoho Mail)
 
