@@ -53,9 +53,22 @@ This document describes the infrastructure and tooling that powers the Blackwell
 
 **Canonical site:** https://blog.blackwell-systems.com
 
-### Network Architecture: Cloudflare → GitHub Pages Edge Redirect
+### Edge-Controlled Static Architecture
 
 This site uses Cloudflare as the edge router and GitHub Pages as the static origin.
+
+```text
+              ┌────────────────────────┐
+              │      Cloudflare Edge   │
+User ───────▶ │  TLS • Identity • Rules│
+              └──────────┬─────────────┘
+                         │
+                         ▼
+              ┌────────────────────────┐
+              │    GitHub Pages (CDN)  │
+              │     Static Origin      │
+              └────────────────────────┘
+```
 
 **Architecture goals:**
 - One canonical public site (`blog.blackwell-systems.com`)
