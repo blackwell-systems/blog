@@ -12,6 +12,135 @@ This is a reference architecture for **edge-native static publishing**: routing 
 
 **Note:** This article uses generic `example.com` placeholders. The actual implementation uses `blackwell-systems.com` (apex/www) and `blog.blackwell-systems.com` (canonical site).
 
+---
+
+## Core Concepts
+
+Before diving into the architecture, it's important to understand the fundamental technologies this pattern uses.
+
+### Static Sites
+
+A **static site** is pre-rendered HTML served directly to users—no server-side code execution, no database queries, no runtime processing.
+
+**Traditional (dynamic) flow:**
+```
+User request → Server executes code → Queries database → Renders HTML → Sends response
+```
+
+**Static site flow:**
+```
+User request → Server sends pre-built HTML file
+```
+
+**How static sites are built:**
+
+Static site generators (Hugo, Jekyll, Next.js, Gatsby) take source files (Markdown, templates, data) and **build** HTML at deployment time, not request time.
+
+```bash
+# Build process (happens once during deployment)
+hugo build
+  → Reads content/posts/*.md
+  → Applies templates
+  → Generates public/index.html, public/posts/article.html, etc.
+
+# Runtime (every user request)
+  → Serve public/article.html (no processing, just file delivery)
+```
+
+**Benefits:**
+- **Fast:** No database queries, no code execution
+- **Secure:** No server-side code to exploit
+- **Cheap:** Can be served from CDNs, no compute costs
+- **Scalable:** Pre-rendered files can be cached globally
+
+**Tradeoff:** Content changes require rebuilding and redeploying. Not suitable for user-specific dynamic content (e.g., dashboards, real-time data).
+
+### GitHub Pages
+
+**GitHub Pages** is a free static hosting service that:
+
+1. Serves files from a GitHub repository
+2. Provides a CDN (Fastly) for global delivery
+3. Automatically builds Jekyll sites (or accepts pre-built HTML)
+4. Issues free HTTPS certificates (Let's Encrypt) for custom domains
+5. Supports custom domains via CNAME configuration
+
+**How it works:**
+
+```
+Your repo (main branch or gh-pages branch)
+  → GitHub's build pipeline (if using Jekyll)
+  → Static files served via Fastly CDN
+  → Available at username.github.io/repo or your custom domain
+```
+
+**Why GitHub Pages for this architecture:**
+- Zero cost (free for public repositories)
+- Zero maintenance (no servers to manage)
+- Global CDN included (Fastly)
+- Automatic HTTPS
+- Git-based deployment (push to deploy)
+
+### The Edge
+
+The **edge** refers to servers geographically distributed close to users, as opposed to a centralized origin server.
+
+**Traditional architecture:**
+```
+User in Tokyo → Origin server in Virginia (200ms roundtrip)
+User in London → Origin server in Virginia (100ms roundtrip)
+User in Sydney → Origin server in Virginia (250ms roundtrip)
+```
+
+**Edge architecture:**
+```
+User in Tokyo → Tokyo edge node (10ms)
+User in London → London edge node (15ms)
+User in Sydney → Sydney edge node (20ms)
+```
+
+**What edge nodes do:**
+
+1. **Terminate TLS** - Handle HTTPS without origin involvement
+2. **Cache content** - Serve cached responses without origin requests
+3. **Execute logic** - Run routing rules, redirects, transformations
+4. **Route requests** - Forward to origin only when necessary
+
+**Cloudflare's edge network:**
+- 330+ data centers globally
+- Automatic routing to nearest node
+- Shared infrastructure (free tier available)
+
+### Edge-Native vs Traditional
+
+**Traditional static hosting:**
+```
+User → Origin CDN → Origin server → Static files
+```
+All logic (routing, redirects) happens at the origin.
+
+**Edge-native architecture:**
+```
+User → Edge (routing logic) → Origin (only canonical content)
+```
+Routing decisions happen at the edge. Origin only serves one canonical hostname.
+
+**Why this matters:**
+
+**Edge-native enables:**
+- **Faster redirects** (10-50ms vs 200-500ms)
+- **Origin protection** (no direct origin access)
+- **Zero origin for redirects** (dummy IP, edge handles everything)
+- **Global policy enforcement** (rules execute at every edge node)
+
+**Traditional requires:**
+- Running a server for redirects
+- Origin handles all routing logic
+- Origin exposed to public internet
+- Centralized latency (distance to origin matters)
+
+---
+
 ## Architecture Overview
 
 ```text
@@ -27,7 +156,7 @@ User ────────►│  TLS • Identity • Rules  │
               └──────────────────────────┘
 ```
 
-**Key principle:** Cloudflare intercepts traffic at the edge and makes routing decisions before any origin request. The origin (GitHub Pages) only serves the canonical hostname.
+Cloudflare intercepts traffic at the edge and makes routing decisions before any origin request. The origin (GitHub Pages) only serves the canonical hostname.
 
 ### The Three Planes
 
