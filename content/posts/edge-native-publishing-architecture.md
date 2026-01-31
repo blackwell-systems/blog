@@ -160,17 +160,11 @@ Cloudflare intercepts traffic at the edge and makes routing decisions before any
 
 ### How This Architecture Works
 
-**The core insight:** Separate identity (which hostnames exist) from content delivery (what gets served).
+The core insight: **separate identity from content delivery**.
 
-**Identity lives at the edge:**
-- Cloudflare handles `example.com` and `www.example.com` (both proxied)
-- These hostnames never contact an origin—Cloudflare redirects immediately
-- Users see these domains in their browser, but they're routing constructs, not content hosts
+Identity lives at the edge. Cloudflare handles `example.com` and `www.example.com` as proxied hostnames. These domains never contact an origin—Cloudflare intercepts all traffic and redirects immediately. Users see these domains in their browser, but they're routing constructs, not content hosts. They exist purely to provide familiar URLs (apex and www) that redirect to the canonical location.
 
-**Content lives at the origin:**
-- GitHub Pages handles only `blog.example.com` (DNS-only)
-- This is the single canonical hostname that actually serves HTML
-- No redirect logic—just static file delivery via Fastly CDN
+Content lives at the origin. GitHub Pages handles only `blog.example.com` as a DNS-only hostname. This is the single canonical hostname that actually serves HTML. There's no redirect logic at this layer—just static file delivery via Fastly's global CDN. The origin doesn't know about apex or www domains and doesn't need to.
 
 **Request flow for apex domain:**
 ```
@@ -196,17 +190,11 @@ Cloudflare intercepts traffic at the edge and makes routing decisions before any
 
 **Why this separation matters:**
 
-**Origin never makes routing decisions:**
-- GitHub Pages doesn't know about `example.com` or `www.example.com`
-- It only serves `blog.example.com`—one hostname, one job
-- Routing policy (which domains redirect where) is enforced at the edge, not the origin
+The origin never makes routing decisions. GitHub Pages doesn't know about `example.com` or `www.example.com`—it only serves `blog.example.com`. This means routing policy (which domains redirect where) is enforced at the edge, not the origin. If the origin is compromised, an attacker cannot redirect users to malicious sites because the origin has no routing authority.
 
-**Edge never serves content:**
-- Cloudflare doesn't cache or serve HTML for redirected hostnames
-- It evaluates rules and sends 301 responses (tiny, fast)
-- Content delivery happens at the origin's CDN (Fastly), not Cloudflare
+The edge never serves content. Cloudflare doesn't cache or serve HTML for redirected hostnames. It evaluates rules and sends 301 responses (tiny, typically <1KB). Content delivery happens at the origin's CDN (Fastly), not Cloudflare. This avoids double-CDN complexity and keeps the edge layer focused on routing.
 
-**Result:** Clean separation of concerns. Routing is global (Cloudflare's 330+ nodes), content is cached (Fastly's network), and origin is stateless (GitHub's static files).
+The result: clean separation of concerns. Routing happens globally at Cloudflare's 330+ edge nodes. Content is cached at Fastly's network. The origin is stateless—just pre-built HTML files stored in a Git repository. Each layer has a single, clear responsibility.
 
 ### The Three Planes
 
@@ -232,29 +220,17 @@ Each plane operates independently. You can swap GitHub Pages for Netlify without
 
 ### Why This Structure
 
-**Apex domain (`example.com`):**
-- Points to `192.0.2.1` (RFC 5737 documentation IP, non-routable)
-- Proxied through Cloudflare (orange cloud)
-- Never contacts origin—Cloudflare handles all requests via Redirect Rules
+The apex domain (`example.com`) points to `192.0.2.1`, a documentation IP from RFC 5737's TEST-NET-1 range that's guaranteed non-routable on the public internet. This IP will never respond to requests. The record is set to proxied (orange cloud) in Cloudflare, which signals Cloudflare's edge network to intercept all traffic and evaluate Redirect Rules before attempting any origin connection. The origin is never contacted—every request to the apex domain is handled entirely at the edge.
 
-**www subdomain (`www.example.com`):**
-- CNAME to apex
-- Proxied through Cloudflare
-- Terminates TLS at edge, redirects to canonical blog hostname
+The www subdomain (`www.example.com`) is a CNAME pointing to the apex. It's also proxied through Cloudflare. When a user visits the www hostname, Cloudflare terminates TLS using its own certificate and immediately evaluates redirect rules. There's no origin server for www—it's purely an edge routing construct that provides the familiar www prefix while redirecting to the canonical blog hostname.
 
-**Blog subdomain (`blog.example.com`):**
-- CNAME to GitHub Pages
-- **DNS only** (gray cloud, not proxied)
-- GitHub Pages handles TLS (Let's Encrypt via ACME)
-- Served directly via Fastly CDN
+The blog subdomain (`blog.example.com`) is a CNAME pointing to GitHub Pages (`username.github.io`). This record is set to DNS-only (gray cloud, not proxied). DNS queries return GitHub's actual IP addresses, not Cloudflare's. This allows GitHub Pages to issue Let's Encrypt certificates via ACME validation without interference from Cloudflare's proxy layer. The blog subdomain is served directly through Fastly (GitHub's CDN) and is the only hostname that actually delivers content—no redirects, just static HTML files.
 
 ### The Dummy IP Strategy
 
-`192.0.2.1` is from TEST-NET-1, reserved for documentation. It's guaranteed non-routable.
+The use of `192.0.2.1` isn't arbitrary. In Cloudflare, a proxied DNS record isn't just name resolution—it's an infrastructure trigger that tells Cloudflare's global network to terminate TLS and process requests at the edge. Without a proxied record pointing somewhere (even a fake IP), redirect rules would never execute. The browser would fail DNS lookup before Cloudflare could intercept the request.
 
-In Cloudflare, a **proxied** record signals the edge to terminate TLS and evaluate Redirect Rules. Without the dummy IP + proxy mode, DNS queries would fail before Cloudflare could intercept.
-
-This creates a **serverless routing layer**: all routing logic lives at the edge, no origin server required for redirects.
+By combining a non-routable IP with proxy mode, this creates a serverless routing layer where all routing logic lives at the edge. No origin server is required for redirects. The edge handles identity (which hostnames exist) and policy (where they redirect), while the origin handles only content delivery for the canonical hostname.
 
 ---
 
@@ -438,12 +414,9 @@ All redirects should be **301 Permanent**.
 
 ### Why Proxy the Apex but Not the Blog?
 
-**Apex + www are proxied** because they exist solely for redirects. Cloudflare must intercept traffic to evaluate Redirect Rules.
+The apex and www hostnames are proxied because they exist solely for redirects. Cloudflare must intercept traffic to evaluate Redirect Rules. Without proxy mode, these hostnames would try to contact the dummy IP (`192.0.2.1`) and fail with connection timeouts.
 
-**Blog is DNS-only** because:
-- GitHub Pages needs direct DNS resolution to issue Let's Encrypt certificates (ACME validation)
-- GitHub Pages already serves via Fastly CDN—adding Cloudflare proxy provides no performance benefit
-- Avoids double-CDN complexity
+The blog subdomain is DNS-only for three reasons. First, GitHub Pages needs direct DNS resolution to issue Let's Encrypt certificates. The ACME validation process requires GitHub to prove control of the domain, which fails if DNS returns Cloudflare's IPs instead of GitHub's. Second, GitHub Pages already serves through Fastly's global CDN—adding Cloudflare as a proxy would create a double-CDN topology (Cloudflare → Fastly → GitHub) with no performance benefit. Third, keeping the blog DNS-only avoids certificate coordination issues. Each layer manages its own TLS independently: Cloudflare for apex/www, GitHub for the blog subdomain.
 
 ### Why 301 Permanent Redirects?
 
@@ -485,20 +458,11 @@ Each legacy input should have a single, direct path to its canonical target.
 
 ### Why Path-Preserving Redirects?
 
-Redirecting `example.com/oss/project` to `blog.example.com/oss/project` (not just `blog.example.com`) preserves:
-- Deep links from external sites
-- Bookmarks and saved URLs
-- SEO for specific pages (not just domain authority)
-
-This is critical for maintaining traffic after domain migration.
+Redirecting `example.com/oss/project` to `blog.example.com/oss/project` (not just the homepage) preserves the complete URL structure. When external sites link to specific pages, those links continue working after migration. Bookmarks and saved URLs don't break. Most importantly, search engines transfer ranking signals to the corresponding page on the new domain, not just the homepage. This preserves SEO for individual pages, not just overall domain authority. Without path preservation, all external links would funnel to the homepage, losing traffic and context.
 
 ### Why Separate Edge and Content Planes?
 
-**Decoupling enables:**
-- **Origin portability:** Migrate from GitHub Pages to Netlify by changing one CNAME
-- **Independent scaling:** Edge routing scales independently of content delivery
-- **Failure isolation:** Cloudflare outage affects redirects, not content delivery (and vice versa)
-- **Technology flexibility:** Change static site generator without touching DNS
+Separating routing (edge) from delivery (origin) provides operational flexibility. You can migrate from GitHub Pages to Netlify by changing a single CNAME record—the edge routing layer remains unchanged. Edge routing scales independently of content delivery, so high redirect traffic doesn't affect origin performance. Failures are isolated: a Cloudflare outage only affects redirects, not content delivery on the canonical hostname (and vice versa). You can change static site generators (Hugo to Jekyll) or hosting providers without touching DNS configuration. Each plane can evolve independently without coordinating changes across layers.
 
 ---
 
