@@ -176,9 +176,9 @@ Each plane operates independently. You can swap GitHub Pages for Netlify without
 
 | Host | Type | Target | Proxy |
 |------|------|--------|-------|
-| `example.com` | A | `192.0.2.1` | ✅ Proxied |
-| `www.example.com` | CNAME | `example.com` | ✅ Proxied |
-| `blog.example.com` | CNAME | `username.github.io` | ❌ DNS only |
+| `example.com` | A | `192.0.2.1` | Proxied |
+| `www.example.com` | CNAME | `example.com` | Proxied |
+| `blog.example.com` | CNAME | `username.github.io` | DNS only |
 
 ### Why This Structure
 
