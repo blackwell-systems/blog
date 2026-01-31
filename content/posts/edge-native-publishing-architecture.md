@@ -198,7 +198,7 @@ This architecture **separates identity from content delivery**.
 
 The origin never makes routing decisions. GitHub Pages doesn't know about `example.com` or `www.example.com`—it only serves `blog.example.com`. This means routing policy (which domains redirect where) is enforced at the edge, not the origin. If the origin is compromised, an attacker cannot redirect users to malicious sites because the origin has no routing authority.
 
-The edge never serves content. Cloudflare doesn't cache or serve HTML for redirected hostnames. It evaluates rules and sends 301 responses (tiny, typically <1KB). Content delivery happens at Fastly's edge network, not Cloudflare.
+Cloudflare's edge never serves content. It evaluates redirect rules and sends 301 responses (tiny, typically <1KB) for apex and www hostnames. Fastly's edge network handles all content delivery—it caches and serves HTML files for the canonical blog subdomain.
 
 **The dual-edge advantage:**
 
