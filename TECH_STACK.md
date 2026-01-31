@@ -141,7 +141,7 @@ blog.blackwell-systems.com
 | `https://www.blackwell-systems.com/oss?x=1` | → `https://blog.blackwell-systems.com/oss?x=1` |
 | `https://blog.blackwell-systems.com` | Served by GitHub |
 
-### Why This Architecture Is Correct
+### Why This Architecture Works
 
 **Avoids TLS traps:**
 - No `www.blog...` multi-level subdomain
