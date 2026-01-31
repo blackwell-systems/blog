@@ -621,5 +621,3 @@ This architecture provides:
 - **$24/year cost** (domain + email, everything else free)
 
 The pattern is production-ready, scales to millions of requests, and requires no server maintenance. It's the same architectural approach used by modern documentation platforms and open-source project sites.
-
-You're not deploying a static site—you're building an edge-native publishing system where routing happens close to users and the origin stays simple.
