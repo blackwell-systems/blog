@@ -225,8 +225,6 @@ This ensures that historical, marketing, or shortened product URLs resolve to th
 - Prevents content identity fragmentation
 - Allows product URLs to change without breaking public references
 
-This rule replaces an earlier Cloudflare Worker and keeps all routing logic declarative and centralized in the edge policy engine.
-
 ### Rule 5: Apex Catch-All (301 Permanent)
 
 ```

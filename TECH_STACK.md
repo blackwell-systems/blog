@@ -140,8 +140,6 @@ THEN 301 redirect to
 - Prevents content identity fragmentation
 - Allows product URLs to change without breaking public references
 
-This rule replaces an earlier Cloudflare Worker and keeps all routing logic declarative and centralized in the edge policy engine.
-
 **Rule 5 - Apex catch-all (301):**
 ```
 IF Hostname equals blackwell-systems.com
