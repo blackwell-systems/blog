@@ -145,18 +145,24 @@ Routing decisions happen at the edge. Origin only serves one canonical hostname.
 
 ```text
               ┌──────────────────────────┐
-              │      Cloudflare Edge     │
-User ────────►│  TLS • Identity • Rules  │
+              │   Cloudflare Edge (330+) │
+User ────────►│  Routing • TLS • Rules   │
               └────────────┬─────────────┘
-                           │ (redirect)
+                           │ (301 redirect)
                            ▼
               ┌──────────────────────────┐
-              │   GitHub Pages (Fastly)  │
-              │      Static Origin       │
+              │   Fastly Edge (Global)   │
+              │  Content CDN via GitHub  │
               └──────────────────────────┘
 ```
 
-Cloudflare intercepts traffic at the edge and makes routing decisions before any origin request. The origin (GitHub Pages) only serves the canonical hostname.
+**Two global CDN networks working in perfect coordination:**
+
+**Cloudflare's edge (330+ nodes)** handles routing decisions in 10-50ms globally, triggered by a dummy IP (192.0.2.1) that creates a routing fabric with zero origin. Redirect rules execute at every edge node—no centralized server required.
+
+**Fastly's edge (via GitHub Pages)** caches and delivers pre-rendered HTML from geographically distributed points of presence. Pure content acceleration with no routing logic.
+
+The two networks never interfere with each other. Cloudflare evaluates redirect rules and sends tiny 301 responses (<1KB). Fastly serves actual HTML files from cache. You get edge routing performance + edge content performance with zero provider coordination.
 
 ### How This Architecture Works
 
@@ -192,9 +198,25 @@ This architecture **separates identity from content delivery**.
 
 The origin never makes routing decisions. GitHub Pages doesn't know about `example.com` or `www.example.com`—it only serves `blog.example.com`. This means routing policy (which domains redirect where) is enforced at the edge, not the origin. If the origin is compromised, an attacker cannot redirect users to malicious sites because the origin has no routing authority.
 
-The edge never serves content. Cloudflare doesn't cache or serve HTML for redirected hostnames. It evaluates rules and sends 301 responses (tiny, typically <1KB). Content delivery happens at the origin's CDN (Fastly), not Cloudflare. This avoids double-CDN complexity and keeps the edge layer focused on routing.
+The edge never serves content. Cloudflare doesn't cache or serve HTML for redirected hostnames. It evaluates rules and sends 301 responses (tiny, typically <1KB). Content delivery happens at Fastly's edge network, not Cloudflare.
 
-The result: clean separation of concerns. Routing happens globally at Cloudflare's 330+ edge nodes. Content is cached at Fastly's network. The origin is stateless—just pre-built HTML files stored in a Git repository. Each layer has a single, clear responsibility.
+**The dual-edge advantage:**
+
+This isn't double-CDN redundancy—it's specialized collaboration. Each network does what it's optimized for:
+
+**Cloudflare specializes in:**
+- Global routing intelligence (330+ edge nodes)
+- Sub-50ms redirect decisions
+- TLS termination for routing layer
+- Zero origin requests (dummy IP triggers edge logic)
+
+**Fastly specializes in:**
+- Content delivery and caching
+- Static asset acceleration
+- Geographic distribution of HTML files
+- Origin pull from GitHub's infrastructure
+
+The result: Routing decisions happen at Cloudflare's edge (10-50ms globally), content delivery happens at Fastly's edge (20-100ms from nearest POP), and the two networks collaborate without coordination. The origin (GitHub Pages) is completely stateless—just pre-built HTML files in a Git repository.
 
 ### The Three Planes
 
@@ -228,9 +250,24 @@ The blog subdomain (`blog.example.com`) is a CNAME pointing to GitHub Pages (`us
 
 ### The Dummy IP Strategy
 
-The use of `192.0.2.1` isn't arbitrary. In Cloudflare, a proxied DNS record isn't just name resolution—it's an infrastructure trigger that tells Cloudflare's global network to terminate TLS and process requests at the edge. Without a proxied record pointing somewhere (even a fake IP), redirect rules would never execute. The browser would fail DNS lookup before Cloudflare could intercept the request.
+The use of `192.0.2.1` is the architectural linchpin that makes serverless edge routing possible.
 
-By combining a non-routable IP with proxy mode, this creates a serverless routing layer where all routing logic lives at the edge. No origin server is required for redirects. The edge handles identity (which hostnames exist) and policy (where they redirect), while the origin handles only content delivery for the canonical hostname.
+**Why a non-routable IP works:**
+
+In Cloudflare, a proxied DNS record is an **infrastructure trigger**, not just name resolution. When you set a record to proxied (orange cloud), you're signaling Cloudflare's global network to:
+
+1. Intercept all traffic at the edge
+2. Terminate TLS locally (issue Cloudflare certificates)
+3. Evaluate redirect rules before any origin request
+4. Only contact the origin if rules don't match
+
+The IP address itself becomes irrelevant—Cloudflare intercepts traffic before any connection attempt. `192.0.2.1` is from RFC 5737's TEST-NET-1 range, guaranteed non-routable on the public internet. It will never respond to requests because it's designed never to exist as a real host.
+
+**What this enables:**
+
+By combining a dummy IP with proxy mode, you create a **routing fabric with zero origin infrastructure**. There's no server at `192.0.2.1`—it's a trigger address that tells Cloudflare's 330+ edge nodes to handle requests locally. Redirect rules execute globally without any centralized origin server. The apex and www domains exist as pure routing constructs.
+
+This is why the architecture costs $24/year instead of $600/year—you're not running servers for redirects. The edge network itself becomes the routing layer, triggered by a DNS record pointing to an address that intentionally goes nowhere.
 
 ---
 
@@ -416,9 +453,13 @@ All redirects should be **301 Permanent**.
 
 The apex and www hostnames are proxied because they exist solely for redirects. Cloudflare must intercept traffic to evaluate Redirect Rules. Without proxy mode, these hostnames would try to contact the dummy IP (`192.0.2.1`) and fail with connection timeouts.
 
-The blog subdomain is DNS-only for three reasons. First, GitHub Pages needs direct DNS resolution to issue Let's Encrypt certificates. The ACME validation process requires GitHub to prove control of the domain, which fails if DNS returns Cloudflare's IPs instead of GitHub's. Second, GitHub Pages already serves through Fastly's global CDN—adding Cloudflare as a proxy would create a double-CDN topology (Cloudflare → Fastly → GitHub) with no performance benefit and unnecessary complexity. Third, keeping the blog DNS-only avoids certificate coordination issues. Each layer manages its own TLS independently: Cloudflare for apex/www, GitHub for the blog subdomain.
+The blog subdomain is DNS-only for three reasons. First, GitHub Pages needs direct DNS resolution to issue Let's Encrypt certificates. The ACME validation process requires GitHub to prove control of the domain, which fails if DNS returns Cloudflare's IPs instead of GitHub's. Second, GitHub Pages already serves through Fastly's global CDN—there's no need to proxy through Cloudflare because content is already edge-cached. Third, keeping the blog DNS-only avoids certificate coordination issues. Each layer manages its own TLS independently: Cloudflare for apex/www, GitHub for the blog subdomain.
 
-**Important:** This architecture does **not** result in double CDN for content delivery. The redirected hostnames (`example.com`, `www.example.com`) never serve content—Cloudflare only sends 301 redirect responses. The canonical hostname (`blog.example.com`) bypasses Cloudflare entirely (DNS-only) and is served directly through Fastly. Only one CDN actually delivers HTML: Fastly.
+**The architecture uses two CDN networks, but not for redundancy:**
+
+The redirected hostnames (`example.com`, `www.example.com`) use Cloudflare's edge network exclusively for routing—Cloudflare sends 301 responses (typically <1KB) without serving content. The canonical hostname (`blog.example.com`) bypasses Cloudflare entirely (DNS-only) and uses Fastly's edge network exclusively for content delivery—Fastly caches and serves pre-rendered HTML globally.
+
+Each network handles what it's optimized for: Cloudflare for sub-50ms routing decisions at 330+ global nodes, Fastly for content caching and delivery. This is specialized collaboration, not redundant CDN stacking.
 
 ### Why 301 Permanent Redirects?
 
