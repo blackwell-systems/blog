@@ -1,50 +1,16 @@
 ---
-title: "Building an Edge-Native Publishing System with Cloudflare and GitHub Pages"
+title: "Edge-Native Publishing Architecture with Cloudflare and GitHub Pages"
 date: 2026-01-31
 draft: false
 tags: ["cloudflare", "github-pages", "edge-computing", "cdn", "dns", "tls", "architecture", "static-site", "hugo", "devops", "infrastructure", "networking", "web-architecture", "ssl", "seo", "301-redirects", "serverless"]
 categories: ["architecture", "infrastructure"]
-description: "How to build a production-grade edge-native publishing system using Cloudflare as an edge router and GitHub Pages as the static origin. Solves the Apex CNAME problem and SSL depth problem simultaneously."
-summary: "Modern static architecture isn't just about hosting HTML files—it's about building a high-performance edge redirect engine on top of a zero-maintenance origin. This article explains how to use Cloudflare's edge network to solve classic DNS and TLS problems while preserving SEO and maintaining zero server infrastructure."
+description: "A reference architecture for building edge-native publishing systems using Cloudflare as an edge router and GitHub Pages as the static origin. Includes DNS configuration, redirect rules, and implementation guide."
+summary: "A production-grade architecture pattern for static publishing that uses Cloudflare's edge network for routing and GitHub Pages for content delivery. Complete with DNS setup, redirect rules, and step-by-step implementation guide."
 ---
 
-Modern static architecture isn't just about hosting HTML files. It's about building a **high-performance edge redirect engine** on top of a **zero-maintenance origin**.
+This is a reference architecture for **edge-native static publishing**: routing decisions happen at the edge (Cloudflare), content is served from a zero-maintenance origin (GitHub Pages), and the entire system costs ~$10-27/year.
 
-This article documents the architecture behind this blog: how Cloudflare functions as an edge router, GitHub Pages serves as the static origin, and how this combination solves two classic web infrastructure problems simultaneously.
-
----
-
-## The Two Problems
-
-### 1. The Apex CNAME Problem
-
-Root domains (apex domains like `example.com`) cannot use CNAME records in DNS. The DNS spec forbids it because CNAMEs must be the only record at a name, and apex domains need other records (SOA, NS, MX).
-
-This means you can't simply point `example.com` directly at a CDN or hosting provider using a CNAME. You need an A record with an IP address—which defeats the purpose of content delivery networks that use DNS-based routing.
-
-### 2. The SSL Depth Problem
-
-Multi-level subdomains (`www.blog.example.com`) break wildcard TLS certificates. A wildcard cert for `*.example.com` covers `blog.example.com` but not `www.blog.example.com`.
-
-You need separate certificates for each subdomain level, which becomes a coordination nightmare when different services manage different parts of your domain hierarchy.
-
-### The Traditional Workarounds (And Why They Fail)
-
-**ALIAS/ANAME records:** Proprietary DNS extensions that aren't universally supported. They work, but lock you into specific DNS providers.
-
-**Multiple origins:** Running separate servers for apex and subdomain. Doubles infrastructure complexity and maintenance burden.
-
-**Accepting broken www:** Just don't support `www.blog.example.com`. Works until marketing wants it.
-
-**Certificate juggling:** Managing certs across multiple layers. Operationally fragile and error-prone.
-
-None of these are satisfying. Modern infrastructure should solve problems, not accumulate workarounds.
-
----
-
-## The Solution: Edge-Controlled Static Architecture
-
-By using Cloudflare as an **edge router** and GitHub Pages as a **static origin**, you can solve both problems simultaneously:
+## Architecture Overview
 
 ```text
               ┌──────────────────────────┐
@@ -59,351 +25,465 @@ User ────────►│  TLS • Identity • Rules  │
               └──────────────────────────┘
 ```
 
-Cloudflare intercepts traffic for the proxied hostnames *before any origin request is made*.
+**Key principle:** Cloudflare intercepts traffic at the edge and makes routing decisions before any origin request. The origin (GitHub Pages) only serves the canonical hostname.
 
----
-
-## Architecture Goals
-
-**One canonical public site:**
-- `https://blog.blackwell-systems.com`
-
-**Preserve legacy links:**
-- `https://blackwell-systems.com/oss` → `https://blog.blackwell-systems.com/oss`
-
-**Support marketing www alias:**
-- `https://www.blackwell-systems.com/...` → `https://blog.blackwell-systems.com/...`
-
-**Avoid TLS traps:**
-- No `www.blog...` multi-level subdomains
-- Each layer manages its own TLS
-
-**Zero origin exposure:**
-- No direct access to origin servers
-- All traffic flows through edge
-
-**No server maintenance:**
-- Static files only
-- No runtime, no databases, no server processes
-
----
-
-## DNS Layer Configuration
-
-| Host | Record | Target | Proxy |
-|------|--------|--------|-------|
-| `blackwell-systems.com` | A | `192.0.2.1` (dummy) | Proxied |
-| `www.blackwell-systems.com` | CNAME | `blackwell-systems.com` | Proxied |
-| `blog.blackwell-systems.com` | CNAME | `blackwell-systems.github.io` | DNS only |
-
-### Why This Works
-
-**`blackwell-systems.com` (Apex domain):**
-- Uses a dummy IP (`192.0.2.1` from TEST-NET-1, reserved for documentation)
-- Proxied through Cloudflare (orange cloud)
-- Never fetched from origin—Cloudflare intercepts and redirects
-
-**`www.blackwell-systems.com` (Marketing alias):**
-- CNAME to apex
-- Proxied through Cloudflare
-- Terminates TLS at edge and redirects while preserving full URI
-
-**`blog.blackwell-systems.com` (Canonical site):**
-- CNAME to GitHub Pages
-- **DNS only** (gray cloud, not proxied)
-- Served directly by GitHub Pages (Fastly)
-- GitHub issues and manages its own TLS certificate
-
-This avoids double-TLS and multi-subdomain certificate conflicts.
-
----
-
-## The Dummy IP as Infrastructure Trigger
-
-Using `192.0.2.1` as the A record for the apex domain is deliberate, not a placeholder.
-
-In Cloudflare, a **proxied** DNS record isn't just name resolution—it's a signal to Cloudflare's global network to **terminate TLS and process the request**.
-
-### How Cloudflare Proxy Mode Works
-
-When you enable proxy mode (orange cloud) on a DNS record:
-
-1. Cloudflare's authoritative DNS returns **Cloudflare IPs** (not your origin IP)
-2. Browser connects to the **nearest Cloudflare edge**
-3. Cloudflare terminates TLS using its certificate
-4. Cloudflare evaluates **Redirect Rules** at the edge
-5. Only if nothing matches does Cloudflare attempt an origin connection
-
-Without a proxied record, redirect rules never run—the browser fails before Cloudflare ever sees the request.
-
-By pointing the apex at a non-routable IP and enabling proxy mode, you create a **serverless routing layer**:
-
-```
-User → Cloudflare Edge → Redirect Rules → Real Origin (GitHub)
-```
-
-### Why 192.0.2.1?
-
-This IP is from `TEST-NET-1` (192.0.2.0/24), a range reserved by RFC 5737 for documentation and examples. It's **guaranteed non-routable** on the public internet.
-
-Using a documentation IP makes the intent explicit: this is an edge-only hostname that should never talk to an origin.
-
----
-
-## Redirect Rules: Edge Routing Logic
-
-All user-facing redirects are implemented as **Cloudflare Redirect Rules** (declarative edge policy).
-
-Cloudflare processes redirect rules **before** any origin request. They run at every edge node globally.
-
-### Rule 1: www → Canonical Blog (301 Permanent)
-
-```
-IF Hostname equals www.blackwell-systems.com
-THEN 301 redirect to
-  concat("https://blog.blackwell-systems.com", http.request.uri)
-```
-
-**Preserves:** path + query string
-
-**Example:**
-```
-https://www.blackwell-systems.com/about?ref=home
-  → https://blog.blackwell-systems.com/about?ref=home
-```
-
-### Rule 2: /oss Legacy Path (301 Permanent)
-
-```
-IF Hostname equals blackwell-systems.com
-AND (URI Path equals /oss OR starts with /oss/)
-THEN 301 redirect to
-  concat("https://blog.blackwell-systems.com", http.request.uri.path)
-```
-
-**Example:**
-```
-https://blackwell-systems.com/oss/project-alpha
-  → https://blog.blackwell-systems.com/oss/project-alpha
-```
-
-### Rule 3: /consulting Legacy Path (301 Permanent)
-
-```
-IF Hostname equals blackwell-systems.com
-AND (URI Path equals /consulting OR starts with /consulting/)
-THEN 301 redirect to
-  concat("https://blog.blackwell-systems.com", http.request.uri.path)
-```
-
-Same pattern as `/oss`, preserves consulting namespace.
-
-### Rule 4: Product Canonicalization (301 Permanent)
-
-```
-IF Hostname equals blackwell-systems.com
-AND (
-  URI Path equals /gcp-emulator-pro
-  OR URI Path equals /gcp-emulator-pro/
-  OR URI Path starts with /gcp-emulator-pro/
-)
-THEN 301 redirect to
-  https://blog.blackwell-systems.com/products/gcp-emulator-pro/
-```
-
-**Why this exists:**
-- Preserves historical product URLs shared before the `/products/` hierarchy existed
-- Consolidates SEO authority onto a single canonical URL
-- Prevents "content identity fragmentation" where the same product is reachable at multiple public paths
-
-### Rule 5: Apex Catch-All (301 Permanent)
-
-```
-IF Hostname equals blackwell-systems.com
-THEN 301 redirect to
-  https://blog.blackwell-systems.com/
-```
-
-**Fallback:** Handles all other apex traffic, ensuring no request ever reaches the dummy IP origin.
-
-### Rule Processing Order
-
-Rules execute in order until a match. If Rules 2, 3, or 4 match, Rule 5 never runs.
-
-This is critical: the catch-all must always be last.
-
----
-
-## Request Flow Examples
-
-| Request | Result |
-|---------|--------|
-| `https://blackwell-systems.com` | → `https://blog.blackwell-systems.com/` |
-| `https://blackwell-systems.com/oss` | → `https://blog.blackwell-systems.com/oss` |
-| `https://blackwell-systems.com/oss/vaultmux` | → `https://blog.blackwell-systems.com/oss/vaultmux` |
-| `https://blackwell-systems.com/gcp-emulator-pro` | → `https://blog.blackwell-systems.com/products/gcp-emulator-pro/` |
-| `https://www.blackwell-systems.com/consulting?x=1` | → `https://blog.blackwell-systems.com/consulting?x=1` |
-| `https://blog.blackwell-systems.com/posts/` | Served directly by GitHub Pages |
-
-### Traffic Flow Diagram
-
-```
-User → blackwell-systems.com / www.blackwell-systems.com
-        ↓
-    Cloudflare Edge (TLS termination)
-        ↓
-   Redirect Rules (policy evaluation)
-        ↓
-blog.blackwell-systems.com
-        ↓
-   GitHub Pages (static content delivery)
-```
-
-**Edge decision time:** 10–50ms (nearest edge node)  
-**Traditional origin redirect:** 200–500ms (roundtrip to origin server)
-
-No origin latency. No origin failures. Global performance regardless of user location.
-
----
-
-## Legacy Path Preservation: SEO Architecture
-
-Path-specific rules (`/oss`, `/consulting`) do real SEO work.
-
-### The Problem: Link Equity Fragmentation
-
-When you migrate domains or restructure URLs, you risk losing years of accumulated SEO value:
-
-- Backlinks from external sites pointing to old URLs
-- Search engine index entries for old URLs
-- Social media shares with old URLs
-- Bookmarks and saved links
-
-If these links break (404), you lose traffic. If they redirect incorrectly, you lose context.
-
-### The Solution: Path-Preserving 301 Redirects
-
-Using `http.request.uri.path` preserves the exact path structure:
-
-```
-Old: https://blackwell-systems.com/oss/project-alpha
-New: https://blog.blackwell-systems.com/oss/project-alpha
-```
-
-### Why 301 Matters
-
-**301 Permanent Redirect** signals to search engines:
-
-1. **Transfer authority:** ranking signals flow to the new URL
-2. **Update index:** replace old URL in results
-3. **Merge signals:** combine historical data with new data
-
-Over time, search engines consolidate the old domain's authority into the new domain.
-
----
-
-## DNS-Only for Blog Subdomain: TLS Coordination
-
-`blog.blackwell-systems.com` is intentionally **not proxied** through Cloudflare (DNS only).
-
-### The TLS Conflict
-
-GitHub Pages automatically issues **Let's Encrypt certificates** for custom domains via ACME.
-
-If you proxy the blog subdomain through Cloudflare:
-
-- DNS resolves to Cloudflare infrastructure
-- GitHub's certificate automation may fail verification or stall
-
-By setting the blog subdomain to **DNS only**, GitHub Pages can validate and issue certificates cleanly.
-
-### The Performance Tradeoff
-
-You lose Cloudflare caching on the canonical blog host, but GitHub Pages already serves through a global CDN (Fastly). In practice, the difference is negligible.
-
----
-
-## The Three Planes
+### The Three Planes
 
 | Plane | Owner | Responsibility |
 |-------|-------|----------------|
-| **Edge Plane** | Cloudflare | Identity, TLS (apex/www), redirects, legacy paths, policy enforcement |
-| **Content Plane** | GitHub Pages | Static HTML delivery, CDN caching, origin TLS for `blog.*` |
-| **Authoring Plane** | Hugo + Git | Content creation, structure, templating, version control |
+| **Edge Plane** | Cloudflare | TLS termination, identity (apex/www), redirects, legacy paths |
+| **Content Plane** | GitHub Pages | Static HTML delivery, CDN (Fastly), origin TLS |
+| **Authoring Plane** | Hugo/Jekyll/etc + Git | Content creation, templating, version control |
+
+Each plane operates independently. You can swap GitHub Pages for Netlify without changing edge routing. You can change Hugo to Jekyll without touching DNS.
 
 ---
 
-## Common Mistakes to Avoid
+## DNS Configuration
 
-### Mistake 1: Proxying the Blog Subdomain
+### Records
 
-**Wrong:**
-```
-blog.blackwell-systems.com → Cloudflare (proxied) → GitHub Pages
-```
+| Host | Type | Target | Proxy |
+|------|------|--------|-------|
+| `example.com` | A | `192.0.2.1` | ✅ Proxied |
+| `www.example.com` | CNAME | `example.com` | ✅ Proxied |
+| `blog.example.com` | CNAME | `username.github.io` | ❌ DNS only |
 
-**Correct:**
-```
-blog.blackwell-systems.com → DNS only → GitHub Pages
-```
+### Why This Structure
 
-### Mistake 2: Using 302 Redirects
+**Apex domain (`example.com`):**
+- Points to `192.0.2.1` (RFC 5737 documentation IP, non-routable)
+- Proxied through Cloudflare (orange cloud)
+- Never contacts origin—Cloudflare handles all requests via Redirect Rules
 
-302 is treated as temporary. Use **301** to transfer authority and consolidate indexing.
+**www subdomain (`www.example.com`):**
+- CNAME to apex
+- Proxied through Cloudflare
+- Terminates TLS at edge, redirects to canonical blog hostname
 
-### Mistake 3: Forgetting Query String Preservation
+**Blog subdomain (`blog.example.com`):**
+- CNAME to GitHub Pages
+- **DNS only** (gray cloud, not proxied)
+- GitHub Pages handles TLS (Let's Encrypt via ACME)
+- Served directly via Fastly CDN
 
-If you want to preserve query strings, use:
+### The Dummy IP Strategy
 
-```
-http.request.uri
-```
+`192.0.2.1` is from TEST-NET-1, reserved for documentation. It's guaranteed non-routable.
 
-Using:
+In Cloudflare, a **proxied** record signals the edge to terminate TLS and evaluate Redirect Rules. Without the dummy IP + proxy mode, DNS queries would fail before Cloudflare could intercept.
 
-```
-http.request.uri.path
-```
-
-drops query strings like `?utm_source=...`.
-
-(For this setup, the `www` rule correctly preserves queries; path-specific rules preserve structure.)
+This creates a **serverless routing layer**: all routing logic lives at the edge, no origin server required for redirects.
 
 ---
 
-## Conclusion
+## Redirect Rules
 
-This architecture provides a production-grade publishing system with:
+All routing logic is declarative—implemented as Cloudflare Redirect Rules. Rules execute at every edge node globally before any origin request.
 
-- **Cloudflare as edge router + policy engine**
-- **GitHub Pages as static origin**
-- **One canonical hostname**
-- **Legacy compatibility via path-preserving redirects**
-- **Zero origin exposure**
-- **No TLS coordination issues**
-- **No server maintenance**
-- **Global redirect performance (10–50ms edge latency)**
-- **~$10–27/year total cost**
+### Rule 1: www → Canonical Blog
 
-You haven't just deployed a static site. You've built an **edge-native publishing system** where routing decisions happen close to users and the origin stays simple and zero-maintenance.
+```
+IF Hostname equals www.example.com
+THEN 301 redirect to
+  concat("https://blog.example.com", http.request.uri)
+```
+
+**Preserves:** Full URI (path + query string)
+
+**Example:**
+```
+https://www.example.com/about?ref=home
+  → https://blog.example.com/about?ref=home
+```
+
+### Rule 2: Section Namespace Preservation
+
+```
+IF Hostname equals example.com
+AND (URI Path equals /oss OR starts with /oss/)
+THEN 301 redirect to
+  concat("https://blog.example.com", http.request.uri.path)
+```
+
+**Repeat for each legacy section** (`/consulting`, `/docs`, `/api`, etc.)
+
+**Purpose:** Preserves SEO for old section URLs. Search engines transfer authority from `example.com/oss` to `blog.example.com/oss`.
+
+### Rule 3: Product Canonicalization
+
+```
+IF Hostname equals example.com
+AND (
+  URI Path equals /product-name
+  OR URI Path equals /product-name/
+  OR URI Path starts with /product-name/
+)
+THEN 301 redirect to
+  https://blog.example.com/products/product-name/
+```
+
+**Use case:** Historical product URLs shared before `/products/` hierarchy existed. Consolidates SEO authority onto one canonical URL.
+
+### Rule 4: Apex Catch-All
+
+```
+IF Hostname equals example.com
+THEN 301 redirect to
+  https://blog.example.com/
+```
+
+**Critical:** This rule must be **last**. It handles all traffic that doesn't match earlier rules, ensuring no request reaches the dummy IP.
+
+### Rule Processing Order
+
+Rules execute in order until a match:
+
+1. www redirect
+2. Specific path rules (/oss, /consulting, /product-name)
+3. Apex catch-all
+
+The catch-all never runs if a more specific rule matches first.
+
+---
+
+## Implementation Guide
+
+### Phase 1: Prepare Content
+
+1. Deploy static site to GitHub Pages (Hugo, Jekyll, Next.js, etc.)
+2. Verify it works at `username.github.io/repo`
+3. Do **not** configure custom domain yet
+
+### Phase 2: Configure Cloudflare DNS
+
+1. Add domain to Cloudflare
+2. Update nameservers at your registrar to Cloudflare's
+3. Wait 24-48 hours for propagation
+4. Verify: `dig NS example.com` should return Cloudflare nameservers
+
+### Phase 3: Set Up Blog Subdomain
+
+1. Add CNAME record: `blog.example.com` → `username.github.io`
+2. Set to **DNS only** (gray cloud, not proxied)
+3. In GitHub Pages settings, add custom domain: `blog.example.com`
+4. Wait 5-10 minutes for GitHub to issue Let's Encrypt certificate
+5. Verify HTTPS: `curl -I https://blog.example.com`
+
+### Phase 4: Configure Apex Domain
+
+1. Add A record: `example.com` → `192.0.2.1`
+2. Set to **Proxied** (orange cloud)
+3. Add CNAME: `www.example.com` → `example.com`
+4. Set to **Proxied** (orange cloud)
+
+At this point, both apex and www will fail (522 errors) because no redirect rules exist yet.
+
+### Phase 5: Add Redirect Rules
+
+In Cloudflare dashboard → Rules → Redirect Rules:
+
+1. Add www redirect rule
+2. Add section-specific rules (if applicable)
+3. Add product rules (if applicable)
+4. Add apex catch-all rule (must be last)
+
+Test each rule individually before enabling the next.
+
+### Phase 6: Verify
+
+Test all URL patterns:
+
+```bash
+# Should redirect to blog
+curl -I https://example.com
+curl -I https://www.example.com
+
+# Should redirect preserving paths
+curl -I https://example.com/oss
+curl -I https://www.example.com/about?ref=test
+
+# Should serve directly from GitHub Pages
+curl -I https://blog.example.com
+```
+
+All redirects should be **301 Permanent**.
+
+---
+
+## Design Decisions Explained
+
+### Why Proxy the Apex but Not the Blog?
+
+**Apex + www are proxied** because they exist solely for redirects. Cloudflare must intercept traffic to evaluate Redirect Rules.
+
+**Blog is DNS-only** because:
+- GitHub Pages needs direct DNS resolution to issue Let's Encrypt certificates (ACME validation)
+- GitHub Pages already serves via Fastly CDN—adding Cloudflare proxy provides no performance benefit
+- Avoids double-CDN complexity
+
+### Why 301 Permanent Redirects?
+
+**301** signals to search engines:
+- Transfer ranking authority from old URL to new URL
+- Update index to replace old URLs with new ones
+- Merge historical SEO signals
+
+**302 Temporary** would preserve old URLs in search index indefinitely.
+
+### Why Path-Preserving Redirects?
+
+Redirecting `example.com/oss/project` to `blog.example.com/oss/project` (not just `blog.example.com`) preserves:
+- Deep links from external sites
+- Bookmarks and saved URLs
+- SEO for specific pages (not just domain authority)
+
+This is critical for maintaining traffic after domain migration.
+
+### Why Separate Edge and Content Planes?
+
+**Decoupling enables:**
+- **Origin portability:** Migrate from GitHub Pages to Netlify by changing one CNAME
+- **Independent scaling:** Edge routing scales independently of content delivery
+- **Failure isolation:** Cloudflare outage affects redirects, not content delivery (and vice versa)
+- **Technology flexibility:** Change static site generator without touching DNS
+
+---
+
+## Performance Characteristics
+
+### Redirect Latency
+
+**Traditional origin-based redirect:**
+```
+Client → Origin (200-500ms) → 301 Response → Redirect
+```
+
+**Edge-based redirect:**
+```
+Client → Cloudflare Edge (10-50ms) → 301 Response → Redirect
+```
+
+**20x faster** because redirects happen at the nearest edge node (330+ globally), not a centralized origin server.
+
+### Content Delivery
+
+**blog.example.com** is served via:
+- GitHub Pages → Fastly CDN (global)
+- Typical latency: 20-100ms depending on edge proximity
+
+**Why not proxy blog through Cloudflare?**
+
+You'd get:
+- Cloudflare edge → Fastly CDN → GitHub Pages origin
+
+Adding Cloudflare between user and Fastly provides minimal benefit and breaks GitHub's certificate automation.
+
+---
+
+## When to Use This Pattern
+
+**Good fit:**
+- Static sites (pre-rendered HTML)
+- Documentation platforms
+- Blogs and marketing sites
+- Open source project sites
+- Low-traffic applications (<10M requests/month on free tier)
+
+**Not a fit:**
+- Dynamic server-side applications (use Workers or origin servers)
+- Real-time applications (WebSocket support limited)
+- High-security applications requiring origin IP protection beyond Cloudflare
+
+---
+
+## Cost Analysis
+
+| Component | Cost |
+|-----------|------|
+| Domain registration | $10-15/year |
+| Cloudflare Free | $0/month |
+| GitHub Pages | $0/month (public repos) |
+| **Total** | **$10-15/year** |
+
+**What you get:**
+- Global CDN (Cloudflare + Fastly)
+- Automatic HTTPS (Let's Encrypt)
+- DDoS protection (Cloudflare)
+- Zero server maintenance
+- Unlimited bandwidth (within GitHub Pages limits)
+
+Compare to:
+- VPS hosting: $60-600/year
+- Managed static hosting: $240-2400/year
+
+---
+
+## Common Issues and Solutions
+
+### Issue: 522 Error on Apex Domain
+
+**Cause:** No redirect rules configured, or rules disabled
+
+**Fix:** Verify Redirect Rules are active and apex domain is proxied (orange cloud)
+
+### Issue: GitHub Pages Certificate Failed
+
+**Cause:** Blog subdomain is proxied through Cloudflare
+
+**Fix:** Set blog subdomain to **DNS only** (gray cloud). Wait 5-10 minutes for GitHub to retry certificate issuance.
+
+### Issue: Query Strings Dropped on Redirect
+
+**Cause:** Using `http.request.uri.path` instead of `http.request.uri`
+
+**Fix:** Use full URI for www redirect:
+```
+concat("https://blog.example.com", http.request.uri)
+```
+
+### Issue: Search Engines Still Showing Old URLs
+
+**Cause:** Recently migrated, search engines haven't updated index yet
+
+**Fix:** Wait 4-8 weeks. Submit new sitemap to Google Search Console. Verify 301 redirects are working (not 302).
+
+---
+
+## Extensions and Variations
+
+### Multiple Products
+
+Add a rule per product:
+
+```
+IF Hostname equals example.com
+AND URI Path starts with /product-a/
+THEN 301 redirect to
+  https://blog.example.com/products/product-a/
+```
+
+### Subdomain for Documentation
+
+Same pattern:
+- `docs.example.com` → CNAME to docs hosting (DNS only)
+- Redirect rules remain unchanged
+
+### Staging Environment
+
+Add staging subdomain:
+- `staging.blog.example.com` → CNAME to staging GitHub Pages (DNS only)
+- No redirect rules needed (staging is separate from production)
+
+---
+
+## Migration from Traditional Hosting
+
+### If You're Currently on VPS/Shared Hosting
+
+1. Build static version of site (use static site generator)
+2. Follow implementation guide above
+3. Keep old hosting active during DNS propagation (48 hours)
+4. Monitor traffic for 1 week
+5. Shut down old hosting after confirming migration success
+
+### If You're Currently Using Apex Domain as Primary
+
+1. Deploy to `blog.example.com` first (Phase 3)
+2. Test thoroughly before adding redirects
+3. Add redirect rules (Phase 5)
+4. Monitor 404 rates for broken links
+5. Update external links where possible (social media, backlinks you control)
+
+---
+
+## Architectural Invariants
+
+These principles define the pattern:
+
+1. **All identity lives at the edge** - Origin never makes routing decisions
+2. **Origins serve content, not routes** - Prevents origin compromise from affecting routing
+3. **Legacy paths are first-class** - Old URLs work indefinitely via redirects
+4. **TLS is single-owner** - Each subdomain level has one TLS authority (no coordination)
+5. **Static content only** - No server-side execution, minimal attack surface
+
+Violating these principles breaks the architecture's guarantees.
+
+---
+
+## Comparison to Alternatives
+
+### vs ALIAS/ANAME Records
+
+**ALIAS/ANAME pros:**
+- Simpler DNS setup (no dummy IP)
+
+**ALIAS/ANAME cons:**
+- Proprietary (not universal DNS standard)
+- Locks you into specific DNS provider
+- No redirect logic (can't preserve legacy paths)
+
+**This pattern wins on:** Portability, flexibility, SEO preservation
+
+### vs Cloudflare Workers
+
+**Workers pros:**
+- More flexibility (custom JavaScript logic)
+- Can transform content, not just redirect
+
+**Workers cons:**
+- More complex (code instead of declarative rules)
+- Higher cost at scale (CPU time billing)
+- Requires deployment pipeline
+
+**This pattern wins on:** Simplicity, cost, declarative config
+
+### vs Origin-Based Redirects
+
+**Origin redirects pros:**
+- Traditional, well-understood pattern
+
+**Origin redirects cons:**
+- Requires running a server (cost + maintenance)
+- Origin latency (200-500ms vs 10-50ms)
+- Origin failures affect redirects
+
+**This pattern wins on:** Performance, cost, reliability
 
 ---
 
 ## Further Reading
 
-**Cloudflare Documentation:**
-- Redirect Rules: https://developers.cloudflare.com/rules/url-forwarding/
-- Proxied DNS records: https://developers.cloudflare.com/dns/manage-dns-records/reference/proxied-dns-records/
-- SSL/TLS overview: https://developers.cloudflare.com/ssl/
+**Cloudflare:**
+- [Redirect Rules Documentation](https://developers.cloudflare.com/rules/url-forwarding/)
+- [Proxied DNS Records](https://developers.cloudflare.com/dns/manage-dns-records/reference/proxied-dns-records/)
+- [SSL/TLS Mode Selection](https://developers.cloudflare.com/ssl/origin-configuration/ssl-modes/)
 
 **GitHub Pages:**
-- Custom domains: https://docs.github.com/en/pages/configuring-a-custom-domain-for-your-github-pages-site
-- HTTPS for custom domains: https://docs.github.com/en/pages/getting-started-with-github-pages/securing-your-github-pages-site-with-https
+- [Custom Domain Configuration](https://docs.github.com/en/pages/configuring-a-custom-domain-for-your-github-pages-site)
+- [HTTPS for Custom Domains](https://docs.github.com/en/pages/getting-started-with-github-pages/securing-your-github-pages-site-with-https)
 
-**DNS and TLS:**
-- RFC 5737 (documentation IPs): https://datatracker.ietf.org/doc/html/rfc5737
-- Let's Encrypt (how it works): https://letsencrypt.org/how-it-works/
+**DNS Standards:**
+- [RFC 5737 - IPv4 Documentation Addresses](https://datatracker.ietf.org/doc/html/rfc5737)
+- [RFC 2606 - Reserved Top Level Domains](https://datatracker.ietf.org/doc/html/rfc2606)
 
 **SEO:**
-- Google 301 guidance: https://developers.google.com/search/docs/crawling-indexing/301-redirects
-- Site move with URL changes: https://developers.google.com/search/docs/crawling-indexing/site-move-with-url-changes
+- [Google 301 Redirect Guidance](https://developers.google.com/search/docs/crawling-indexing/301-redirects)
+- [Site Migration with URL Changes](https://developers.google.com/search/docs/crawling-indexing/site-move-with-url-changes)
+
+---
+
+## Summary
+
+This architecture provides:
+
+- **Edge-first routing** (10-50ms global latency)
+- **Zero-maintenance origin** (GitHub Pages, static files)
+- **SEO preservation** (301 redirects with path preservation)
+- **TLS isolation** (no coordination between providers)
+- **Origin portability** (swap hosting without DNS changes)
+- **~$10-15/year cost** (domain only, everything else free)
+
+The pattern is production-ready, scales to millions of requests, and requires no server maintenance. It's the same architectural approach used by modern documentation platforms and open-source project sites.
+
+You're not deploying a static site—you're building an edge-native publishing system where routing happens close to users and the origin stays simple.
