@@ -162,9 +162,9 @@ Cloudflare intercepts traffic at the edge and makes routing decisions before any
 
 This architecture **separates identity from content delivery**.
 
-Identity lives at the edge. Cloudflare handles `example.com` and `www.example.com` as proxied hostnames. These domains never contact an origin—Cloudflare intercepts all traffic and redirects immediately. Users see these domains in their browser, but they're routing constructs, not content hosts. They exist purely to provide familiar URLs (apex and www) that redirect to the canonical location.
+**Identity** means which public-facing hostnames exist and what they do (redirect vs serve content). This is managed at the edge. Cloudflare handles `example.com` and `www.example.com` as proxied hostnames. These domains never contact an origin—Cloudflare intercepts all traffic and redirects immediately. Users see these domains in their browser, but they're routing constructs, not content hosts. They exist purely to provide familiar URLs (apex and www) that redirect to the canonical location. The edge layer owns the public interface—which hostnames are valid and where they route.
 
-Content lives at the origin. GitHub Pages handles only `blog.example.com` as a DNS-only hostname. This is the single canonical hostname that actually serves HTML. There's no redirect logic at this layer—just static file delivery via Fastly's global CDN. The origin doesn't know about apex or www domains and doesn't need to.
+**Content delivery** means serving the actual HTML files. This is managed at the origin. GitHub Pages handles only `blog.example.com` as a DNS-only hostname. This is the single canonical hostname that actually serves HTML. There's no redirect logic at this layer—just static file delivery via Fastly's global CDN. The origin doesn't know about apex or www domains and doesn't need to. It has one job: serve pre-built HTML for the canonical hostname.
 
 **Request flow for apex domain:**
 ```
