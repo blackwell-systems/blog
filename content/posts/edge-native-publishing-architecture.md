@@ -278,6 +278,46 @@ Rules execute in order until a match:
 
 The catch-all never runs if a more specific rule matches first.
 
+### Why Redirect Rules (Not Workers)
+
+**Redirect Rules are declarative:**
+- Configuration, not code
+- No deployment pipeline required
+- Faster to audit (view all rules in dashboard)
+- Changes propagate globally in seconds
+
+**Cloudflare Workers are imperative:**
+- Custom JavaScript execution
+- Requires version control + deployment
+- More powerful (can transform content, not just redirect)
+- Higher cost at scale (CPU time billing)
+
+**Use Redirect Rules when:** Simple path-based redirects, canonicalization, legacy URL preservation.
+
+**Use Workers when:** Complex logic (geolocation routing, A/B testing, header manipulation), content transformation at edge.
+
+For this architecture, Redirect Rules provide the right balance: declarative, auditable, and zero deployment overhead.
+
+### Rule Evaluation Semantics
+
+**First match wins:** Rules execute in order until one matches. Subsequent rules are skipped.
+
+**Critical implication:** Put specific rules before general rules. The catch-all must always be last.
+
+**Example of shadowing (wrong):**
+```
+Rule 1: IF hostname = example.com THEN redirect to blog.example.com/
+Rule 2: IF hostname = example.com AND path = /oss THEN redirect to blog.example.com/oss
+```
+Rule 2 never runs—Rule 1 matches first and redirects to homepage.
+
+**Correct order:**
+```
+Rule 1: IF hostname = example.com AND path = /oss THEN redirect to blog.example.com/oss
+Rule 2: IF hostname = example.com THEN redirect to blog.example.com/
+```
+Specific path rules first, catch-all last.
+
 ---
 
 ## Implementation Guide
@@ -364,6 +404,35 @@ All redirects should be **301 Permanent**.
 
 **302 Temporary** would preserve old URLs in search index indefinitely.
 
+### Redirect Chain Budget
+
+**Target:** 1 hop maximum for apex/www redirects.
+
+**Acceptable:** 2 hops maximum for legacy paths.
+
+**Why this matters:**
+
+Redirect chains (A → B → C) waste crawl budget and dilute ranking signals. Search engines may stop following after 3-5 hops.
+
+**How to avoid:**
+
+Ensure each redirect rule points **directly** to the final canonical URL. Don't redirect to another URL that redirects again.
+
+**Example of a chain (bad):**
+```
+example.com/product
+  → 301 to example.com/products/product
+  → 301 to blog.example.com/products/product
+```
+
+**Correct (1 hop):**
+```
+example.com/product
+  → 301 to blog.example.com/products/product
+```
+
+Each legacy input should have a single, direct path to its canonical target.
+
 ### Why Path-Preserving Redirects?
 
 Redirecting `example.com/oss/project` to `blog.example.com/oss/project` (not just `blog.example.com`) preserves:
@@ -411,6 +480,138 @@ You'd get:
 - Cloudflare edge → Fastly CDN → GitHub Pages origin
 
 Adding Cloudflare between user and Fastly provides minimal benefit and breaks GitHub's certificate automation.
+
+---
+
+## Debugging and Troubleshooting
+
+When things break (and they will during setup), use this checklist to diagnose issues quickly.
+
+### DNS Configuration Checklist
+
+**Verify proxy status:**
+```bash
+# Check Cloudflare dashboard
+# Apex + www: Orange cloud (proxied)
+# Blog subdomain: Gray cloud (DNS only)
+```
+
+**Verify DNS propagation:**
+```bash
+# Should return Cloudflare IPs for apex/www
+dig example.com
+dig www.example.com
+
+# Should return GitHub Pages IPs for blog
+dig blog.example.com
+```
+
+### GitHub Pages Checklist
+
+**Custom domain configuration:**
+- In repo settings → Pages → Custom domain: `blog.example.com`
+- HTTPS checkbox: Enabled
+- Check for "Certificate is being provisioned" or "DNS check failed"
+
+**Certificate issues:**
+```bash
+# Test HTTPS
+curl -I https://blog.example.com
+
+# If you see certificate errors:
+# 1. Verify blog subdomain is DNS only (not proxied)
+# 2. Wait 5-10 minutes for GitHub to retry
+# 3. Check GitHub Pages status: https://www.githubstatus.com
+```
+
+### Redirect Testing
+
+**Test each redirect rule:**
+```bash
+# Apex should redirect
+curl -I https://example.com
+# Expect: HTTP/1.1 301 Moved Permanently
+# Expect: location: https://blog.example.com/
+
+# www should redirect preserving path
+curl -I https://www.example.com/about?ref=test
+# Expect: HTTP/1.1 301 Moved Permanently
+# Expect: location: https://blog.example.com/about?ref=test
+
+# Legacy paths should redirect
+curl -I https://example.com/oss
+# Expect: HTTP/1.1 301 Moved Permanently
+# Expect: location: https://blog.example.com/oss
+
+# Canonical host should serve content
+curl -I https://blog.example.com
+# Expect: HTTP/1.1 200 OK
+```
+
+**Wrong status codes:**
+- **522** (Connection timed out) - No redirect rules configured, or apex not proxied
+- **302** (Temporary redirect) - Wrong redirect type, change to 301
+- **404** (Not found) - Target URL doesn't exist on origin
+- **526** (Invalid SSL) - GitHub Pages certificate not issued yet
+
+### Cloudflare Analytics
+
+**Check redirect rule match rates:**
+
+In Cloudflare dashboard → Rules → Redirect Rules → Analytics:
+- Rules should show non-zero match counts after testing
+- If rule shows 0 matches, check rule syntax or order
+
+**Common rule syntax issues:**
+- Missing `concat()` function
+- Wrong field name (`http.request.uri` vs `http.request.uri.path`)
+- Rule order (catch-all shadowing specific rules)
+
+### Common Failure Modes
+
+**Issue: Blog subdomain shows Cloudflare 522 error**
+
+**Cause:** Blog subdomain is proxied (orange cloud) but GitHub Pages can't be reached
+
+**Fix:** Set blog subdomain to DNS only (gray cloud)
+
+**Issue: Certificate errors on blog subdomain**
+
+**Cause:** GitHub Pages ACME validation failing
+
+**Fix:**
+1. Verify blog subdomain is DNS only
+2. Verify custom domain is set in GitHub Pages settings
+3. Wait 10 minutes for retry
+4. Check DNS resolution: `dig blog.example.com` should return GitHub Pages IPs
+
+**Issue: Redirect chain (multiple 301s)**
+
+**Cause:** Rules redirect to intermediate URLs that redirect again
+
+**Fix:** Update rules to point directly to final canonical URL (see Redirect Chain Budget section)
+
+**Issue: Query strings dropped on redirect**
+
+**Cause:** Using `http.request.uri.path` instead of `http.request.uri`
+
+**Fix:** Use full URI: `concat("https://blog.example.com", http.request.uri)`
+
+### Monitoring and Validation
+
+**After deployment, verify:**
+
+1. **All redirects are 301** (not 302)
+2. **Redirect targets are correct** (location header)
+3. **No redirect chains** (1 hop for most URLs)
+4. **Canonical host returns 200** (not redirecting)
+5. **HTTPS works on all hosts** (no certificate warnings)
+
+**Tools:**
+- `curl -I` for manual testing
+- Google Search Console for crawl errors
+- Cloudflare Analytics for redirect rule metrics
+- Browser dev tools (Network tab) for debugging redirect chains
 
 ---
 
