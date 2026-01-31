@@ -416,7 +416,9 @@ All redirects should be **301 Permanent**.
 
 The apex and www hostnames are proxied because they exist solely for redirects. Cloudflare must intercept traffic to evaluate Redirect Rules. Without proxy mode, these hostnames would try to contact the dummy IP (`192.0.2.1`) and fail with connection timeouts.
 
-The blog subdomain is DNS-only for three reasons. First, GitHub Pages needs direct DNS resolution to issue Let's Encrypt certificates. The ACME validation process requires GitHub to prove control of the domain, which fails if DNS returns Cloudflare's IPs instead of GitHub's. Second, GitHub Pages already serves through Fastly's global CDN—adding Cloudflare as a proxy would create a double-CDN topology (Cloudflare → Fastly → GitHub) with no performance benefit. Third, keeping the blog DNS-only avoids certificate coordination issues. Each layer manages its own TLS independently: Cloudflare for apex/www, GitHub for the blog subdomain.
+The blog subdomain is DNS-only for three reasons. First, GitHub Pages needs direct DNS resolution to issue Let's Encrypt certificates. The ACME validation process requires GitHub to prove control of the domain, which fails if DNS returns Cloudflare's IPs instead of GitHub's. Second, GitHub Pages already serves through Fastly's global CDN—adding Cloudflare as a proxy would create a double-CDN topology (Cloudflare → Fastly → GitHub) with no performance benefit and unnecessary complexity. Third, keeping the blog DNS-only avoids certificate coordination issues. Each layer manages its own TLS independently: Cloudflare for apex/www, GitHub for the blog subdomain.
+
+**Important:** This architecture does **not** result in double CDN for content delivery. The redirected hostnames (`example.com`, `www.example.com`) never serve content—Cloudflare only sends 301 redirect responses. The canonical hostname (`blog.example.com`) bypasses Cloudflare entirely (DNS-only) and is served directly through Fastly. Only one CDN actually delivers HTML: Fastly.
 
 ### Why 301 Permanent Redirects?
 
