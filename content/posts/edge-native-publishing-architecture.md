@@ -160,7 +160,7 @@ Cloudflare intercepts traffic at the edge and makes routing decisions before any
 
 ### How This Architecture Works
 
-The core insight: **separate identity from content delivery**.
+This architecture **separates identity from content delivery**.
 
 Identity lives at the edge. Cloudflare handles `example.com` and `www.example.com` as proxied hostnames. These domains never contact an origin—Cloudflare intercepts all traffic and redirects immediately. Users see these domains in their browser, but they're routing constructs, not content hosts. They exist purely to provide familiar URLs (apex and www) that redirect to the canonical location.
 
