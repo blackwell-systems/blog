@@ -164,6 +164,44 @@ blog.blackwell-systems.com
 - Traditional origin redirect: 200-500ms
 - No origin latency, no origin failures
 
+### Architecture Deep Dive
+
+This tech stack is a textbook example of "Modern Static Architecture"—essentially a high-performance redirect engine sitting on top of a zero-maintenance origin.
+
+**The Apex CNAME Problem + SSL Depth Problem:**
+
+Solved simultaneously by using Cloudflare's logic to intercept traffic before it ever looks for a real server.
+
+#### The "Dummy IP" as Infrastructure Trigger
+
+The use of `192.0.2.1` is a pro-level move. In Cloudflare, a "Proxied" record isn't just a DNS entry—it's a toggle that tells Cloudflare's global network to "listen" for traffic on that hostname.
+
+Without that dummy record, Redirect Rules would never trigger because the browser would get a "Domain not found" error before it even sent the HTTP request to Cloudflare.
+
+This creates a serverless routing layer where the "origin" (GitHub) only handles the final destination, and Cloudflare handles the identity and legacy path management.
+
+#### Legacy Path Preservation
+
+Rules 2 and 3 (`/oss` and `/consulting`) are critical for SEO preservation. By using `concat` with `http.request.uri.path`, a user clicking a 5-year-old link to `blackwell-systems.com/oss/project-alpha` lands exactly on `blog.blackwell-systems.com/oss/project-alpha`.
+
+**The SEO Win:** Because these are 301 (Permanent) redirects, Google eventually updates its index to the new blog URLs, effectively merging the "authority" of the old domain into the new one.
+
+#### DNS-Only for Blog Subdomain
+
+`blog.blackwell-systems.com` is set to DNS Only (Grey Cloud). This is a smart choice for GitHub Pages specifically:
+
+**The SSL Conflict:** GitHub Pages generates its own Let's Encrypt certificates. If you "Orange Cloud" (proxy) that record, GitHub's automated SSL bot sometimes fails to verify the domain because it sees Cloudflare's IP instead of its own.
+
+**The Performance Tradeoff:** You lose Cloudflare's "Edge Caching" for the blog content, but GitHub Pages is already served via its own global CDN (Fastly), so the speed difference is negligible.
+
+#### Email Deliverability
+
+The email setup is airtight.
+
+**MX + SPF + DKIM** is the "Golden Ratio" for deliverability.
+
+Many people forget the DKIM (CNAME) record, which is why their emails end up in spam. By including it, every email is digitally signed, proving to Gmail/Outlook that the message hasn't been tampered with.
+
 ### Email (Zoho Mail)
 
 **MX Records (Mail Exchange):**
