@@ -176,25 +176,61 @@ blog.blackwell-systems.com
 ### Why This Architecture Works
 
 **Avoids TLS traps:**
-- No `www.blog...` multi-level subdomain
-- Cloudflare only terminates TLS for one-level hosts
 
-**Edge-first:**
-- Redirects happen at Cloudflare, not origin
-- No unnecessary origin requests
+Multi-level subdomains like `www.blog.example.com` break wildcard TLS certificates. A wildcard cert for `*.example.com` covers `blog.example.com` but not `www.blog.example.com`. You'd need separate certificates for each level.
+
+This architecture avoids the problem entirely:
+- `www.blackwell-systems.com` terminates at Cloudflare (one level)
+- `blog.blackwell-systems.com` terminates at GitHub (one level)
+- Each layer manages its own TLS independently
+- No coordination required between providers
+
+**Edge-first routing:**
+
+Traditional architectures make routing decisions at the origin server. A request travels hundreds of milliseconds to reach the server, the server evaluates routing logic, then sends a 301 redirect back.
+
+This architecture makes routing decisions at Cloudflare's edge—the nearest node to the user, typically 10-50ms away. The redirect happens without ever contacting an origin server. No origin latency. No origin failures. Global performance regardless of where the user connects from.
 
 **Zero origin exposure:**
-- Apex IP is fake (`192.0.2.1`)
-- Cloudflare must redirect, or nothing loads
+
+The apex domain points to `192.0.2.1`, a non-routable IP from the TEST-NET-1 range (RFC 5737). This IP is guaranteed to never respond.
+
+Without Cloudflare's proxy mode enabled, users would get a connection timeout. But with proxy mode, Cloudflare intercepts all traffic and processes redirect rules before any origin lookup happens.
+
+This means:
+- Origin IP never appears in public DNS
+- Users cannot bypass Cloudflare to access origin directly
+- DDoS attacks must flow through Cloudflare's protection
+- Origin infrastructure is completely invisible
 
 **Host portability:**
-- Can move from GitHub Pages to Netlify, S3, etc.
-- Only the blog CNAME changes
 
-**Performance:**
-- Edge decision: 10-50ms (nearest edge node)
-- Traditional origin redirect: 200-500ms
-- No origin latency, no origin failures
+Because all routing logic lives at the edge (Cloudflare), the origin can be swapped without changing user-facing URLs.
+
+Migrating from GitHub Pages to Netlify, Vercel, or S3:
+1. Deploy content to new host
+2. Update one DNS record (`blog.blackwell-systems.com` CNAME)
+3. Wait for DNS propagation
+
+Zero downtime. Zero redirect changes. Zero impact to search engines or external links.
+
+The edge routing layer is decoupled from the content delivery layer.
+
+**Performance characteristics:**
+
+Traditional redirect topology:
+```
+Client → Origin (200-500ms roundtrip) → 301 Response → Redirect
+```
+
+Edge redirect topology:
+```
+Client → Cloudflare Edge (10-50ms) → 301 Response → Redirect
+```
+
+The difference: **20x faster redirects** because the decision happens at the edge node closest to the user, not at a centralized origin server.
+
+For a user in Tokyo, the redirect happens in Tokyo. For a user in London, the redirect happens in London. Origin location becomes irrelevant.
 
 ### Architecture Deep Dive
 
