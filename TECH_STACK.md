@@ -166,41 +166,84 @@ blog.blackwell-systems.com
 
 ### Architecture Deep Dive
 
-This tech stack is a textbook example of "Modern Static Architecture"—essentially a high-performance redirect engine sitting on top of a zero-maintenance origin.
+This stack implements **Modern Static Architecture**: a high-performance edge redirect engine sitting on top of a zero-maintenance origin.
 
-**The Apex CNAME Problem + SSL Depth Problem:**
+By combining Cloudflare's edge routing with GitHub Pages as the static host, this architecture solves two classic problems simultaneously:
 
-Solved simultaneously by using Cloudflare's logic to intercept traffic before it ever looks for a real server.
+- **The Apex CNAME problem** (root domains can't CNAME cleanly)
+- **The SSL depth problem** (multi-level subdomains break wildcard TLS)
 
-#### The "Dummy IP" as Infrastructure Trigger
+Cloudflare intercepts traffic *before DNS resolution ever reaches a real server*.
 
-The use of `192.0.2.1` is a pro-level move. In Cloudflare, a "Proxied" record isn't just a DNS entry—it's a toggle that tells Cloudflare's global network to "listen" for traffic on that hostname.
+#### The Dummy IP as Infrastructure Trigger
 
-Without that dummy record, Redirect Rules would never trigger because the browser would get a "Domain not found" error before it even sent the HTTP request to Cloudflare.
+Using `192.0.2.1` as the A record for the apex domain is deliberate.
 
-This creates a serverless routing layer where the "origin" (GitHub) only handles the final destination, and Cloudflare handles the identity and legacy path management.
+In Cloudflare, a **proxied** DNS record isn't just name resolution—it's a signal to Cloudflare's global network to **terminate TLS and process the request**.
+
+Without a proxied record, redirect rules would never run. The browser would fail DNS lookup before Cloudflare ever saw the request.
+
+By pointing the apex at a non-routable IP and enabling proxy mode, this creates a **serverless routing layer**:
+
+```
+User → Cloudflare Edge → Redirect Rules → Real Origin (GitHub)
+```
+
+Cloudflare handles identity, legacy paths, and TLS. GitHub only serves the final content.
 
 #### Legacy Path Preservation
 
-Rules 2 and 3 (`/oss` and `/consulting`) are critical for SEO preservation. By using `concat` with `http.request.uri.path`, a user clicking a 5-year-old link to `blackwell-systems.com/oss/project-alpha` lands exactly on `blog.blackwell-systems.com/oss/project-alpha`.
+Path-specific rules for `/oss` and `/consulting` do real SEO work.
 
-**The SEO Win:** Because these are 301 (Permanent) redirects, Google eventually updates its index to the new blog URLs, effectively merging the "authority" of the old domain into the new one.
+Using `concat("https://blog.blackwell-systems.com", http.request.uri.path)` means a user hitting:
+
+```
+https://blackwell-systems.com/oss/project-alpha
+```
+
+lands on:
+
+```
+https://blog.blackwell-systems.com/oss/project-alpha
+```
+
+**The SEO benefit:** Because these are **301 permanent redirects**, search engines transfer authority from the old domain, update their index to the new canonical URLs, and merge historical ranking signals into the new site. This preserves years of link equity.
 
 #### DNS-Only for Blog Subdomain
 
-`blog.blackwell-systems.com` is set to DNS Only (Grey Cloud). This is a smart choice for GitHub Pages specifically:
+`blog.blackwell-systems.com` is intentionally **not proxied** through Cloudflare.
 
-**The SSL Conflict:** GitHub Pages generates its own Let's Encrypt certificates. If you "Orange Cloud" (proxy) that record, GitHub's automated SSL bot sometimes fails to verify the domain because it sees Cloudflare's IP instead of its own.
+**TLS Conflict:** GitHub Pages issues its own Let's Encrypt certificates. If you proxy the domain, GitHub's ACME validation can fail because it sees Cloudflare's IP instead of its own.
 
-**The Performance Tradeoff:** You lose Cloudflare's "Edge Caching" for the blog content, but GitHub Pages is already served via its own global CDN (Fastly), so the speed difference is negligible.
+**Performance Tradeoff:** You lose Cloudflare edge caching, but GitHub Pages is already served via **Fastly** (a global CDN). The latency difference is negligible.
+
+Result: Cloudflare handles routing, GitHub handles hosting + TLS, no certificate deadlocks.
 
 #### Email Deliverability
 
-The email setup is airtight.
+The email stack is correctly hardened:
 
-**MX + SPF + DKIM** is the "Golden Ratio" for deliverability.
+| Record | Purpose |
+|--------|---------|
+| **MX** | Tells the world where mail is delivered |
+| **SPF** | Authorizes which servers can send mail |
+| **DKIM** | Cryptographically signs each message |
 
-Many people forget the DKIM (CNAME) record, which is why their emails end up in spam. By including it, every email is digitally signed, proving to Gmail/Outlook that the message hasn't been tampered with.
+Together, these form the golden ratio of deliverability. Many setups fail because they skip DKIM—this setup doesn't, which means mail is verifiable, tamper-proof, and far less likely to land in spam.
+
+#### The Big Picture
+
+This architecture provides:
+
+- Cloudflare as **edge router + policy engine**
+- GitHub Pages as **static origin**
+- One canonical hostname
+- Legacy compatibility
+- No origin exposure
+- No TLS traps
+- No server maintenance
+
+This is the same architectural pattern used by modern documentation platforms, open-source portals, and SaaS marketing stacks.
 
 ### Email (Zoho Mail)
 
