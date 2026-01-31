@@ -10,6 +10,8 @@ summary: "A production-grade architecture pattern for static publishing that use
 
 This is a reference architecture for **edge-native static publishing**: routing decisions happen at the edge (Cloudflare), content is served from a zero-maintenance origin (GitHub Pages), and the entire system costs ~$24/year ($12 domain + $12 email).
 
+**Note:** This article uses generic `example.com` placeholders. The actual implementation uses `blackwell-systems.com` (apex/www) and `blog.blackwell-systems.com` (canonical site).
+
 ## Architecture Overview
 
 ```text
@@ -110,6 +112,8 @@ THEN 301 redirect to
 
 **Purpose:** Preserves SEO for old section URLs. Search engines transfer authority from `example.com/oss` to `blog.example.com/oss`.
 
+**Note:** This rule uses `http.request.uri.path` (path only), which **drops query strings**. If you need to preserve query parameters (UTM tags, tracking params), use `http.request.uri` instead. The actual implementation drops query strings for section redirects—they're used for SEO preservation of deep links, not marketing campaigns.
+
 ### Rule 3: Product Canonicalization
 
 ```
@@ -139,9 +143,9 @@ THEN 301 redirect to
 
 Rules execute in order until a match:
 
-1. www redirect
-2. Specific path rules (/oss, /consulting, /product-name)
-3. Apex catch-all
+1. www redirect (Rule 1)
+2. Specific path rules (Rules 2-3: /oss, /consulting, /product-name)
+3. Apex catch-all (Rule 4 - must be last)
 
 The catch-all never runs if a more specific rule matches first.
 
