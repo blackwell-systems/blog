@@ -1,5 +1,5 @@
 ---
-title: "Edge-Native Publishing Architecture with Cloudflare and GitHub Pages"
+title: "Building a Low-Cost Production-Grade Edge-Native Publishing Architecture with Cloudflare and GitHub Pages"
 date: 2026-01-31
 draft: false
 tags: ["cloudflare", "github-pages", "edge-computing", "cdn", "dns", "tls", "architecture", "static-site", "hugo", "devops", "infrastructure", "networking", "web-architecture", "ssl", "seo", "301-redirects", "serverless"]
