@@ -202,7 +202,7 @@ The edge never serves content. Cloudflare doesn't cache or serve HTML for redire
 
 **The dual-edge advantage:**
 
-This isn't double-CDN redundancy—it's specialized collaboration. Each network does what it's optimized for:
+Each network does what it's optimized for:
 
 **Cloudflare specializes in:**
 - Global routing intelligence (330+ edge nodes)
@@ -459,7 +459,7 @@ The blog subdomain is DNS-only for three reasons. First, GitHub Pages needs dire
 
 The redirected hostnames (`example.com`, `www.example.com`) use Cloudflare's edge network exclusively for routing—Cloudflare sends 301 responses (typically <1KB) without serving content. The canonical hostname (`blog.example.com`) bypasses Cloudflare entirely (DNS-only) and uses Fastly's edge network exclusively for content delivery—Fastly caches and serves pre-rendered HTML globally.
 
-Each network handles what it's optimized for: Cloudflare for sub-50ms routing decisions at 330+ global nodes, Fastly for content caching and delivery. This is specialized collaboration, not redundant CDN stacking.
+Each network handles what it's optimized for: Cloudflare for sub-50ms routing decisions at 330+ global nodes, Fastly for content caching and delivery.
 
 ### Why 301 Permanent Redirects?
 

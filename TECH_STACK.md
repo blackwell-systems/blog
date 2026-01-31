@@ -271,7 +271,7 @@ Cloudflare's 330+ edge nodes handle identity (which hostnames exist and where th
 
 Redirected hostnames (`blackwell-systems.com`, `www.blackwell-systems.com`) use Cloudflare's edge network exclusively for routing—301 responses without content. The canonical hostname (`blog.blackwell-systems.com`) bypasses Cloudflare entirely (DNS-only) and uses Fastly's edge network exclusively for content delivery.
 
-This is specialized collaboration, not redundant CDN stacking. Each network does what it's optimized for: Cloudflare for sub-50ms routing decisions at 330+ global nodes, Fastly for content caching and delivery.
+Each network does what it's optimized for: Cloudflare for sub-50ms routing decisions at 330+ global nodes, Fastly for content caching and delivery.
 
 #### Path Preservation
 
