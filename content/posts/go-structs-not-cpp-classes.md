@@ -19,7 +19,7 @@ This post shows why that analogy breaks at the CPU level - especially once indir
 
 "Structs with methods" is not the differentiator.
 
-The differentiator is **default indirection**: whether your common design ends up as contiguous values + static calls, or pointers + dynamic dispatch + scattered memory.
+The differentiator is **default indirection**: whether your design patterns push you toward contiguous values + static calls, or pointers + dynamic dispatch + scattered memory.
 {{< /callout >}}
 
 ---
