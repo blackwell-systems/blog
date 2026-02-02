@@ -1,5 +1,5 @@
 ---
-title: "'Go Structs Are Just C++ Classes' Breaks Down at the Hardware Level"
+title: "Go Structs Are Not C++ Classes: 7 Hardware-Level Differences"
 date: 2026-02-02
 draft: false
 tags: ["go", "cpp", "c++", "structs", "classes", "memory-layout", "performance", "hardware", "cache", "vtable", "virtual-dispatch", "value-semantics", "reference-semantics", "concurrency", "stack", "heap"]
