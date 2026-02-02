@@ -261,3 +261,11 @@ main table th:first-child {
   font-weight: normal !important;
 }
 
+/* Wider content area for technical articles with diagrams */
+@media only screen and (min-width: 992px) {
+  .main {
+    width: 1024px !important;
+    max-width: 95vw !important;
+  }
+}
+
