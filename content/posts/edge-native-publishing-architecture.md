@@ -296,7 +296,7 @@ For this architecture, requests terminate at stage 3 (Redirect Rules). The 301 r
 
 By combining a dummy IP with proxy mode, you create a **routing fabric with zero origin infrastructure**. There's no server at `192.0.2.1` - it's a required field that triggers edge-only execution. Redirect rules execute globally at 330+ edge nodes without any centralized origin server. The apex and www domains exist as pure routing constructs.
 
-This is why the architecture costs $24/year instead of $600/year - you're not running servers for redirects. The edge network itself becomes the routing layer, triggered by a DNS record pointing to an address that intentionally leads nowhere.
+This is why the architecture costs ~$24/year instead of $600/year - you're not running servers for redirects. The edge network itself becomes the routing layer, triggered by a DNS record pointing to an address that intentionally leads nowhere.
 
 ---
 
@@ -721,11 +721,11 @@ In Cloudflare dashboard → Rules → Redirect Rules → Analytics:
 
 | Component | Cost |
 |-----------|------|
-| Domain registration | $12/year |
+| Domain registration | $12-15/year (varies by TLD) |
 | Email (Zoho Mail) | $12/year ($1/month) |
 | Cloudflare Free | $0/month |
 | GitHub Pages | $0/month (public repos) |
-| **Total** | **$24/year** |
+| **Total** | **~$24-27/year** |
 
 **What you get:**
 - Global CDN (Cloudflare + Fastly)
@@ -860,6 +860,6 @@ This architecture provides:
 - **SEO preservation** (301 redirects with path preservation)
 - **TLS isolation** (no coordination between providers)
 - **Origin portability** (swap hosting without DNS changes)
-- **$24/year cost** (domain + email, everything else free)
+- **~$24/year cost** (domain + email, everything else free - varies by TLD)
 
-The pattern is production-ready, scales to millions of requests, and requires no server maintenance. It's the same architectural approach used by modern documentation platforms and open-source project sites.
+The pattern is production-ready, scales to millions of requests, and requires no server maintenance.
