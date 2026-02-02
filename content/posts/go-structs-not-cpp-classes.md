@@ -1405,7 +1405,34 @@ func processShapes(shapes []Shape) {
 - Branch misprediction penalties
 - Cache misses
 
-**The difference:** In Go, this is **opt-in**. You choose when to pay the cost. In C++, inheritance forces you to pay it everywhere.
+**The difference is where you pay the cost:**
+
+**Go:** Interfaces are pervasive in the standard library (`io.Reader`, `io.Writer`, `error`, `fmt.Stringer`, `context.Context`). You're constantly using interface dispatch for I/O, errors, and formatting. But these are **glue code** where I/O latency dominates anyway (disk/network operations take milliseconds, interface dispatch takes nanoseconds).
+
+**Your domain data structures** remain concrete values:
+```go
+// Business logic: Concrete types (cache-friendly)
+type Point struct { X, Y int }
+type Transaction struct { ID, Amount int }
+type User struct { Name string, Age int }
+
+points := make([]Point, 1000000)      // Contiguous values
+transactions := make([]Transaction, 1000000)  // Contiguous values
+```
+
+**C++:** Inheritance-based polymorphism forces interfaces on **your domain objects**. Your business logic data structures pay the indirection cost:
+```cpp
+// Business logic: Forced into inheritance (cache-hostile)
+class GameObject { virtual void update() = 0; };
+class Transaction { virtual void process() = 0; };
+
+GameObject* entities[1000000];     // Your data is pointers
+Transaction* txns[1000000];        // Your data is scattered
+```
+
+**The real distinction:** Go's interface cost concentrates in I/O boundaries (already slow). C++ inheritance cost spreads into your hot loops (where every nanosecond matters).
+
+When processing millions of domain objects in tight loops, Go's concrete types avoid the overhead. When doing I/O operations, both languages pay interface costs - but I/O dominates anyway.
 
 ---
 
