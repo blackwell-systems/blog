@@ -567,17 +567,37 @@ Stack allocation:
 - Adjust stack pointer (SUB instruction)
 - Typical cost: <1 ns (single CPU cycle)
 
-**Note on allocation benchmarks:**
+**Measured allocation overhead** ([source code](https://github.com/blackwell-systems/blog/tree/main/benchmarks/structs-vs-classes)):
 
-Simple allocation benchmarks are difficult because modern compilers optimize aggressively. In our [benchmark tests](https://github.com/blackwell-systems/blog/tree/main/benchmarks/structs-vs-classes), both C++ and Go showed similar timings (1-2ns per allocation) with -O3 optimization - the compiler likely eliminated or batched allocations.
+```
+C++ (1M allocations, 48-byte objects):
 
-The real-world difference appears in **allocation-heavy workloads** where optimization is limited. From [Discord's engineering blog](https://discord.com/blog/why-discord-is-switching-from-go-to-rust), heap allocation pressure caused 2-minute GC pauses in production with millions of long-lived objects.
+Heap allocation (new + store pointer):
+  Total time: 34.9 ms
+  Time per allocation: 34 ns
 
-Stack allocation's advantage emerges when:
-- Compiler can't optimize away allocations
-- Objects are short-lived (function scope)
-- Allocation rate is extremely high (>1M/sec)
-- GC pressure matters (long-lived objects)
+Stack-based storage (vector of values):
+  Total time: 6.5 ms
+  Time per allocation: 6 ns
+
+Measured speedup: 5.3× faster for stack-based storage
+
+Go (1M allocations, 96-byte objects):
+
+Heap allocation (pointer slice):
+  Total time: 97.3 ms
+  Time per allocation: 97 ns
+
+Value slice (contiguous storage):
+  Total time: 56.4 ms
+  Time per allocation: 56 ns
+
+Measured speedup: 1.7× faster for value storage
+```
+
+C++ shows larger difference because Go's allocator is more efficient (per-goroutine caches). But both show heap overhead.
+
+**Real-world impact:** From [Discord's engineering blog](https://discord.com/blog/why-discord-is-switching-from-go-to-rust), heap allocation pressure caused 2-minute GC pauses in production with millions of long-lived objects.
 
 **Why Go's heap allocator is faster:**
 - Per-goroutine caches (no global lock)
@@ -1397,7 +1417,7 @@ func processShapes(shapes []Shape) {
 |--------|------------------------|-------------------|-----------------|
 | **Memory layout** | Scattered (heap pointers) | Contiguous (value arrays) | **7.3× speedup** (measured) |
 | **Method dispatch** | Virtual (vtable lookup) | Static (compile-time) | **2.8× speedup** C++, **4.6× speedup** Go (measured) |
-| **Allocation** | Heap (new/delete) | Stack (escape analysis) | Minimal in microbenchmarks (optimized away), significant in production (Discord: 2min GC → μs) |
+| **Allocation** | Heap (new/delete) | Stack/value storage | **5.3× speedup** C++, **1.7× speedup** Go (measured) |
 | **Polymorphism** | Forced (inheritance) | Optional (interfaces) | Opt-in cost vs pervasive cost |
 | **Receiver** | Implicit `this` pointer | Explicit value/pointer | Enables inlining, copy elision |
 | **Construction** | Special semantics | Regular functions | Simpler, fewer edge cases |
