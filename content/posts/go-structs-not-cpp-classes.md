@@ -8,81 +8,27 @@ description: "Go structs and C++ classes both have methods, but their hardware-l
 summary: "Structs with methods look like classes, but the hardware tells a different story. Go structs are contiguous stack values with static dispatch. C++ classes are heap pointers with virtual dispatch. This isn't syntax - it's how the CPU actually executes your code."
 ---
 
-A common response to "[How Multicore CPUs Changed Object-Oriented Programming]({{< relref "multicore-killed-oop.md" >}})" goes like this:
+The most common pushback I got in the LinkedIn comments was:
 
-> "Go and Rust don't reject OOP. They have structs with methods, interfaces, and composition. Structs do the same thing as C++ classes - it's just different syntax."
+> "Go structs are basically C++ classes. Same OOP, different syntax."
 
-This sounds reasonable. Both have methods on data. Both support polymorphism. Both provide encapsulation.
+If that were true, the CPU-level costs would be roughly the same. They aren't.
 
-**But here's what actually happens in the CPU.**
+This post is not about style or philosophy. It's about what your processor executes: memory layout, dispatch, allocation, and cache behavior.
 
-This post examines 7 hardware-level differences between Go structs and C++ classes. Not syntax. Not paradigms. **What the processor executes.**
+{{< callout type="info" >}}
+**If you only take one thing from this rebuttal:**
+
+"Structs with methods" is not the differentiator.
+
+The differentiator is **default indirection**: whether your common design ends up as contiguous values + static calls, or pointers + dynamic dispatch + scattered memory.
+{{< /callout >}}
 
 ---
 
-## Addressing Common Rebuttals
+## Quick Clarifications from the Multicore Thread
 
-Before diving into hardware details, let's address the most common responses to "multicore changed OOP":
-
-### "OOP Was Never About Shared Mutable State"
-
-**The critique:** "OOP is about encapsulation and code reuse, not sharing state. This is a strawman."
-
-**The reality:** You're right that OOP's **intent** wasn't to share state everywhere. But OOP's **implementation** in mainstream languages (Java, Python, C++, C#) made reference semantics the default:
-
-```java
-// Java: Reference semantics by default
-List<User> users = new ArrayList<>();
-User alice = new User("Alice");
-users.add(alice);
-
-// Hidden sharing:
-processUser(alice);  // Function receives reference, not copy
-// alice might be mutated inside processUser
-```
-
-The design wasn't malicious. It was **convenient for single-threaded code**. Assignment copying references is cheap (8 bytes) vs copying large objects (KB+). But it made sharing implicit and pervasive.
-
-**Alan Kay's original vision** (message passing between isolated objects) is closer to Erlang's actor model than to Java's shared heap objects. So yes, classical OOP implementations diverged from Kay's intent.
-
-### "C Has Pointers Too"
-
-**The critique:** "You claim C's value semantics saved it, but C programmers pass pointers everywhere. Same problem!"
-
-**The reality:** True - C lets you share via pointers. But there's a critical difference:
-
-**C (explicit sharing):**
-```c
-// C: Sharing is VISIBLE
-struct Point p1 = {1, 2};
-struct Point p2 = p1;  // Copy (safe)
-
-processPoint(&p1);  // & makes sharing explicit
-// You SEE the & - you KNOW sharing happens
-```
-
-**Java (implicit sharing):**
-```java
-// Java: Sharing is HIDDEN
-Point p1 = new Point(1, 2);
-Point p2 = p1;  // Reference (hidden sharing!)
-
-processPoint(p1);  // No & needed
-// You don't see sharing - it's always references
-```
-
-Yes, C codebases with globals everywhere (CPython) still suffer. But C makes sharing **visible** via `&` and `*`. Java/Python hide it.
-
-### "Bad Design Killed OOP, Not Multicore"
-
-**The critique:** "I saw terrible OOP codebases in the 1990s-2000s. Unnecessary complexity, not hardware, was the problem."
-
-**Both are true.** Bad OOP design (7-level inheritance hierarchies, God objects, anemic domain models) existed before multicore. But multicore made **all OOP design harder**:
-
-**Pre-2005 (single-core):** Bad OOP design = confusing, but deterministic  
-**Post-2005 (multicore):** Bad OOP design = confusing **and** race conditions
-
-Multicore didn't invent bad design. It **amplified** the consequences. Shared mutable state went from "code smell" to "production outage."
+Before the hardware details, these are the background assumptions behind the "structs are classes" claim:
 
 ### "Java/C++ Are Still Used Successfully on Multicore"
 
@@ -143,20 +89,23 @@ So yes, if we define OOP as Kay intended, then Erlang/Go/Rust **are** OOP. The a
 
 ## The Hardware Reality
 
-Philosophical debates aside, here's what actually executes on the CPU:
+Philosophical debates aside, here's what actually executes on the CPU.
+
+**The important difference isn't what either language can do.** It's what their mainstream patterns make easy. Go makes "concrete value types, contiguous memory, static calls" the path of least resistance. C++ makes that possible too - but in inheritance-heavy designs, the path of least resistance often becomes "pointers, scattered objects, virtual dispatch." That's what shows up at the hardware level.
 
 ---
 
 ## 1. Memory Layout: Contiguous vs Scattered
 
-### C++: Pointer Array to Heap Objects
+### C++: Polymorphic Class Hierarchies Push Toward Pointers
 
 ```cpp
-// C++: Collection of objects
+// C++: When using polymorphism, you end up with pointers
 class Point {
     int x, y;
 };
 
+// Pattern common in inheritance-heavy designs:
 std::vector<Point*> points;
 for (int i = 0; i < 1000; i++) {
     points.push_back(new Point{i, i});
@@ -281,14 +230,14 @@ Speedup: 4-5× faster
 ```
 
 The difference isn't the language. It's what the CPU executes:
-- **C++:** Chase pointers through scattered memory
-- **Go:** Read contiguous sequential data
+- **Inheritance-heavy C++:** Chase pointers through scattered memory
+- **Go concrete types:** Read contiguous sequential data
 
 ---
 
 ## 2. Virtual Method Dispatch: Vtable vs Static Calls
 
-### C++: Runtime Virtual Dispatch
+### C++: Virtual Dispatch in Inheritance Hierarchies
 
 ```cpp
 class Shape {
@@ -442,7 +391,7 @@ Cost: 3-4 memory accesses + indirect branch
 Similar to C++ virtual dispatch
 ```
 
-**The key difference:** In Go, interfaces are **opt-in**. Most code uses concrete types (static dispatch). In C++, polymorphism requires virtual methods (dynamic dispatch).
+In Go, static dispatch is the default and dynamic dispatch is opt-in via interfaces. In C++, once you design around inheritance/virtuals, the dynamic-dispatch + indirection costs become pervasive in that slice of the codebase.
 
 ### The Hardware Impact
 
@@ -1279,10 +1228,10 @@ Cache difference: 2-3× more data fits in cache
 
 These 7 differences aren't independent. They compound:
 
-### C++ Default Pattern (Forced by Language Design)
+### Inheritance-Heavy C++ Pattern (Common in OO Designs)
 
 ```cpp
-// C++: This is idiomatic
+// C++: Idiomatic inheritance-based design
 class GameObject {
 public:
     virtual void update() = 0;  // Virtual method (vtable pointer)
@@ -1320,10 +1269,10 @@ for (auto* e : entities) {
 
 **Result:** 4-5 memory accesses per iteration, scattered across RAM
 
-### Go Default Pattern (Enabled by Language Design)
+### Go Concrete-Type Pattern (Path of Least Resistance)
 
 ```go
-// Go: This is idiomatic
+// Go: Idiomatic data-oriented design
 type Position struct { X, Y, Z float64 }
 type Velocity struct { X, Y, Z float64 }
 type Health struct { HP int }
@@ -1452,11 +1401,13 @@ C++ classes default to:
 
 These aren't minor differences. They're **10-100× performance differences** depending on workload.
 
-The real insight: **Default patterns matter**. C++ makes the slow path default (inheritance, virtual methods, heap). Go makes the fast path default (concrete types, static dispatch, stack).
+**Default patterns matter**. C++ makes the slow path default in inheritance-heavy designs (virtual methods, pointer indirection, heap). Go makes the fast path default (concrete types, static dispatch, stack).
 
 When you need polymorphism in Go, you pay the same costs as C++ (interfaces = dynamic dispatch). But you **opt in** explicitly, not **forced in** by the type system.
 
-That's the hardware-level difference structs and classes.
+"Structs with methods are just classes" is syntactically true but semantically false.
+
+In C++, classes are a feature. In Go, methods on structs are a feature. But the performance cliffs people associate with "OO" come from indirection and dynamic dispatch - and Go makes those cliffs opt-in.
 
 ---
 
