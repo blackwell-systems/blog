@@ -95,7 +95,7 @@ Before examining hardware differences, define the key concepts. **Note:** Latenc
 
 **Static dispatch:** Function call where the target address is known at compile time. The CPU knows exactly which function to call before runtime. Enables inlining (compiler replaces call with function body). Cost: ~1ns, often zero after inlining.
 
-**Dynamic dispatch:** Function call where the target address is determined at runtime through indirection (vtable lookup, interface dispatch). The CPU must load the function pointer from memory before calling. Prevents inlining. Cost: ~5-20ns due to memory indirection and branch misprediction.
+**Dynamic dispatch:** Function call where the target address is determined at runtime through indirection (vtable lookup, interface dispatch). The CPU must load the function pointer from memory before calling. Prevents inlining. Cost: typically a few nanoseconds per call, depending on branch predictability and cache behavior.
 
 **Vtable (virtual method table):** Compiler-generated table of function pointers used for dynamic dispatch. Each polymorphic object has a hidden vtable pointer (8 bytes overhead). Calling a virtual method: load object pointer → load vtable pointer from object → load function pointer from vtable → indirect call. Three memory accesses before the actual function executes.
 
@@ -107,7 +107,7 @@ Before examining hardware differences, define the key concepts. **Note:** Latenc
 
 **Contiguous memory:** Data stored sequentially in memory. Arrays, slices, value structs. Enables CPU prefetching (hardware loads data before requested). Often achieves high cache hit rates (directionally 70%+ in tight sequential loops, varies by working set).
 
-**Scattered memory:** Data stored at non-sequential addresses. Pointer arrays, heap-allocated objects, linked lists. Defeats CPU prefetching (unpredictable access pattern). Causes frequent cache misses (30-50% miss rate).
+**Scattered memory:** Data stored at non-sequential addresses. Pointer arrays, heap-allocated objects, linked lists. Defeats CPU prefetching (unpredictable access pattern). Often causes elevated cache miss rates in large, scattered working sets.
 
 ---
 
@@ -538,7 +538,7 @@ std::vector<Point> points;  // Values, not pointers
    - Search free list for 8-byte chunk
    - Update heap metadata
    - Return pointer: 0x2a4b1000
-   Cost: ~50-100 CPU cycles
+   Cost: often tens to hundreds of CPU cycles on the fast path
 
 2. Call Point constructor
    - Initialize x = 1, y = 2
@@ -905,7 +905,7 @@ for (int i = 0; i < N; i++) {
 }
 ```
 
-The pattern: moving from pointer graphs with indirect calls to contiguous arrays with direct loops commonly produces multi-× to order-of-magnitude throughput improvements, depending on cache behavior and working set size. The speedup isn't from Go vs C++—it's from **contiguous data vs pointer indirection**, regardless of language.
+The pattern: moving from pointer graphs with indirect calls to contiguous arrays with direct loops commonly produces multi-× improvements, and in cache-bound workloads can reach order-of-magnitude gains. The speedup isn't from Go vs C++—it's from **contiguous data vs pointer indirection**, regardless of language.
 
 ---
 
@@ -945,7 +945,7 @@ Call c.increment():
 3. Increment:               eax++
 4. Store count:             *(rdi+0) = eax
 
-'this' is always a pointer (implicit indirection)
+'this' is passed as a pointer, introducing implicit indirection at the call boundary
 ```
 
 **Concurrency issue:**
@@ -1510,7 +1510,7 @@ When processing millions of domain objects in tight loops, Go's concrete types a
 | **Method dispatch** | Virtual (vtable lookup) | Static (compile-time) | **2.8× speedup** C++, **4.6× speedup** Go (measured) |
 | **Allocation** | Heap (new/delete) | Stack/value storage | **5.3× speedup** C++, **1.7× speedup** Go (measured) |
 | **Polymorphism** | Pervasive (inheritance) | Optional (interfaces) | Opt-in cost vs pervasive cost |
-| **Receiver** | Implicit `this` pointer | Explicit value/pointer | Can enable inlining, copy elision |
+| **Receiver** | Implicit `this` pointer | Explicit value/pointer | Can enable inlining and copy elision (compiler-dependent) |
 | **Construction** | Special semantics | Regular functions | Simpler, fewer edge cases |
 | **Memory overhead** | +8 bytes (vtable ptr) | +0 bytes | 50% space savings per object |
 
