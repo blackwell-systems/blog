@@ -1,10 +1,11 @@
 ---
-title: "Go Structs Are Not C++ Classes: 7 Hardware-Level Differences"
+title: "Go Structs Are Not C++ Classes"
+subtitle: "Why identical abstractions produce radically different CPU execution graphs"
 date: 2026-02-02
 draft: false
 tags: ["go", "cpp", "c++", "structs", "classes", "memory-layout", "performance", "hardware", "cache", "vtable", "virtual-dispatch", "value-semantics", "reference-semantics", "concurrency", "stack", "heap"]
 categories: ["programming", "architecture"]
-description: "Go structs and C++ classes both have methods, but their hardware-level implementations are fundamentally different. From memory layout to CPU cache behavior, these differences change how code executes on modern processors."
+description: "Go structs and C++ classes occupy the same modeling role but create radically different hardware execution graphs. From memory layout to CPU cache behavior, language defaults shape what the processor actually executes."
 summary: "Structs with methods look like classes, but the hardware tells a different story. Go makes contiguous values + static calls the path of least resistance. In inheritance-heavy C++ designs, you often end up with pointers + virtual dispatch + scattered memory. This isn't syntax - it's what the CPU executes."
 ---
 
@@ -68,6 +69,8 @@ But this requires:
 
 **Go makes this the default.** You don't need expertise to write cache-friendly code.
 
+The question is not what is possible in a language, but what is idiomatic under deadline pressure. Defaults shape systems.
+
 ### "OOP Is Just Message Passing"
 
 **The critique:** "Alan Kay said Erlang is true OOP. You're attacking a strawman definition."
@@ -90,6 +93,10 @@ So yes, if we define OOP as Kay intended, then Erlang/Go/Rust **are** OOP. The a
 Philosophical debates aside, here's what actually executes on the CPU.
 
 **The important difference isn't what either language can do.** It's what their mainstream patterns make easy. Go makes "concrete value types, contiguous memory, static calls" the path of least resistance. C++ makes that possible too - but in inheritance-heavy designs, the path of least resistance often becomes "pointers, scattered objects, virtual dispatch." That's what shows up at the hardware level.
+
+**About the benchmarks in this article:**
+
+These microbenchmarks isolate the same primitives that dominate real systems: pointer chasing, cache misses, indirect branches. Large systems are just these primitives multiplied. The 7.3× slowdown from scattered memory in a microbenchmark becomes the same 7.3× slowdown when processing 100,000 game entities or 1 million transactions. The hardware doesn't know if you're running a benchmark or production code - it just executes loads, stores, and branches.
 
 ---
 
