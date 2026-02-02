@@ -91,7 +91,7 @@ So yes, if we define OOP as Kay intended, then Erlang/Go/Rust **are** OOP. The a
 
 Before examining hardware differences, define the key concepts. **Note:** Latency numbers cited below are order-of-magnitude mental models; actual costs depend on cache level, miss rate, CPU architecture, and system load.
 
-**Cache locality:** How close data is in memory. CPUs read memory in 64-byte cache lines. Sequential data (addresses 0x1000, 0x1008, 0x1010) fits in one cache line (fast - 0.5ns access). Scattered data (addresses 0x1000, 0x5000, 0x9000) requires multiple cache lines (slow - 100ns per DRAM access). Value semantics produce sequential layouts. Reference semantics produce scattered layouts.
+**Cache locality:** How close data is in memory. CPUs read memory in 64-byte cache lines. Sequential data (addresses 0x1000, 0x1008, 0x1010) fits in one cache line (fast - L1 cache ~0.5ns). Scattered data (addresses 0x1000, 0x5000, 0x9000) requires multiple cache lines. Modern CPUs have multiple cache levels: L1 (~0.5ns), L2 (~3-5ns), L3 (~10-30ns), DRAM (~100ns). Miss rates and latency depend on access pattern, working set size, and CPU architecture. Value semantics produce sequential layouts. Reference semantics produce scattered layouts.
 
 **Static dispatch:** Function call where the target address is known at compile time. The CPU knows exactly which function to call before runtime. Enables inlining (compiler replaces call with function body). Cost: ~1ns, often zero after inlining.
 
@@ -517,16 +517,16 @@ In Go, static dispatch is the default path. In inheritance-heavy C++, dynamic di
 
 ## 3. Object Allocation: Stack vs Heap
 
-### C++: Heap Allocation Default
+### C++: Polymorphism Often Implies Pointer Lifetimes
 
 ```cpp
-// C++ idiomatic pattern: heap allocation
-Point* p1 = new Point{1, 2};
-auto p2 = std::make_unique<Point>(3, 4);
-auto p3 = std::make_shared<Point>(5, 6);
+// C++ pattern when using polymorphic base pointers:
+Shape* s1 = new Circle{5};
+auto s2 = std::make_unique<Rectangle>(3, 4);
 
-// Stack allocation (less common):
-Point p4{7, 8};  // Destructed when scope ends
+// Concrete types can use stack allocation:
+Point p1{1, 2};  // Stack, no indirection
+std::vector<Point> points;  // Values, not pointers
 ```
 
 **What happens with `new Point{1, 2}`:**
@@ -1028,31 +1028,33 @@ go func() {
 
 The receiver type **shows the programmer** whether mutation/sharing happens.
 
-### The Hardware Impact
+### Why This Matters
 
-**Value receivers often enable better optimization:**
+**The receiver type makes sharing and mutation intent visible at the call boundary:**
 
 ```go
-type Point struct {
-    X, Y int
+type Counter struct {
+    Count int
 }
 
-// Value receiver - compiler may inline aggressively:
-func (p Point) Distance() int {
-    return int(math.Sqrt(float64(p.X*p.X + p.Y*p.Y)))
+// Value receiver: Can't mutate original (receives copy)
+func (c Counter) Get() int {
+    return c.Count
 }
 
-// Pointer receiver - similar inlining potential:
-func (p *Point) Distance() int {
-    return int(math.Sqrt(float64(p.X*p.X + p.Y*p.Y)))
+// Pointer receiver: Can mutate original (receives pointer)
+func (c *Counter) Increment() {
+    c.Count++
 }
 ```
 
-**The real difference:**
-- Value receivers make mutation intent explicit (can't modify original)
-- Pointer receivers signal mutation capability (can modify original)
-- Both can be inlined depending on escape analysis and complexity
-- The semantic clarity matters more than inlining potential
+**The impact is semantic and ergonomic, not a direct performance guarantee:**
+
+- **Concurrency reasoning:** Seeing `counter.Get()` vs `counter.Increment()` immediately tells you which ones might mutate shared state
+- **Escape behavior:** Value receivers can sometimes enable stack allocation, but this depends on escape analysis heuristics, not receiver type alone
+- **Aliasing opportunities:** Value receivers give the compiler more freedom to reason about aliasing, but whether this translates to optimization depends on many factors
+
+The key win is **intent clarity at call boundaries**, which shapes what patterns become idiomatic in concurrent code. Performance effects are indirect (escape analysis, aliasing analysis), not a guaranteed inlining switch.
 
 ---
 
