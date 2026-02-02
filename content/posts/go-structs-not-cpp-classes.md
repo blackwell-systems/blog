@@ -213,20 +213,26 @@ for i := range points {
 
 ### The Hardware Impact
 
-**Benchmark: Sum 1 million Point coordinates**
+**The Hardware Cost of Pointer Chasing**
+
+According to [Jeff Dean's "Latency Numbers Every Programmer Should Know"](https://gist.github.com/jboner/2841832):
+- **L1 cache reference:** 0.5 ns
+- **Main memory reference:** 100 ns (200× slower)
+
+**What this means for iteration:**
 
 ```
 C++ (pointer array):
-- Memory accesses: 2 million (array + dereference)
-- Cache misses: ~500,000 (scattered heap)
-- Time: 50-80ms
+- Read pointer: L1 cache hit (0.5 ns)
+- Dereference to object: Main memory miss (100 ns)
+- Per iteration: ~100ns (dominated by cache miss)
 
 Go (value array):
-- Memory accesses: 1 million (direct)
-- Cache misses: ~15,000 (sequential, prefetched)
-- Time: 10-15ms
+- Read value directly: L1/L2 cache hit (0.5-7 ns)
+- Sequential access enables prefetching
+- Per iteration: ~1-5ns (CPU prefetches next values)
 
-Speedup: 4-5× faster
+Representative difference: 20-100× slower per element access
 ```
 
 The difference isn't the language. It's what the CPU executes:
@@ -395,30 +401,35 @@ In Go, static dispatch is the default and dynamic dispatch is opt-in via interfa
 
 ### The Hardware Impact
 
-**Benchmark: Call method 10 million times**
+**Virtual Dispatch Overhead**
+
+From [Jeff Dean's latency numbers](https://gist.github.com/jboner/2841832):
+- **Branch mispredict:** 5 ns
+
+Virtual dispatch adds:
+- Memory access to vtable pointer: ~0.5-7 ns (cache dependent)
+- Memory access to function pointer: ~0.5-7 ns
+- Indirect branch: ~5 ns (potential misprediction)
+
+**Total virtual call overhead:** 6-19 ns per call (vs <1 ns for inlined static call)
+
+**Representative comparison (processing 10M calls):**
 
 ```
-C++ virtual method:
-- Indirect calls: 10 million
-- Branch mispredictions: ~500,000 (mixed types)
-- Time: 80-120ms
+C++ virtual methods:
+- 10M × ~10ns (indirect + potential mispredict)
+- Representative time: ~100ms
 
-Go concrete type:
-- Direct calls: 10 million (inlined by compiler)
-- Branch mispredictions: 0 (static)
-- Time: 5-10ms
+Go concrete types:
+- 10M × <1ns (inlined direct calls)
+- Representative time: <10ms
 
-Go interface (explicit polymorphism):
-- Indirect calls: 10 million
-- Branch mispredictions: ~500,000
-- Time: 80-120ms (similar to C++)
-
-Speedup: 8-15× faster for concrete types
+Go interfaces (when opted in):
+- 10M × ~10ns (similar to C++ virtual)
+- Representative time: ~100ms
 ```
 
-Go's advantage: **Default is fast (static).** Use interfaces only when you need polymorphism.
-
-C++ forces you to pay virtual dispatch cost even when you don't need polymorphism.
+In Go, static dispatch is default. In C++, once you design around inheritance/virtuals, dynamic dispatch becomes pervasive.
 
 ---
 
@@ -533,24 +544,36 @@ Total cost: ~30-50 cycles per allocation
 
 ### The Hardware Impact
 
-**Benchmark: Create 10 million Point objects**
+**Allocation Cost Comparison**
+
+From [Jeff Dean's latency numbers](https://gist.github.com/jboner/2841832):
+- **Mutex lock/unlock:** 25 ns
+
+Heap allocation (malloc/new) typically involves:
+- Free list traversal or allocator lock
+- Metadata updates
+- Representative cost: 50-200 ns per allocation
+
+Stack allocation:
+- Adjust stack pointer (SUB instruction)
+- Representative cost: <1 ns (single CPU cycle)
+
+**Representative comparison (10M allocations):**
 
 ```
 C++ (heap via new):
-- malloc calls: 10 million
-- Heap operations: 10 million × 100 cycles = 1 billion cycles
-- Time: ~500-800ms (on 3GHz CPU)
+- 10M × ~100ns (malloc overhead)
+- Representative time: ~1000ms
 
 Go (stack via escape analysis):
-- Stack operations: 10 million × 4 cycles = 40 million cycles
-- Time: ~15-20ms
+- 10M × <1ns (stack pointer adjustment)
+- Representative time: <10ms
 
 Go (heap when escapes):
-- Heap operations: 10 million × 30 cycles = 300 million cycles
-- Time: ~100-150ms
+- 10M × ~20ns (Go's allocator faster than malloc)
+- Representative time: ~200ms
 
-Speedup: 25-40× faster when stack-allocated
-Even heap: 3-5× faster (better allocator)
+Representative difference: 100× faster for stack, 5× faster heap
 ```
 
 **Why Go's heap allocator is faster:**
@@ -726,29 +749,44 @@ shapes := []Shape{
 
 ### The Hardware Impact
 
-**Benchmark: Process 1 million shapes**
+**Representative Performance Impact**
+
+Based on [cache latency costs](https://gist.github.com/jboner/2841832) (L1: 0.5ns, memory: 100ns):
 
 ```
-C++ (forced polymorphism):
+C++ (inheritance-based polymorphism):
 - Memory layout: Array of pointers → scattered objects
-- Cache misses: ~500,000 (pointer chasing)
-- Virtual dispatch: 1 million indirect calls
-- Time: 80-120ms
+- Each access: Pointer read + dereference (cache miss likely)
+- Virtual dispatch: Indirect call overhead
+- Representative overhead: 50-100× per element vs sequential
 
 Go (concrete types, no polymorphism):
-- Memory layout: Two contiguous arrays
-- Cache misses: ~15,000 (sequential access)
-- Static dispatch: Direct calls (inlined)
-- Time: 10-15ms
+- Memory layout: Contiguous arrays
+- Each access: Direct read (cache hits via prefetching)
+- Static dispatch: Direct calls (often inlined)
+- Representative overhead: Minimal (1-5× baseline)
 
 Go (explicit polymorphism via interface):
-- Memory layout: Array of interface values
-- Cache misses: ~500,000 (still scattered)
-- Dynamic dispatch: 1 million indirect calls
-- Time: 80-120ms (similar to C++)
-
-Speedup: 6-8× when polymorphism not needed
+- Memory layout: Interface values (similar to pointers)
+- Each access: Similar cache behavior to C++
+- Dynamic dispatch: Indirect calls
+- Representative overhead: 50-100× (same costs as C++)
 ```
+
+Go's advantage: You choose when to pay the cost. C++ inheritance hierarchies make you pay everywhere.
+
+**Real-world example: Discord's migration to Rust**
+
+From [Discord's engineering blog](https://discord.com/blog/why-discord-is-switching-from-go-to-rust):
+
+> "We were reaching the limits of Go's garbage collector... We had 2-minute latency spikes as the garbage collector was forced to scan the entire heap."
+
+After migrating their Read States service from Go to Rust (value semantics, no GC):
+- **Before (Go):** 2-minute latency spikes during GC
+- **After (Rust):** Microsecond average response times
+- **Cache improvement:** Increased to 8 million items in single LRU cache
+
+This confirms the memory layout thesis: scattered heap objects create GC pressure and cache misses. Rust's value semantics (similar to Go's, but without GC) eliminated both problems.
 
 **Real-world impact: Game engines (ECS)**
 
