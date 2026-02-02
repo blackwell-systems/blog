@@ -849,10 +849,6 @@ Violating these principles breaks the architecture's guarantees.
 - [RFC 5737 - IPv4 Documentation Addresses](https://datatracker.ietf.org/doc/html/rfc5737)
 - [RFC 2606 - Reserved Top Level Domains](https://datatracker.ietf.org/doc/html/rfc2606)
 
-**SEO:**
-- [Google 301 Redirect Guidance](https://developers.google.com/search/docs/crawling-indexing/301-redirects)
-- [Site Migration with URL Changes](https://developers.google.com/search/docs/crawling-indexing/site-move-with-url-changes)
-
 ---
 
 ## Summary
