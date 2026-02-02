@@ -5,7 +5,7 @@ draft: false
 tags: ["go", "cpp", "c++", "structs", "classes", "memory-layout", "performance", "hardware", "cache", "vtable", "virtual-dispatch", "value-semantics", "reference-semantics", "concurrency", "stack", "heap"]
 categories: ["programming", "architecture"]
 description: "Go structs and C++ classes both have methods, but their hardware-level implementations are fundamentally different. From memory layout to CPU cache behavior, these differences change how code executes on modern processors."
-summary: "Structs with methods look like classes, but the hardware tells a different story. Go structs are contiguous stack values with static dispatch. C++ classes are heap pointers with virtual dispatch. This isn't syntax - it's how the CPU actually executes your code."
+summary: "Structs with methods look like classes, but the hardware tells a different story. Go makes contiguous values + static calls the path of least resistance. In inheritance-heavy C++ designs, you often end up with pointers + virtual dispatch + scattered memory. This isn't syntax - it's what the CPU executes."
 ---
 
 A common claim:
