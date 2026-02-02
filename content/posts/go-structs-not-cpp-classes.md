@@ -1417,8 +1417,3 @@ In C++, classes are a feature. In Go, methods on structs are a feature. But the 
 - [How Multicore CPUs Changed Object-Oriented Programming]({{< relref "multicore-killed-oop.md" >}}) - Why reference semantics became problematic
 - [Go's Value Philosophy: Part 1 - Why Everything Is a Value]({{< relref "go-values-not-objects.md" >}}) - Deep dive into value semantics
 - [Go's Value Philosophy: Part 2 - Escape Analysis and Performance]({{< relref "go-values-escape-analysis.md" >}}) - How Go optimizes value allocation
-
-**External resources:**
-- [Data-Oriented Design (Mike Acton)](https://www.youtube.com/watch?v=rX0ItVEVjHc) - Why cache locality matters
-- [CppCon: Chandler Carruth on CPU caches](https://www.youtube.com/watch?v=fHNmRkzxHWs)
-- [Go Escape Analysis](https://go.dev/doc/gc-guide#Eliminating_heap_allocations) - How the compiler decides stack vs heap
