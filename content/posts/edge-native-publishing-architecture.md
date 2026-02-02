@@ -253,7 +253,7 @@ blackwell-systems.com → (reserved for future use)
 - Ignore them and share blog URLs directly (both work)
 - Start using them later without architectural changes
 
-**The key insight:** This architecture optimizes for **avoiding painful migration**, not minimizing infrastructure. You pay a small redirect cost (10-50ms) for facade URLs, but you eliminate the future cost of migrating established content with significant SEO/backlinks.
+This architecture optimizes for **avoiding painful migration**, not minimizing infrastructure. You pay a small redirect cost (10-50ms) for facade URLs, but you eliminate the future cost of migrating established content with significant SEO/backlinks.
 
 Put content where it will ultimately live, not where it's simplest today.
 
