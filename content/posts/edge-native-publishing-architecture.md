@@ -320,7 +320,7 @@ https://www.example.com/about?ref=home
   → https://blog.example.com/about?ref=home
 ```
 
-### Rule 2: Path Preservation
+### Rule 2: URL Facade for Convenience
 
 ```
 IF Hostname equals example.com
@@ -331,9 +331,17 @@ THEN 301 redirect to
 
 **Repeat for each section** (`/consulting`, `/docs`, `/api`, etc.)
 
-**Purpose:** Preserves SEO for old section URLs. Search engines transfer authority from `example.com/oss` to `blog.example.com/oss`.
+**Purpose:** Provides clean, short URLs for marketing and sharing. `example.com/oss` is easier to type and remember than `blog.example.com/oss`. The apex domain acts as a **convenience facade** - a simpler public entry point that redirects to the canonical content location.
 
-**Note:** This rule uses `http.request.uri.path` (path only), which **drops query strings**. If you need to preserve query parameters (UTM tags, tracking params), use `http.request.uri` instead. The actual implementation drops query strings for section redirects—they're used for SEO preservation of deep links, not marketing campaigns.
+**Use cases:**
+- Marketing materials: "Visit example.com/consulting"
+- Business cards: Shorter, more professional URLs
+- Social media: Cleaner links for sharing
+- Email signatures: Apex domain without subdomain clutter
+
+The blog subdomain remains the canonical location where content actually lives. This is intentional architecture, not legacy migration - the apex provides permanent user-friendly aliases.
+
+**Note:** This rule uses `http.request.uri.path` (path only), which **drops query strings**. If you need to preserve query parameters (UTM tags, tracking params), use `http.request.uri` instead.
 
 ### Rule 3: Product Canonicalization
 
@@ -492,12 +500,12 @@ Each network handles what it's optimized for: Cloudflare for sub-50ms routing de
 
 ### Why 301 Permanent Redirects?
 
-**301** signals to search engines:
-- Transfer ranking authority from old URL to new URL
-- Update index to replace old URLs with new ones
-- Merge historical SEO signals
+**301 Permanent** signals to search engines:
+- Transfer ranking authority from facade URL to canonical URL
+- Update index to prefer the canonical URL
+- Merge SEO signals onto the canonical location
 
-**302 Temporary** would preserve old URLs in search index indefinitely.
+**302 Temporary** would keep both URLs in the search index indefinitely, splitting authority between apex and blog subdomains instead of consolidating it on the canonical location.
 
 ### Redirect Chain Budget
 
@@ -530,7 +538,15 @@ Each redirect should have a single, direct path to its canonical target.
 
 ### Why Path-Preserving Redirects?
 
-Redirecting `example.com/oss/project` to `blog.example.com/oss/project` (not just the homepage) preserves the complete URL structure. When external sites link to specific pages, those links continue working after migration. Bookmarks and saved URLs don't break. Most importantly, search engines transfer ranking signals to the corresponding page on the new domain, not just the homepage. This preserves SEO for individual pages, not just overall domain authority. Without path preservation, all external links would funnel to the homepage, losing traffic and context.
+Redirecting `example.com/oss/project` to `blog.example.com/oss/project` (not just the homepage) preserves the complete URL structure. This serves multiple purposes:
+
+**User experience:** External links, bookmarks, and saved URLs continue working. Users who share or save `example.com/consulting` reach the correct content, not the homepage.
+
+**SEO benefit:** Search engines transfer ranking signals to the corresponding page on the canonical domain, not just the homepage. Each page maintains its individual search authority.
+
+**Link integrity:** When external sites link to specific pages, those links reach the intended content. Without path preservation, all external links would funnel to the homepage, losing traffic and context.
+
+The facade URLs (`example.com/section`) and canonical URLs (`blog.example.com/section`) maintain 1:1 mapping - every apex path has an equivalent blog path.
 
 ### Why Separate Edge and Content Planes?
 
@@ -826,7 +842,7 @@ These principles define the pattern:
 
 1. **All identity lives at the edge** - Origin never makes routing decisions
 2. **Origins serve content, not routes** - Prevents origin compromise from affecting routing
-3. **Legacy paths are first-class** - Old URLs work indefinitely via redirects
+3. **Facade URLs are first-class** - Apex domain paths work as convenient aliases indefinitely
 4. **TLS is single-owner** - Each subdomain level has one TLS authority (no coordination)
 5. **Static content only** - No server-side execution, minimal attack surface
 
