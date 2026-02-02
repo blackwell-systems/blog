@@ -143,18 +143,7 @@ Routing decisions happen at the edge. Origin only serves one canonical hostname.
 
 ## Architecture Overview
 
-```text
-              ┌──────────────────────────┐
-              │   Cloudflare Edge (330+) │
-User ────────►│  Routing • TLS • Rules   │
-              └────────────┬─────────────┘
-                           │ (301 redirect)
-                           ▼
-              ┌──────────────────────────┐
-              │   Fastly Edge (Global)   │
-              │  Content CDN via GitHub  │
-              └──────────────────────────┘
-```
+{{< figure src="/blog/images/edge-native-drawio.png" alt="Complete edge-native publishing architecture diagram showing Cloudflare routing layer, GitHub Pages content layer, DNS configuration, and request flows" caption="The complete architecture: Cloudflare edge handles identity and routing (10-50ms), GitHub Pages + Fastly CDN delivers content (20-100ms), DNS configuration shows the dummy IP (192.0.2.1) that triggers edge-only execution." >}}
 
 **Two global CDN networks working in perfect coordination:**
 
@@ -242,7 +231,11 @@ Each plane operates independently. You can swap GitHub Pages for Netlify without
 
 ### Why This Structure
 
-The apex domain (`example.com`) points to `192.0.2.1`, a documentation IP from RFC 5737's TEST-NET-1 range that's guaranteed non-routable on the public internet. This IP will never respond to requests. The record is set to proxied (orange cloud) in Cloudflare, which signals Cloudflare's edge network to intercept all traffic and evaluate Redirect Rules before attempting any origin connection. The origin is never contacted—every request to the apex domain is handled entirely at the edge.
+The apex domain (`example.com`) points to `192.0.2.1` - but **that IP address is functionally irrelevant**. Once the record is proxied (orange cloud), Cloudflare never routes to that address. The IP could be `192.0.2.1`, `10.0.0.1`, or any other value - the behavior is identical.
+
+The IP field exists because DNS schema requires an A record to have an IP address. Once you enable proxy mode, that value becomes a **dead-end placeholder** - a required field behind a programmable edge. Cloudflare answers DNS queries with its own anycast IPs (not `192.0.2.1`), intercepts traffic at the nearest edge node, and evaluates Redirect Rules before considering any origin connection.
+
+Why use `192.0.2.1` specifically? It's a **fail-closed safety signal** from RFC 5737's TEST-NET-1 range (guaranteed non-routable). If your edge rules break, Cloudflare will try to reach the origin and fail immediately - giving you a fast 522 error instead of accidentally proxying to a real server. The origin is never contacted during normal operation - every request to the apex domain is handled entirely at the edge.
 
 The www subdomain (`www.example.com`) is a CNAME pointing to the apex. It's also proxied through Cloudflare. When a user visits the www hostname, Cloudflare terminates TLS using its own certificate and immediately evaluates redirect rules. There's no origin server for www—it's purely an edge routing construct that provides the familiar www prefix while redirecting to the canonical blog hostname.
 
@@ -250,24 +243,60 @@ The blog subdomain (`blog.example.com`) is a CNAME pointing to GitHub Pages (`us
 
 ### The Dummy IP Strategy
 
-The use of `192.0.2.1` is the architectural linchpin that makes serverless edge routing possible.
+The use of `192.0.2.1` is the architectural linchpin that makes serverless edge routing possible - but not in the way you might think.
 
-**Why a non-routable IP works:**
+**The IP address is functionally irrelevant.**
 
-In Cloudflare, a proxied DNS record is an **infrastructure trigger**, not just name resolution. When you set a record to proxied (orange cloud), you're signaling Cloudflare's global network to:
+Once a DNS record is proxied (orange cloud), the IP value itself doesn't matter. Cloudflare never routes to that address. You could use `192.0.2.1`, `10.0.0.1`, `1.2.3.4`, or any other IP - the behavior would be identical. The address is never contacted, never resolved, never routed to.
 
-1. Intercept all traffic at the edge
-2. Terminate TLS locally (issue Cloudflare certificates)
-3. Evaluate redirect rules before any origin request
-4. Only contact the origin if rules don't match
+**What actually happens:**
 
-The IP address itself becomes irrelevant—Cloudflare intercepts traffic before any connection attempt. `192.0.2.1` is from RFC 5737's TEST-NET-1 range, guaranteed non-routable on the public internet. It will never respond to requests because it's designed never to exist as a real host.
+In Cloudflare, a proxied DNS record is an **infrastructure trigger**, not a routing destination. When you set a record to proxied (orange cloud), you're signaling Cloudflare's global network to:
+
+1. Answer DNS queries with **Cloudflare's own anycast IPs** (not your configured value)
+2. Intercept all traffic at the edge (nearest of 330+ nodes)
+3. Terminate TLS locally (issue Cloudflare certificates)
+4. Evaluate redirect rules before any origin request
+5. Only contact the origin if rules don't match
+
+The IP field is a **required UI field**, not a routing parameter. DNS requires an A record to have an IP address, so Cloudflare's interface demands one - but once you enable proxy mode, that value becomes a placeholder behind a programmable edge.
+
+**Why use `192.0.2.1` specifically?**
+
+Using a TEST-NET IP (RFC 5737) is a **fail-closed safety signal**. If your edge rules break or are disabled:
+- Cloudflare will try to reach the origin at the configured IP
+- The connection will **fail immediately** (TEST-NET addresses are non-routable)
+- You get a fast failure (522 timeout) instead of accidentally proxying to a real server
+
+You're not pointing *to* something. You're declaring: **"the edge is the service."**
+
+**The mental model:**
+
+```
+Traditional thinking (wrong):
+  DNS resolves → IP address → Server at that IP → Response
+
+Edge-native reality:
+  DNS resolves → Cloudflare anycast IP → Edge evaluates rules → Response
+                                       ↓
+                           Origin IP never consulted
+```
+
+The IP is not an origin. It is a **dead-end placeholder** that exists only to satisfy DNS schema requirements while signaling that routing decisions happen entirely at the edge.
+
+**Cloudflare's processing pipeline:**
+
+{{< figure src="/blog/images/cloudflare-traffic-flow.png" alt="Cloudflare traffic flow showing 17 processing stages at the edge" caption="Cloudflare's edge processing pipeline - 17 stages execute before considering any origin request. Redirect Rules (stage 3) return responses immediately, never reaching later stages." >}}
+
+This diagram shows why the origin IP is irrelevant: an HTTP request passes through URL normalization, rewrites, **Redirect Rules** (stage 3), page rules, configuration rules, origin rules, security layers (DDoS, WAF, bots), rate limiting, caching, Workers, and response modification - all **at the edge** before Cloudflare even considers contacting an origin server.
+
+For this architecture, requests terminate at stage 3 (Redirect Rules). The 301 response is generated and sent back to the user immediately. Stages 4-17 never execute. The origin IP configured in DNS is never consulted, never connected to, never relevant.
 
 **What this enables:**
 
-By combining a dummy IP with proxy mode, you create a **routing fabric with zero origin infrastructure**. There's no server at `192.0.2.1`—it's a trigger address that tells Cloudflare's 330+ edge nodes to handle requests locally. Redirect rules execute globally without any centralized origin server. The apex and www domains exist as pure routing constructs.
+By combining a dummy IP with proxy mode, you create a **routing fabric with zero origin infrastructure**. There's no server at `192.0.2.1` - it's a required field that triggers edge-only execution. Redirect rules execute globally at 330+ edge nodes without any centralized origin server. The apex and www domains exist as pure routing constructs.
 
-This is why the architecture costs $24/year instead of $600/year—you're not running servers for redirects. The edge network itself becomes the routing layer, triggered by a DNS record pointing to an address that intentionally goes nowhere.
+This is why the architecture costs $24/year instead of $600/year - you're not running servers for redirects. The edge network itself becomes the routing layer, triggered by a DNS record pointing to an address that intentionally leads nowhere.
 
 ---
 
