@@ -19,7 +19,9 @@ This post shows why that analogy breaks at the CPU level - especially once indir
 
 "Structs with methods" is not the differentiator.
 
-The differentiator is **default indirection**: whether your design patterns push you toward contiguous values + static calls, or pointers + dynamic dispatch + scattered memory.
+The differentiator is **execution topology**: the pattern of memory loads, branches, and indirection that your code compiles into. Similar abstractions at the modeling level can produce different execution topologies under common idioms—and CPUs care about topology, not abstractions.
+
+Language defaults shape which topologies become the path of least resistance.
 {{< /callout >}}
 
 ---
@@ -1540,14 +1542,14 @@ When combined: Memory layout dominates (accounts for ~86% of speedup)
 
 "Structs with methods" is not the differentiator.
 
-The differentiator is **whether your design trends toward contiguous data + direct calls, or pointer graphs + indirect calls**.
+The differentiator is **execution topology**: whether your design trends toward contiguous data + direct calls, or pointer graphs + indirect calls.
 
 Both Go and C++ can express either style. The difference is **what becomes idiomatic under pressure**:
 
 * **Go** makes it easy to keep domain data as concrete values in contiguous slices, and to reserve interfaces and pointers for boundaries.
 * **Classic C++ inheritance-centric designs** commonly propagate base pointers and virtual calls into hot loops, which brings pointer chasing + indirect branches along for the ride.
 
-The CPU doesn't care about "objects"—it cares about cache lines, branches, and allocations. This article maps language idioms to those hardware costs.
+The CPU doesn't care about "objects"—it cares about cache lines, branches, and allocations. This article maps language idioms to **execution topologies**: the actual pattern of loads, stores, and branches that the hardware executes.
 
 **What the benchmarks show:**
 
