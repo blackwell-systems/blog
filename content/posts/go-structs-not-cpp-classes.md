@@ -277,27 +277,35 @@ for i := range points {
 
 **The Hardware Cost of Pointer Chasing**
 
-According to [Jeff Dean's "Latency Numbers Every Programmer Should Know"](https://gist.github.com/jboner/2841832):
-- **L1 cache reference:** 0.5 ns
-- **Main memory reference:** 100 ns (200× slower)
+According to [Jeff Dean's "Latency Numbers Every Programmer Should Know"](https://gist.github.com/jboner/2841832) as order-of-magnitude reference points:
+- **L1 cache reference:** ~0.5 ns
+- **Main memory reference:** ~100 ns (200× slower)
 
 **Measured benchmark results** ([source code](https://github.com/blackwell-systems/go-structs-vs-cpp-classes)):
+
+These numbers are from one machine with a specific working set. Focus on the ratio and direction:
 
 ```
 C++ (1M elements, 100 iterations):
 
 Pointer array (scattered heap):
-  Total time: 213.8 ms
-  Time per element: 2 ns
+  Measured: ~2 ns per element
+  (This includes many cache hits; working set partially fits in cache)
 
 Value array (contiguous memory):
-  Total time: 29.2 ms
-  Time per element: 0.29 ns
+  Measured: ~0.29 ns per element
+  (High cache hit rate from sequential access + prefetching)
 
-Measured speedup: 7.3× faster for contiguous memory
+Measured ratio: 7× slower for pointer chasing
 ```
 
-The difference matches hardware predictions: pointer dereferencing causes cache misses, while sequential access gets cache hits.
+**What the numbers mean:**
+- The 2 ns average includes cache hits (not pure DRAM latency)
+- As working set grows beyond cache, miss rates rise toward the 100ns DRAM speeds
+- Sequential access enables hardware prefetching (CPU loads ahead)
+- Scattered access defeats prefetching (unpredictable pattern)
+
+The key is the ratio (7×) and mechanism (cache locality), not absolute ns values.
 
 The difference isn't the language. It's what the CPU executes:
 - **Inheritance-heavy C++:** Chase pointers through scattered memory
@@ -467,40 +475,43 @@ In Go, static dispatch is the default and dynamic dispatch is opt-in via interfa
 
 **Virtual Dispatch Overhead**
 
-From [Jeff Dean's latency numbers](https://gist.github.com/jboner/2841832):
-- **Branch mispredict:** 5 ns
+From [Jeff Dean's latency numbers](https://gist.github.com/jboner/2841832) as order-of-magnitude mental models:
+- **Branch mispredict:** ~5 ns
+- **Indirect call overhead:** typically a few ns, varies by predictability
 
-**Measured benchmark results** ([source code](https://github.com/blackwell-systems/go-structs-vs-cpp-classes)):
+**Measured benchmark results** ([source code](https://github.com/blackwell-systems/go-structs-vs-cpp-classes), isolated vtable overhead using contiguous arrays):
+
+These numbers are from one machine and workload. Absolute values vary by CPU, compiler version, and access patterns. Focus on ratios and direction:
 
 ```
 C++ (10M elements, 10 iterations = 100M calls):
 
-Virtual dispatch (inheritance + vtable):
-  Total time: 2010 ms
-  Time per call: 20 ns
+Virtual dispatch (contiguous array, vtable lookup):
+  Measured: ~20 ns per call (includes loop overhead + vtable indirection)
 
-Static dispatch (concrete type):
-  Total time: 714 ms
-  Time per call: 7 ns
+Static dispatch (contiguous array, direct calls):
+  Measured: ~7 ns per call (includes loop overhead, likely partially inlined)
 
-Measured speedup: 2.8× faster for static dispatch
+Measured ratio: ~2.8× slower for virtual dispatch
 
 Go (10M elements, 10 iterations = 100M calls):
 
 Interface dispatch (dynamic):
-  Total time: 252 ms
-  Time per call: 2 ns
+  Measured: ~2 ns per call (may include devirtualization or loop artifacts)
 
 Concrete type (static dispatch):
-  Total time: 54 ms
-  Time per call: 0.5 ns
+  Measured: ~0.5 ns per call (likely fully inlined)
 
-Measured speedup: 4.6× faster for concrete types
+Measured ratio: ~4× slower for interface dispatch
 ```
 
-Both languages show the same pattern: static dispatch is significantly faster than dynamic dispatch. The difference is that Go compiles concrete types more aggressively (better inlining).
+**Key findings:**
+- Both languages show the same pattern: indirect calls are several times slower than direct/inlined calls
+- The ratios (2-5×) are more stable than absolute ns values
+- Go's measured numbers suggest aggressive inlining; beware of devirtualization in microbenchmarks
+- In real code, vtable overhead combines with pointer chasing (see Benchmark 1)
 
-In Go, static dispatch is default. In C++, once you design around inheritance/virtuals, dynamic dispatch becomes pervasive.
+In Go, static dispatch is the default path. In inheritance-heavy C++, dynamic dispatch often becomes pervasive across hot loops.
 
 ---
 
@@ -542,10 +553,10 @@ Total cost: ~100-150 cycles per allocation
 
 **Garbage collection isn't the issue here.** C++ uses manual memory management (new/delete), not GC. The cost is heap allocation itself - malloc/free overhead.
 
-**Why C++ defaults to heap:**
-- Polymorphism requires pointers (virtual dispatch)
+**Why inheritance-heavy C++ commonly uses heap allocation:**
+- Runtime polymorphism via base pointers requires indirection
 - Object lifetime beyond scope (return from function)
-- Standard library containers store pointers (std::vector\<T*\>)
+- Containers holding heterogeneous derived types store pointers
 
 ### Go: Stack Allocation Default (Escape Analysis)
 
@@ -875,29 +886,27 @@ This confirms the memory layout thesis: scattered heap objects create GC pressur
 
 **Real-world impact: Game engines (ECS)**
 
-Why modern game engines abandoned OOP inheritance:
+Why modern game engines moved away from deep inheritance hierarchies:
 
 ```cpp
-// Old way (C++ inheritance): Forced pointer array
-GameObject* entities[100000];
+// Old approach (inheritance-based): Pointer array + virtual calls
+GameObject* entities[N];
 for (auto* e : entities) {
-    e->update();  // Pointer chase + virtual call
+    e->update();  // Pointer chase + virtual call per entity
 }
-Performance: 1,000-5,000 entities @ 60 FPS
 
-// New way (data-oriented design): Separate arrays
-Position positions[100000];   // Contiguous
-Velocity velocities[100000];  // Contiguous
-Health healths[100000];       // Contiguous
+// Modern approach (data-oriented): Separate component arrays
+Position positions[N];   // Contiguous
+Velocity velocities[N];  // Contiguous
+Health healths[N];       // Contiguous
 
-for (int i = 0; i < 100000; i++) {
+for (int i = 0; i < N; i++) {
     positions[i].x += velocities[i].x;
     positions[i].y += velocities[i].y;
 }
-Performance: 100,000+ entities @ 60 FPS
 ```
 
-The speedup isn't from Go vs C++. It's from **contiguous data vs pointer indirection**.
+The pattern: moving from pointer graphs with indirect calls to contiguous arrays with direct loops commonly produces order-of-magnitude throughput improvements. The speedup isn't from Go vs C++—it's from **contiguous data vs pointer indirection**, regardless of language.
 
 ---
 
@@ -1024,37 +1033,29 @@ The receiver type **shows the programmer** whether mutation/sharing happens.
 
 ### The Hardware Impact
 
-**Value receivers enable optimizations:**
+**Value receivers often enable better optimization:**
 
 ```go
 type Point struct {
     X, Y int
 }
 
-// Value receiver - compiler can inline:
+// Value receiver - compiler may inline aggressively:
 func (p Point) Distance() int {
     return int(math.Sqrt(float64(p.X*p.X + p.Y*p.Y)))
 }
 
-// Becomes:
-for i := range points {
-    // Inlined (no function call):
-    dist := int(math.Sqrt(float64(points[i].X*points[i].X + points[i].Y*points[i].Y)))
-}
-```
-
-**Pointer receivers prevent inlining:**
-
-```go
+// Pointer receiver - similar inlining potential:
 func (p *Point) Distance() int {
     return int(math.Sqrt(float64(p.X*p.X + p.Y*p.Y)))
 }
-
-// Cannot inline (pointer indirection):
-for i := range points {
-    dist := points[i].Distance()  // Function call overhead
-}
 ```
+
+**The real difference:**
+- Value receivers make mutation intent explicit (can't modify original)
+- Pointer receivers signal mutation capability (can modify original)
+- Both can be inlined depending on escape analysis and complexity
+- The semantic clarity matters more than inlining potential
 
 ---
 
@@ -1423,25 +1424,25 @@ for i := range positions {
 
 ### Performance Comparison
 
-**Processing 100,000 entities @ 60 FPS (16.67ms frame budget):**
+**Directional Performance Impact:**
+
+When hot loops shift from pointer-chasing + virtual calls to contiguous iteration + direct calls:
 
 ```
-C++ (inheritance-based):
-- Memory accesses per frame: 400,000-500,000
-- Cache miss rate: 30-50%
-- Time per frame: 20-30ms (frame drop!)
-- Achievable: 1,000-5,000 entities @ 60 FPS
+Inheritance-based (pointer graphs + virtual dispatch):
+- More memory accesses per operation (pointer + vtable + data)
+- Higher cache miss rates (scattered objects)
+- Indirect branches (misprediction penalties)
+- Result: Often orders of magnitude fewer operations per frame
 
-Go (data-oriented):
-- Memory accesses per frame: 200,000-300,000
-- Cache miss rate: 5-10%
-- Time per frame: 1-2ms
-- Achievable: 100,000+ entities @ 60 FPS
-
-Speedup: 10-20× more entities at same frame rate
+Data-oriented (contiguous arrays + direct calls):
+- Fewer memory accesses per operation (direct array indexing)
+- Lower cache miss rates (sequential access + prefetching)
+- Direct branches (predictable, often inlined)
+- Result: Often orders of magnitude more operations per frame
 ```
 
-This isn't "Go is faster than C++." This is **contiguous data is faster than pointer chasing**, regardless of language.
+This isn't "Go is faster than C++." This is **contiguous data is faster than pointer chasing**, regardless of language. The question is which pattern your idioms push you toward.
 
 The difference: C++'s polymorphism design **forces** pointer chasing. Go's design makes it **optional**.
 
@@ -1543,19 +1544,19 @@ The hardware doesn't care about syntax. It executes:
 - Function calls (direct vs indirect)
 - Allocations (stack vs heap)
 
-Go structs default to:
+Go's common patterns favor:
 - **Contiguous memory** (CPU prefetches, cache hits)
 - **Static dispatch** (direct calls, inlinable)
-- **Stack allocation** (no malloc overhead)
+- **Value storage** (minimal allocation overhead)
 
-C++ classes default to:
+Inheritance-heavy C++ patterns commonly lead to:
 - **Scattered memory** (pointer chasing, cache misses)
 - **Virtual dispatch** (indirect calls, branch mispredictions)
-- **Heap allocation** (malloc/free overhead)
+- **Pointer-heavy heap allocation** (malloc/free overhead)
 
 These aren't minor differences. They're **10-100× performance differences** depending on workload.
 
-**Default patterns matter**. C++ makes the slow path default in inheritance-heavy designs (virtual methods, pointer indirection, heap). Go makes the fast path default (concrete types, static dispatch, stack).
+**Idioms shape what you reach for under pressure**. Inheritance-heavy C++ designs commonly propagate base pointers and virtual calls into hot loops. Go's concrete-type idioms make contiguous data and static dispatch the path of least resistance.
 
 When you need polymorphism in Go, you pay the same costs as C++ (interfaces = dynamic dispatch). But you **opt in** explicitly, not **forced in** by the type system.
 
