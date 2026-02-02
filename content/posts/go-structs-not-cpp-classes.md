@@ -63,7 +63,7 @@ for (const auto& p : points) {  // Reference for perf
 But this requires:
 - Understanding copy/move semantics
 - Knowing when to use const&
-- Avoiding inheritance (forces pointers)
+- Avoiding inheritance (commonly requires pointers for heterogeneous collections)
 - Fighting std library defaults (std::shared_ptr everywhere)
 
 **Go makes this the default.** You don't need expertise to write cache-friendly code.
@@ -103,7 +103,7 @@ Before examining hardware differences, define the key concepts. **Note:** Latenc
 
 **Stack allocation:** Local variables stored on the call stack. Allocation: move stack pointer (1 CPU cycle, <1ns). Deallocation: automatic when function returns (free). Memory is contiguous and reused across function calls. Lifetime: deterministic (scope-bound).
 
-**Heap allocation:** Memory requested from allocator (malloc, new, runtime allocator). Allocation: search free lists, update metadata (50-100 cycles, 50-100ns). Deallocation: explicit (free, delete) or garbage collection. Memory is scattered across heap. Lifetime: flexible (can outlive function scope).
+**Heap allocation:** Memory requested from allocator (malloc, new, runtime allocator). Allocation: search free lists, update metadata (typically tens to hundreds of cycles). Deallocation: explicit (free, delete) or garbage collection. Memory is scattered across heap. Lifetime: flexible (can outlive function scope). **Note:** Exact allocator costs vary by implementation and fast-path optimizations; these are representative ranges, not guarantees.
 
 **Contiguous memory:** Data stored sequentially in memory. Arrays, slices, value structs. Enables CPU prefetching (hardware loads data before requested). Achieves high cache hit rates (75-98%).
 
@@ -128,7 +128,7 @@ These microbenchmarks isolate primitives (pointer chasing, cache misses, indirec
 ### C++: Polymorphic Class Hierarchies Push Toward Pointers
 
 ```cpp
-// C++: Heterogeneous polymorphism forces pointer storage
+// C++: Heterogeneous polymorphism commonly requires pointer storage
 class Shape {
 public:
     virtual ~Shape() = default;
@@ -147,7 +147,7 @@ public:
     double area() const override { return width * height; }
 };
 
-// Pattern forced by heterogeneous polymorphism:
+// Pattern required for heterogeneous polymorphism:
 std::vector<Shape*> shapes;
 for (int i = 0; i < 1000; i++) {
     if (i % 2 == 0) {
@@ -187,10 +187,10 @@ What 'new Circle{i}' does internally:
 2. Call Circle constructor to initialize vtable pointer and radius
 3. Return pointer to allocated memory
 
-Why pointers are forced:
+Why pointers are required:
 - Circle and Rectangle have different sizes (heterogeneous)
 - vector<Shape> would slice off derived class data
-- Polymorphism requires storing different types in one container
+- Storing different types in one container requires indirection
 
 Result: Objects scattered across heap pages (no locality guarantee)
 ```
@@ -497,12 +497,14 @@ Measured ratio: ~2.8× slower for virtual dispatch
 Go (10M elements, 10 iterations = 100M calls):
 
 Interface dispatch (dynamic):
-  Measured: ~2 ns per call (may include devirtualization or loop artifacts)
+  Measured: a few ns per call on this system
+  (Exact values vary widely and may be optimized away by the compiler)
 
 Concrete type (static dispatch):
-  Measured: ~0.5 ns per call (likely fully inlined)
+  Measured: sub-ns per call (likely fully inlined)
 
-Measured ratio: ~4× slower for interface dispatch
+Measured ratio: several× slower for interface dispatch
+(Treat only the ratio and mechanism as meaningful, not absolute ns)
 ```
 
 **Key findings:**
@@ -764,11 +766,11 @@ Objects scattered on heap (different sizes!)
 Cannot be contiguous - different sizes per type
 ```
 
-**Why this is forced:**
+**Why heterogeneous storage requires pointers:**
 - Circle is 16 bytes (vtable ptr + radius + padding)
 - Rectangle is 20 bytes (vtable ptr + width + height + padding)
 - Cannot fit different-sized objects in fixed-size array
-- Pointers are only way to store polymorphic collection
+- Indirection is required to store polymorphic collection
 
 ### Go: Separate Arrays (Opt-In Polymorphism)
 
@@ -903,7 +905,7 @@ for (int i = 0; i < N; i++) {
 }
 ```
 
-The pattern: moving from pointer graphs with indirect calls to contiguous arrays with direct loops commonly produces order-of-magnitude throughput improvements. The speedup isn't from Go vs C++—it's from **contiguous data vs pointer indirection**, regardless of language.
+The pattern: moving from pointer graphs with indirect calls to contiguous arrays with direct loops commonly produces multi-× to order-of-magnitude throughput improvements, depending on cache behavior and working set size. The speedup isn't from Go vs C++—it's from **contiguous data vs pointer indirection**, regardless of language.
 
 ---
 
@@ -1432,18 +1434,18 @@ Inheritance-based (pointer graphs + virtual dispatch):
 - More memory accesses per operation (pointer + vtable + data)
 - Higher cache miss rates (scattered objects)
 - Indirect branches (misprediction penalties)
-- Result: Often orders of magnitude fewer operations per frame
+- Result: Multi-× to orders of magnitude fewer operations per frame (depends on cache)
 
 Data-oriented (contiguous arrays + direct calls):
 - Fewer memory accesses per operation (direct array indexing)
 - Lower cache miss rates (sequential access + prefetching)
 - Direct branches (predictable, often inlined)
-- Result: Often orders of magnitude more operations per frame
+- Result: Multi-× to orders of magnitude more operations per frame (depends on cache)
 ```
 
 This isn't "Go is faster than C++." This is **contiguous data is faster than pointer chasing**, regardless of language. The question is which pattern your idioms push you toward.
 
-The difference: C++'s polymorphism design **forces** pointer chasing. Go's design makes it **optional**.
+The difference: C++'s heterogeneous polymorphism **requires** pointer indirection. Go's design makes it **optional**.
 
 ---
 
@@ -1484,7 +1486,7 @@ points := make([]Point, 1000000)      // Contiguous values
 transactions := make([]Transaction, 1000000)  // Contiguous values
 ```
 
-**C++:** Inheritance-based polymorphism forces interfaces on **your domain objects**. Your business logic data structures pay the indirection cost:
+**C++:** Inheritance-based polymorphism commonly propagates into **your domain objects**. Your business logic data structures pay the indirection cost:
 ```cpp
 // Business logic: Forced into inheritance (cache-hostile)
 class GameObject { virtual void update() = 0; };
@@ -1557,9 +1559,11 @@ The measured ratios (7× for memory layout, 3-5× for dispatch) isolate specific
 
 But the direction is consistent: when hot loops concentrate pointer chasing + indirect dispatch, performance degrades. When they use contiguous data + direct calls, CPUs execute them efficiently.
 
+**These mechanisms are universal**—the languages differ only in how often their idioms lead you into them. Cache misses, indirect branches, and scattered allocations cost the same in both languages. The difference is which patterns become the path of least resistance.
+
 **The point:** Modern languages didn't invent new abstractions—they made different patterns the path of least resistance. Go's concrete-type idioms lower the activation energy for cache-friendly code. C++'s value-oriented subset does the same, but you reach for it deliberately, not by default in inheritance-heavy designs.
 
-Next time someone says "just syntax," ask them to show you the assembly. Syntax doesn't cause order-of-magnitude slowdowns—memory layout and indirection do.
+Next time someone says "just syntax," ask them to show you the assembly. Syntax doesn't cause multi-× slowdowns—memory layout and indirection do.
 
 ---
 
