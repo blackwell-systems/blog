@@ -136,7 +136,7 @@ class Point {
 // Pattern common in inheritance-heavy designs:
 std::vector<Point*> points;
 for (int i = 0; i < 1000; i++) {
-    points.push_back(new Point{i, i});
+    points.push_back(new Point{i, i});  // Each 'new' calls malloc() internally
 }
 ```
 
@@ -161,8 +161,13 @@ Heap - Point objects (scattered, 8 KB total):
 0x2a4b1020: Point{2, 2}   (8 bytes)
 ...
 
-Problem: Each Point allocation likely from different malloc() call
-Result: Objects scattered across heap pages
+What 'new Point{i, i}' does internally:
+1. Call malloc(8) to allocate heap memory
+2. Call Point constructor to initialize x, y
+3. Return pointer to allocated memory
+
+Problem: Each 'new' is a separate malloc() call
+Result: Objects scattered across heap pages (no locality guarantee)
 ```
 
 **What happens during iteration:**
