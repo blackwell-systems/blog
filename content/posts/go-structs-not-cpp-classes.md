@@ -91,7 +91,7 @@ So yes, if we define OOP as Kay intended, then Erlang/Go/Rust **are** OOP. The a
 
 Before examining hardware differences, define the key concepts. **Note:** Latency numbers cited below are order-of-magnitude mental models; actual costs depend on cache level, miss rate, CPU architecture, and system load.
 
-**Cache locality:** How close data is in memory. CPUs read memory in 64-byte cache lines. Sequential data (addresses 0x1000, 0x1008, 0x1010) fits in one cache line (fast - L1 cache ~0.5ns). Scattered data (addresses 0x1000, 0x5000, 0x9000) requires multiple cache lines. Modern CPUs have multiple cache levels: L1 (~0.5ns), L2 (~3-5ns), L3 (~10-30ns), DRAM (~100ns). Miss rates and latency depend on access pattern, working set size, and CPU architecture. Value semantics produce sequential layouts. Reference semantics produce scattered layouts.
+**Cache locality:** How close data is in memory. CPUs read memory in 64-byte cache lines. Sequential data (addresses 0x1000, 0x1008, 0x1010) fits in one cache line (fast - L1 cache ~0.5ns). Scattered data (addresses 0x1000, 0x5000, 0x9000) requires multiple cache lines. Modern CPUs have multiple cache levels: L1 (~0.5ns), L2 (~3-5ns), L3 (~10-30ns), DRAM (~100ns). Modern systems with NUMA can see cross-socket memory access exceed 150ns. Miss rates and latency depend on access pattern, working set size, and CPU architecture. Value semantics produce sequential layouts. Reference semantics produce scattered layouts.
 
 **Static dispatch:** Function call where the target address is known at compile time. The CPU knows exactly which function to call before runtime. Enables inlining (compiler replaces call with function body). Cost: ~1ns, often zero after inlining.
 
@@ -714,7 +714,7 @@ delete user;
 
 ## 4. Inheritance: Pointer Indirection Requirement
 
-### C++: Polymorphism Forces Pointers
+### C++: Polymorphism Commonly Pushes Toward Pointers
 
 ```cpp
 class Shape {
@@ -763,7 +763,7 @@ shapes[2] → 0x2a4b10a0 (Circle, 16 bytes)
 ...
 
 Objects scattered on heap (different sizes!)
-Cannot be contiguous - different sizes per type
+Cannot be stored contiguously without indirection or manual layout machinery - different sizes per type
 ```
 
 **Why heterogeneous storage requires pointers:**
@@ -1488,7 +1488,7 @@ transactions := make([]Transaction, 1000000)  // Contiguous values
 
 **C++:** Inheritance-based polymorphism commonly propagates into **your domain objects**. Your business logic data structures pay the indirection cost:
 ```cpp
-// Business logic: Forced into inheritance (cache-hostile)
+// Business logic: Commonly designed with inheritance (cache-hostile)
 class GameObject { virtual void update() = 0; };
 class Transaction { virtual void process() = 0; };
 
@@ -1509,7 +1509,7 @@ When processing millions of domain objects in tight loops, Go's concrete types a
 | **Memory layout** | Scattered (heap pointers) | Contiguous (value arrays) | **7.3× speedup** (measured) |
 | **Method dispatch** | Virtual (vtable lookup) | Static (compile-time) | **2.8× speedup** C++, **4.6× speedup** Go (measured) |
 | **Allocation** | Heap (new/delete) | Stack/value storage | **5.3× speedup** C++, **1.7× speedup** Go (measured) |
-| **Polymorphism** | Forced (inheritance) | Optional (interfaces) | Opt-in cost vs pervasive cost |
+| **Polymorphism** | Pervasive (inheritance) | Optional (interfaces) | Opt-in cost vs pervasive cost |
 | **Receiver** | Implicit `this` pointer | Explicit value/pointer | Enables inlining, copy elision |
 | **Construction** | Special semantics | Regular functions | Simpler, fewer edge cases |
 | **Memory overhead** | +8 bytes (vtable ptr) | +0 bytes | 50% space savings per object |
