@@ -1,10 +1,10 @@
 ---
-title: "Go Structs Are Not C++ Classes: Why Identical Abstractions Produce Radically Different CPU Execution Graphs"
+title: "Go Structs Are Not C++ Classes: Why Similar Modeling Roles Produce Different Hardware Execution Patterns"
 date: 2026-02-02
 draft: false
 tags: ["go", "cpp", "c++", "structs", "classes", "memory-layout", "performance", "hardware", "cache", "vtable", "virtual-dispatch", "value-semantics", "reference-semantics", "concurrency", "stack", "heap"]
 categories: ["programming", "architecture"]
-description: "Go structs and C++ classes occupy the same modeling role but create radically different hardware execution graphs. From memory layout to CPU cache behavior, language defaults shape what the processor actually executes."
+description: "Go structs and C++ classes occupy similar modeling roles but commonly lead to different hardware execution patterns. From memory layout to CPU cache behavior, language defaults shape what the processor actually executes."
 summary: "Structs with methods look like classes, but the hardware tells a different story. Go makes contiguous values + static calls the path of least resistance. In inheritance-heavy C++ designs, you often end up with pointers + virtual dispatch + scattered memory. This isn't syntax - it's what the CPU executes."
 ---
 
@@ -41,7 +41,7 @@ Before the hardware details, these are the background assumptions behind the "st
 
 These are **workarounds** retrofitted onto reference-based languages. Go/Rust bake these patterns into the language default.
 
-**The difference:** Java requires discipline. Go makes safety the default.
+**The difference:** Java requires discipline. Go makes cache-friendly patterns the default.
 
 ### "You Can Model Any Semantics in C++"
 
@@ -119,7 +119,7 @@ Philosophical debates aside, here's what actually executes on the CPU.
 
 **About the benchmarks in this article:**
 
-These microbenchmarks isolate the same primitives that dominate real systems: pointer chasing, cache misses, indirect branches. Large systems are just these primitives multiplied. The 7.3× slowdown from scattered memory in a microbenchmark becomes the same 7.3× slowdown when processing 100,000 game entities or 1 million transactions. The hardware doesn't know if you're running a benchmark or production code - it just executes loads, stores, and branches.
+These microbenchmarks isolate primitives (pointer chasing, cache misses, indirect branches) that can dominate hot paths in real systems. The exact ratios don't carry over universally—CPUs overlap latencies, prefetchers help sometimes, and bottlenecks shift with workload. But the mechanisms and direction do: when your hot loop becomes indirection-heavy (pointer chasing + indirect calls), the CPU pays these categories of penalties. The benchmarks show what's possible when these costs concentrate in tight loops.
 
 ---
 
@@ -128,61 +128,88 @@ These microbenchmarks isolate the same primitives that dominate real systems: po
 ### C++: Polymorphic Class Hierarchies Push Toward Pointers
 
 ```cpp
-// C++: When using polymorphism, you end up with pointers
-class Point {
-    int x, y;
+// C++: Heterogeneous polymorphism forces pointer storage
+class Shape {
+public:
+    virtual ~Shape() = default;
+    virtual double area() const = 0;
 };
 
-// Pattern common in inheritance-heavy designs:
-std::vector<Point*> points;
+class Circle : public Shape {
+    int radius;
+public:
+    double area() const override { return 3.14159 * radius * radius; }
+};
+
+class Rectangle : public Shape {
+    int width, height;
+public:
+    double area() const override { return width * height; }
+};
+
+// Pattern forced by heterogeneous polymorphism:
+std::vector<Shape*> shapes;
 for (int i = 0; i < 1000; i++) {
-    points.push_back(new Point{i, i});  // Each 'new' calls malloc() internally
+    if (i % 2 == 0) {
+        shapes.push_back(new Circle{i});  // Each 'new' calls malloc() internally
+    } else {
+        shapes.push_back(new Rectangle{i, i});
+    }
 }
+
+// Cannot use vector<Shape> - causes object slicing
+// Cannot store inline - different derived types have different sizes
 ```
 
 **Memory layout (what the hardware sees):**
 
 ```
 Stack:
-std::vector<Point*> points
+std::vector<Shape*> shapes
 ├─ data: 0x7fff1000 (pointer to array)
 ├─ size: 1000
 └─ capacity: 1024
 
 Heap - Array of pointers (8 KB, contiguous):
-0x7fff1000: [ptr 0] → 0x2a4b1000
-0x7fff1008: [ptr 1] → 0x2a4b1010
-0x7fff1010: [ptr 2] → 0x2a4b1020
+0x7fff1000: [ptr 0] → 0x2a4b1000  (Circle)
+0x7fff1008: [ptr 1] → 0x2a4b1020  (Rectangle)
+0x7fff1010: [ptr 2] → 0x2a4b1040  (Circle)
 ...
 
-Heap - Point objects (scattered, 8 KB total):
-0x2a4b1000: Point{0, 0}   (8 bytes)
-0x2a4b1010: Point{1, 1}   (8 bytes) 
-0x2a4b1020: Point{2, 2}   (8 bytes)
+Heap - Shape objects (scattered, different sizes):
+0x2a4b1000: Circle{vtable, radius}      (16 bytes: vtable ptr + int + padding)
+0x2a4b1020: Rectangle{vtable, w, h}     (16 bytes: vtable ptr + 2 ints)
+0x2a4b1040: Circle{vtable, radius}      (16 bytes)
 ...
 
-What 'new Point{i, i}' does internally:
-1. Call malloc(8) to allocate heap memory
-2. Call Point constructor to initialize x, y
+What 'new Circle{i}' does internally:
+1. Call malloc(16) to allocate heap memory for Circle
+2. Call Circle constructor to initialize vtable pointer and radius
 3. Return pointer to allocated memory
 
-Problem: Each 'new' is a separate malloc() call
+Why pointers are forced:
+- Circle and Rectangle have different sizes (heterogeneous)
+- vector<Shape> would slice off derived class data
+- Polymorphism requires storing different types in one container
+
 Result: Objects scattered across heap pages (no locality guarantee)
 ```
 
 **What happens during iteration:**
 
 ```cpp
-for (auto* p : points) {
-    sum += p->x + p->y;  // Two memory accesses
+for (auto* s : shapes) {
+    area += s->area();  // Pointer dereference + vtable lookup
 }
 ```
 
 **CPU execution:**
-1. Read pointer from array: `0x7fff1000` → get `0x2a4b1000`
-2. Dereference pointer: Jump to `0x2a4b1000` → read Point data
-3. Next iteration: Read `0x7fff1008` → get `0x2a4b1010`
-4. Dereference: Jump to `0x2a4b1010` (likely cache miss!)
+1. Read pointer from array: `0x7fff1000` → get `0x2a4b1000` (Circle)
+2. Dereference pointer: Jump to `0x2a4b1000` → load vtable pointer
+3. Follow vtable: Load Circle::area function pointer → indirect call
+4. Next iteration: Read `0x7fff1008` → get `0x2a4b1020` (Rectangle)
+5. Dereference: Jump to `0x2a4b1020` (likely cache miss!) → load vtable
+6. Follow vtable: Load Rectangle::area function pointer → indirect call
 
 **Cache behavior:**
 - Pointer array is contiguous (cache-friendly)
@@ -807,28 +834,28 @@ shapes := []Shape{
 
 ### The Hardware Impact
 
-**Representative Performance Impact**
+**Performance Impact (Directional)**
 
-Based on [cache latency costs](https://gist.github.com/jboner/2841832) (L1: 0.5ns, memory: 100ns):
+Based on [cache latency costs](https://gist.github.com/jboner/2841832) (L1: 0.5ns, memory: 100ns as mental models):
 
 ```
 C++ (inheritance-based polymorphism):
 - Memory layout: Array of pointers → scattered objects
-- Each access: Pointer read + dereference (cache miss likely)
-- Virtual dispatch: Indirect call overhead
-- Representative overhead: 50-100× per element vs sequential
+- Each access: Pointer read + dereference (cache miss likely) + vtable lookup
+- Combined overhead: In worst cases (unpredictable access + cache misses), 
+  can be orders of magnitude slower than sequential access
+- In practice: Often multi-× slowdowns when hot loops become indirection-heavy
 
 Go (concrete types, no polymorphism):
 - Memory layout: Contiguous arrays
 - Each access: Direct read (cache hits via prefetching)
 - Static dispatch: Direct calls (often inlined)
-- Representative overhead: Minimal (1-5× baseline)
+- Overhead: Minimal compared to scattered + indirect patterns
 
 Go (explicit polymorphism via interface):
 - Memory layout: Interface values (similar to pointers)
-- Each access: Similar cache behavior to C++
-- Dynamic dispatch: Indirect calls
-- Representative overhead: 50-100× (same costs as C++)
+- Each access: Similar cache/dispatch behavior to C++
+- Combined overhead: Pays similar costs to C++ virtual dispatch when used
 ```
 
 Go's advantage: You choose when to pay the cost. C++ inheritance hierarchies make you pay everywhere.
