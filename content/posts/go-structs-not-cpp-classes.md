@@ -13,7 +13,7 @@ summary: "Structs with methods look like classes, but the hardware tells a diffe
 This post shows why that analogy breaks at the CPU level - especially once indirection and dynamic dispatch enter the picture.
 
 {{< callout type="info" >}}
-**If you only take one thing from this rebuttal:**
+**If you only take one thing from this article:**
 
 "Structs with methods" is not the differentiator.
 
