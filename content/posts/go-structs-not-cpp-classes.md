@@ -254,7 +254,7 @@ According to [Jeff Dean's "Latency Numbers Every Programmer Should Know"](https:
 - **L1 cache reference:** 0.5 ns
 - **Main memory reference:** 100 ns (200× slower)
 
-**Measured benchmark results** ([source code](https://github.com/blackwell-systems/blog/tree/main/benchmarks/structs-vs-classes)):
+**Measured benchmark results** ([source code](https://github.com/blackwell-systems/go-structs-vs-cpp-classes)):
 
 ```
 C++ (1M elements, 100 iterations):
@@ -443,7 +443,7 @@ In Go, static dispatch is the default and dynamic dispatch is opt-in via interfa
 From [Jeff Dean's latency numbers](https://gist.github.com/jboner/2841832):
 - **Branch mispredict:** 5 ns
 
-**Measured benchmark results** ([source code](https://github.com/blackwell-systems/blog/tree/main/benchmarks/structs-vs-classes)):
+**Measured benchmark results** ([source code](https://github.com/blackwell-systems/go-structs-vs-cpp-classes)):
 
 ```
 C++ (10M elements, 10 iterations = 100M calls):
@@ -602,7 +602,7 @@ Stack allocation:
 - Adjust stack pointer (SUB instruction)
 - Typical cost: <1 ns (single CPU cycle)
 
-**Measured allocation overhead** ([source code](https://github.com/blackwell-systems/blog/tree/main/benchmarks/structs-vs-classes)):
+**Measured allocation overhead** ([source code](https://github.com/blackwell-systems/go-structs-vs-cpp-classes)):
 
 ```
 C++ (1M allocations, 48-byte objects):
@@ -1485,7 +1485,7 @@ When processing millions of domain objects in tight loops, Go's concrete types a
 | **Construction** | Special semantics | Regular functions | Simpler, fewer edge cases |
 | **Memory overhead** | +8 bytes (vtable ptr) | +0 bytes | 50% space savings per object |
 
-**Benchmarks:** [Source code and methodology](https://github.com/blackwell-systems/blog/tree/main/benchmarks/structs-vs-classes)
+**Benchmarks:** [Source code and methodology](https://github.com/blackwell-systems/go-structs-vs-cpp-classes)
 
 **The compounding effect (measured):**
 
