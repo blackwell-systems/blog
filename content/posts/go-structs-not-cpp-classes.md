@@ -1472,6 +1472,8 @@ When you need polymorphism in Go, you pay the same costs as C++ (interfaces = dy
 
 In C++, classes are a feature. In Go, methods on structs are a feature. But the performance cliffs people associate with "OO" come from indirection and dynamic dispatch - and Go makes those cliffs opt-in.
 
+Next time someone says "just syntax," ask them to show you the assembly. Syntax doesn't cause 7× slowdowns - memory layout does.
+
 ---
 
 ## Further Reading
