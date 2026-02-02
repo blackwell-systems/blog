@@ -1,6 +1,5 @@
 ---
-title: "Go Structs Are Not C++ Classes"
-subtitle: "Why identical abstractions produce radically different CPU execution graphs"
+title: "Go Structs Are Not C++ Classes: Why Identical Abstractions Produce Radically Different CPU Execution Graphs"
 date: 2026-02-02
 draft: false
 tags: ["go", "cpp", "c++", "structs", "classes", "memory-layout", "performance", "hardware", "cache", "vtable", "virtual-dispatch", "value-semantics", "reference-semantics", "concurrency", "stack", "heap"]
