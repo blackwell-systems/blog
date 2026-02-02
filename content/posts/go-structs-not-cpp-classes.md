@@ -191,6 +191,8 @@ for (auto* p : points) {
 
 ### Go: Contiguous Value Array
 
+Go structs use value semantics by default - collections store actual objects, not pointers.
+
 ```go
 // Go: Collection of values
 type Point struct {
