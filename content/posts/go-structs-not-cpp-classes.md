@@ -49,7 +49,7 @@ These are **workarounds** retrofitted onto reference-based languages. Go/Rust ba
 
 **True, but irrelevant.** Yes, expert C++ programmers write:
 ```cpp
-// C++: Expert value-oriented design
+// C++: value-oriented design
 struct Point { int x, y; };  // Value type
 
 std::vector<Point> points;  // Not pointers!
@@ -84,6 +84,30 @@ The question is not what is possible in a language, but what is idiomatic under 
 This article uses "classical OOP" to mean the **1980s-2010s mainstream implementation**: Java, C++, Python, Ruby, C#. These languages deviated from Kay's message-passing vision toward shared mutable heap objects.
 
 So yes, if we define OOP as Kay intended, then Erlang/Go/Rust **are** OOP. The article's thesis becomes: "Multicore forced mainstream OOP to return to Kay's original vision."
+
+---
+
+## Foundational Terms
+
+Before examining hardware differences, define the key concepts:
+
+**Cache locality:** How close data is in memory. CPUs read memory in 64-byte cache lines. Sequential data (addresses 0x1000, 0x1008, 0x1010) fits in one cache line (fast - 0.5ns access). Scattered data (addresses 0x1000, 0x5000, 0x9000) requires multiple cache lines (slow - 100ns per DRAM access). Value semantics produce sequential layouts. Reference semantics produce scattered layouts.
+
+**Static dispatch:** Function call where the target address is known at compile time. The CPU knows exactly which function to call before runtime. Enables inlining (compiler replaces call with function body). Cost: ~1ns, often zero after inlining.
+
+**Dynamic dispatch:** Function call where the target address is determined at runtime through indirection (vtable lookup, interface dispatch). The CPU must load the function pointer from memory before calling. Prevents inlining. Cost: ~5-20ns due to memory indirection and branch misprediction.
+
+**Vtable (virtual method table):** Compiler-generated table of function pointers used for dynamic dispatch. Each polymorphic object has a hidden vtable pointer (8 bytes overhead). Calling a virtual method: load object pointer → load vtable pointer from object → load function pointer from vtable → indirect call. Three memory accesses before the actual function executes.
+
+**Pointer chasing:** Following pointers through memory to access data. Each pointer dereference is a memory access. If the target isn't in cache (common for heap-allocated objects), costs 100ns. Sequential array access: one pointer (array base), then offsets (arithmetic). Scattered object access: load pointer, dereference (cache miss), load next pointer, dereference (cache miss).
+
+**Stack allocation:** Local variables stored on the call stack. Allocation: move stack pointer (1 CPU cycle, <1ns). Deallocation: automatic when function returns (free). Memory is contiguous and reused across function calls. Lifetime: deterministic (scope-bound).
+
+**Heap allocation:** Memory requested from allocator (malloc, new, runtime allocator). Allocation: search free lists, update metadata (50-100 cycles, 50-100ns). Deallocation: explicit (free, delete) or garbage collection. Memory is scattered across heap. Lifetime: flexible (can outlive function scope).
+
+**Contiguous memory:** Data stored sequentially in memory. Arrays, slices, value structs. Enables CPU prefetching (hardware loads data before requested). Achieves high cache hit rates (75-98%).
+
+**Scattered memory:** Data stored at non-sequential addresses. Pointer arrays, heap-allocated objects, linked lists. Defeats CPU prefetching (unpredictable access pattern). Causes frequent cache misses (30-50% miss rate).
 
 ---
 
