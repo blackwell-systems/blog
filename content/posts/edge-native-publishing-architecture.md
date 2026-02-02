@@ -143,7 +143,7 @@ Routing decisions happen at the edge. Origin only serves one canonical hostname.
 
 ## Architecture Overview
 
-{{< figure src="/blog/images/edge-native-drawio.png" alt="Complete edge-native publishing architecture diagram showing Cloudflare routing layer, GitHub Pages content layer, DNS configuration, and request flows" caption="The complete architecture: Cloudflare edge handles identity and routing (10-50ms), GitHub Pages + Fastly CDN delivers content (20-100ms), DNS configuration shows the dummy IP (192.0.2.1) that triggers edge-only execution." >}}
+{{< figure src="/images/edge-native-drawio.png" alt="Complete edge-native publishing architecture diagram showing Cloudflare routing layer, GitHub Pages content layer, DNS configuration, and request flows" caption="The complete architecture: Cloudflare edge handles identity and routing (10-50ms), GitHub Pages + Fastly CDN delivers content (20-100ms), DNS configuration shows the dummy IP (192.0.2.1) that triggers edge-only execution." >}}
 
 **Two global CDN networks working in perfect coordination:**
 
@@ -286,7 +286,7 @@ The IP is not an origin. It is a **dead-end placeholder** that exists only to sa
 
 **Cloudflare's processing pipeline:**
 
-{{< figure src="/blog/images/cloudflare-traffic-flow.png" alt="Cloudflare traffic flow showing 17 processing stages at the edge" caption="Cloudflare's edge processing pipeline - 17 stages execute before considering any origin request. Redirect Rules (stage 3) return responses immediately, never reaching later stages." >}}
+{{< figure src="/images/cloudflare-traffic-flow.png" alt="Cloudflare traffic flow showing 17 processing stages at the edge" caption="Cloudflare's edge processing pipeline - 17 stages execute before considering any origin request. Redirect Rules (stage 3) return responses immediately, never reaching later stages." >}}
 
 This diagram shows why the origin IP is irrelevant: an HTTP request passes through URL normalization, rewrites, **Redirect Rules** (stage 3), page rules, configuration rules, origin rules, security layers (DDoS, WAF, bots), rate limiting, caching, Workers, and response modification - all **at the edge** before Cloudflare even considers contacting an origin server.
 
