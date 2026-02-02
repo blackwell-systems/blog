@@ -89,7 +89,7 @@ So yes, if we define OOP as Kay intended, then Erlang/Go/Rust **are** OOP. The a
 
 ## Foundational Terms
 
-Before examining hardware differences, define the key concepts:
+Before examining hardware differences, define the key concepts. **Note:** Latency numbers cited below are order-of-magnitude mental models; actual costs depend on cache level, miss rate, CPU architecture, and system load.
 
 **Cache locality:** How close data is in memory. CPUs read memory in 64-byte cache lines. Sequential data (addresses 0x1000, 0x1008, 0x1010) fits in one cache line (fast - 0.5ns access). Scattered data (addresses 0x1000, 0x5000, 0x9000) requires multiple cache lines (slow - 100ns per DRAM access). Value semantics produce sequential layouts. Reference semantics produce scattered layouts.
 
@@ -668,16 +668,13 @@ Value slice (contiguous storage):
 Measured speedup: 1.7× faster for value storage
 ```
 
-C++ shows larger difference because Go's allocator is more efficient (per-goroutine caches). But both show heap overhead.
+C++ shows larger difference because Go's allocator has per-goroutine caches (faster small allocations). But both show that heap overhead exceeds value storage.
 
-**Real-world impact:** From [Discord's engineering blog](https://discord.com/blog/why-discord-is-switching-from-go-to-rust), heap allocation pressure caused 2-minute GC pauses in production with millions of long-lived objects.
+**Important:** This benchmark measures allocation + storage topology. Go's per-P caches make individual allocations fast, but the **total cost includes GC scanning** of pointer graphs. C++ has malloc overhead but no GC. The trade-offs differ:
+- Go: Fast allocation, pays for GC scanning later
+- C++: Slower malloc, pays for explicit free/delete
 
-**Why Go's heap allocator is faster:**
-- Per-goroutine caches (no global lock)
-- Size-segregated spans (less fragmentation)
-- Concurrent mark-sweep GC (low pause times)
-
-But stack allocation is still **25× faster** than heap.
+**Real-world impact:** From [Discord's engineering blog](https://discord.com/blog/why-discord-is-switching-from-go-to-rust), heap allocation pressure caused 2-minute GC pauses in production with millions of long-lived objects. Moving to value semantics (Rust) eliminated both allocation overhead and GC scanning.
 
 ### Real-World Example
 
@@ -1537,34 +1534,30 @@ When combined: Memory layout dominates (accounts for ~86% of speedup)
 
 ## Conclusion
 
-"Structs with methods are just classes" is **syntactically true** but **semantically false**.
+"Structs with methods" is not the differentiator.
 
-The hardware doesn't care about syntax. It executes:
-- Memory loads (contiguous vs scattered)
-- Function calls (direct vs indirect)
-- Allocations (stack vs heap)
+The differentiator is **whether your design trends toward contiguous data + direct calls, or pointer graphs + indirect calls**.
 
-Go's common patterns favor:
-- **Contiguous memory** (CPU prefetches, cache hits)
-- **Static dispatch** (direct calls, inlinable)
-- **Value storage** (minimal allocation overhead)
+Both Go and C++ can express either style. The difference is **what becomes idiomatic under pressure**:
 
-Inheritance-heavy C++ patterns commonly lead to:
-- **Scattered memory** (pointer chasing, cache misses)
-- **Virtual dispatch** (indirect calls, branch mispredictions)
-- **Pointer-heavy heap allocation** (malloc/free overhead)
+* **Go** makes it easy to keep domain data as concrete values in contiguous slices, and to reserve interfaces and pointers for boundaries.
+* **Classic C++ inheritance-centric designs** commonly propagate base pointers and virtual calls into hot loops, which brings pointer chasing + indirect branches along for the ride.
 
-These aren't minor differences. They're **10-100× performance differences** depending on workload.
+The CPU doesn't care about "objects"—it cares about cache lines, branches, and allocations. This article maps language idioms to those hardware costs.
 
-**Idioms shape what you reach for under pressure**. Inheritance-heavy C++ designs commonly propagate base pointers and virtual calls into hot loops. Go's concrete-type idioms make contiguous data and static dispatch the path of least resistance.
+**What the benchmarks show:**
 
-When you need polymorphism in Go, you pay the same costs as C++ (interfaces = dynamic dispatch). But you **opt in** explicitly, not **forced in** by the type system.
+The measured ratios (7× for memory layout, 3-5× for dispatch) isolate specific mechanisms. Real systems see variable impacts depending on:
+- Whether the working set fits in cache
+- Whether branches are predictable
+- How allocation patterns interact with GC or allocator behavior
+- Whether prefetchers and OoO execution can hide latency
 
-"Structs with methods are just classes" is syntactically true but semantically false.
+But the direction is consistent: when hot loops concentrate pointer chasing + indirect dispatch, performance degrades. When they use contiguous data + direct calls, CPUs execute them efficiently.
 
-In C++, classes are a feature. In Go, methods on structs are a feature. But the performance cliffs people associate with "OO" come from indirection and dynamic dispatch - and Go makes those cliffs opt-in.
+**The point:** Modern languages didn't invent new abstractions—they made different patterns the path of least resistance. Go's concrete-type idioms lower the activation energy for cache-friendly code. C++'s value-oriented subset does the same, but you reach for it deliberately, not by default in inheritance-heavy designs.
 
-Next time someone says "just syntax," ask them to show you the assembly. Syntax doesn't cause 7× slowdowns - memory layout does.
+Next time someone says "just syntax," ask them to show you the assembly. Syntax doesn't cause order-of-magnitude slowdowns—memory layout and indirection do.
 
 ---
 
