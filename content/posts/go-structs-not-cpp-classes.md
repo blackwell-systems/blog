@@ -105,7 +105,7 @@ Before examining hardware differences, define the key concepts. **Note:** Latenc
 
 **Heap allocation:** Memory requested from allocator (malloc, new, runtime allocator). Allocation: search free lists, update metadata (typically tens to hundreds of cycles). Deallocation: explicit (free, delete) or garbage collection. Memory is scattered across heap. Lifetime: flexible (can outlive function scope). **Note:** Exact allocator costs vary by implementation and fast-path optimizations; these are representative ranges, not guarantees.
 
-**Contiguous memory:** Data stored sequentially in memory. Arrays, slices, value structs. Enables CPU prefetching (hardware loads data before requested). Achieves high cache hit rates (75-98%).
+**Contiguous memory:** Data stored sequentially in memory. Arrays, slices, value structs. Enables CPU prefetching (hardware loads data before requested). Often achieves high cache hit rates (directionally 70%+ in tight sequential loops, varies by working set).
 
 **Scattered memory:** Data stored at non-sequential addresses. Pointer arrays, heap-allocated objects, linked lists. Defeats CPU prefetching (unpredictable access pattern). Causes frequent cache misses (30-50% miss rate).
 
@@ -269,8 +269,8 @@ for i := range points {
 
 **Cache behavior:**
 - All data sequential (perfect prefetching)
-- CPU loads 64-byte cache lines (holds 4 Points)
-- 75% cache hit rate on sequential access
+- CPU loads 64-byte cache lines
+- High cache hit rate on sequential access (prefetcher loads ahead)
 - No pointer dereferencing overhead
 
 ### The Hardware Impact
@@ -364,7 +364,7 @@ Virtual call s->area():
 4. Indirect call:              call *func
 
 Cost: 4 memory accesses + indirect branch
-Time: ~5-10ns per call
+Time: typically a few nanoseconds per call, depending on branch predictability
 ```
 
 **Branch prediction impact:**
@@ -636,7 +636,7 @@ From [Jeff Dean's latency numbers](https://gist.github.com/jboner/2841832):
 Heap allocation (malloc/new) typically involves:
 - Free list traversal or allocator lock
 - Metadata updates
-- Typical cost: 50-200 ns per allocation
+- Typical cost: tens to hundreds of nanoseconds on the fast path, far more under contention or fragmentation
 
 Stack allocation:
 - Adjust stack pointer (SUB instruction)
@@ -1445,7 +1445,7 @@ Data-oriented (contiguous arrays + direct calls):
 
 This isn't "Go is faster than C++." This is **contiguous data is faster than pointer chasing**, regardless of language. The question is which pattern your idioms push you toward.
 
-The difference: C++'s heterogeneous polymorphism **requires** pointer indirection. Go's design makes it **optional**.
+The difference: C++'s heterogeneous polymorphism **commonly pushes designs toward** pointer indirection. Go's design makes it **optional**.
 
 ---
 
@@ -1510,7 +1510,7 @@ When processing millions of domain objects in tight loops, Go's concrete types a
 | **Method dispatch** | Virtual (vtable lookup) | Static (compile-time) | **2.8× speedup** C++, **4.6× speedup** Go (measured) |
 | **Allocation** | Heap (new/delete) | Stack/value storage | **5.3× speedup** C++, **1.7× speedup** Go (measured) |
 | **Polymorphism** | Pervasive (inheritance) | Optional (interfaces) | Opt-in cost vs pervasive cost |
-| **Receiver** | Implicit `this` pointer | Explicit value/pointer | Enables inlining, copy elision |
+| **Receiver** | Implicit `this` pointer | Explicit value/pointer | Can enable inlining, copy elision |
 | **Construction** | Special semantics | Regular functions | Simpler, fewer edge cases |
 | **Memory overhead** | +8 bytes (vtable ptr) | +0 bytes | 50% space savings per object |
 
