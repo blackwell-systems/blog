@@ -217,6 +217,46 @@ The result: Routing decisions happen at Cloudflare's edge (10-50ms globally), co
 
 Each plane operates independently. You can swap GitHub Pages for Netlify without changing edge routing. You can change Hugo to Jekyll without touching DNS.
 
+### Why This Pattern? The Strategic Rationale
+
+**The problem this architecture solves:** You want to start publishing content immediately (blog articles, technical guides) without blocking on what the apex domain should eventually become.
+
+**The naive approach (serve from apex initially):**
+```
+blackwell-systems.com/posts/article-name
+blackwell-systems.com/oss
+blackwell-systems.com/consulting
+```
+
+This works today but creates a **forced migration later**. When you want to add a landing page, product showcase, or company homepage at the apex:
+- All blog content must move to a subdomain
+- Every external link breaks (LinkedIn shares, backlinks, search results)
+- SEO authority dilutes during transition
+- 301 redirects required for every URL
+- Risk of broken links if migration fails
+
+**This architecture front-loads the decision:**
+```
+blog.blackwell-systems.com/posts/article-name (permanent content location)
+blackwell-systems.com → (reserved for future use)
+```
+
+**Benefits:**
+- **Ship content immediately** - Blog subdomain lets you publish without deciding apex strategy
+- **Avoid future migration** - Content stays at blog subdomain forever (no URL changes)
+- **Reserve apex flexibility** - Deploy landing page / product site / company homepage later
+- **No SEO disruption** - When you add apex content, blog URLs remain unchanged
+- **GitHub Pages constraint** - One custom domain per repo; subdomain pattern scales to multiple services
+
+**The facade URLs** (`blackwell-systems.com/oss` → `blog.blackwell-systems.com/oss`) are optional convenience aliases. You can:
+- Use them for marketing materials (shorter, cleaner URLs)
+- Ignore them and share blog URLs directly (both work)
+- Start using them later without architectural changes
+
+**The key insight:** This architecture optimizes for **avoiding painful migration**, not minimizing infrastructure. You pay a small redirect cost (10-50ms) for facade URLs, but you eliminate the future cost of migrating established content with significant SEO/backlinks.
+
+Put content where it will ultimately live, not where it's simplest today.
+
 ---
 
 ## DNS Configuration
@@ -547,6 +587,48 @@ Redirecting `example.com/oss/project` to `blog.example.com/oss/project` (not jus
 **Link integrity:** When external sites link to specific pages, those links reach the intended content. Without path preservation, all external links would funnel to the homepage, losing traffic and context.
 
 The facade URLs (`example.com/section`) and canonical URLs (`blog.example.com/section`) maintain 1:1 mapping - every apex path has an equivalent blog path.
+
+### Why Use a Blog Subdomain Instead of Serving from Apex?
+
+The blog subdomain might seem unnecessary if all your content is blog articles. Why not serve everything directly from `example.com` and avoid the extra DNS layer?
+
+**The answer: Avoiding future migration.**
+
+If you serve blog content from the apex domain initially, you create a migration problem when you later want to add other content:
+
+**Serving from apex today:**
+```
+blackwell-systems.com/posts/article-name (blog content, getting traffic/SEO)
+blackwell-systems.com/oss (blog content)
+blackwell-systems.com/consulting (blog content)
+```
+
+**When you want to add a landing page later:**
+- The apex is occupied by blog content
+- Need to move blog content to subdomain
+- All external links break (LinkedIn shares, backlinks, search index)
+- Require 301 redirects: `apex/posts/* → blog/posts/*`
+- SEO authority temporarily diluted during transition
+- Risk of broken links if redirects fail
+
+**Starting with blog subdomain:**
+```
+blog.blackwell-systems.com/posts/article-name (blog content, stays here forever)
+blackwell-systems.com → (reserved, empty for now)
+```
+
+**When you add a landing page later:**
+- Deploy landing page to apex domain
+- Blog content stays exactly where it is
+- No migration needed, no broken links
+- No SEO impact, no redirect configuration changes
+- Apex domain was always reserved for this
+
+**The architectural decision:** Put content where it will **ultimately live**, not where it's most convenient today.
+
+The blog subdomain ensures you never need to migrate blog content when expanding the site. It's permanent infrastructure, not temporary convenience. The apex remains available for whatever you build next (landing page, product site, company homepage) without forcing a disruptive content migration.
+
+**GitHub Pages limitation reinforces this:** GitHub Pages serves one custom domain per repository. If you later want `products.blackwell-systems.com` or `docs.blackwell-systems.com`, you'd need separate repositories anyway. The blog subdomain pattern scales naturally to multi-subdomain architectures.
 
 ### Why Separate Edge and Content Planes?
 
