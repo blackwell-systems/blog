@@ -8,7 +8,7 @@ description: "Go structs and C++ classes both have methods, but their hardware-l
 summary: "Structs with methods look like classes, but the hardware tells a different story. Go structs are contiguous stack values with static dispatch. C++ classes are heap pointers with virtual dispatch. This isn't syntax - it's how the CPU actually executes your code."
 ---
 
-The most common pushback I got in the LinkedIn comments was:
+A common claim:
 
 > "Go structs are basically C++ classes. Same OOP, different syntax."
 
