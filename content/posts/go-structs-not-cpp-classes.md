@@ -8,13 +8,9 @@ description: "Go structs and C++ classes both have methods, but their hardware-l
 summary: "Structs with methods look like classes, but the hardware tells a different story. Go makes contiguous values + static calls the path of least resistance. In inheritance-heavy C++ designs, you often end up with pointers + virtual dispatch + scattered memory. This isn't syntax - it's what the CPU executes."
 ---
 
-A common claim:
+"Go structs are basically C++ classes" is usually shorthand for "Go structs play the same modeling role as my classes."
 
-> "Go structs are basically C++ classes. Same OOP, different syntax."
-
-If that were true, the CPU-level costs would be roughly the same. They aren't.
-
-This post is not about style or philosophy. It's about what your processor executes: memory layout, dispatch, allocation, and cache behavior.
+This post shows why that analogy breaks at the CPU level - especially once indirection and dynamic dispatch enter the picture.
 
 {{< callout type="info" >}}
 **If you only take one thing from this rebuttal:**
