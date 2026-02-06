@@ -580,9 +580,55 @@ You understand:
 - Status: Content and cover complete, ready for final publishing setup
 - Target: January 2026 launch
 
-**Open Source Projects (12 Production Tools + GCP Emulator Ecosystem):**
+**Open Source Projects (13 Production Tools + GCP Emulator Ecosystem + Allocator Infrastructure):**
 
-### 1. goldenthread
+### 1. temporal-slab
+**GitHub:** https://github.com/blackwell-systems/temporal-slab
+
+temporal-slab is a **lifetime-aware slab allocator** for fixed-size objects, designed for systems requiring predictable latency, bounded memory usage, and safe behavior under sustained allocation churn.
+
+**Technical Architecture:**
+- **Lock-free fast path**: Atomic operations with CAS loops for sub-100ns allocation without mutex contention
+- **O(1) deterministic class selection**: Precomputed lookup table (768 bytes) eliminates branching jitter for HFT workloads
+- **Conservative recycling**: FULL-only slab recycling prevents use-after-free races with provably safe reuse boundaries
+- **Bounded RSS**: Cache + overflow architecture guarantees memory footprint limits under sustained pressure
+- **Safe handle validation**: Opaque 64-bit handles with magic number checks reject invalid frees without crashes
+
+**Performance Characteristics:**
+- **p50 allocation: 70ns** (lock-free fast path hitting L1 cache)
+- **p99 allocation: 1.7µs** (rare slow path for new slab allocation)
+- **RSS stability: 2.4% growth** over 1000 churn cycles (vs 20-50% for malloc/tcmalloc)
+- **Space efficiency: 88.9%** (11.1% internal fragmentation from fixed size classes)
+- **Thread scaling: Linear to 4 threads** (cache coherence limits beyond 8)
+
+**Design Philosophy:**
+- **Temporal fragmentation prevention**: Objects allocated together die together, enabling slab-level reclamation
+- **No compaction**: Objects never move once allocated, eliminating latency spikes
+- **No unmapping**: Slabs remain mapped for lifetime, enabling safe handle validation
+- **Explicit safety contracts**: Invalid frees return false, not crash—observable failure modes
+
+**Ideal Workloads:**
+- **High-frequency trading (HFT)**: Sub-100ns deterministic allocation with no jitter from branching or locks
+- **Session stores**: Millions of alloc/free per second with bounded RSS
+- **Cache metadata**: Predictable latency under continuous eviction
+- **Connection tracking**: Fixed-size objects with high churn rates
+
+**Benchmark Infrastructure:**
+- **Separate neutral harness**: temporal-slab-allocator-bench repo for fair comparison
+- **Multiple allocators**: system_malloc, jemalloc, tcmalloc (optional auto-detection)
+- **Workload-focused**: churn_fixed tests RSS stability and tail latency under sustained pressure
+- **Machine-readable output**: CSV and JSON formats with complete parameter tracking
+- **Defensive methodology**: Explicit scope statements prevent inappropriate comparisons
+
+**Documentation Quality:**
+- **foundations.md**: First-principles explanation of temporal fragmentation, entropy, and lifetime-aware allocation
+- **results.md**: Comprehensive benchmarks with interpretation guidelines, comparison tables, red flags
+- **Executive framing**: Clear trade-off statements (sacrifices generality for deterministic behavior)
+- **Scope boundaries**: Explicit non-goals prevent feature creep and maintain project focus
+
+**Value:** Eliminates latency variance and RSS drift in churn-heavy systems with fixed-size allocation patterns. Provides infrastructure for building higher-level systems (caches, tiered allocators) where predictable behavior matters more than average-case performance.
+
+### 2. goldenthread
 **GitHub:** https://github.com/blackwell-systems/goldenthread
 
 goldenthread is a **build-time schema compiler** that generates TypeScript Zod schemas from Go struct tags. Write validation rules once in Go, get type-safe TypeScript validation automatically.
