@@ -2,6 +2,8 @@
 title: "Why Your Service Leaks Memory When Valgrind Says It Doesn't"
 date: 2026-02-16
 draft: false
+series: ["structural-leaks"]
+seriesOrder: 1
 tags: ["memory-management", "systems-programming", "debugging", "allocators", "profiling", "c"]
 categories: ["debugging", "performance", "systems"]
 description: "Structural memory leaks occur when individual objects are freed but coarse-grained allocators can't reclaim memory. Learn how to detect them with sub-2ns overhead using libdrainprof."

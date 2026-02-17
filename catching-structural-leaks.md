@@ -1,4 +1,14 @@
-# Catching Structural Memory Leaks with Drainability Profiling
+---
+title: "Catching Structural Memory Leaks: A Temporal-Slab Case Study"
+date: 2026-02-16
+draft: false
+series: ["structural-leaks"]
+seriesOrder: 2
+tags: ["memory-management", "systems-programming", "debugging", "allocators", "profiling", "c", "temporal-slab", "epoch-based", "integration", "ci", "validation"]
+categories: ["debugging", "performance", "systems"]
+description: "Real-world case study: integrating drainability profiling into temporal-slab allocator. See DSR measurements, diagnostic mode, and exact leak location identification with sub-2ns overhead."
+summary: "From theory to practice: integrating drainability profiling into temporal-slab. See validation results (DSR = 1.0 - p), diagnostic mode pinpointing slab_lib.c:1829, and step-by-step integration guide for your allocator."
+---
 
 **TL;DR:** Traditional leak detectors miss a class of bugs where memory is properly freed but allocator granules can't be reclaimed. We integrated a drainability profiler into temporal-slab (an epoch-based allocator) to detect and diagnose these "structural leaks." The profiler adds < 2ns overhead and pinpoints exact source locations causing violations.
 
