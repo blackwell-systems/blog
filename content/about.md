@@ -76,7 +76,7 @@ As a technical writer (3x AWS Certified, 225,000+ lines of documentation), I've 
 
 ## Publications
 
-**Blackwell, D. (2026).** *Normalization Confluence for Registry-Governed Stream Processing.* Working Paper.
+**Blackwell, D. (2026).** *Normalization Confluence for Registry-Governed Stream Processing.* Technical Report. [doi:10.5281/zenodo.18671870](https://doi.org/10.5281/zenodo.18671870)
 
 Identifies a third regime for coordination-free convergence in distributed systems: normalization confluence, where non-commutative operations that may violate invariants converge through compensation. Formalizes registry-governed stream processing, proves termination and confluence under well-founded compensation (WFC) and compensation commutativity (CC), and develops a verification calculus for practical CC checking. Shows uniformly bounded compensation (UBC) yields constant per-event overhead matching conventional stream processing.
 
