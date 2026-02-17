@@ -63,7 +63,7 @@ This pattern appears in production systems using:
 
 Traditional profilers see individual objects and report "no leaks." But the allocator sees granules (epochs, regions, slabs) that can't be drained.
 
-## The Solution: Drainability Profiling
+## Drainability Profiling
 
 We need to measure **drainability** at the allocator's granule boundaries:
 
