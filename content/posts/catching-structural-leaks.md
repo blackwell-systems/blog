@@ -75,7 +75,7 @@ DSR (Drainability Satisfaction Rate) = drainable_closes / total_closes
 - **DSR = 0.5**: Half of granules are pinned by lingering allocations
 - **DSR = 0.0**: Every granule has pinned allocations
 
-A dropping DSR is a leading indicator of structural leaks, often visible hours before RSS growth becomes critical.
+DSR quantifies structural leak severity - a low DSR means granules aren't draining, leading to memory retention.
 
 ## Case Study: Integrating with Temporal-Slab
 
@@ -151,6 +151,8 @@ We validated the profiler measures DSR correctly by running controlled workloads
 **Test setup:** 100 epochs, 1 allocation per epoch. With probability `p`, skip freeing the allocation (simulating a structural leak).
 
 **Theoretical prediction:** DSR = 1.0 - p
+
+**Note on statistical variance:** With 100 epochs per run, statistical variance is significant at low p. The paper's validation uses 200K requests and achieves R²≥0.998. These CI tests use small samples for speed, not precision.
 
 **Results:**
 
@@ -373,9 +375,10 @@ The temporal-slab README provides a template for integrating any epoch-based all
 
 ## What's Next
 
-**Current work:**
-- Validating with PostgreSQL's memory contexts (similar epoch-based pattern)
-- Investigating nginx pool allocator (request-scoped pools)
+**Planned investigations:**
+- PostgreSQL's memory contexts (similar epoch-based pattern)
+- Nginx pool allocator (request-scoped pools)
+- Redis arena allocator (long-running server with varied lifetimes)
 
 **Future directions:**
 - Rust bindings for Rust allocators
