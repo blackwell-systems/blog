@@ -15,16 +15,14 @@ So where did 16GB go?
 This is the symptom of a **structural memory leak** - a class of memory bug that traditional leak detectors cannot see because they only track individual objects, not the coarse-grained containers that hold them.
 
 {{< callout type="warning" >}}
-**The Problem:** Traditional leak detectors (Valgrind, ASan, LeakSanitizer) only find unreachable objects. They miss situations where all objects are properly freed but the allocator cannot reclaim the backing memory because one long-lived allocation pins an entire granule.
+Traditional leak detectors (Valgrind, ASan, LeakSanitizer) only find unreachable objects. They miss situations where all objects are properly freed but the allocator cannot reclaim the backing memory because one long-lived allocation pins an entire granule.
 {{< /callout >}}
 
 ## What Are Structural Leaks?
 
 Consider a slab allocator with 1,000 slots per slab. Your service allocates 1,000 objects in slab #47. Over time, 999 of those objects are freed. But one remains - a session object that won't be freed for another hour.
 
-**From Valgrind's perspective:** No leak. That one object is still reachable, still in use.
-
-**From the allocator's perspective:** Slab #47 cannot be returned to the OS. It's pinned by a single allocation. The memory backing those 999 freed slots is gone but not reclaimable.
+Valgrind sees no leak. That one object is still reachable, still in use. But the allocator can't return slab #47 to the OS. It's pinned by a single allocation. The memory backing those 999 freed slots is gone but not reclaimable.
 
 Multiply this pattern across thousands of slabs, epochs, or arenas over days of uptime, and you get unbounded memory growth with zero reported leaks.
 
