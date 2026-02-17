@@ -74,6 +74,14 @@ As a technical writer (3x AWS Certified, 225,000+ lines of documentation), I've 
 
 ---
 
+## Publications
+
+**Blackwell, D. (2026).** *Drainability: When Coarse-Grained Memory Reclamation Produces Bounded Retention.* Technical Report. [doi:10.5281/zenodo.18653776](https://doi.org/10.5281/zenodo.18653776)
+
+Defines drainability as a structural property of memory allocators and proves bounded retention guarantees for epoch-based, arena, and slab allocators. Introduces DSR (Drainability Satisfaction Rate) as a metric for detecting structural memory leaks - the class of leaks that traditional tools (Valgrind, ASan) cannot detect because individual objects are properly freed but coarse-grained containers remain pinned.
+
+---
+
 ## Open Source & Services
 
 View my complete [open source portfolio](/oss/) and [consulting services](/consulting/) on their dedicated pages.
