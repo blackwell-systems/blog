@@ -12,7 +12,7 @@ summary: "From theory to practice: integrating drainability profiling into tempo
 
 **TL;DR:** Traditional leak detectors miss a class of bugs where memory is properly freed but allocator granules can't be reclaimed. We integrated a drainability profiler into temporal-slab (an epoch-based allocator) to detect and diagnose these "structural leaks." The profiler adds < 2ns overhead and pinpoints exact source locations causing violations.
 
-## The Problem: When Valgrind Says You're Fine (But You're Not)
+## When Valgrind Says You're Fine (But You're Not)
 
 You've seen this before: RSS grows unbounded, but Valgrind reports no leaks. Every object is properly freed. ASan is silent. Yet your service's memory footprint climbs from 500MB to 2GB over a week, and you're forced to restart it every Monday morning.
 
