@@ -448,7 +448,7 @@ The DSR metric and drainability concept come from formal analysis proving when c
 
 The library validates this theorem: test suite runs P-sweep experiments with `p ∈ {0.0, 0.1, 0.5, 1.0}` and confirms `DSR = 1.0 - p` exactly.
 
-![RSS over time for seven violation fractions](/blog/images/drainability-fan-plot.png)
+![RSS over time for seven violation fractions](/images/drainability-fan-plot.png)
 
 *RSS over time for seven violation fractions. p=0 is flat, everything else diverges linearly. Even small violation rates cause unbounded growth in long-running services.*
 
