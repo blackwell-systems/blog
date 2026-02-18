@@ -734,51 +734,51 @@ This is the gap that [structural memory leaks](/posts/structural-memory-leaks-dr
 
 ## Quick Reference Glossary
 
-**RAM (Random Access Memory)**: Physical memory chips. The finite hardware resource all processes share.
+- **RAM (Random Access Memory):** Physical memory chips. The finite hardware resource all processes share.
 
-**Virtual Memory**: Per-process address space abstraction. Each process sees a private, isolated address range.
+- **Virtual Memory:** Per-process address space abstraction. Each process sees a private, isolated address range.
 
-**Page**: Fundamental memory unit. 4KB on x86-64 Linux (2MB for huge pages, 1GB for giant pages).
+- **Page:** Fundamental memory unit. 4KB on x86-64 Linux (2MB for huge pages, 1GB for giant pages).
 
-**RSS (Resident Set Size)**: Physical memory currently mapped to a process. Includes anonymous (heap/stack) and file-backed (code/libs) pages. Shared pages counted fully in each process.
+- **RSS (Resident Set Size):** Physical memory currently mapped to a process. Includes anonymous (heap/stack) and file-backed (code/libs) pages. Shared pages counted fully in each process.
 
-**VmSize (Virtual Memory Size)**: Total address space reserved by a process. Includes mapped and unmapped regions. Can vastly exceed physical RAM.
+- **VmSize (Virtual Memory Size):** Total address space reserved by a process. Includes mapped and unmapped regions. Can vastly exceed physical RAM.
 
-**PSS (Proportional Set Size)**: RSS with shared pages divided proportionally. If 10 processes share a 2MB library, each process's PSS includes 200KB.
+- **PSS (Proportional Set Size):** RSS with shared pages divided proportionally. If 10 processes share a 2MB library, each process's PSS includes 200KB.
 
-**USS (Unique Set Size)**: Memory private to a process. Excludes all shared pages. Shows what would be freed if the process exits.
+- **USS (Unique Set Size):** Memory private to a process. Excludes all shared pages. Shows what would be freed if the process exits.
 
-**WSS (Working Set Size)**: Pages actively accessed by a process over a time window. The minimum RAM needed to avoid thrashing.
+- **WSS (Working Set Size):** Pages actively accessed by a process over a time window. The minimum RAM needed to avoid thrashing.
 
-**Page Cache**: File data cached in RAM. Included in "used" but instantly reclaimable. Makes repeated file reads fast.
+- **Page Cache:** File data cached in RAM. Included in "used" but instantly reclaimable. Makes repeated file reads fast.
 
-**Buffer Cache**: Filesystem metadata (inodes, superblocks, directory entries) cached in RAM. Also reclaimable.
+- **Buffer Cache:** Filesystem metadata (inodes, superblocks, directory entries) cached in RAM. Also reclaimable.
 
-**Anonymous Pages**: Memory not backed by files. Created by `malloc()`, stack allocations. Must be swapped to disk to reclaim.
+- **Anonymous Pages:** Memory not backed by files. Created by `malloc()`, stack allocations. Must be swapped to disk to reclaim.
 
-**File-Backed Pages**: Memory mapped from files. Code segments, shared libraries, memory-mapped files. Can be discarded and re-read from disk.
+- **File-Backed Pages:** Memory mapped from files. Code segments, shared libraries, memory-mapped files. Can be discarded and re-read from disk.
 
-**Dirty Pages**: Modified since loading or mapping. Must be written to swap before reclaiming. Anonymous pages are typically dirty once written.
+- **Dirty Pages:** Modified since loading or mapping. Must be written to swap before reclaiming. Anonymous pages are typically dirty once written.
 
-**Clean Pages**: Unmodified. Can be discarded immediately and re-read if needed. Read-only code pages are clean.
+- **Clean Pages:** Unmodified. Can be discarded immediately and re-read if needed. Read-only code pages are clean.
 
-**Page Fault**: CPU exception when accessing unmapped or swapped-out memory. Kernel resolves by mapping a physical page.
+- **Page Fault:** CPU exception when accessing unmapped or swapped-out memory. Kernel resolves by mapping a physical page.
 
-**Swap**: Disk space used to store pages when physical RAM is full. Slower than RAM (milliseconds vs nanoseconds).
+- **Swap:** Disk space used to store pages when physical RAM is full. Slower than RAM (milliseconds vs nanoseconds).
 
-**TLB (Translation Lookaside Buffer)**: CPU cache for virtual-to-physical address translations. Reduces page table lookup overhead.
+- **TLB (Translation Lookaside Buffer):** CPU cache for virtual-to-physical address translations. Reduces page table lookup overhead.
 
-**Cgroup (Control Group)**: Linux kernel feature for resource limiting. Docker/Kubernetes use cgroups to enforce memory limits.
+- **Cgroup (Control Group):** Linux kernel feature for resource limiting. Docker/Kubernetes use cgroups to enforce memory limits.
 
-**OOM (Out Of Memory) Killer**: Kernel subsystem that kills processes when memory is exhausted. Selects victims based on memory usage and priority.
+- **OOM (Out Of Memory) Killer:** Kernel subsystem that kills processes when memory is exhausted. Selects victims based on memory usage and priority.
 
-**Slab Cache**: Kernel's object allocator. Caches frequently allocated structures (inodes, dentries) to reduce allocation overhead.
+- **Slab Cache:** Kernel's object allocator. Caches frequently allocated structures (inodes, dentries) to reduce allocation overhead.
 
-**Huge Pages**: 2MB pages (vs standard 4KB). Reduce TLB pressure for memory-intensive applications.
+- **Huge Pages:** 2MB pages (vs standard 4KB). Reduce TLB pressure for memory-intensive applications.
 
-**Available Memory**: Estimate of RAM that can be allocated without swapping. Includes free pages and reclaimable cache.
+- **Available Memory:** Estimate of RAM that can be allocated without swapping. Includes free pages and reclaimable cache.
 
-**Drainability**: The ability of a coarse-grained allocator (slab, arena, epoch) to return memory to the OS when objects are freed. Low drainability causes structural leaks.
+- **Drainability:** The ability of a coarse-grained allocator (slab, arena, epoch) to return memory to the OS when objects are freed. Low drainability causes structural leaks.
 
 ## Wrapping Up
 
