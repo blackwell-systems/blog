@@ -76,6 +76,10 @@ As a technical writer (3x AWS Certified, 225,000+ lines of documentation), I've 
 
 ## Publications
 
+**Blackwell, D. (2026).** *Normalization Confluence in Federated Registry Networks.* Technical Report. [doi:10.5281/zenodo.18677401](https://doi.org/10.5281/zenodo.18677401)
+
+Extends normalization confluence to federated environments where multiple registries with independent invariants are connected by morphisms encoding cross-organizational constraints. For tree-shaped morphism networks, proves federated convergence requires only validity preservation - all other conditions derive from network acyclicity via an authority argument. Includes self-contained treatment of single-registry model with convergence theorem, necessity results, and verification calculus.
+
 **Blackwell, D. (2026).** *Normalization Confluence for Registry-Governed Stream Processing.* Technical Report. [doi:10.5281/zenodo.18671870](https://doi.org/10.5281/zenodo.18671870)
 
 Identifies a third regime for coordination-free convergence in distributed systems: normalization confluence, where non-commutative operations that may violate invariants converge through compensation. Formalizes registry-governed stream processing, proves termination and confluence under well-founded compensation (WFC) and compensation commutativity (CC), and develops a verification calculus for practical CC checking. Shows uniformly bounded compensation (UBC) yields constant per-event overhead matching conventional stream processing.
