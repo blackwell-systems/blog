@@ -36,8 +36,81 @@ Three different tools. Three different numbers. Your allocator reports 1.8GB in 
 This is the memory metrics confusion that every developer encounters. This post builds a complete taxonomy: from physical RAM allocation to virtual address spaces to per-process resident sets to allocator-level tracking. By the end, you'll know which metric matters for your specific debugging scenario.
 
 {{< callout type="info" >}}
-**This post assumes**: Linux (though concepts apply broadly), x86-64 architecture, basic understanding of pages and virtual memory. If you need background on paging, start with the kernel documentation on memory management.
+**This post assumes**: Linux (though concepts apply broadly), x86-64 architecture. We'll define foundational concepts (pages, virtual memory) as we go.
 {{< /callout >}}
+
+## Foundational Concepts
+
+Before diving into metrics, establish the building blocks:
+
+### Physical Memory (RAM)
+
+Random Access Memory - the actual hardware chips on your motherboard. Data stored in RAM is lost when power is removed (volatile). Measured in gigabytes (GB). This is the finite resource all processes compete for.
+
+When you see "16GB RAM", that's physical memory. The kernel manages which processes get which physical pages.
+
+### Virtual Memory
+
+An abstraction that gives each process its own private address space. From a process's perspective, it has access to the full address range (on 64-bit systems: 0 to 2^64-1), regardless of how much physical RAM exists.
+
+Virtual addresses are translated to physical addresses by the Memory Management Unit (MMU) using page tables maintained by the kernel.
+
+**Key insight**: Multiple processes can have the same virtual address (e.g., `0x7fff00000000`) pointing to different physical pages. Virtual memory provides isolation - one process cannot see another's memory.
+
+### Page
+
+The fundamental unit of memory management. On x86-64 Linux, the default page size is **4KB** (4,096 bytes).
+
+Memory is not allocated byte-by-byte. The kernel allocates full pages. When you allocate 1 byte, the kernel maps at least one 4KB page into your address space.
+
+Pages can be:
+- **Mapped**: Associated with a virtual address range in a process
+- **Resident**: Physically present in RAM (vs swapped to disk)
+- **Shared**: Mapped into multiple processes' address spaces
+- **Dirty**: Modified since being loaded from disk
+- **Clean**: Unmodified, can be discarded and re-read
+
+### Memory Mapping
+
+The process of linking a virtual address range to physical pages or files. Created via:
+
+- **Anonymous mapping**: Backed by RAM (or swap), not a file. Used for heap, stack.
+- **File-backed mapping**: Backed by a file on disk. Used for code, shared libraries, memory-mapped files.
+
+Example: When you load a shared library, the kernel creates a file-backed mapping. Multiple processes loading the same library share the same physical pages.
+
+### Address Space
+
+The range of virtual addresses available to a process. On 64-bit Linux:
+
+- **User space**: `0x0000000000000000` to `0x00007fffffffffff` (lower 128TB)
+- **Kernel space**: `0xffff800000000000` to `0xffffffffffffffff` (upper 128TB)
+
+Each process has its own user space address range. Kernel space is shared across all processes but only accessible in kernel mode.
+
+### Process
+
+An executing program with:
+- Private address space (virtual memory)
+- Code (instructions)
+- Data (global variables)
+- Heap (dynamic allocations via `malloc`)
+- Stack (local variables, function call frames)
+- Open files, network sockets, etc.
+
+Each process sees its own isolated memory view. The kernel manages the mapping between virtual addresses (what the process sees) and physical pages (actual RAM).
+
+### Kernel Space vs User Space
+
+**User space**: Where application code runs. Cannot directly access hardware or other processes' memory. Uses system calls to request kernel services.
+
+**Kernel space**: Where the kernel runs with full hardware access. Manages physical memory, schedules processes, handles I/O.
+
+When you call `malloc()`, your user space code eventually makes a system call (like `brk()` or `mmap()`) that crosses into kernel space to allocate pages.
+
+---
+
+With these foundations established, we can now explore why measuring memory is complex.
 
 ## Why Multiple Memory Metrics Exist
 
@@ -608,6 +681,54 @@ This is the gap that [structural memory leaks](/posts/structural-memory-leaks-dr
 **Container memory:**
 - `docker stats` - Cgroup memory usage
 - `/sys/fs/cgroup/memory/` - Raw cgroup memory files
+
+## Quick Reference Glossary
+
+**RAM (Random Access Memory)**: Physical memory chips. The finite hardware resource all processes share.
+
+**Virtual Memory**: Per-process address space abstraction. Each process sees a private, isolated address range.
+
+**Page**: Fundamental memory unit. 4KB on x86-64 Linux (2MB for huge pages, 1GB for giant pages).
+
+**RSS (Resident Set Size)**: Physical memory currently mapped to a process. Includes anonymous (heap/stack) and file-backed (code/libs) pages. Shared pages counted fully in each process.
+
+**VmSize (Virtual Memory Size)**: Total address space reserved by a process. Includes mapped and unmapped regions. Can vastly exceed physical RAM.
+
+**PSS (Proportional Set Size)**: RSS with shared pages divided proportionally. If 10 processes share a 2MB library, each process's PSS includes 200KB.
+
+**USS (Unique Set Size)**: Memory private to a process. Excludes all shared pages. Shows what would be freed if the process exits.
+
+**WSS (Working Set Size)**: Pages actively accessed by a process over a time window. The minimum RAM needed to avoid thrashing.
+
+**Page Cache**: File data cached in RAM. Included in "used" but instantly reclaimable. Makes repeated file reads fast.
+
+**Buffer Cache**: Filesystem metadata (inodes, superblocks, directory entries) cached in RAM. Also reclaimable.
+
+**Anonymous Pages**: Memory not backed by files. Created by `malloc()`, stack allocations. Must be swapped to disk to reclaim.
+
+**File-Backed Pages**: Memory mapped from files. Code segments, shared libraries, memory-mapped files. Can be discarded and re-read from disk.
+
+**Dirty Pages**: Modified since loading. Must be written to disk before reclaiming. Heap allocations are always dirty.
+
+**Clean Pages**: Unmodified. Can be discarded immediately and re-read if needed. Read-only code pages are clean.
+
+**Page Fault**: CPU exception when accessing unmapped or swapped-out memory. Kernel resolves by mapping a physical page.
+
+**Swap**: Disk space used to store pages when physical RAM is full. Slower than RAM (milliseconds vs nanoseconds).
+
+**TLB (Translation Lookaside Buffer)**: CPU cache for virtual-to-physical address translations. Reduces page table lookup overhead.
+
+**Cgroup (Control Group)**: Linux kernel feature for resource limiting. Docker/Kubernetes use cgroups to enforce memory limits.
+
+**OOM (Out Of Memory) Killer**: Kernel subsystem that kills processes when memory is exhausted. Selects victims based on memory usage and priority.
+
+**Slab Cache**: Kernel's object allocator. Caches frequently allocated structures (inodes, dentries) to reduce allocation overhead.
+
+**Huge Pages**: 2MB pages (vs standard 4KB). Reduce TLB pressure for memory-intensive applications.
+
+**Available Memory**: Estimate of RAM that can be allocated without swapping. Includes free pages and reclaimable cache.
+
+**Drainability**: The ability of a coarse-grained allocator (slab, arena, epoch) to return memory to the OS when objects are freed. Low drainability causes structural leaks.
 
 ## Wrapping Up
 
