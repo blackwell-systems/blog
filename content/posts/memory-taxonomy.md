@@ -68,7 +68,7 @@ An abstraction that gives each process its own private address space. On x86-64 
 
 Virtual addresses are translated to physical addresses by the Memory Management Unit (MMU) using page tables maintained by the kernel.
 
-**Key insight**: Multiple processes can have the same virtual address (e.g., `0x7fff00000000`) pointing to different physical pages. Virtual memory provides isolation - one process cannot see another's memory.
+Multiple processes can have the same virtual address (e.g., `0x7fff00000000`) pointing to different physical pages. Virtual memory provides isolation - one process cannot see another's memory.
 
 ### Page
 
