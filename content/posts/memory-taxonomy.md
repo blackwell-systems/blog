@@ -39,6 +39,19 @@ This is the memory metrics confusion that every developer encounters. This post 
 **This post assumes**: Linux (though concepts apply broadly), x86-64 architecture. We'll define foundational concepts (pages, virtual memory) as we go.
 {{< /callout >}}
 
+## Quick Cheat Sheet
+
+Before the deep dive, here's what matters for common scenarios:
+
+- **System low on memory?** Check `available` in `free -h` (not `free` - that's misleading)
+- **Process memory growing?** Track RSS over time via `/proc/[pid]/status` or `htop`
+- **Heap vs RSS gap?** Compare allocator stats to RSS - if gap grows unbounded, you have a structural leak
+- **Container OOM'd?** Check cgroup memory (`docker stats` or `memory.current` in `/sys/fs/cgroup`)
+- **Shared memory accounting?** Use PSS (not RSS) to fairly divide shared pages across processes
+- **Performance issues?** If Working Set Size > available RAM, you're thrashing (add RAM or reduce working set)
+
+The rest of this post explains why these metrics exist, how they relate, and when each one matters.
+
 ## Foundational Concepts
 
 Before diving into metrics, establish the building blocks:
@@ -51,7 +64,7 @@ When you see "16GB RAM", that's physical memory. The kernel manages which proces
 
 ### Virtual Memory
 
-An abstraction that gives each process its own private address space. From a process's perspective, it has access to the full address range (on 64-bit systems: 0 to 2^64-1), regardless of how much physical RAM exists.
+An abstraction that gives each process its own private address space. On x86-64 Linux, user processes see up to 128TB of addressable memory (lower canonical range), regardless of how much physical RAM exists.
 
 Virtual addresses are translated to physical addresses by the Memory Management Unit (MMU) using page tables maintained by the kernel.
 
@@ -324,9 +337,10 @@ RSS includes:
 - **Shared pages**: Libraries shared with other processes (fully counted, not divided)
 
 RSS grows when:
-- You write to newly allocated pages (page faults)
-- You read memory-mapped files (demand paging)
-- You create threads (new stacks)
+- You access newly allocated anonymous pages (write faults for heap/stack)
+- You read or write memory-mapped files (demand paging)
+- You create threads (new stack pages)
+- Pages are copied for copy-on-write (forked processes)
 
 RSS shrinks when:
 - The kernel reclaims pages under memory pressure
@@ -372,12 +386,13 @@ The set of pages actively accessed by the process over a time window. Not direct
 
 WSS represents the minimum RAM needed to avoid thrashing. If WSS > available RAM, the process will constantly page fault.
 
-Measuring WSS requires:
-- Clearing page access bits
-- Waiting for a period (e.g., 60 seconds)
-- Counting which pages were accessed
+Measuring WSS is approximate. Tools estimate it via:
+- Sampling page faults with perf events
+- Checking referenced bits in `/proc/kpageflags` (requires root)
+- Using `mincore()` to track page residency changes
+- Instrumenting page table access bits (kernel support varies)
 
-Tools like `wss` (from Brendan Gregg's perf tools) approximate WSS:
+Tools like `wss` (from Brendan Gregg's perf tools) approximate WSS using these techniques:
 
 ```bash
 $ wss $(pidof app) 60
@@ -447,8 +462,30 @@ for (int i = 0; i < 990000; i++) {
 
 This gap - memory that's freed at the allocator level but still resident at the kernel level - is where [structural memory leaks](/posts/structural-memory-leaks-drainability/) occur.
 
+### Decision Rule: Stable vs Growing Gap
+
+The RSS - heap gap tells you about allocator health:
+
+**Stable gap (normal):**
+```
+Hour 1: Heap 1.8GB, RSS 2.1GB (gap: 300MB)
+Hour 6: Heap 1.9GB, RSS 2.2GB (gap: 300MB)
+Hour 24: Heap 1.8GB, RSS 2.1GB (gap: 300MB)
+```
+
+This is expected allocator overhead. Memory use is proportional to load.
+
+**Growing gap (structural leak):**
+```
+Hour 1: Heap 1.8GB, RSS 2.1GB (gap: 300MB)
+Hour 6: Heap 1.9GB, RSS 2.7GB (gap: 800MB)
+Hour 24: Heap 1.8GB, RSS 4.2GB (gap: 2.4GB)
+```
+
+Heap usage is stable but RSS grows. The allocator cannot return freed memory because coarse-grained structures (slabs, arenas, epochs) remain partially full. This is a drainability failure.
+
 {{< callout type="info" >}}
-**Heap < RSS is expected**. Allocators use more memory than your application directly allocates. The question is: how large is the gap, and is it growing over time? Tools like [libdrainprof](https://github.com/blackwell-systems/drainability-profiler) measure this gap to detect structural leaks.
+**Heap < RSS is expected**. Allocators use more memory than your application directly allocates. A stable gap is normal overhead. A growing gap indicates structural leaks. Tools like [libdrainprof](https://github.com/blackwell-systems/drainability-profiler) measure allocator drainability to detect this.
 {{< /callout >}}
 
 ## Page Granularity
@@ -473,7 +510,7 @@ void *ptr = mmap(NULL, 1, ...);  // Request 1 byte
 
 **TLB pressure**: The CPU's Translation Lookaside Buffer caches virtual-to-physical mappings. More pages = more TLB misses = slower memory access. Huge pages (2MB) reduce this pressure.
 
-**Page faults**: First access to a mapped page triggers a page fault (soft fault if already in RAM, hard fault if needs disk I/O). RSS only increases on first write (copy-on-write for many mappings).
+**Page faults**: First access to a mapped page triggers a page fault (soft fault if already in RAM, hard fault if needs disk I/O). RSS increases when pages become resident - on read faults for file-backed mappings, on write faults for anonymous pages or copy-on-write.
 
 ## Dirty vs Clean Pages
 
@@ -487,16 +524,18 @@ Pages are classified by whether they've been modified:
 
 ### Dirty Pages
 
-- Modified since allocation
-- Must be written to disk (swap) before reclaiming
-- Examples: Heap allocations, modified memory-mapped files, stack
+- Modified since being loaded or mapped
+- Must be written to swap (or dropped via `madvise()`) before reclaiming
+- Examples: Written heap allocations, modified memory-mapped files, stack pages that have been used
 
-Under memory pressure, the kernel prefers to reclaim clean pages (free immediately) over dirty pages (must write to swap first).
+Anonymous memory is typically dirty once written. File-backed pages become dirty when modified.
+
+Under memory pressure, the kernel prefers to reclaim clean pages (drop immediately) over dirty pages (must write to swap first).
 
 ```bash
 $ cat /proc/$(pidof app)/status | grep -E 'RssAnon|RssFile'
-RssAnon:       1842176 kB    # Dirty (heap, stack)
-RssFile:        312576 kB    # Mostly clean (code, libs)
+RssAnon:       1842176 kB    # Typically dirty (heap, stack)
+RssFile:        312576 kB    # Often clean (code, libs)
 ```
 
 ## Anonymous vs File-Backed Memory
@@ -536,14 +575,19 @@ $ docker stats app
 CONTAINER    MEM USAGE / LIMIT     MEM %
 app          2.1GiB / 4GiB        52.5%
 
+# Cgroup v1 (older systems)
 $ cat /sys/fs/cgroup/memory/docker/<container_id>/memory.usage_in_bytes
+2201010176    # ~2.1GB
+
+# Cgroup v2 (modern systems)
+$ cat /sys/fs/cgroup/docker/<container_id>/memory.current
 2201010176    # ~2.1GB
 ```
 
 Cgroup memory includes:
 - All process RSS
 - Page cache attributed to the cgroup
-- Kernel memory (for some kernel structures)
+- Can include some kernel memory depending on cgroup version and configuration
 
 This can exceed the sum of individual process RSS values within the container because cached file data is shared.
 
@@ -591,10 +635,15 @@ If RSS grows but heap usage stays flat, you have a structural leak. The allocato
 **Check**: Sum RSS of all processes, compare to cgroup memory
 
 ```bash
-$ ps aux | awk '{sum+=$6} END {print sum/1024 " MB"}'  # All RSS
+$ ps aux | awk '{sum+=$6} END {print sum/1024 " MB"}'  # RSS in KiB, convert to MB
 2048 MB
 
+# Cgroup v1
 $ cat /sys/fs/cgroup/memory/docker/<id>/memory.usage_in_bytes
+4294967296    # 4GB
+
+# Cgroup v2
+$ cat /sys/fs/cgroup/docker/<id>/memory.current
 4294967296    # 4GB
 ```
 
@@ -640,7 +689,7 @@ Allocated (200MB) is what the application uses. Active (500MB) includes allocato
 | Process memory growth over time | RSS trend | Physical memory footprint increasing | Profile heap usage, check for leaks, measure allocator drainability |
 | Suspected memory leak | RSS vs heap usage | Gap between allocated and resident memory | Run Valgrind (finds object leaks), profile allocator (finds structural leaks) |
 | Shared memory accounting across processes | PSS (not RSS) | Fair attribution of shared pages | Use PSS for cost accounting, RSS for process limits |
-| Container being OOM killed | Cgroup `memory.usage_in_bytes` | Total memory including cache | Increase container limit or reduce cache pressure |
+| Container being OOM killed | Cgroup memory (`memory.current` or `memory.usage_in_bytes`) | Total memory including cache | Increase container limit or reduce cache pressure |
 | Performance degradation (thrashing) | WSS vs available RAM | Working set fits in RAM? | Add RAM, reduce working set, improve locality |
 | Understanding allocator behavior | RSS - heap allocations | Allocator overhead and fragmentation | Tune allocator, switch allocators, reduce fragmentation |
 
@@ -666,11 +715,12 @@ This is the gap that [structural memory leaks](/posts/structural-memory-leaks-dr
 - `/proc/meminfo` - Detailed kernel memory accounting
 
 **Process-level memory:**
-- `ps aux` - RSS per process (column 6)
+- `ps aux` - RSS per process (column 6, in KiB)
+- `ps -o rss= -p $(pidof app)` - RSS for specific process (cleaner than ps aux)
 - `top` / `htop` - Real-time RSS monitoring
-- `/proc/[pid]/status` - VmSize, VmRSS, VmData, etc.
-- `/proc/[pid]/smaps` - Detailed per-mapping breakdown
-- `/proc/[pid]/smaps_rollup` - Aggregated PSS
+- `/proc/[pid]/status` - VmSize, VmRSS, VmData, and more
+- `/proc/[pid]/smaps` - Detailed per-mapping breakdown (address ranges, permissions, RSS per mapping)
+- `/proc/[pid]/smaps_rollup` - Aggregated PSS, USS, dirty/clean breakdown
 
 **Allocator profiling:**
 - `jemalloc` stats - `malloc_stats_print()` for internal state
@@ -680,7 +730,7 @@ This is the gap that [structural memory leaks](/posts/structural-memory-leaks-dr
 
 **Container memory:**
 - `docker stats` - Cgroup memory usage
-- `/sys/fs/cgroup/memory/` - Raw cgroup memory files
+- `/sys/fs/cgroup/memory/` (v1) or `/sys/fs/cgroup/` (v2) - Raw cgroup memory files
 
 ## Quick Reference Glossary
 
@@ -708,7 +758,7 @@ This is the gap that [structural memory leaks](/posts/structural-memory-leaks-dr
 
 **File-Backed Pages**: Memory mapped from files. Code segments, shared libraries, memory-mapped files. Can be discarded and re-read from disk.
 
-**Dirty Pages**: Modified since loading. Must be written to disk before reclaiming. Heap allocations are always dirty.
+**Dirty Pages**: Modified since loading or mapping. Must be written to swap before reclaiming. Anonymous pages are typically dirty once written.
 
 **Clean Pages**: Unmodified. Can be discarded immediately and re-read if needed. Read-only code pages are clean.
 
@@ -742,7 +792,7 @@ The taxonomy:
 
 Most debugging scenarios require checking metrics at multiple layers:
 
-- OOM? Check `available` (system) and `memory.usage_in_bytes` (cgroup)
+- OOM? Check `available` (system) and cgroup memory (`memory.current` or `memory.usage_in_bytes`)
 - Memory leak? Check RSS trend (process) and heap usage (allocator)
 - Performance? Check WSS (process) vs available RAM (system)
 
