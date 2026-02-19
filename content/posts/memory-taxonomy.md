@@ -512,6 +512,243 @@ void *ptr = mmap(NULL, 1, ...);  // Request 1 byte
 
 **Page faults**: First access to a mapped page triggers a page fault (soft fault if already in RAM, hard fault if needs disk I/O). RSS increases when pages become resident - on read faults for file-backed mappings, on write faults for anonymous pages or copy-on-write.
 
+## Transparent Huge Pages (THP)
+
+Transparent Huge Pages is a Linux kernel feature that automatically promotes standard 4KB pages to 2MB huge pages to reduce TLB (Translation Lookaside Buffer) pressure and improve memory access performance.
+
+### The TLB Problem
+
+The CPU's TLB caches virtual-to-physical address translations. TLB capacity is limited (typically 64-512 entries for data, similar for instructions). When your application uses gigabytes of memory with 4KB pages, the TLB can't hold all the translations.
+
+**Example without THP:**
+```
+Application uses 4GB of memory
+4GB ÷ 4KB pages = 1,048,576 page table entries needed
+TLB capacity: ~512 entries
+TLB hit rate: 0.05% (most accesses miss)
+Result: Constant page table walks (4-5 memory accesses per TLB miss)
+```
+
+**With 2MB huge pages:**
+```
+Application uses 4GB of memory
+4GB ÷ 2MB pages = 2,048 page table entries needed
+TLB capacity: ~512 entries
+TLB hit rate: 25% (much better)
+Result: Fewer page table walks, faster memory access
+```
+
+Each TLB miss costs 100-200 CPU cycles. For memory-intensive workloads, THP can improve performance by 5-30%.
+
+{{< mermaid >}}
+flowchart TB
+    subgraph standard["4KB Pages: 1M translations"]
+        tlb1[TLB: 512 entries]
+        pt1[Page Table: 1M entries]
+        miss1[TLB Miss Rate: 99.95%]
+    end
+
+    subgraph thp["2MB Huge Pages: 2K translations"]
+        tlb2[TLB: 512 entries]
+        pt2[Page Table: 2K entries]
+        hit2[TLB Hit Rate: 25%]
+    end
+
+    standard -.Frequent page table walks.-> pt1
+    thp -.Fewer page table walks.-> pt2
+
+    style standard fill:#4C3A3C,stroke:#6b7280,color:#f0f0f0
+    style thp fill:#3A4C43,stroke:#6b7280,color:#f0f0f0
+{{< /mermaid >}}
+
+### How THP Works
+
+The kernel attempts to use 2MB pages automatically without application changes:
+
+1. **Allocation**: When allocating anonymous memory (heap, stack), the kernel tries to find 2MB contiguous physical regions
+2. **Promotion**: The kernel scans for opportunities to combine 512 adjacent 4KB pages into one 2MB page
+3. **Compaction**: If memory is fragmented, the kernel migrates pages to create contiguous 2MB regions
+4. **Splitting**: When necessary (memory pressure, munmap of partial region), the kernel splits 2MB pages back to 4KB
+
+Check THP status:
+
+```bash
+# Check if THP is enabled
+$ cat /sys/kernel/mm/transparent_hugepage/enabled
+always [madvise] never
+# [madvise] means THP only used when application requests it
+
+# Check THP statistics
+$ grep AnonHugePages /proc/meminfo
+AnonHugePages:    524288 kB    # 256 x 2MB huge pages currently in use
+
+$ grep thp /proc/vmstat
+thp_fault_alloc 1543           # Successful huge page allocations
+thp_fault_fallback 892         # Failed allocations (fell back to 4KB)
+thp_collapse_alloc 234         # Successful promotions via compaction
+thp_split_page 89              # Huge pages split back to 4KB
+```
+
+### The Performance Trade-off
+
+**Benefits:**
+- Reduced TLB misses (5-30% performance improvement for memory-intensive workloads)
+- Lower page table overhead (fewer entries to manage)
+- Fewer page faults (one fault covers 2MB vs 4KB)
+
+**Costs:**
+- **Compaction overhead**: Kernel pauses allocations to migrate pages and create 2MB contiguous regions
+- **Higher memory usage**: 2MB granularity means more internal fragmentation
+- **Delayed memory reclaim**: Kernel must split huge pages before reclaiming, adding latency
+- **Unpredictable latency spikes**: Compaction can take milliseconds
+
+### When THP Causes Problems
+
+Many production systems **disable THP** because the costs outweigh the benefits:
+
+**Databases (Redis, MongoDB, PostgreSQL, MySQL):**
+
+```bash
+# Redis sees periodic 50-200ms latency spikes
+# Cause: THP compaction blocking allocations
+
+# Check for THP-related stalls
+$ grep thp_fault_fallback_charge /proc/vmstat
+thp_fault_fallback_charge 4821    # High number = frequent compaction failures
+
+# Kernel log shows compaction storms
+$ dmesg | grep "page allocation stalls"
+[12345.678] page allocation stalls for 127ms, order:9
+```
+
+Databases prefer **predictable latency** over throughput. They write randomly to memory, which quickly fragments 2MB regions. THP promotion attempts cause unpredictable pauses.
+
+**Recommendation from Redis documentation:**
+```bash
+# Disable THP permanently
+echo never > /sys/kernel/mm/transparent_hugepage/enabled
+echo never > /sys/kernel/mm/transparent_hugepage/defrag
+```
+
+**Containers with memory limits:**
+
+THP uses more memory than 4KB pages due to 2MB granularity. For a container with a 1GB limit, THP can trigger OOM kills sooner because the kernel can't reclaim memory as granularly.
+
+**Latency-sensitive applications:**
+
+Real-time systems, low-latency services, and interactive applications suffer from unpredictable compaction pauses. For these workloads, consistent 4KB page behavior is preferable.
+
+### When THP Helps
+
+**Throughput-oriented workloads:**
+- Batch processing (MapReduce, analytics)
+- Scientific computing (simulation, modeling)
+- Video encoding/decoding
+- Machine learning training (large matrix operations)
+
+These workloads benefit from TLB efficiency and don't care about millisecond latency spikes.
+
+**Sequential memory access patterns:**
+
+If your application allocates large contiguous regions and accesses them sequentially, THP works well because:
+- Memory is less fragmented
+- Compaction is less frequent
+- TLB benefits are maximized
+
+### Configuration Options
+
+THP has three modes:
+
+```bash
+# Always try to use huge pages
+echo always > /sys/kernel/mm/transparent_hugepage/enabled
+
+# Only use huge pages when application requests (madvise MADV_HUGEPAGE)
+echo madvise > /sys/kernel/mm/transparent_hugepage/enabled
+
+# Never use huge pages
+echo never > /sys/kernel/mm/transparent_hugepage/enabled
+```
+
+Defragmentation policy controls how aggressively the kernel compacts memory:
+
+```bash
+# Check defrag policy
+$ cat /sys/kernel/mm/transparent_hugepage/defrag
+always defer defer+madvise [madvise] never
+
+# always: Aggressively compact (high CPU cost, unpredictable latency)
+# defer: Compact in background (lower latency impact)
+# madvise: Only compact when application requests
+# never: Never compact
+```
+
+### Impact on Memory Metrics
+
+THP affects how you interpret RSS and memory usage:
+
+**RSS granularity:**
+
+With 4KB pages, RSS can decrease in 4KB increments. With 2MB huge pages, the kernel must split the huge page before reclaiming, delaying RSS decreases.
+
+```bash
+# Application frees 100MB of memory
+# With 4KB pages: RSS drops quickly
+# With THP: RSS stays high until huge pages are split
+
+$ watch -n 1 'grep AnonHugePages /proc/$(pidof app)/status'
+# If AnonHugePages stays high while heap usage drops, THP is preventing reclaim
+```
+
+**Memory fragmentation:**
+
+THP promotion requires 2MB contiguous physical regions. If memory is fragmented, promotion fails and falls back to 4KB pages. This explains why two identical applications might have different AnonHugePages values depending on allocation order.
+
+**Allocator behavior:**
+
+Allocators see 2MB chunks from the kernel instead of 4KB. This can interact poorly with allocator fragmentation - a few live objects in a 2MB region prevent the entire region from being returned to the OS.
+
+### Monitoring THP Effectiveness
+
+```bash
+# Check how much memory is in huge pages
+$ grep AnonHugePages /proc/meminfo
+AnonHugePages:   2097152 kB    # 1GB in huge pages
+
+# Check promotion success rate
+$ grep thp /proc/vmstat
+thp_fault_alloc 5432           # Successful allocations
+thp_fault_fallback 123         # Failed allocations
+# High fallback rate means memory is too fragmented for THP
+
+# Check per-process huge page usage
+$ grep AnonHugePages /proc/$(pidof app)/status
+AnonHugePages:    524288 kB    # 256MB of this process is in huge pages
+
+# Monitor compaction activity
+$ watch -n 1 'grep compact /proc/vmstat'
+compact_stall 45               # Number of allocation stalls due to compaction
+compact_fail 12                # Failed compaction attempts
+```
+
+If `compact_stall` is high and growing, compaction is causing latency spikes.
+
+### Decision Framework
+
+| Workload Type | THP Recommendation | Reason |
+|---------------|-------------------|--------|
+| Databases (Redis, Postgres, MySQL) | **Disable** | Random writes fragment memory, compaction causes latency spikes |
+| Real-time systems | **Disable** | Unpredictable compaction pauses violate latency SLAs |
+| Containers with tight limits | **Disable** or `madvise` | 2MB granularity wastes memory, triggers OOM sooner |
+| Batch processing / analytics | **Enable** | Benefits from TLB efficiency, latency spikes don't matter |
+| Scientific computing | **Enable** | Large sequential memory access patterns benefit from huge pages |
+| Machine learning training | **Enable** | Large matrix operations see significant speedup |
+| Web servers (mixed workload) | **madvise** | Let application control via `madvise()` for specific allocations |
+
+{{< callout type="warning" >}}
+**THP is controversial**. It can provide significant performance gains or cause unpredictable latency issues. Databases almost universally recommend disabling it. Monitor `compact_stall` and `thp_fault_fallback` - if these metrics are high and growing, THP is hurting more than helping.
+{{< /callout >}}
+
 ## Dirty vs Clean Pages
 
 Pages are classified by whether they've been modified:
