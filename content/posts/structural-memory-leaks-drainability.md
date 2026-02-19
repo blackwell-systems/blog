@@ -1,13 +1,13 @@
 ---
-title: "Why Your Service Leaks Memory When Valgrind Says It Doesn't"
+title: "Structural Memory Leaks: Binary Outcomes in Coarse-Grained Reclamation"
 date: 2026-02-16
 draft: false
 series: ["structural-leaks"]
 seriesOrder: 1
-tags: ["memory-management", "systems-programming", "debugging", "allocators", "profiling", "c"]
+tags: ["memory-management", "systems-programming", "debugging", "allocators", "profiling", "c", "research", "formal-methods", "performance-analysis", "drainability", "epoch-based", "arena-allocators", "slab-allocators", "memory-profiling", "bounded-retention"]
 categories: ["debugging", "performance", "systems"]
-description: "Structural memory leaks occur when individual objects are freed but coarse-grained allocators can't reclaim memory. Learn how to detect them with sub-2ns overhead using libdrainprof."
-summary: "Your memory grows. Valgrind shows zero leaks. All objects are freed. What's happening? Structural leaks: when coarse-grained allocators can't drain granules despite freed objects. Here's how to find them."
+description: "Proven binary outcome for coarse-grained allocators: drainability yields O(1) retention, violations cause Ω(t) growth. Detect structural leaks with sub-2ns overhead using libdrainprof."
+summary: "Memory grows unbounded. Valgrind shows zero leaks. Research proves coarse-grained allocators have a binary asymptotic outcome: satisfy drainability for O(1) retention, violate it for Ω(t) growth. No middle ground."
 ---
 
 Your service has been running for three days. Memory usage climbed from 2GB to 18GB. You suspect a leak. You run Valgrind. Zero leaks detected. You run AddressSanitizer. Clean. You add logging to every allocation and deallocation. Everything that's allocated gets freed.
@@ -16,9 +16,29 @@ So where did 16GB go?
 
 This is the symptom of a **structural memory leak** - a class of memory bug that traditional leak detectors cannot see because they only track individual objects, not the coarse-grained containers that hold them.
 
+{{< callout type="info" >}}
+**Research Result:** I proved coarse-grained allocators have a **binary asymptotic outcome**:
+- Satisfy drainability → O(1) retention (memory plateaus)
+- Violate drainability → Ω(t) retention (unbounded linear growth)
+
+No middle ground. No tuning helps. The routing function alone determines which class you're in.
+
+**Paper:** [*Drainability: When Coarse-Grained Memory Reclamation Produces Bounded Retention*](https://doi.org/10.5281/zenodo.18653776) (Blackwell, 2026)
+{{< /callout >}}
+
 {{< callout type="warning" >}}
 Traditional leak detectors (Valgrind, ASan, LeakSanitizer) only find unreachable objects. They miss situations where all objects are properly freed but the allocator cannot reclaim the backing memory because one long-lived allocation pins an entire granule.
 {{< /callout >}}
+
+## The Binary Outcome
+
+Same allocator. Same workload. Only the routing function changed:
+
+![RSS over time for seven violation fractions](/images/drainability-fan-plot.png)
+
+**What you're seeing:** Seven different violation rates (p = 0.0 to 1.0). The p=0 line plateaus at O(1). Everything else diverges linearly at Ω(t). Even small violation rates cause unbounded growth in long-running services.
+
+This isn't fragmentation (different problem). This isn't tuning (wrong tool). This is a **structural property** with a sharp asymptotic boundary - the routing function alone determines which class you're in.
 
 ## What Are Structural Leaks?
 
@@ -440,15 +460,19 @@ libdrainprof catches this: DSR drops from 1.0 to 0.75 over the first hour of tra
 **Practical Reality:** Most high-performance systems use some form of coarse-grained allocation. If you're doing epoch-based memory management, arena allocation, or slab pools, you have the potential for structural leaks. This library makes them visible.
 {{< /callout >}}
 
-## The Theory Behind It
+## The Formal Result
 
-The DSR metric and drainability concept come from formal analysis proving when coarse-grained allocators produce bounded vs unbounded retention.
+I formalized when coarse-grained reclamation produces bounded retention:
 
-**Theorem (simplified):** If allocations violate granule boundaries with probability `p`, then retained granules grow as `R(t) ≥ p·m(t)` where `m(t)` is total closed granules. The DSR metric is `1 - p`, measuring how often granules drain successfully.
+**Theorem 1 (Alignment Theorem):** A granule is reclaimable at its boundary if and only if it is drainable. This establishes drainability as both necessary and sufficient.
 
-**What this means:** Even small violation rates compound over time in long-running services. A 1% violation rate (`p = 0.01`) means 1% of closed granules are retained indefinitely.
+**Theorem 2 (Bounded Growth):** If all closed granules are drainable, retained memory R(t) = O(1) - bounded by a constant independent of uptime.
 
-The library validates this theorem: test suite runs P-sweep experiments with `p ∈ {0.0, 0.1, 0.5, 1.0}` and confirms `DSR = 1.0 - p` exactly.
+**Theorem 3 (Pinning Growth):** If fraction p > 0 of granules are non-drainable, then R(t) ≥ p·m(t) = Ω(t) - linear growth with number of reclamation cycles.
+
+**The dichotomy:** Either O(1) or Ω(t). No intermediate regime. The routing function alone determines which class.
+
+The DSR metric (`drainable_closes / total_closes = 1 - p`) quantifies this directly. The library validates empirically: P-sweep tests with p ∈ {0.0, 0.01, 0.05, 0.10, 0.25, 0.50, 1.0} confirm the predicted growth rates with R² ≥ 0.998.
 
 ![RSS over time for seven violation fractions](/images/drainability-fan-plot.png)
 
@@ -460,15 +484,19 @@ The library validates this theorem: test suite runs P-sweep experiments with `p 
 
 ## Summary
 
-Structural memory leaks occur when coarse-grained allocators cannot reclaim memory at granule boundaries despite individual objects being properly freed. Traditional leak detectors cannot see this because they only track unreachable objects.
+Coarse-grained allocators exhibit a **binary asymptotic outcome**: either O(1) retention (bounded) or Ω(t) growth (unbounded). The routing function alone determines which class. No tuning, no middle ground. This is a structural property, not a fragmentation problem.
 
-Drainability measures whether granules can be reclaimed when they close. The DSR metric quantifies this: `DSR = drainable_closes / total_closes`. When DSR drops below 1.0, you have structural leaks accumulating.
+Structural memory leaks occur when coarse-grained allocators cannot reclaim memory at granule boundaries despite individual objects being properly freed. Traditional leak detectors miss this because they only track unreachable objects.
 
-[libdrainprof](https://github.com/blackwell-systems/drainability-profiler) instruments allocators with <2ns overhead in production mode, 25ns in diagnostic mode. Integration requires four API calls. The library captures source locations and generates pinning reports showing which allocations are preventing reclamation.
+**Drainability** is the necessary and sufficient condition for bounded retention. The DSR metric quantifies this: `DSR = drainable_closes / total_closes`. When DSR drops below 1.0, you have structural leaks accumulating at Ω(t).
 
-Run production mode always-on to monitor DSR. When it drops, enable diagnostic mode temporarily to identify problematic allocation sites. Fix the lifetime mismatches. Return to production monitoring. The sub-2ns overhead makes always-on production monitoring viable.
+[libdrainprof](https://github.com/blackwell-systems/drainability-profiler) makes drainability measurable in production with <2ns overhead (production mode) or 25ns overhead (diagnostic mode). Integration requires four API calls. The library captures source locations and generates pinning reports showing which allocations prevent reclamation.
 
-For the theory: [read the paper](https://doi.org/10.5281/zenodo.18653776). For practical debugging: use the tool.
+**Workflow:** Run production mode always-on to monitor DSR. When it drops, enable diagnostic mode temporarily to identify problematic allocation sites. Fix the lifetime mismatches. Return to production monitoring.
+
+**For the theory:** [Read the paper](https://doi.org/10.5281/zenodo.18653776) (formal proofs, theorems, empirical validation).
+
+**For practical debugging:** Use the tool. The math validates the approach, but the library works whether you read the paper or not.
 
 ---
 
