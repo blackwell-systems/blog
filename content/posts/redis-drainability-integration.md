@@ -89,9 +89,9 @@ flowchart TB
     style backing fill:#4C3A3C,stroke:#6b7280,color:#f0f0f0
 {{< /mermaid >}}
 
-Most allocations (99%+) go through tcache and never touch the arena path. Instrumenting `arena_malloc_small()` only catches cache refills - batches of objects being pulled from slabs, not individual allocations.
+The problem: 99%+ of allocations go through tcache, never touching the arena path. When you instrument `arena_malloc_small()`, you only see cache refills (batches of objects), not individual allocations.
 
-Tracking extents while missing the actual allocation layer creates an abstraction mismatch.
+This creates an abstraction mismatch - tracking extents but missing where actual allocations happen.
 
 ## Second Attempt: Tcache Refill/Flush
 
