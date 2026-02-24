@@ -155,7 +155,7 @@ shelfctl browse --tag textbook
 shelfctl tags  # list all tags with book counts
 ```
 
-## Migration: The Killer Feature
+## Migration: Fixing the Mess You Already Have
 
 The real value isn't starting fresh. It's fixing the mess you already have.
 
