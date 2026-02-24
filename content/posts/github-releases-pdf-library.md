@@ -8,6 +8,8 @@ description: "Git history bloats forever when you commit PDFs. Git LFS costs mon
 summary: "Every PDF committed to git history stays there forever, bloating clones even after deletion. Git LFS adds cost and friction. GitHub Release assets offer a better approach: free CDN-backed storage with on-demand downloads, lightweight repos, and built-in migration tools."
 ---
 
+![shelfctl mascot Shelby](/images/shelfctl/shelby-padded.png)
+
 You know that moment when you clone a repo and it takes forever because someone committed PDFs three years ago? Or when you discover your "books" repo is 2GB even though you deleted half the files last month?
 
 Yeah. Git never forgets.
@@ -114,6 +116,44 @@ Opening sicp.pdf
 First time downloads from GitHub's CDN. Subsequent opens use your local cache. On another machine? Same command fetches it again on-demand.
 
 You can have a 100GB library across multiple shelves, but if you only read 10 books, you only download 800MB.
+
+## What Day-to-Day Use Looks Like
+
+Once your shelves are set up, the workflow collapses to a few commands:
+
+```bash
+# Search across all shelves
+shelfctl search "algorithms"
+
+# Browse a shelf interactively - filter by tag, open books with 'o'
+shelfctl browse --shelf programming --tag textbook
+
+# Add a book from a URL directly
+shelfctl shelve https://example.com/paper.pdf --shelf research --tags ai,ml
+
+# Open a book - downloads only that file, cached for next time
+shelfctl open sicp
+```
+
+**Your library follows you across machines.** Every `shelfctl open` checks local cache first, then pulls from GitHub's CDN if needed. Switch to a new laptop, run the same commands, get the same books. No syncing, no setup, no copying files around.
+
+**Annotations travel with the book.** Highlight and annotate a PDF in your reader of choice. The changes are saved to local cache. Run `shelfctl sync sicp` and the annotated version is uploaded back to GitHub, replacing the original. Open it on another machine and you get your annotated copy. No extra sync service required.
+
+```bash
+# Annotate in your PDF reader, then push back to GitHub
+shelfctl sync sicp
+
+# Sync everything you've modified locally
+shelfctl sync --all
+```
+
+**Tags and search keep things findable.** As your library grows across multiple shelves, tags are how you navigate it without remembering which shelf a book lives in.
+
+```bash
+shelfctl search "lisp"
+shelfctl browse --tag textbook
+shelfctl tags  # list all tags with book counts
+```
 
 ## Migration: The Killer Feature
 
@@ -257,6 +297,8 @@ shelfctl implements this entire workflow. It's open source, written in Go, and t
 
 Running `shelfctl` with no arguments opens an interactive TUI hub for browsing, adding, and editing books without typing commands. All CLI commands also work non-interactively with `--json` output for scripting.
 
+![shelfctl interactive TUI hub](/images/shelfctl/tui_screenshot.png)
+
 **Install:**
 
 ```bash
@@ -299,6 +341,8 @@ shelfctl index --open
 ```
 
 This generates a static HTML page from your cached books - cover thumbnails, tag filters, live search - and opens it in your browser. No server required, works completely offline.
+
+![shelfctl HTML index](/images/shelfctl/html_viewer.jpeg)
 
 Done. Your library lives in GitHub Releases. Your git history stays clean. Your clones stay fast.
 
