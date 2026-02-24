@@ -255,10 +255,15 @@ Each does what it's designed for. No fighting the tools.
 
 shelfctl implements this entire workflow. It's open source, written in Go, and takes 2 minutes to set up.
 
+Running `shelfctl` with no arguments opens an interactive TUI hub for browsing, adding, and editing books without typing commands. All CLI commands also work non-interactively with `--json` output for scripting.
+
 **Install:**
 
 ```bash
-# Download from releases page, or:
+# Homebrew (macOS/Linux)
+brew install blackwell-systems/tap/shelfctl
+
+# Or with Go:
 go install github.com/blackwell-systems/shelfctl/cmd/shelfctl@latest
 ```
 
@@ -286,6 +291,14 @@ shelfctl shelve ~/Downloads/book.pdf --shelf books --title "My Book"
 ```bash
 shelfctl open my-book
 ```
+
+**Browse offline:**
+
+```bash
+shelfctl index --open
+```
+
+This generates a static HTML page from your cached books - cover thumbnails, tag filters, live search - and opens it in your browser. No server required, works completely offline.
 
 Done. Your library lives in GitHub Releases. Your git history stays clean. Your clones stay fast.
 
