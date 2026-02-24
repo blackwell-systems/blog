@@ -356,4 +356,6 @@ If this solves a problem you've been fighting, star the repo or try it out. If y
 
 ---
 
+![Shelby](/images/shelfctl/shelby2.png)
+
 *Meet Shelby, the shelfctl mascot. Shelby is a terminal wearing a bookshelf like a sweater, because why not.*
