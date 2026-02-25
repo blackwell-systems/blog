@@ -647,29 +647,17 @@ None of these elements are expensive. The mascot was generated with AI. The scre
 
 The expense is *coherence* - making sure every element reinforces every other element. That's what the spec provides. Without it, you have a collection of assets. With it, you have a brand.
 
-## Reproducing This for Your Project
+## The Short Version
 
-If you want to do something similar:
-
-**1. Start with your name.** What natural tensions or visual concepts does it suggest? For shelfctl, it was physical (shelf) vs digital (ctl). For your tool, it might be speed vs reliability, simplicity vs power, local vs distributed. Find the duality and make it visual.
-
-**2. Pick two colors.** Not five. Not a palette generator. Two colors that represent the tension in your name or concept. Use them everywhere. Two colors create a system. Six colors create decisions.
-
-**3. Write a character spec before generating.** Spend 30 minutes describing proportions, materials, face placement, and explicit "don't do this" rules. This document will save you hours of iteration. Version it. Update it when you find ambiguities.
-
-**4. Generate against the spec, not from scratch.** Every prompt includes the full spec. The pose is the only variable. Reject anything that violates the spec, regardless of how good it looks. Your rejection criteria should be a checklist, not a feeling.
-
-**5. Try multiple models.** As of early 2026, capability varies significantly. What one model can't do, another might handle easily. Test with your actual spec, not with simple prompts.
-
-**6. Place mascot images contextually.** Don't scatter them randomly. Each image should relate to the content around it. The mascot is navigation, not decoration. If you can't explain why a particular pose appears at a particular location, it shouldn't be there.
-
-**7. Script your screencasts.** Use VHS or similar tools. Declarative recordings are reproducible, versionable, and cheap to update. Store the tape files in your repo alongside the code.
-
-**8. Choose a terminal theme that doesn't fight your brand.** Check that the theme's accent colors don't clash with your UI colors. Test by taking a screenshot of your TUI with the theme and checking if your brand colors still pop.
-
-**9. License your assets separately.** MIT your code. Protect your brand. State both clearly.
-
-The entire brand system for shelfctl - spec, poses, wordmark, screencasts, themed screenshots - was built in less time than writing the architecture documentation. The tooling makes it fast. The spec makes it consistent. The result makes people stop scrolling.
+1. Find the duality in your name and make it two colors
+2. Write a character spec before you generate anything
+3. Generate against the spec - reject anything that violates it
+4. Try multiple models with your actual spec
+5. Place images contextually - the mascot is navigation, not decoration
+6. Script screencasts with VHS
+7. Pick a terminal theme that doesn't fight your brand colors
+8. Design reusable template poses with blank space built in
+9. Start with a restrictive brand license - you can loosen it later
 
 ---
 
