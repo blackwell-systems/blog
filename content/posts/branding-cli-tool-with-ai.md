@@ -290,6 +290,8 @@ This pose shows Shelby sitting at a desk with a computer. It introduces the inst
 
 A lower pose with the magnifying glass pointed downward, as if examining the command table that follows. This creates a visual flow: the character looks down, your eye follows to the table below. It's a small compositional trick, but it works for guiding reading direction.
 
+![Shelby examining with magnifying glass](https://github.com/blackwell-systems/shelfctl/raw/main/assets/shelby2.png)
+
 ### Support Shelby (Call to Action)
 
 The "Enjoying shelfctl?" image is the most marketing-forward pose. This one needed to feel warm and inviting without being cloying. The text is baked into the image rather than being a markdown header, which means it renders consistently across GitHub's various markdown contexts (repo page, mobile, dark mode).
@@ -639,4 +641,4 @@ The entire brand system for shelfctl - spec, poses, wordmark, screencasts, theme
 
 ---
 
-![Shelby](https://github.com/blackwell-systems/shelfctl/raw/main/assets/shelby2.png)
+![Shelby faces](https://github.com/blackwell-systems/shelfctl/raw/main/assets/shelf_faces.png)
