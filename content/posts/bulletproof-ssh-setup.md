@@ -2,7 +2,7 @@
 title: "Bulletproof SSH: Multi-Identity Git, Socket Persistence, and Zero-Trust Key Management"
 date: 2026-02-25
 draft: false
-tags: ["ssh", "git", "security", "devops", "github", "identity-management"]
+tags: ["ssh", "git", "security", "devops", "github", "identity-management", "openssh", "ssh-config", "ssh-agent", "unix-domain-sockets", "ed25519", "git-config", "multi-identity", "ssh-keys", "control-sockets", "known-hosts", "developer-tools", "dotfiles", "containers", "docker", "linux", "macos"]
 categories: ["developer-tools"]
 description: "A complete SSH setup for developers juggling personal, business, and enterprise GitHub identities -- using only OpenSSH, git, and coreutils. Host aliases, conditional git configs, control sockets, and known_hosts pinning."
 summary: "Most developers cargo-cult their SSH config from Stack Overflow. This is the setup I actually run: three GitHub identities on one machine, persistent control sockets, conditional git configs that auto-select the right key, and pinned known_hosts. No third-party tools."
@@ -67,12 +67,6 @@ git clone git@github-enterprise:enterprise-org/platform.git
 ```
 
 The remote URL embeds the identity. Every subsequent `git pull` and `git push` on that clone uses the correct key automatically, because the remote is stored in `.git/config` as `github-business:...` or `github-enterprise:...`, and SSH resolves those aliases through `~/.ssh/config`.
-
-### Why `IdentitiesOnly` Matters
-
-Without `IdentitiesOnly yes`, OpenSSH sends every key in the agent to the server. GitHub accepts the first key that matches any account. If your enterprise key is in the agent (because you `ssh-add`'d it earlier), it will be offered first to every host -- including your personal repos.
-
-The failure is silent. The connection succeeds (GitHub sees a valid key), but the identity is wrong. Commits get attributed to the wrong account. Audit logs show the wrong user. `IdentitiesOnly yes` prevents this by restricting the connection to exactly the key you specified.
 
 ### Key Generation
 
@@ -200,7 +194,7 @@ The default `known_hosts` behavior is trust-on-first-use (TOFU). The first time 
 
 TOFU is better than no verification at all, but it has a real gap: the first connection is completely unverified. If an attacker intercepts that first connection -- through DNS poisoning, a compromised network, or a rogue WiFi access point -- they can present their own key, and you'll accept it without knowing. Every connection after that will appear to succeed, because SSH is now verifying against the attacker's key.
 
-For hosts you connect to regularly, you can close this gap by pinning the keys before your first connection. GitHub, for example, publishes their SSH host key fingerprints publicly:
+For hosts you connect to regularly, you can close this gap by pinning the keys before your first connection. GitHub publishes their SSH host key fingerprints at [github.com/meta](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/githubs-ssh-key-fingerprints) -- copy them into your `known_hosts` directly, verified against that page rather than whatever key the server presents on first connect:
 
 ```
 # ~/.ssh/known_hosts
@@ -208,8 +202,6 @@ For hosts you connect to regularly, you can close this gap by pinning the keys b
 github.com ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOMqqnkVzrm0SdG6UOoqKLsabgH5C9okWi0dh2l9GKJl
 github.com ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBEmKSENjQEezOmxkZMy7opKgwFB9nkt5YRrYMjNuG5N87uRgg6CLrbo5wAdT/y6v0mKV0U2w0WZ2YB/++Tpockg=
 ```
-
-GitHub publishes their SSH key fingerprints at [github.com/meta](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/githubs-ssh-key-fingerprints). Verify against that page, not against whatever key the server presents on first connect.
 
 ### Hashed Known Hosts
 
