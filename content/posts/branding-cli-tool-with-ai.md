@@ -332,7 +332,29 @@ The generation cost is trivial once the spec exists. Describe a celebratory pose
 
 ![Shelby announcing v0.1.0](https://github.com/blackwell-systems/shelfctl/raw/main/assets/shelby_v010.png)
 
-The key to all of this is restraint. The diagrams use the orange/teal palette and the warm-wood-and-books aesthetic but don't include Shelby directly. The books get faces but the shelves don't. Shelby announces releases but doesn't appear in every commit message. Extended lore creates depth without overexposure - the mascot stays special because it's not everywhere.
+### Planning Assets for Reuse
+
+Not every pose needs to be a finished piece. Some of the most useful assets are designed as templates.
+
+One Shelby pose shows the character from behind, sitting at a computer. The screen is blank and transparent. That's deliberate - a blank screen means I can composite any text, screenshot, or diagram onto it and create a new image without regenerating the character. One generation, unlimited variations. Need a "Getting Started" image? Write "Getting Started" on the screen. Need a release announcement? Put the version number on it. Need a blog header? Drop in whatever fits.
+
+![Shelby at computer - blank screen](https://github.com/blackwell-systems/shelfctl/raw/main/assets/shelby4.png)
+
+This is a different way of thinking about AI-generated assets. Instead of generating a finished image for every use case, generate a composable base and customize it with ImageMagick or any image editor. The character stays perfectly consistent because it's literally the same image every time. Only the screen content changes.
+
+Think about this before you generate. Which poses could serve as templates? A character holding a blank sign. A character pointing at an empty space. A character next to a whiteboard. Design the negative space into the pose intentionally, and one generation gives you an asset you'll reuse dozens of times.
+
+### The Restraint Problem
+
+Once the spec works and generating new poses takes minutes instead of hours, the temptation is to put Shelby everywhere. I had to dial myself back several times. An early version of the README had Shelby in nearly every section - above every code block, next to every table, in the footer twice. It looked like a children's book, not a developer tool.
+
+The instinct makes sense. You spent time getting the character right, the generation pipeline is fast, and every new pose feels like it adds value. But there's a threshold where a mascot stops being charming and starts being cluttered. When the character appears so often that your eye stops registering it, you've passed that threshold.
+
+The rule I settled on: Shelby appears at major section transitions, not minor ones. If two Shelby images would be visible on the same screen at the same scroll position, one of them needs to go. The diagrams use the orange/teal palette and the warm-wood-and-books aesthetic but don't include Shelby directly. The books get faces but the shelves don't. Shelby announces releases but doesn't appear in every commit message.
+
+If you find yourself staring at Sora prompting video ideas for your mascot, you may have gone too far. Maybe. *Maybe.*
+
+Extended lore creates depth without overexposure. The mascot stays special because it's not everywhere.
 
 ## VHS for Screencasts
 
@@ -524,17 +546,27 @@ It's a subtle introduction rather than a full reveal. The README hero image is t
 
 If you've spent time on a mascot or visual identity and haven't set the social preview, you're leaving the highest-leverage placement empty. Do it before you share the repo anywhere.
 
-## Brand Asset Licensing
+## Should You Open Source Your Mascot?
 
-One detail that's easy to overlook: licensing. The code is MIT licensed, but the mascot and brand assets need different treatment.
+The instinct in open source is to share everything. The code is MIT, the docs are public, the spec is in the repo - why not MIT the mascot too?
 
-shelfctl's `assets/LICENSE` file allows redistribution of unmodified brand assets with shelfctl, but doesn't license them for reuse in other projects. This means:
+Because the mascot isn't code. Code gains value when other people use it, fork it, improve it. A mascot loses value when other people use it. If Shelby shows up as the logo for an unrelated npm package, it dilutes the recognition that makes the mascot useful in the first place. The entire point of a brand identity is that it identifies *your* project. MIT-licensing the mascot defeats the purpose of creating it.
+
+This feels uncomfortable if you're deep in the open source mindset. It felt uncomfortable to me. But look at how established projects handle it: Docker's Moby Dock, the Rust crab, the Linux Foundation's trademark on Tux, Mozilla's strict brand guidelines for Firefox - all have restricted brand usage even though the projects themselves are fully open source. This isn't corporate gatekeeping. It's standard practice for any project where visual identity matters.
+
+On the other hand, look at Go's gopher. Renee French's design is Creative Commons licensed and the community ran with it. Go gophers appear on conference stickers, blog posts, third-party tutorials, custom plushies, company swag. The gopher is arguably the most successful mascot in developer tools, and a lot of that success came from letting people remix it freely. The gopher *is* Go's marketing, and the community does the marketing for free.
+
+There's a real tension here. Tight control preserves brand clarity. Loose control creates community adoption. The practical answer: start restrictive. You can always loosen a license later if your community grows and remixing would help. You can't go the other way - once something is Creative Commons, you can't take that back. Protect it now, and if your project becomes the next Go, that's a great problem to revisit.
+
+shelfctl's `assets/LICENSE` file allows redistribution of unmodified brand assets *with shelfctl*, but doesn't license them for reuse in other projects. This means:
 
 - Forks can include Shelby (they ship shelfctl)
 - Other projects can't use Shelby as their mascot
 - Blog posts and articles can include Shelby images when discussing shelfctl
 
-This is a standard approach for open source projects with brand identity. The code is free. The brand is protected. Both are clearly stated in the repo.
+The spec itself is public in the repo. Anyone can read it, learn from the approach, and write their own spec for their own character. That's the part worth sharing freely. The character that came out of the spec is the part worth protecting.
+
+The code is free. The brand is protected. Both are clearly stated in the repo.
 
 ## What Made This Work in 4 Days
 
