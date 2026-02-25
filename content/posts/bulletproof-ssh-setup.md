@@ -254,7 +254,7 @@ Use host aliases as the primary mechanism. Use `sshCommand` as the safety net fo
 
 The Fundamentals section introduced Unix domain sockets and process inheritance as abstract primitives. Here's how they come together concretely in the SSH agent -- and why that matters for connection multiplexing and container sharing later.
 
-The SSH agent (`ssh-agent`) holds your decrypted private keys in memory and listens on a Unix domain socket -- the path stored in the `SSH_AUTH_SOCK` environment variable. When you run `ssh-add ~/.ssh/id_ed25519`, the agent reads the key file, decrypts it (prompting for your passphrase if needed), and stores the raw key material in its own process memory.
+The SSH agent (`ssh-agent`) is just a daemon -- a long-running background process, no different from any other process on your system. It holds your decrypted private keys in its own memory and listens on a Unix domain socket whose path is stored in the `SSH_AUTH_SOCK` environment variable. The name "agent" makes it sound like it has intelligence or autonomy, but it's really just a key store with an IPC interface. When you run `ssh-add ~/.ssh/id_ed25519`, the agent reads the key file, decrypts it (prompting for your passphrase if needed), and stores the raw key material in its process memory.
 
 When any SSH client on the system needs to authenticate, it doesn't read the private key file itself. Instead, it connects to the agent's socket and says "sign this challenge with key X." The agent performs the cryptographic operation and returns the signature. The private key bytes never leave the agent process -- the SSH client only ever sees the signature.
 
