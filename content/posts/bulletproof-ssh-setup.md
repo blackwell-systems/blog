@@ -182,7 +182,9 @@ The performance difference is significant. The first `git push` to a repo requir
 
 ### Caveats
 
-Control sockets persist authentication state. If you `ssh-add -D` to clear your agent but a control socket is still alive, connections through that socket continue to work. This is usually fine -- the socket dies after `ControlPersist` seconds. But if you need to immediately revoke access, kill the master:
+{{< callout type="warning" >}}
+Control sockets persist authentication state. If you `ssh-add -D` to clear your agent but a control socket is still alive, connections through that socket continue to work. The socket dies after `ControlPersist` seconds, but if you need to immediately revoke access, kill the master explicitly.
+{{< /callout >}}
 
 ```bash
 ssh -O exit -o ControlPath=~/.ssh/sockets/%r@%h-%p git@github.com
@@ -215,7 +217,11 @@ The `|1|` prefix indicates a hashed entry. Enable with `HashKnownHosts yes` in y
 
 ## File Permissions
 
-SSH is opinionated about file permissions, and its failure mode is the worst kind: silent. If a private key is group-readable, SSH doesn't warn you -- it just skips the key entirely and falls back to the next one. You'll spend an hour debugging why the wrong identity is being offered before you think to check `ls -la`.
+SSH is opinionated about file permissions, and its failure mode is the worst kind: silent.
+
+{{< callout type="warning" >}}
+If a private key is group-readable, SSH doesn't warn you -- it just skips the key entirely and falls back to the next one. You'll spend an hour debugging why the wrong identity is being offered before you think to check `ls -la`.
+{{< /callout >}}
 
 The reason SSH cares is that private keys are the only secret in the entire authentication chain. If another user on the system can read your private key, they can impersonate you to any server that trusts it. SSH enforces this at the filesystem level rather than trusting you to get it right.
 
@@ -234,9 +240,35 @@ The config file gets `600` because it can contain sensitive information -- paths
 
 One common gotcha: if you restore your `.ssh` directory from a backup or copy it from another machine, the permissions often come across wrong. Archive formats don't always preserve Unix permissions, and copying from a FAT32 USB drive or a Windows filesystem sets everything to `755`. Run the `chmod` commands above any time you migrate keys to a new machine.
 
+## Secrets Don't Belong in Repositories
+
+File permissions protect keys on your local machine. But the more common disaster is keys and credentials ending up in git history -- where they're permanent, searchable, and public the moment you push.
+
+This happens more often than people admit. A developer adds a private key or API token to a repo for "just a quick test," forgets about it, and pushes. Even if they delete the file in a subsequent commit, the secret is still in the git history. `git log --all --full-history -- path/to/secret` will find it. GitHub's own secret scanning catches thousands of leaked credentials daily, and that's only the ones that match known patterns.
+
+The rule is simple: secrets never enter version control. Not temporarily, not in a branch you'll delete, not in a private repo you might make public later. Once a secret hits a remote, assume it's compromised and rotate it.
+
+For SSH keys specifically, this means your `~/.ssh` directory lives outside your git repositories entirely. Your `.gitignore` should never need to exclude `id_ed25519` because `id_ed25519` should never be anywhere near a working tree in the first place.
+
+Dotfiles repos are the most common way this goes wrong. Developers version their shell configs, `.gitconfig`, SSH config -- and accidentally include private keys alongside them. A dotfiles repo should contain your `~/.ssh/config` (which has no secrets -- just host aliases and directives) but never your private key files. The same applies to `.env` files, API tokens stored in shell profiles, and anything else that grants access. If your dotfiles repo is public, treat every file in it as public. If it's private, treat every file as one accidental visibility change away from public.
+
+For other secrets -- API keys, database credentials, service account tokens -- the principle extends the same way. Environment variables loaded from a `.env` file that's in `.gitignore` work for local development. For CI/CD, use your platform's secrets management: GitHub Actions secrets, GitLab CI variables, or a dedicated vault. The pattern is always the same: secrets are injected at runtime from a trusted store, never checked into source.
+
+{{< callout type="danger" >}}
+If you've already pushed a secret to a remote, deleting the file isn't enough. The secret lives in git history until you rewrite it with `git filter-repo` or BFG Repo-Cleaner -- and even then, anyone who cloned before the rewrite still has it. Rotate the credential immediately. Rewriting history is damage control, not remediation.
+{{< /callout >}}
+
+GitHub offers push protection through secret scanning that blocks pushes containing known credential patterns before they reach the remote. Enable it in your repository's security settings. It won't catch everything -- custom API keys or internal tokens don't match GitHub's pattern library -- but it catches the common ones: AWS keys, Slack tokens, database connection strings, and private keys.
+
+For defense in depth, add a pre-commit hook that scans staged files for high-entropy strings or known secret patterns. Tools like `gitleaks` run in milliseconds and catch secrets before they enter local history, let alone a remote. A secret that never gets committed doesn't need to be rotated.
+
 ## Sharing Across VM and Container Boundaries
 
-If you develop inside Linux VMs (Lima, Colima, UTM) or containers (Docker, devcontainers), you have the same SSH config problem twice: the host machine has your keys and config, but the guest needs them too. Copying keys into containers is a security antipattern -- they end up in image layers, build caches, or container filesystems that outlive the session.
+If you develop inside Linux VMs (Lima, Colima, UTM) or containers (Docker, devcontainers), you have the same SSH config problem twice: the host machine has your keys and config, but the guest needs them too.
+
+{{< callout type="danger" >}}
+**Never copy private keys into containers.** They end up in image layers, build caches, or container filesystems that outlive the session. Even a `COPY` in a multi-stage build leaves the key in an intermediate layer that `docker history` can extract.
+{{< /callout >}}
 
 The clean approach is bind-mounting your host's `~/.ssh` directory into the guest as read-only:
 
