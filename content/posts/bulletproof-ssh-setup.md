@@ -206,7 +206,7 @@ Git resolves configuration through a cascade of files, read in order, where each
 3. **Conditional includes** (`includeIf`) -- evaluated during global config loading, can override global values based on conditions like directory path
 4. **Repo-level** (`.git/config`) -- per-repository overrides, highest priority
 
-The key insight is that later values overwrite earlier ones for the same key. If `~/.gitconfig` sets `user.email = personal@example.com` and an `includeIf` block loads a file that sets `user.email = you@enterprise.com`, the enterprise email wins. If the repo's own `.git/config` sets yet another email, that wins over both.
+Later values overwrite earlier ones for the same key. If `~/.gitconfig` sets `user.email = personal@example.com` and an `includeIf` block loads a file that sets `user.email = you@enterprise.com`, the enterprise email wins. If the repo's own `.git/config` sets yet another email, that wins over both.
 
 Git's `includeIf` directive exploits this cascade by conditionally loading an additional config file based on the repo's filesystem path:
 
