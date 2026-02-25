@@ -68,7 +68,7 @@ Once you have two brand colors, the question is where they show up. For shelfctl
 ![Brand colors in the TUI](https://github.com/blackwell-systems/shelfctl/raw/main/assets/tui_screenshot.png)
 
 **In the wordmark:**
-- `shelf` rendered in orange, `ctl` rendered in teal
+- <span style="color:#fb6820;font-weight:bold">shelf</span> rendered in orange, <span style="color:#1b8487;font-weight:bold">ctl</span> rendered in teal
 - Appears in architecture diagrams and promotional images
 
 **In the HTML index viewer:**
