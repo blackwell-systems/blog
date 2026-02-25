@@ -4,13 +4,13 @@ date: 2026-02-25
 draft: false
 tags: ["ssh", "git", "security", "devops", "github", "identity-management", "openssh", "ssh-config", "ssh-agent", "unix-domain-sockets", "ed25519", "git-config", "multi-identity", "ssh-keys", "control-sockets", "known-hosts", "developer-tools", "dotfiles", "containers", "docker", "linux", "macos"]
 categories: ["developer-tools"]
-description: "A complete SSH setup for developers juggling personal, business, and enterprise GitHub identities -- using only OpenSSH, git, and coreutils. Host aliases, conditional git configs, control sockets, and known_hosts pinning."
+description: "A complete SSH setup for developers juggling personal, business, and enterprise GitHub identities -- using only OpenSSH and git. Host aliases, conditional git configs, control sockets, and known_hosts pinning."
 summary: "Most developers cargo-cult their SSH config from Stack Overflow. This is the setup I actually run: three GitHub identities on one machine, persistent control sockets, conditional git configs that auto-select the right key, and pinned known_hosts. No third-party tools."
 ---
 
 Most developers have an SSH config that grew by accretion. A key here, a host entry there, a Stack Overflow snippet pasted in 2019 that nobody remembers the purpose of. It works until it doesn't -- and when it doesn't, the failure mode is silent: the wrong key gets offered, the wrong email lands on a commit, or an agent helpfully sends your employer's key to your personal project.
 
-This is the setup I actually run. Three GitHub identities on one machine, persistent multiplexed connections, conditional git configuration that auto-selects the right identity, and pinned host keys. Everything uses OpenSSH, git, and coreutils. No third-party tools, no wrapper scripts, no GUI key managers.
+This is the setup I actually run. Three GitHub identities on one machine, persistent multiplexed connections, conditional git configuration that auto-selects the right identity, and pinned host keys. Everything uses OpenSSH and git. No third-party tools, no wrapper scripts, no GUI key managers.
 
 ## Fundamentals
 
