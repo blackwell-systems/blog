@@ -90,8 +90,16 @@ sequenceDiagram
     participant GH as GitHub
 
     Dev->>Git: git push
-    Git->>GitCfg: Which identity for this directory?
-    GitCfg-->>Git: includeIf matches ~/code/business/<br/>email = you@company.com<br/>sshCommand = use id_ed25519_business
+    Note over Git: Git resolves identity through<br/>a cascade of config files
+    Git->>GitCfg: 1. Read /etc/gitconfig (system)
+    GitCfg-->>Git: (no user identity set)
+    Git->>GitCfg: 2. Read ~/.gitconfig (global)
+    GitCfg-->>Git: user.email = personal@example.com
+    Git->>GitCfg: 3. Evaluate includeIf conditions
+    GitCfg-->>Git: gitdir:~/code/business/ matches<br/>→ load ~/.gitconfig-business<br/>→ user.email = you@company.com<br/>→ core.sshCommand = use id_ed25519_business
+    Git->>GitCfg: 4. Read .git/config (repo-level)
+    GitCfg-->>Git: (no override - business identity stands)
+    Note over Git: Final identity: you@company.com<br/>Each level can override the previous
     Git->>SSH: Connect to github-business
     SSH->>SSHCfg: Resolve Host github-business
     SSHCfg-->>SSH: HostName github.com<br/>IdentityFile id_ed25519_business<br/>IdentitiesOnly yes
@@ -188,7 +196,16 @@ The `-C` comment is metadata embedded in the public key file. It doesn't affect 
 
 Host aliases solve the SSH side, but git also stamps every commit with a name and email. If you forget to set `user.email` in a work repo, your personal email ends up in the enterprise commit log.
 
-Git's `includeIf` directive conditionally loads a config file based on the repo's filesystem path:
+Git resolves configuration through a cascade of files, read in order, where each level can override the previous:
+
+1. **System** (`/etc/gitconfig`) -- machine-wide defaults, rarely sets user identity
+2. **Global** (`~/.gitconfig`) -- your personal defaults, where you set your primary name and email
+3. **Conditional includes** (`includeIf`) -- evaluated during global config loading, can override global values based on conditions like directory path
+4. **Repo-level** (`.git/config`) -- per-repository overrides, highest priority
+
+The key insight is that later values overwrite earlier ones for the same key. If `~/.gitconfig` sets `user.email = personal@example.com` and an `includeIf` block loads a file that sets `user.email = you@enterprise.com`, the enterprise email wins. If the repo's own `.git/config` sets yet another email, that wins over both.
+
+Git's `includeIf` directive exploits this cascade by conditionally loading an additional config file based on the repo's filesystem path:
 
 ```ini
 # ~/.gitconfig
