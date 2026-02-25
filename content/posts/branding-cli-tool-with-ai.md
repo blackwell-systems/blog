@@ -73,9 +73,11 @@ Once you have two brand colors, the question is where they show up. For shelfctl
 
 **In the HTML index viewer:**
 - `shelfctl index` generates a static HTML page for browsing your library in a browser
-- The same brand colors appear, but in monochrome variants - muted teal borders, desaturated orange highlights
-- The full-saturation colors that work in a terminal would be harsh in a browser context, so the HTML uses toned-down versions of the same hues
-- The result still reads as "shelfctl" without looking like a terminal screenshot pasted into a web page
+- The same brand colors appear, but as slightly desaturated monochromatic variations - muted teal borders, softened orange highlights
+- Full-saturation terminal colors would be harsh in a browser context, so the HTML uses subtler versions of the same hues
+- The result still reads as "shelfctl" without screaming "terminal app." The brand identity carries through at a lower volume
+
+![HTML index viewer with monochrome brand colors](https://github.com/blackwell-systems/shelfctl/raw/main/assets/html_viewer.jpeg)
 
 **In documentation:**
 - Mermaid diagram colors use the dark variants of these hues
