@@ -359,7 +359,9 @@ The instinct makes sense. You spent time getting the character right, the genera
 
 The rule I settled on: Shelby appears at major section transitions, not minor ones. If two Shelby images would be visible on the same screen at the same scroll position, one of them needs to go. The diagrams use the orange/teal palette and the warm-wood-and-books aesthetic but don't include Shelby directly. The books get faces but the shelves don't. Shelby announces releases but doesn't appear in every commit message.
 
+{{< callout type="warning" >}}
 If you find yourself staring at Sora prompting video ideas for your mascot, you may have gone too far. Maybe. *Maybe.*
+{{< /callout >}}
 
 Extended lore creates depth without overexposure. The mascot stays special because it's not everywhere.
 
