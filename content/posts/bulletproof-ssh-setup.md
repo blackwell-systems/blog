@@ -12,6 +12,106 @@ Most developers have an SSH config that grew by accretion. A key here, a host en
 
 This is the setup I actually run. Three GitHub identities on one machine, persistent multiplexed connections, conditional git configuration that auto-selects the right identity, and pinned host keys. Everything uses OpenSSH, git, and coreutils. No third-party tools, no wrapper scripts, no GUI key managers.
 
+## Fundamentals
+
+SSH authentication is built on public key cryptography. You generate a key pair: a private key that stays on your machine, and a public key that you upload to servers you want to access. The two keys are mathematically linked -- data signed with the private key can only be verified by the corresponding public key, and vice versa. When you connect to a server, it sends a random challenge. Your SSH client signs that challenge with your private key and sends the signature back. The server verifies the signature against the public key you registered earlier. If it matches, you're authenticated. The private key itself never crosses the network.
+
+This is why the private key must be protected and the public key can be shared freely. Anyone with your public key can verify your signatures, but only someone holding the private key can produce them. The entire security model collapses if the private key is readable by anyone else -- which is why SSH refuses to use keys with loose file permissions, and why copying private keys into containers or git repositories is dangerous.
+
+When you run `ssh github.com`, OpenSSH doesn't just open a connection to that hostname. It first reads `~/.ssh/config` and searches for a `Host` block that matches the name you typed. If it finds `Host github.com`, it applies every directive in that block -- which key to use, which user to connect as, whether to reuse an existing connection. If no block matches, OpenSSH falls back to defaults. The name you type doesn't have to be a real hostname. `Host github-business` is just a label -- a pattern that OpenSSH matches against. The actual hostname to connect to comes from the `HostName` directive inside that block. This is the mechanism that makes the entire multi-identity setup work: you invent names, map them to the same server, and attach different keys to each name.
+
+The third primitive is process inheritance. When a process starts a child process, the child inherits a copy of the parent's environment variables. Your terminal emulator starts a shell, and that shell inherits variables like `PATH`, `HOME`, and `SSH_AUTH_SOCK`. When you open a new terminal pane or tab, the new shell inherits the same variables from the same parent. When git spawns an SSH subprocess to push code, that subprocess inherits `SSH_AUTH_SOCK` from the shell that ran `git push`. This chain of inheritance is what allows a single SSH agent -- one process, listening on one socket -- to serve every terminal pane, every IDE background process, and every git hook on your system. They all inherited the same `SSH_AUTH_SOCK` value, so they all connect to the same agent.
+
+### How the Pieces Fit Together
+
+{{< mermaid >}}
+flowchart TB
+    subgraph dev["Developer Machine"]
+        direction TB
+        subgraph trigger["Git Operation"]
+            push["git push"]
+            gitcfg[".git/config<br/>remote = git@github-business:org/repo"]
+        end
+
+        subgraph identity["Identity Resolution"]
+            gitrc["~/.gitconfig<br/>includeIf gitdir:~/code/business/<br/>→ loads business email + sshCommand"]
+            sshcfg["~/.ssh/config<br/>Host github-business<br/>→ HostName github.com<br/>→ IdentityFile id_ed25519_business<br/>→ IdentitiesOnly yes"]
+        end
+
+        subgraph agent["SSH Agent (single process)"]
+            sock["Unix domain socket<br/>SSH_AUTH_SOCK"]
+            keys["Decrypted keys in memory<br/>id_ed25519<br/>id_ed25519_business<br/>id_ed25519_enterprise"]
+        end
+
+        subgraph ctrl["Control Socket"]
+            csock["~/.ssh/sockets/git@github.com-22<br/>Reuses existing connection<br/>if alive"]
+        end
+    end
+
+    subgraph remote["GitHub"]
+        gh["Receives signature<br/>Maps key → account<br/>Authenticates as business identity"]
+    end
+
+    push --> gitcfg
+    gitcfg --> gitrc
+    gitrc --> sshcfg
+    sshcfg --> sock
+    sock --> keys
+    keys -->|"Signs challenge<br/>(private key never leaves agent)"| csock
+    csock -->|"Encrypted channel"| gh
+
+    style dev fill:#252627,stroke:#6b7280,color:#f0f0f0
+    style trigger fill:#3A4A5C,stroke:#6b7280,color:#f0f0f0
+    style identity fill:#3A4C43,stroke:#6b7280,color:#f0f0f0
+    style agent fill:#4C4538,stroke:#6b7280,color:#f0f0f0
+    style ctrl fill:#4C4538,stroke:#6b7280,color:#f0f0f0
+    style remote fill:#4C3A3C,stroke:#6b7280,color:#f0f0f0
+    style push fill:#3A4A5C,stroke:#5B8AAF,color:#f0f0f0
+    style gitcfg fill:#3A4A5C,stroke:#6b7280,color:#f0f0f0
+    style gitrc fill:#3A4C43,stroke:#6b7280,color:#f0f0f0
+    style sshcfg fill:#3A4C43,stroke:#6b7280,color:#f0f0f0
+    style sock fill:#4C4538,stroke:#6b7280,color:#f0f0f0
+    style keys fill:#4C4538,stroke:#6b7280,color:#f0f0f0
+    style csock fill:#4C4538,stroke:#6b7280,color:#f0f0f0
+    style gh fill:#4C3A3C,stroke:#6b7280,color:#f0f0f0
+{{< /mermaid >}}
+
+Here's what happens in time when you run `git push` in a business repo:
+
+{{< mermaid >}}
+sequenceDiagram
+    participant Dev as Developer
+    participant Git as git
+    participant GitCfg as ~/.gitconfig
+    participant SSH as SSH Client
+    participant SSHCfg as ~/.ssh/config
+    participant Agent as ssh-agent
+    participant Ctrl as Control Socket
+    participant GH as GitHub
+
+    Dev->>Git: git push
+    Git->>GitCfg: Which identity for this directory?
+    GitCfg-->>Git: includeIf matches ~/code/business/<br/>email = you@company.com<br/>sshCommand = use id_ed25519_business
+    Git->>SSH: Connect to github-business
+    SSH->>SSHCfg: Resolve Host github-business
+    SSHCfg-->>SSH: HostName github.com<br/>IdentityFile id_ed25519_business<br/>IdentitiesOnly yes
+    SSH->>Ctrl: Existing connection for git@github.com-22?
+    alt Control socket alive
+        Ctrl-->>SSH: Reuse encrypted channel
+    else No socket
+        SSH->>GH: TCP + key exchange + host verification
+        Note over SSH,GH: New control socket created
+    end
+    GH->>SSH: Authentication challenge
+    SSH->>Agent: Sign challenge with id_ed25519_business
+    Agent-->>SSH: Signature (private key stays in agent)
+    SSH->>GH: Signed response
+    GH-->>Git: Authenticated as business account
+    Git-->>Dev: Push complete
+{{< /mermaid >}}
+
+The rest of this article walks through each layer -- from the host aliases that select the right key, through the git config that selects the right email, down to the agent and control sockets that handle the actual cryptography and connection management.
+
 ## One Host, Multiple Identities
 
 GitHub authenticates by SSH key, not by username. When you `git push`, GitHub looks at which key you presented and maps it to an account. If you have three keys for three GitHub identities (personal, business, enterprise), OpenSSH has no way to know which one to send -- unless you tell it.
