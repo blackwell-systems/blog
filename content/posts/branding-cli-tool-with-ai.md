@@ -50,7 +50,7 @@ I split it into two brand colors:
 - **shelf**: `#fb6820` - warm red-orange
 - **ctl**: `#1b8487` - teal
 
-These two colors drive everything: the TUI theme, the mascot's cap, the wordmark, the mermaid diagrams in documentation, the terminal theme used for screenshots. When you see orange, you're in "library" territory. When you see teal, you're in "tool" territory. The application's UI uses both throughout.
+These two colors drive everything: the TUI theme, the mascot's cap, the wordmark, the mermaid diagrams in documentation, the terminal theme used for screenshots. When you see <span style="color:#fb6820;font-weight:bold">orange</span>, you're in "library" territory. When you see <span style="color:#1b8487;font-weight:bold">teal</span>, you're in "tool" territory. The application's UI uses both throughout.
 
 {{< callout type="info" >}}
 Picking two colors instead of a full palette was deliberate. Two colors are easy to remember, easy to apply consistently, and hard to get wrong. A 6-color palette creates decisions. Two colors create a system.
@@ -99,6 +99,7 @@ The problems with early iterations:
 - **The face kept moving.** Sometimes eyes were above the shelf opening, sometimes below. Sometimes there was a separate panel for the face.
 - **Material inconsistency.** Some generations looked like painted wood, others like plastic, others like a 3D render.
 - **The terminal element was an afterthought.** When I asked for "a terminal on top," I got a literal monitor sitting on the bookshelf. That's not a mascot, it's furniture.
+- **The AI kept making robots.** This was the most frustrating drift. I'd ask for a bookshelf character with a terminal cap and get back a robot with a screen for a face, or a mechanical figure with a shelf bolted to its chest. The models latched onto "terminal" and pulled toward sci-fi rather than staying with warm wood and books. The more I tried to correct it with follow-up prompts, the more it oscillated between "too robotic" and "just a shelf with googly eyes." This was one of the pivotal moments that made me stop prompting and start writing a spec instead.
 
 The lesson: broad prompts produce broad results. You can't iterate your way to consistency without a spec.
 
