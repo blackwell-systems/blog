@@ -139,7 +139,6 @@ Host github-enterprise
   User git
   IdentityFile ~/.ssh/id_ed25519_enterprise
   IdentitiesOnly yes
-  AddKeysToAgent yes
 
 # Business (your company's GitHub org)
 Host github-business
@@ -251,11 +250,9 @@ Use host aliases as the primary mechanism. Use `sshCommand` as the safety net fo
 
 ## The SSH Agent and Unix Domain Sockets
 
-Before getting into connection multiplexing, it's worth understanding the mechanism underneath it -- and underneath SSH agent forwarding, and underneath the container sharing trick we'll use later. That mechanism is the Unix domain socket.
+The Fundamentals section introduced Unix domain sockets and process inheritance as abstract primitives. Here's how they come together concretely in the SSH agent -- and why that matters for connection multiplexing and container sharing later.
 
-A Unix domain socket is a file on disk that two processes use to talk to each other. Unlike TCP sockets, which send data over a network (even if both processes are on the same machine), Unix domain sockets use the kernel's file I/O path directly. There's no IP address, no port number, no network stack overhead. One process creates the socket file, and other processes connect to it by path -- the same way they'd open any file, except instead of reading bytes, they get a bidirectional communication channel.
-
-The SSH agent (`ssh-agent`) uses this mechanism to hold your decrypted private keys in memory. When you run `ssh-add ~/.ssh/id_ed25519`, the agent reads the key file, decrypts it (prompting for your passphrase if needed), and stores the raw key material in its own process memory. It then listens on a Unix domain socket -- the path stored in the `SSH_AUTH_SOCK` environment variable.
+The SSH agent (`ssh-agent`) holds your decrypted private keys in memory, and other processes talk to it through a Unix domain socket -- a file on disk that acts as a bidirectional communication channel. When you run `ssh-add ~/.ssh/id_ed25519`, the agent reads the key file, decrypts it (prompting for your passphrase if needed), and stores the raw key material in its own process memory. It then listens on a Unix domain socket -- the path stored in the `SSH_AUTH_SOCK` environment variable.
 
 When any SSH client on the system needs to authenticate, it doesn't read the private key file itself. Instead, it connects to the agent's socket and says "sign this challenge with key X." The agent performs the cryptographic operation and returns the signature. The private key bytes never leave the agent process -- the SSH client only ever sees the signature.
 
