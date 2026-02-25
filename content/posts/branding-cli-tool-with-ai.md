@@ -65,6 +65,8 @@ Once you have two brand colors, the question is where they show up. For shelfctl
 - Orange (#fb6820) is the highlight color - active selections, the hub menu icon, status indicators
 - The user sees these colors every time they run the tool
 
+![Brand colors in the TUI](https://github.com/blackwell-systems/shelfctl/raw/main/assets/tui_screenshot.png)
+
 **In the wordmark:**
 - `shelf` rendered in orange, `ctl` rendered in teal
 - Appears in architecture diagrams and promotional images
@@ -286,6 +288,8 @@ This was the first pose generated after the spec was written, and it became the 
 
 This pose shows Shelby sitting at a desk with a computer. It introduces the install section of the README, connecting the character to the action the reader is about to take. Getting the computer to look right without overwhelming the character took a few attempts - the first generations made the computer too detailed and realistic against the cartoon character.
 
+![Installing Shelby](https://github.com/blackwell-systems/shelfctl/raw/main/assets/shelby5.png)
+
 ### Commands Shelby (Kneeling, Examining)
 
 A lower pose with the magnifying glass pointed downward, as if examining the command table that follows. This creates a visual flow: the character looks down, your eye follows to the table below. It's a small compositional trick, but it works for guiding reading direction.
@@ -484,6 +488,8 @@ The shelfctl wordmark splits the name visually: `shelf` in orange (#fb6820), `ct
 The wordmark appears in the architecture diagram images (the shelf illustrations) rather than as a standalone logo. It's integrated into context rather than slapped on top.
 
 The wordmark was also generated with AI, with the same iterative process: specify the colors, the font feel (clean, modern, slightly rounded), and the split point. It took fewer iterations than the mascot because typography is more constrained - there are fewer ways to get a two-color text treatment wrong.
+
+![shelfctl wordmark](https://github.com/blackwell-systems/shelfctl/raw/main/assets/wordmark-tight.png)
 
 ## Poses as README Navigation
 
