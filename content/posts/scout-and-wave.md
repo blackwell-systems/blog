@@ -1,7 +1,7 @@
 ---
 title: "Scout-and-Wave: A Coordination Pattern for Parallel AI Agents"
 date: 2026-02-27
-draft: true
+draft: false
 tags: ["ai", "multi-agent", "claude-code", "developer-tools", "patterns", "prompt-engineering", "productivity", "openclaw", "autogen", "crewai", "langchain", "agent-orchestration"]
 categories: ["ai", "tools"]
 description: "A pattern for running multiple AI agents in parallel without conflicts — using a throwaway scout agent to map seams and dependencies before any code is written, then executing in waves against a shared coordination artifact."

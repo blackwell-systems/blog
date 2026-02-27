@@ -2,7 +2,7 @@
 title: "Branding a CLI Tool in 4 Days: Mascot, Screencasts, and Visual Identity with AI"
 date: 2026-02-24
 draft: false
-tags: ["branding", "mascot", "ai-art", "cli", "terminal", "tui", "open-source", "design", "developer-tools", "shelfctl", "bubble-tea", "vhs", "screencasts", "github", "readme", "image-generation", "character-design", "go", "golang", "marketing", "developer-experience", "visual-identity"]
+tags: ["branding", "mascot", "ai-art", "cli", "open-source", "design", "developer-tools", "vhs", "character-design", "visual-identity"]
 categories: ["tools", "design"]
 description: "How I built a cohesive visual identity for a CLI tool using AI image generation - from locking down a character spec to creating consistent poses, screencasts with VHS, and a terminal theme that ties everything together."
 summary: "Most CLI tools ship with no visual identity beyond a help screen. Here's how I used AI image generation to create Shelby, a consistent mascot with a locked-down spec, and built a complete brand system - poses, screencasts, color palette, terminal theme - for shelfctl in 4 days."
@@ -12,7 +12,9 @@ Most CLI tools look like this to the outside world: a help screen, a README with
 
 That's fine for internal utilities. But if you want someone to stop scrolling past your repo, you need more than a feature list. You need a visual identity that makes people pause.
 
-This is the story of how I built a complete brand system for [shelfctl](https://github.com/blackwell-systems/shelfctl) - a terminal-based library manager - in 4 days, alongside the application itself. The mascot, the color palette, the screencasts, the README flow, the terminal theme for screenshots. All of it reinforced by a single design spec and built with AI image generation.
+This is the story of how I built a complete brand system for [shelfctl](https://github.com/blackwell-systems/shelfctl) - a terminal-based library manager - in 4 days, alongside the application itself. The mascot, the color palette, the screencasts, the README flow, the terminal theme for screenshots. All of it reinforced by a single design spec and built with AI image generation. The total cost was a $20/month ChatGPT subscription I already had.
+
+The core insight: AI image generation is a slot machine until you write a spec. The spec is what turns random outputs into a manufacturable character with known tolerances. Everything in this post flows from that.
 
 ## What We're Building Toward
 
@@ -28,18 +30,7 @@ But getting here took iteration. Lots of it.
 
 ## Why Brand a CLI Tool at All
 
-Open source projects compete for attention. Not just against other tools that solve the same problem, but against every repo a developer scrolls past in a day. GitHub's explore page, Hacker News, Reddit, Twitter - every context where your project shows up, it's surrounded by other projects.
-
-Most CLI tools present identically: a name, a one-line description, and a wall of markdown. There's nothing wrong with that if your tool is already established or if you're building for a captive audience. But if you're launching something new and want people to actually stop and look, visual identity is the differentiator.
-
-This isn't about making things pretty for the sake of it. It's about:
-
-- **Recognition.** If someone sees Shelby on Twitter and then encounters the README on GitHub, they connect the two instantly.
-- **Professionalism signal.** A cohesive visual identity signals that someone cares about the project enough to invest beyond just code.
-- **README scannability.** A 450-line README with only code blocks is a wall. The same README with contextual mascot images becomes scannable sections.
-- **Shareability.** People share things that look interesting. A screenshot of a TUI with a cute mascot gets shared. A help screen doesn't.
-
-The investment is small. The return is disproportionate.
+Open source projects compete for attention against every repo a developer scrolls past in a day, and most CLI tools present identically: a name, a one-line description, and a wall of markdown. A cohesive visual identity — even a simple one — changes the dynamic. Someone who sees the mascot on Twitter recognizes it when they find the README. A 450-line README with contextual images becomes scannable where a wall of code blocks isn't. People share things that look interesting. The investment is small. The return is disproportionate.
 
 ## Starting Point: The Name and the Color Split
 
@@ -91,15 +82,11 @@ One decision (two colors) creates consistency across every surface the project t
 
 ## The First Mascot Attempts
 
-The initial concept was simple: "a bookshelf character." I started with broad prompts and got back exactly what you'd expect - generic cartoon bookshelves with pasted-on faces, inconsistent proportions, and no personality.
+The initial concept was simple: "a bookshelf character." I started with broad prompts and got back exactly what you'd expect — generic cartoon bookshelves with pasted-on faces, inconsistent proportions, and no personality.
 
-The problems with early iterations:
+Proportions shifted between every generation. One image would be tall and narrow, the next squat and wide — there was no consistent silhouette. The face kept migrating: sometimes above the shelf opening, sometimes below, sometimes embedded in a separate panel. Materials oscillated between painted wood, plastic, and hyperrealistic 3D renders. When I asked for "a terminal on top," I got a literal computer monitor sitting on a bookshelf. That's not a mascot — it's furniture.
 
-- **Proportions shifted between generations.** One image would be tall and narrow, the next squat and wide. There was no consistent silhouette.
-- **The face kept moving.** Sometimes eyes were above the shelf opening, sometimes below. Sometimes there was a separate panel for the face.
-- **Material inconsistency.** Some generations looked like painted wood, others like plastic, others like a 3D render.
-- **The terminal element was an afterthought.** When I asked for "a terminal on top," I got a literal monitor sitting on the bookshelf. That's not a mascot, it's furniture.
-- **The AI kept making robots.** This was the most frustrating drift. I'd ask for a bookshelf character with a terminal cap and get back a robot with a screen for a face, or a mechanical figure with a shelf bolted to its chest. The models latched onto "terminal" and pulled toward sci-fi rather than staying with warm wood and books. The more I tried to correct it with follow-up prompts, the more it oscillated between "too robotic" and "just a shelf with googly eyes." This was one of the pivotal moments that made me stop prompting and start writing a spec instead.
+But the most frustrating drift was the robots. I'd ask for a bookshelf character with a terminal cap and get back a robot with a screen for a face, or a mechanical figure with a shelf bolted to its chest. The models latched onto "terminal" and pulled toward sci-fi rather than staying with warm wood and books. The more I tried to correct it with follow-up prompts, the more it oscillated between "too robotic" and "just a shelf with googly eyes." This was the pivotal moment that made me stop prompting and start writing a spec instead.
 
 The lesson: broad prompts produce broad results. You can't iterate your way to consistency without a spec.
 
@@ -230,15 +217,7 @@ Each generation gets checked against a mental checklist derived from the spec's 
 
 If any of those fail, the image gets rejected regardless of how "good" it looks overall. Consistency matters more than any individual generation looking nice.
 
-**Common failure modes even with the spec:**
-
-- The bottom edge keeps trying to become a black band. AI models love adding a dark stripe across the bottom of characters. The spec explicitly calls this out, but it still happens in maybe 30% of generations.
-- Proportions drift toward tall and narrow. Shelby should be squat and compact. Without the width-to-height ratio in the spec, models default to human proportions.
-- The terminal cap grows too large. Models tend to make headwear prominent. The spec says "must not overpower body proportions" specifically because of this.
-- Books in the shelf opening get overly detailed. The spec says "simple rectangles" but models sometimes add covers, titles, or textures.
-- The cheeks disappear or change color. Small detail, but important for Shelby's personality.
-
-On average, getting a usable pose takes 3-5 generation attempts with the spec. Without the spec, I never got a usable result.
+Even with the spec, the hit rate is around 60-70%. The same failure modes from the pre-spec era still appear — the black base band, the proportion drift, the oversized cap — they just happen less often and are immediately identifiable against the checklist. On average, getting a usable pose takes 3-5 generation attempts with the spec. Without the spec, I never got a usable result.
 
 ### Getting the Transparency Right
 
@@ -311,39 +290,25 @@ This image doubles as a call to action - a visual nudge toward starring the repo
 
 Multiple Shelby expressions in a horizontal strip. This was generated as a single image showing different facial expressions (happy, surprised, thinking, winking). It works as a footer because it's visually dense but doesn't demand attention - you notice it if you scroll to the bottom, but it doesn't interrupt the document flow.
 
-## Extended Lore: Beyond the Mascot
+## Beyond the Mascot: Supporting Cast and Extended Lore
 
-Once the main character is established, there's room to have fun with the world around it. Not everything needs to be the mascot doing a pose. Some of the most effective visual assets in the README aren't Shelby at all - they're extensions of the visual universe.
+Once the main character is established, there's room to have fun with the world around it. Not everything needs to be the mascot doing a pose. Some of the most effective visual assets in the README aren't Shelby at all — they're extensions of the visual universe.
 
-### Bookshelf Illustrations
+The README includes shelf-themed architecture diagrams (shelf.png, shelf2.png, shelf3.png) that illustrate how shelfctl organizes data. These were generated with the same color palette but a different style — more infographic, less character. They show the relationship between repos, releases, and catalog files, the storage model, and the feature set.
 
-The README includes shelf-themed architecture diagrams (shelf.png, shelf2.png, shelf3.png) that illustrate how shelfctl organizes data. These were generated with the same color palette but a different style - more infographic, less character. They show the relationship between repos, releases, and catalog files, the storage model, and the feature set.
+But I went further than dry diagrams. Some of the bookshelf illustrations have personality of their own — books with little faces on them, leaning against each other, looking cheerful on their shelves. This isn't random whimsy. It extends the idea that this is a world where books and shelves have character. Shelby is the main character, but the books are the supporting cast.
 
-But I went further than dry diagrams. Some of the bookshelf illustrations have personality of their own - books with little faces on them, leaning against each other, looking cheerful on their shelves. This isn't random whimsy. It extends the idea that this is a world where books and shelves have character. Shelby is the main character, but the books are the supporting cast.
+These small touches shift the reader's reaction from "I understand the architecture" to "I understand the architecture and I like this project." A project with one character image feels like a logo. A project with a character, themed diagrams, and expressive props feels like a world someone built with care.
 
-These small touches do something important: they make the documentation feel alive. A shelf diagram with faceless rectangles communicates information. The same diagram with books that have tiny expressions communicates information *and* personality. The reader's reaction shifts from "I understand the architecture" to "I understand the architecture and I like this project."
-
-### The Brand Universe
-
-This is what I think of as extended lore. The mascot is the anchor, but the visual world around the mascot creates depth. A project with one character image feels like a logo. A project with a character, themed diagrams, expressive props, and contextual illustrations feels like a universe someone built with care.
-
-The effort for each additional piece is small once the spec and color palette exist. Generate a bookshelf with the same warm wood tones and bright book colors. Add faces to the books. Create a cozy reading scene. Each one takes a few minutes and adds another moment of delight in the documentation.
-
-### Release Announcements
-
-Another place the mascot earns its keep: version releases. Instead of a plain changelog or a GitHub Release with a wall of bullet points, Shelby announces new versions. A quick pose generated from the spec - Shelby holding a sign, Shelby celebrating, Shelby presenting - turns a routine release into something people actually notice in their feed.
-
-This works because GitHub Releases support markdown with images. A release that opens with a character image and then lists changes gets more visual weight in notifications and feeds than one that's just text. It's the same information, but the presentation creates a moment of recognition for anyone who's seen the mascot before.
-
-The generation cost is trivial once the spec exists. Describe a celebratory pose, paste the spec, pick the best result, drop it into the release notes. Five minutes of work that makes every release feel like an event rather than a version bump.
+The same principle applies to version releases. Instead of a plain changelog, Shelby announces new versions — holding a sign, celebrating, presenting. GitHub Releases support markdown with images, so a release that opens with a character image gets more visual weight in notifications and feeds than plain text. Five minutes of work that makes every release feel like an event rather than a version bump.
 
 ![Shelby announcing v0.1.0](https://github.com/blackwell-systems/shelfctl/raw/main/assets/shelby_v010.png)
 
-### Planning Assets for Reuse
+## Designing Template Poses
 
 Not every pose needs to be a finished piece. Some of the most useful assets are designed as templates.
 
-One Shelby pose shows the character from behind, sitting at a computer. The screen is blank and transparent. That's deliberate - a blank screen means I can composite any text, screenshot, or diagram onto it and create a new image without regenerating the character. One generation, unlimited variations. Need a "Getting Started" image? Write "Getting Started" on the screen. Need a release announcement? Put the version number on it. Need a blog header? Drop in whatever fits.
+One Shelby pose shows the character from behind, sitting at a computer. The screen is blank and transparent. That's deliberate — a blank screen means I can composite any text, screenshot, or diagram onto it and create a new image without regenerating the character. One generation, unlimited variations. Need a "Getting Started" image? Write "Getting Started" on the screen. Need a release announcement? Put the version number on it. Need a blog header? Drop in whatever fits.
 
 ![Shelby at computer - blank screen](https://github.com/blackwell-systems/shelfctl/raw/main/assets/shelby4.png)
 
@@ -351,9 +316,9 @@ This is a different way of thinking about AI-generated assets. Instead of genera
 
 Think about this before you generate. Which poses could serve as templates? A character holding a blank sign. A character pointing at an empty space. A character next to a whiteboard. Design the negative space into the pose intentionally, and one generation gives you an asset you'll reuse dozens of times.
 
-### The Restraint Problem
+## The Restraint Problem
 
-Once the spec works and generating new poses takes minutes instead of hours, the temptation is to put Shelby everywhere. I had to dial myself back several times. An early version of the README had Shelby in nearly every section - above every code block, next to every table, in the footer twice. It looked like a children's book, not a developer tool.
+Once the spec works and generating new poses takes minutes instead of hours, the temptation is to put Shelby everywhere. I had to dial myself back several times. An early version of the README had Shelby in nearly every section — above every code block, next to every table, in the footer twice. It looked like a children's book, not a developer tool.
 
 The instinct makes sense. You spent time getting the character right, the generation pipeline is fast, and every new pose feels like it adds value. But there's a threshold where a mascot stops being charming and starts being cluttered. When the character appears so often that your eye stops registering it, you've passed that threshold.
 
@@ -401,18 +366,9 @@ This is declarative. The recording is reproducible. When the UI changes, I updat
 
 ### Why VHS Over Screen Recording
 
-Traditional screen recording has problems for documentation:
+Traditional screen recording is non-reproducible — when the UI changes, you re-record manually with different timing, different framing, different resolution. Then you need video editing software to cut bad takes and trim dead air. The result is a one-off artifact that looks slightly different every time you make it.
 
-- **Non-reproducible.** Record it once, and when the UI changes you have to record again manually. Timing, mouse movements, and framing are all different each time.
-- **Resolution inconsistency.** Your terminal might be at 2x retina, the recording might compress differently, GitHub might rescale the GIF.
-- **Editing friction.** Cut a bad take, speed up a slow section, trim the beginning - all of this requires video editing software.
-
-VHS eliminates all of this:
-
-- **Reproducible.** Same tape, same output, every time. CI could regenerate the GIF on every release if you wanted.
-- **Versionable.** The tape file is 141 lines of text. It goes in git. You can diff it, review it in PRs, and see exactly what changed.
-- **Configurable.** Font, size, padding, border radius, window chrome - all specified in the tape file. The output looks exactly the same on any machine that runs it.
-- **Commentable.** The tape file supports comments. Each section of the demo is annotated with what it's showing:
+VHS inverts this. The tape file is 141 lines of text that lives in git. Same tape, same output, every time. You can diff it, review it in PRs, and CI could regenerate the GIF on every release if you wanted. Font, size, padding, border radius, window chrome — all specified in the file. The tape even supports comments, so each section of the demo is annotated with what it's showing:
 
 ```
 # -- 4. Multi-select picker: select 5 books --
@@ -591,7 +547,7 @@ Building the application and the brand simultaneously isn't the typical approach
 
 **VHS made screencasts cheap.** Without VHS, I'd have spent hours doing screen recordings, trimming, re-recording when the UI changed. With VHS, the tape file took 20 minutes to write and generates a perfect GIF in seconds. When I changed the TUI, I updated the tape and re-ran it.
 
-**AI made the mascot possible.** Without AI image generation, I'd either commission an artist (days to weeks of lead time, hundreds of dollars for multiple poses) or ship without a mascot. AI compressed the timeline from weeks to hours. The spec is what made the AI output usable.
+**AI made the mascot possible.** Without AI image generation, I'd either commission an artist (days to weeks of lead time, hundreds of dollars for multiple poses) or ship without a mascot. AI compressed the timeline from weeks to hours. The total cost was a $20/month ChatGPT Plus subscription I already had — all the generations, all the failed attempts, all the poses, included. The spec is what made the AI output usable.
 
 ## The Brand System
 
