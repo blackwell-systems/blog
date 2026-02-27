@@ -2,7 +2,7 @@
 title: "Scout-and-Wave: A Coordination Pattern for Parallel AI Agents"
 date: 2026-02-27
 draft: true
-tags: ["ai", "multi-agent", "claude-code", "developer-tools", "patterns", "prompt-engineering", "productivity"]
+tags: ["ai", "multi-agent", "claude-code", "developer-tools", "patterns", "prompt-engineering", "productivity", "openclaw", "autogen", "crewai", "langchain", "agent-orchestration"]
 categories: ["ai", "tools"]
 description: "A pattern for running multiple AI agents in parallel without conflicts — using a throwaway scout agent to map seams and dependencies before any code is written, then executing in waves against a shared coordination artifact."
 summary: "Naive parallel agents step on each other. The scout-and-wave pattern solves this by front-loading dependency mapping: one throwaway agent identifies seams and builds a living coordination artifact before any implementation begins. Development then proceeds in waves, each consuming and updating the artifact for the next."
@@ -164,5 +164,15 @@ The closest named concepts are the Planner-Worker-Judge pattern (Planner maps wo
 First, the scout is throwaway. It's not a persistent orchestrator that continues to direct execution — it does one job, produces one document, and disappears. This keeps the coordination overhead minimal.
 
 Second, the coordination artifact is living. A spec describes intended state. The scout artifact tracks actual state as waves complete. Downstream agents get accurate inputs from the previous wave, not stale pre-flight assumptions. This distinction matters in practice: a spec written before implementation can't know what Wave 1 actually built. An artifact updated by Wave 1 can.
+
+Scout-and-wave is also distinct from framework-level solutions. OpenClaw, AutoGen, CrewAI, and LangGraph all provide agent coordination primitives — routing, sub-agents, role-based crews, graph-based workflows. None of them solve the problem scout-and-wave solves, because that problem is upstream of execution. By the time you're dispatching agents in any of these frameworks, the conflict has already been baked in. Scout-and-wave is what you run before you pick up the framework.
+
+| Approach | What it solves | What it doesn't solve |
+|---|---|---|
+| OpenClaw sub-agents | Parallel task dispatch | Dependency mapping, file conflict prevention |
+| AutoGen / CrewAI | Agent roles and conversation structure | Pre-flight seam identification |
+| LangGraph | Workflow graph execution | Codebase conflict detection before execution |
+| Planner-Worker-Judge | Persistent planning + evaluation | Throwaway scout, living artifact, wave handoff |
+| Scout-and-wave | Pre-flight dependency mapping + wave coordination | Replaces none of the above — runs before them |
 
 I've been running this pattern for a while without a name for it. The coordination artifact from the brewprune session still lives in `docs/IMPL-brew-native.md` if you want to see what the scout actually produced. If you've been doing something similar — or something better — I'd like to hear about it.
