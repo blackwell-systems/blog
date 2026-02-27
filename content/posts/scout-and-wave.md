@@ -208,7 +208,7 @@ If you can't check those boxes, the feature probably isn't ready for parallelism
 
 ## Reference: The Prompts
 
-Everything above describes the pattern. Below are the actual prompts that implement it: the scout prompt that produces the coordination artifact, and the agent prompt template that gets stamped per-agent from the scout's output. The prompts, a worked example, and a Claude Code `/saw` skill are available at [github.com/blackwell-systems/scout-and-wave](https://github.com/blackwell-systems/scout-and-wave).
+Everything above describes the pattern. Below are the actual prompts that implement it: the scout prompt that produces the coordination artifact, and the agent prompt template that gets stamped per-agent from the scout's output. The prompts and a Claude Code `/saw` skill are available at [github.com/blackwell-systems/scout-and-wave](https://github.com/blackwell-systems/scout-and-wave).
 
 ### Scout Prompt
 
