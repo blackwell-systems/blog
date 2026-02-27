@@ -17,7 +17,7 @@ The difference isn't the agents. It's what happens before you launch them.
 Scout-and-wave: one read-only scout produces a coordination artifact (seams, ownership, DAG), then implementation proceeds in verified waves that consume and update that artifact.
 
 {{< callout type="info" >}}
-This isn't spec-driven development. Spec-driven dev says write the spec before the code; that's table stakes at this point. Scout-and-wave is specifically about what happens when multiple agents are executing in parallel against a shared codebase: who owns which files, what the exact interface contracts are before anyone writes a line, and how you propagate the actual state of completed work to the next wave. The scout produces that artifact autonomously by reading the codebase. You don't write it by hand.
+**This isn't spec-driven development.** Spec-driven dev, formalized by tools like [GitHub's Spec Kit](https://developer.microsoft.com/blog/spec-driven-development-spec-kit), says write the spec before the code. That's table stakes at this point, and you should be doing it. But spec-driven dev is a human-to-AI handoff: a human writes requirements, architecture, and phased tasks, then hands them to an agent. Scout-and-wave starts where those specs end: when multiple agents need to execute in parallel against a shared codebase. Who owns which files? What are the exact interface contracts across agent boundaries? How do you propagate the actual state of completed work to the next wave? Spec Kit doesn't answer these questions because it assumes one agent executing tasks sequentially. The scout produces that coordination artifact autonomously by reading the codebase. You don't write it by hand.
 {{< /callout >}}
 
 ## What Goes Wrong With Naive Parallel Agents
