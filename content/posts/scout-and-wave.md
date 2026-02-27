@@ -8,7 +8,7 @@ description: "A pattern for running multiple AI agents in parallel without confl
 summary: "Naive parallel agents step on each other. The scout-and-wave pattern solves this by front-loading dependency mapping: one throwaway agent identifies seams and builds a living coordination artifact before any implementation begins. Development then proceeds in waves, each consuming and updating the artifact for the next."
 ---
 
-The last time I ran a scout-and-wave session on brewprune, 7 agents produced 1,532 lines of new code across 16 files in 3 waves. The feature was complete, building, and passing tests in under an hour.
+The last time I ran a scout-and-wave session on [brewprune](https://github.com/blackwell-systems/brewprune), 7 agents produced 1,532 lines of new code across 16 files in 3 waves. The feature was complete, building, and passing tests in under an hour.
 
 The first time I tried parallel agents without any coordination structure, I got merge conflicts, contradictory implementations, and an hour of cleanup. The agents had done real work. None of it fit together.
 
@@ -58,9 +58,9 @@ The coordination artifact the scout produces looks like this:
 
 ```markdown
 ## Wave structure
-Wave 1: [agent A — files], [agent B — files], [agent C — files]
-Wave 2: [agent D — files], [agent E — files] — blocked on Wave 1
-Wave 3: [agent F — files] — blocked on Wave 2
+Wave 1: [agent A - files], [agent B - files], [agent C - files]
+Wave 2: [agent D - files], [agent E - files] - blocked on Wave 1
+Wave 3: [agent F - files] - blocked on Wave 2
 
 ## Interface contracts
 // Exact function signatures agents must implement or may call
@@ -78,8 +78,8 @@ func buildOptPathMap(st *store.Store) (map[string]string, error)
 | ...                               | ...   | ...  |
 
 ## Status
-- [ ] Wave 1 Agent A — shim generator
-- [ ] Wave 1 Agent B — version check on startup
+- [ ] Wave 1 Agent A - [description]
+- [ ] Wave 1 Agent B - [description]
 ```
 
 The status checklist becomes a living artifact: each wave updates it before the next wave launches. Downstream agents consume the actual state of what was built, not stale pre-flight assumptions.
@@ -331,9 +331,9 @@ with a broken build.
 
 ### Status
 
-- [ ] Wave 1 Agent A — [description]
-- [ ] Wave 1 Agent B — [description]
-- [ ] Wave 2 Agent C — [description]
+- [ ] Wave 1 Agent A - [description]
+- [ ] Wave 1 Agent B - [description]
+- [ ] Wave 2 Agent C - [description]
 - ...
 
 ## Rules
@@ -419,4 +419,4 @@ When done, report:
 - Any deviations from the spec and why
 ````
 
-I've been running this pattern for a while without a name for it. The coordination artifact from the brewprune session still lives in `docs/IMPL-brew-native.md` if you want to see what the scout actually produced. If you've been doing something similar, or something better, I'd like to hear about it.
+I've been running this pattern for a while without a name for it. If you've been doing something similar, or something better, I'd like to hear about it.
