@@ -116,11 +116,15 @@ The feature was shim management for brewprune, a new subsystem touching shim gen
 The DAG showed Wave 2 was blocked on A specifically; B, C, and D had no dependents in later waves. Wave 3 was blocked on E and F. Wave 1 had no internal dependencies.
 
 ```
-Wave 1: [A] [B] [C] [D]     ← 4 parallel agents
-           ↓ (A completes)
-Wave 2:   [E] [F]            ← 2 parallel agents, unblocked by A
-           ↓ (E+F complete)
-Wave 3:    [G]               ← 1 agent, unblocked by E+F
+Wave 1:   [A]  [B]  [C]  [D]        ← 4 parallel agents
+              |
+              ↓  (A completes)
+
+Wave 2:      [E]  [F]               ← 2 parallel agents, unblocked by A
+              |
+              ↓  (E+F complete)
+
+Wave 3:       [G]                   ← 1 agent, unblocked by E+F
 ```
 
 **Wave 1 (4 agents in parallel):**
