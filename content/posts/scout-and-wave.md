@@ -362,8 +362,8 @@ You are Wave {N} Agent {letter}. {One-sentence summary of your task.}
 ## 1. File Ownership
 
 You own these files. Do not touch any other files.
-- `path/to/file.go` — {create | modify}
-- `path/to/file_test.go` — {create | modify}
+- `path/to/file.go` - {create | modify}
+- `path/to/file_test.go` - {create | modify}
 
 ## 2. Interfaces You Must Implement
 
@@ -392,8 +392,8 @@ expectations, and any constraints on the approach.}
 
 {Named tests with one-line descriptions. Be specific.}
 
-1. `TestFunctionName_Scenario` — {what it verifies}
-2. `TestFunctionName_EdgeCase` — {what it verifies}
+1. `TestFunctionName_Scenario` - {what it verifies}
+2. `TestFunctionName_EdgeCase` - {what it verifies}
 
 ## 6. Verification Gate
 
