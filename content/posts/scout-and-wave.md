@@ -16,6 +16,8 @@ The difference isn't the agents. It's what happens before you launch them.
 
 Scout-and-wave: one read-only scout produces a coordination artifact — seams, ownership, DAG — then implementation proceeds in verified waves that consume and update that artifact.
 
+This isn't spec-driven development. Spec-driven dev says write the spec before the code — that's table stakes at this point. Scout-and-wave is specifically about what happens when multiple agents are executing in parallel against a shared codebase: who owns which files, what the exact interface contracts are before anyone writes a line, and how you propagate the actual state of completed work to the next wave. The scout produces that artifact autonomously by reading the codebase — you don't write it by hand.
+
 ## What Goes Wrong With Naive Parallel Agents
 
 The instinct when you discover parallel agents is to split the work and fire them all at once. It feels efficient. Agents make local decisions without global context, and when multiple agents are touching the same codebase, those local decisions collide.
