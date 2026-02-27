@@ -188,9 +188,9 @@ The pattern has overhead. The scout phase takes time. For a two-file change, it'
 
 The closest named concepts are the Planner-Worker-Judge pattern (Planner maps work, Workers execute, Judge evaluates) and spec-driven development (write the spec before the code). Scout-and-wave borrows from both but differs in two ways.
 
-First, the scout is throwaway. It's not a persistent orchestrator that continues to direct execution; it does one job, produces one document, and disappears. This keeps the coordination overhead minimal.
+1. **The scout is throwaway.** It's not a persistent orchestrator that continues to direct execution; it does one job, produces one document, and disappears. This keeps the coordination overhead minimal.
 
-Second, the coordination artifact is living. A spec describes intended state. The scout artifact tracks actual state as waves complete. Downstream agents get accurate inputs from the previous wave, not stale pre-flight assumptions. This distinction matters in practice: a spec written before implementation can't know what Wave 1 actually built. An artifact updated by Wave 1 can.
+2. **The coordination artifact is living.** A spec describes intended state. The scout artifact tracks actual state as waves complete. Downstream agents get accurate inputs from the previous wave, not stale pre-flight assumptions. This distinction matters in practice: a spec written before implementation can't know what Wave 1 actually built. An artifact updated by Wave 1 can.
 
 Scout-and-wave is also distinct from framework-level solutions. OpenClaw, AutoGen, CrewAI, and LangGraph all provide agent coordination primitives: routing, sub-agents, role-based crews, graph-based workflows. Frameworks can enforce a workflow once you've decided on a decomposition. Scout-and-wave is how you find a decomposition that won't collide in a real codebase. By the time you're dispatching agents in any of these frameworks, you've already either done this work or skipped it.
 
