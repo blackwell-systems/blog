@@ -14,6 +14,8 @@ The first time I tried parallel agents without any coordination structure, I got
 
 The difference isn't the agents. It's what happens before you launch them.
 
+Scout-and-wave: one read-only scout produces a coordination artifact — seams, ownership, DAG — then implementation proceeds in verified waves that consume and update that artifact.
+
 ## What Goes Wrong With Naive Parallel Agents
 
 The instinct when you discover parallel agents is to split the work and fire them all at once. It feels efficient. Agents make local decisions without global context, and when multiple agents are touching the same codebase, those local decisions collide.
@@ -22,11 +24,11 @@ There are four specific failure modes:
 
 **File clobbering.** Two agents are assigned related work. Neither knows the other exists. They both touch the same file, make incompatible changes, and you spend time reconciling their outputs — defeating the parallelism entirely.
 
-**Calling code that doesn't exist yet.** Agent B is building a feature that depends on a function Agent A is writing. Agent B makes assumptions about that function's signature. Agent A makes different ones. Integration fails.
+**Interface drift.** Agent B is building a feature that depends on a function Agent A is writing. Agent B makes assumptions about that function's signature. Agent A makes different ones. Integration fails.
 
-**Late conflict discovery.** Agents complete their individual tasks successfully. The integration failures surface only when you try to assemble the pieces. By then, rework is expensive.
+**Integration tax.** Agents complete their individual tasks successfully. The integration failures surface only when you try to assemble the pieces. By then, rework is expensive.
 
-**Context window waste.** Giving every agent the full picture of a large feature bloats every prompt. Each agent spends its context on information irrelevant to its specific task.
+**Context window waste.** Giving every agent the full picture of a large feature bloats every prompt. Instead of 7 agents each carrying a 20k-token feature brief, you've paid that cost seven times — and each agent is still reasoning over context irrelevant to its slice of the work.
 
 These aren't edge cases. They're the default outcome of uncoordinated parallelism.
 
@@ -37,10 +39,10 @@ Dependency mapping needs to be a first-class phase, not something you figure out
 Before any agent writes a line of code, a scout agent answers three questions:
 
 1. **What are the seams?** Where does the new feature touch existing code? What are the minimal, stable interfaces between pieces?
-2. **Who owns what?** Every file that will change gets assigned to exactly one agent. No two agents in the same wave touch the same file.
+2. **Who owns what?** Every file that will change gets assigned to exactly one agent. No two agents in the same wave touch the same file. If two tasks need the same file, that file becomes its own seam — extract an interface or create a new file so ownership stays disjoint. This turns a limitation into a design principle.
 3. **What's the DAG?** If Agent B needs Agent A's interface, B is in a later wave. If A and B are independent, they're in the same wave.
 
-The scout is throwaway — read-only, no implementation, one-shot. Its entire output is a single document: interface contracts, a file ownership table, and a wave structure. That document is the coordination artifact.
+The scout is throwaway — read-only, no implementation, one-shot. Its entire output is a single document: interface contracts, a file ownership table, and a wave structure. That document is the coordination artifact. Keeping the scout throwaway prevents planner drift — the artifact becomes the single source of truth, not an ongoing conversation with a planner that might change its mind mid-execution.
 
 **Interface contracts are defined before any agent starts. Agents code against the spec, not against each other's in-progress code.**
 
@@ -88,7 +90,18 @@ Every agent in a wave gets three things in its prompt:
 2. **Interface contracts** — The exact signatures it must implement and the exact signatures it may call from prior waves.
 3. **Verification gate** — Must run the build and tests and report results before finishing.
 
-Wave N+1 does not launch until Wave N is verified: build green, tests passing. Worktrees isolate agents from each other during execution so there are no mid-flight merge conflicts.
+The gate is a hard contract, not a suggestion. For the brewprune session it looked like this:
+
+```
+Gate (Wave N complete when all pass):
+- go build ./...          passes
+- go vet ./...            passes
+- go test ./...           passes
+- brewprune doctor        clean
+- scout artifact updated: status checkboxes ticked, any signature changes recorded
+```
+
+Wave N+1 does not launch until Wave N is verified. Worktrees isolate agents from each other during execution so there are no mid-flight merge conflicts.
 
 After each wave: review outputs, fix any compiler errors, commit, update the status checklist.
 
@@ -130,14 +143,20 @@ Results by wave:
 
 Notice the shape: maximum parallelism at the start (4 agents), narrowing as work integrates (2, then 1). This isn't a coincidence — it's what a dependency graph looks like. Foundational work fans out; integration work converges. The wave structure falls out naturally from the DAG.
 
+The result wasn't luck or model quality. Three things made it work:
+
+- **No two agents touched the same file in a wave.** File clobbering was structurally impossible.
+- **All cross-agent calls used predeclared signatures.** Agent E called `RefreshShims` exactly as the scout defined it. Agent A implemented it exactly as defined. They never needed to coordinate.
+- **Every wave ended with build and tests green before the next launched.** Integration failures surfaced at wave boundaries, not at the end. Each fix was local and cheap.
+
 ## Why It Works
 
 | Problem with naive parallel agents | How scout-and-wave solves it |
 |------------------------------------|------------------------------|
 | Agents clobber each other's changes | File ownership table enforces disjoint sets |
-| Agents can't call code that isn't written yet | Interface contracts defined upfront — agents code against the spec |
-| Integration failures discovered late | Verification gate per wave catches breaks early |
-| Context window blown by a monolithic task | Each agent only sees its own narrow context |
+| Interface drift — agents assume different signatures | Interface contracts defined upfront — agents code against the spec |
+| Integration tax — failures surface at the end | Verification gate per wave catches breaks at wave boundaries |
+| Context window waste — 7 agents × full feature brief | Scout pays the context cost once; agents carry only their slice |
 | Hard to reason about dependencies | Explicit DAG → waves fall out naturally |
 
 ## When to Use It
@@ -165,7 +184,7 @@ First, the scout is throwaway. It's not a persistent orchestrator that continues
 
 Second, the coordination artifact is living. A spec describes intended state. The scout artifact tracks actual state as waves complete. Downstream agents get accurate inputs from the previous wave, not stale pre-flight assumptions. This distinction matters in practice: a spec written before implementation can't know what Wave 1 actually built. An artifact updated by Wave 1 can.
 
-Scout-and-wave is also distinct from framework-level solutions. OpenClaw, AutoGen, CrewAI, and LangGraph all provide agent coordination primitives — routing, sub-agents, role-based crews, graph-based workflows. None of them solve the problem scout-and-wave solves, because that problem is upstream of execution. By the time you're dispatching agents in any of these frameworks, the conflict has already been baked in. Scout-and-wave is what you run before you pick up the framework.
+Scout-and-wave is also distinct from framework-level solutions. OpenClaw, AutoGen, CrewAI, and LangGraph all provide agent coordination primitives — routing, sub-agents, role-based crews, graph-based workflows. Frameworks can enforce a workflow once you've decided on a decomposition. Scout-and-wave is how you find a decomposition that won't collide in a real codebase. By the time you're dispatching agents in any of these frameworks, you've already either done this work or skipped it.
 
 | Approach | What it solves | What it doesn't solve |
 |---|---|---|
@@ -174,5 +193,13 @@ Scout-and-wave is also distinct from framework-level solutions. OpenClaw, AutoGe
 | LangGraph | Workflow graph execution | Codebase conflict detection before execution |
 | Planner-Worker-Judge | Persistent planning + evaluation | Throwaway scout, living artifact, wave handoff |
 | Scout-and-wave | Pre-flight dependency mapping + wave coordination | Replaces none of the above — runs before them |
+
+**Run a scout if:**
+- 5+ files will change
+- 2+ subsystems are involved
+- 3+ agents are needed
+- You can name the interfaces before you write the implementations
+
+If you can't check those boxes, the feature probably isn't ready for parallelism yet — and the scout will tell you that too.
 
 I've been running this pattern for a while without a name for it. The coordination artifact from the brewprune session still lives in `docs/IMPL-brew-native.md` if you want to see what the scout actually produced. If you've been doing something similar — or something better — I'd like to hear about it.
