@@ -28,15 +28,17 @@ showMetadata: false
 
 **[vaultmux](https://github.com/blackwell-systems/vaultmux)** ([Go pkg](https://pkg.go.dev/github.com/blackwell-systems/vaultmux)) | **[vaultmux-rs](https://github.com/blackwell-systems/vaultmux-rs)** ([Rust crate](https://crates.io/crates/vaultmux)) - Unified secret management across Bitwarden, 1Password, pass, AWS, GCP, Azure. Write once, support 7+ backends. Available in Go and Rust.
 
-### Developer Tools
+### AI Development Tools
 
 **[claudewatch](https://github.com/blackwell-systems/claudewatch)** - Get measurably better at AI-assisted development. Generates CLAUDE.md improvements from your actual Claude Code session data, then proves whether they worked with before/after effectiveness scoring. Reads local files under `~/.claude/`, finds friction patterns, and tracks cost per outcome. Zero network calls.
 
 **[scout-and-wave](https://github.com/blackwell-systems/scout-and-wave)** - Methodology for reducing conflict with parallel AI agents. A throwaway scout maps the dependency graph, interface contracts, and file ownership before any code is written. Development agents execute in waves, revising a living coordination artifact between each wave. Includes canonical prompts and a Claude Code `/saw` skill.
 
-**[blackdot](https://blackwell-systems.github.io/blackdot/#/)** - Modular development framework with multi-vault secrets, Claude Code integration, extensible hooks, and health checks.
-
 **[dotclaude](https://blackwell-systems.github.io/dotclaude/#/)** - Profile manager for Claude Code. Switch between work/personal contexts, multi-backend routing.
+
+### Developer Tools
+
+**[blackdot](https://blackwell-systems.github.io/blackdot/#/)** - Modular development framework with multi-vault secrets, Claude Code integration, extensible hooks, and health checks.
 
 ### Libraries
 
