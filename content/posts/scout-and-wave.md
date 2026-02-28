@@ -201,21 +201,28 @@ The shape here is the opposite of the shim feature: instead of a converging DAG 
 
 ## When to Use It
 
+**High parallelization value** (SAW pays for itself):
+- Build/test cycle >30 seconds — each parallel agent runs independently, amplifying time savings
+- Agents own 3+ files each — more implementation time per agent means more to parallelize
+- Tasks involve non-trivial logic, tests, and edge cases — not simple find-and-replace
+- Agents are fully independent (single wave) — maximum parallelization benefit
+
+**Low parallelization value** (consider alternatives):
+- Simple edits, documentation-only, or trivially fast sequential work — SAW overhead dominates
+- 2-3 agents with disjoint files and no dependencies — use SAW Quick mode instead
+- Note: the IMPL doc has coordination value even when speed gains are marginal (audit trail, interface spec, progress tracking) — flag as SUITABLE WITH CAVEATS in those cases
+
 **Good fit:**
-- Feature touches 5+ files
-- Clear seams exist (or can be designed) between pieces
-- You can define stable interfaces before writing implementations
+- Clear seams exist between pieces
+- Interfaces can be defined before implementation starts
 - Work can be chunked so each agent owns 1-3 files
 
 **Poor fit:**
-- No clear seams: everything is tightly coupled
-- Interface is unknown until you start implementing
-- Feature is genuinely one piece of logic with nothing to parallelize
-- Root cause is unknown — a crash, a race condition, behavior that must be observed before it can be fixed. Investigate first, then use SAW for the fix.
+- Tightly coupled code with no clean file boundaries
+- Interface cannot be known until you start implementing
+- Root cause is unknown (crash, race condition) — investigate first, then use SAW for the fix
 
-Run `/saw check` when you're unsure. The scout also runs the suitability gate internally and will emit a NOT SUITABLE verdict rather than producing a broken IMPL doc with forced decomposition.
-
-The pattern has overhead. The scout phase takes time. For a two-file change, it's not worth it. For anything where you'd otherwise context-switch between a half-dozen related tasks, it pays for itself quickly.
+Run `/saw check` when you're unsure. The scout runs a built-in suitability gate with time-to-value estimates (SAW total vs sequential baseline) and will emit a NOT SUITABLE verdict rather than producing a broken IMPL doc with forced decomposition.
 
 ## How This Relates to Existing Patterns
 
@@ -243,18 +250,23 @@ Scout-and-wave is also distinct from framework-level solutions. OpenClaw, AutoGe
 
 If you can't check those boxes, the feature probably isn't ready for parallelism yet. Run `/saw check` first — it answers the suitability question in seconds, without producing an IMPL doc or committing to a full analysis.
 
+{{< callout type="info" >}}
+**The prompts below are illustrative.** They represent the v0.1 pattern described in this article. The canonical, actively-maintained prompts (including the suitability gate, Wave 0 pattern, module decomposition, and v0.3.0 improvements) are at [github.com/blackwell-systems/scout-and-wave](https://github.com/blackwell-systems/scout-and-wave).
+{{< /callout >}}
+
 ## Reference: The Prompts
 
 Everything above describes the pattern. Below are the core prompts that implement it: the scout prompt that produces the coordination artifact, and the agent prompt template that gets stamped per-agent from the scout's output.
 
-The `/saw` skill for Claude Code exposes four commands:
+The `/saw` skill for Claude Code exposes six commands:
 
 ```
-/saw check <description>   # Suitability pre-flight — no files written
-/saw scout <description>   # Full scout phase, produces docs/IMPL-<feature>.md
-/saw wave                  # Execute next pending wave, pause for review
-/saw wave --auto           # Execute all waves; pause only if verification fails
-/saw status                # Show current progress from the IMPL doc
+/saw bootstrap <description>   # Design-first architecture for new projects (no existing codebase)
+/saw check <description>       # Suitability pre-flight — no files written
+/saw scout <description>       # Full scout phase, produces docs/IMPL-<feature>.md
+/saw wave                      # Execute next pending wave, pause for review
+/saw wave --auto               # Execute all waves; pause only if verification fails
+/saw status                    # Show current progress from the IMPL doc
 ```
 
 The canonical prompts (including the suitability gate and Wave 0 sections) are at [github.com/blackwell-systems/scout-and-wave](https://github.com/blackwell-systems/scout-and-wave). The versions below are representative of the core pattern.
