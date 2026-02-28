@@ -42,7 +42,9 @@ These aren't edge cases. They're the default outcome of uncoordinated parallelis
 
 Dependency mapping needs to be a first-class phase, not something you figure out on the fly.
 
-Before any agent writes a line of code, a scout agent answers three questions:
+Before any agent writes a line of code, the scout runs a suitability check. Three questions: Can the work decompose into ≥2 disjoint file groups? Are there investigation-first items — a crash to reproduce, a race condition whose root cause is unknown — that must be understood before they can be fixed? Can the cross-agent interfaces be defined before implementation starts? If the answer to any of these is no, the scout emits a NOT SUITABLE verdict and stops. A crash with an unknown root cause needs investigation before agents can be written to fix it; scout-and-wave isn't the right tool until you know what's broken. Run `/saw check` to run just this pre-flight without committing to a full analysis.
+
+If the check passes, a scout agent answers three questions:
 
 1. **What are the seams?** Where does the new feature touch existing code? What are the minimal, stable interfaces between pieces?
 2. **Who owns what?** Every file that will change gets assigned to exactly one agent. No two agents in the same wave touch the same file. If two tasks need the same file, that file becomes its own seam: extract an interface or create a new file so ownership stays disjoint. This turns a limitation into a design principle.
@@ -209,8 +211,9 @@ The shape here is the opposite of the shim feature: instead of a converging DAG 
 - No clear seams: everything is tightly coupled
 - Interface is unknown until you start implementing
 - Feature is genuinely one piece of logic with nothing to parallelize
+- Root cause is unknown — a crash, a race condition, behavior that must be observed before it can be fixed. Investigate first, then use SAW for the fix.
 
-The scout itself will surface this: if you can't assign file ownership cleanly during mapping, that's a signal the work isn't parallelizable, which is still useful information before you start.
+Run `/saw check` when you're unsure. The scout also runs the suitability gate internally and will emit a NOT SUITABLE verdict rather than producing a broken IMPL doc with forced decomposition.
 
 The pattern has overhead. The scout phase takes time. For a two-file change, it's not worth it. For anything where you'd otherwise context-switch between a half-dozen related tasks, it pays for itself quickly.
 
@@ -238,11 +241,23 @@ Scout-and-wave is also distinct from framework-level solutions. OpenClaw, AutoGe
 - 3+ agents are needed
 - You can name the interfaces before you write the implementations
 
-If you can't check those boxes, the feature probably isn't ready for parallelism yet, and the scout will tell you that too.
+If you can't check those boxes, the feature probably isn't ready for parallelism yet. Run `/saw check` first — it answers the suitability question in seconds, without producing an IMPL doc or committing to a full analysis.
 
 ## Reference: The Prompts
 
-Everything above describes the pattern. Below are the actual prompts that implement it: the scout prompt that produces the coordination artifact, and the agent prompt template that gets stamped per-agent from the scout's output. The prompts and a Claude Code `/saw` skill are available at [github.com/blackwell-systems/scout-and-wave](https://github.com/blackwell-systems/scout-and-wave).
+Everything above describes the pattern. Below are the core prompts that implement it: the scout prompt that produces the coordination artifact, and the agent prompt template that gets stamped per-agent from the scout's output.
+
+The `/saw` skill for Claude Code exposes four commands:
+
+```
+/saw check <description>   # Suitability pre-flight — no files written
+/saw scout <description>   # Full scout phase, produces docs/IMPL-<feature>.md
+/saw wave                  # Execute next pending wave, pause for review
+/saw wave --auto           # Execute all waves; pause only if verification fails
+/saw status                # Show current progress from the IMPL doc
+```
+
+The canonical prompts (including the suitability gate and Wave 0 sections) are at [github.com/blackwell-systems/scout-and-wave](https://github.com/blackwell-systems/scout-and-wave). The versions below are representative of the core pattern.
 
 ### Scout Prompt
 
@@ -448,11 +463,17 @@ backward compatibility requirements, things to explicitly avoid.}
 
 ## 8. Report
 
-When done, report:
+Append your completion report to the IMPL doc under
+`### Agent {letter} — Completion Report`. This is the canonical record —
+downstream agents and the orchestrator read the IMPL doc, not chat output.
+Interface contract changes must be written there so the next wave picks them up.
+
+Include:
 - What you implemented (function names, key decisions)
 - Test results (pass/fail, count)
 - Any deviations from the spec and why
-- Any interface contract changes (signature differences from the original spec that downstream agents need to know about)
+- Any interface contract changes (exact signature differences downstream agents need)
+- Any out-of-scope dependencies discovered (file name, required change, reason)
 ````
 
 I've been running this pattern for a while without a name for it. If you've been doing something similar, or something better, I'd like to hear about it.
