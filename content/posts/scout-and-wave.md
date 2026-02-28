@@ -8,7 +8,9 @@ description: "A pattern for running multiple AI agents in parallel without confl
 summary: "Naive parallel agents step on each other. The scout-and-wave pattern solves this by front-loading dependency mapping: one throwaway agent identifies seams and builds a living coordination artifact before any implementation begins. Development then proceeds in waves, each consuming and updating the artifact for the next."
 ---
 
-The last time I ran a scout-and-wave session on [brewprune](https://github.com/blackwell-systems/brewprune), 7 agents produced 1,532 lines of new code across 16 files in 3 waves. The feature was complete, building, and passing tests in under an hour.
+The last time I ran a scout-and-wave session on [brewprune](https://github.com/blackwell-systems/brewprune), 11 agents fixed 18 UX issues across 35 files in a single wave. Net: +4,021 lines, all tests green, no post-merge integration failures.
+
+The time before that: 7 agents, 1,532 lines, 16 files, 3 waves — a new shim management subsystem. The feature was complete, building, and passing tests in under an hour.
 
 The first time I tried parallel agents without any coordination structure, I got merge conflicts, contradictory implementations, and an hour of cleanup. The agents had done real work. None of it fit together.
 
@@ -46,7 +48,7 @@ Before any agent writes a line of code, a scout agent answers three questions:
 2. **Who owns what?** Every file that will change gets assigned to exactly one agent. No two agents in the same wave touch the same file. If two tasks need the same file, that file becomes its own seam: extract an interface or create a new file so ownership stays disjoint. This turns a limitation into a design principle.
 3. **What's the DAG?** If Agent B needs Agent A's interface, B is in a later wave. If A and B are independent, they're in the same wave.
 
-The scout is throwaway: read-only, no implementation, one-shot. Its entire output is a single document: interface contracts, a file ownership table, and a wave structure. That document is the coordination artifact. Keeping the scout throwaway prevents planner drift; the artifact becomes the single source of truth, not an ongoing conversation with a planner that might change its mind mid-execution.
+The scout is throwaway: read-only, no implementation, one-shot. Its entire output is a single document: interface contracts, a file ownership table, and a wave structure. That document is the coordination artifact. For a small feature (3–5 agents), one file is fine. For 10+ agents, split it: an index file with the wave structure, ownership table, and status checklist, and one per-agent file with the full implementation spec. Individual agent prompts stay focused; the index stays readable. Keeping the scout throwaway prevents planner drift; the artifact becomes the single source of truth, not an ongoing conversation with a planner that might change its mind mid-execution.
 
 **Interface contracts are defined before any agent starts. Agents code against the spec, not against each other's in-progress code.**
 
@@ -84,9 +86,13 @@ func buildOptPathMap(st *store.Store) (map[string]string, error)
 
 The status checklist becomes a living artifact: each wave updates it before the next wave launches. Downstream agents consume the actual state of what was built, not stale pre-flight assumptions.
 
+One more thing worth putting in the artifact: **cascade candidates** — files that call code being modified but don't need changes themselves. If Agent K adds a column to a table renderer, and two other files call that renderer, those callers are cascade candidates. Flag them in the IMPL doc. They don't need their own agents, but the post-merge verification gate should watch them explicitly. In practice, naming them upfront is what lets you confidently skip assigning them to agents.
+
 ## Wave Execution
 
 Each wave is a set of agents that can run fully in parallel because their file sets don't overlap and they depend only on interfaces already defined in the spec.
+
+When there are no cross-agent dependencies at all — every agent touches disjoint files and no agent's output is another's input — the entire job is a single flat wave. The 11-agent UX audit was this shape: 18 independent findings mapped to 11 disjoint file groups, no cross-cutting interfaces, one wave. The DAG degenerates to a straight line. This is actually the best case: maximum parallelism, no sequencing overhead, the whole job completes in the time it takes the slowest agent.
 
 Every agent in a wave gets three things in its prompt:
 
@@ -105,7 +111,7 @@ Gate (Wave N complete when all pass):
 - scout artifact updated: status checkboxes ticked, any signature changes recorded
 ```
 
-Wave N+1 does not launch until Wave N is verified. Worktrees isolate agents from each other during execution so there are no mid-flight merge conflicts. After all agents in a wave complete, their worktrees merge back into the main branch and the verification gate runs against the merged result. Individual agents pass their gates in isolation, but the merged codebase can surface issues none of them saw individually. This post-merge verification is the real gate.
+Wave N+1 does not launch until Wave N is verified. Worktrees *can* isolate agents from each other during execution, but in practice with Claude Code Task agents, all agents write to the main working tree — and that's fine, because disjoint file ownership is what actually prevents conflicts, not the worktree mechanism. Worktrees are optional isolation; ownership is the hard constraint. After all agents in a wave complete, their worktrees merge back into the main branch and the verification gate runs against the merged result. Individual agents pass their gates in isolation, but the merged codebase can surface issues none of them saw individually. This post-merge verification is the real gate.
 
 ### The Artifact Revises Itself
 
@@ -158,6 +164,19 @@ Results by wave:
 | **Total**         | **16**| **1,532** | **60** |
 
 Notice the shape: maximum parallelism at the start (4 agents), narrowing as work integrates (2, then 1). This isn't a coincidence: it's what a dependency graph looks like. Foundational work fans out; integration work converges. The wave structure falls out naturally from the DAG.
+
+### Second run: UX audit (11 agents, 1 wave)
+
+A re-audit of brewprune surfaced 18 UX issues across 11 disjoint files. No cross-agent dependencies: every finding mapped to a single file group. The scout produced a flat single-wave structure with per-agent files instead of one monolithic IMPL doc.
+
+| Wave              | Files | Added | Removed |
+|-------------------|-------|-------|---------|
+| Wave 1 (11 agents) | 21   | 4,201 | 180     |
+| **Total**          | **21** | **4,201** | **180** |
+
+Every agent owned 1–2 files. The post-merge gate passed clean on the first try — no integration failures because there were no cross-agent interfaces to drift.
+
+The shape here is the opposite of the shim feature: instead of a converging DAG (4→2→1), it's a flat fan-out (11→done). Both are valid. The scout tells you which one you have.
 
 The result wasn't luck or model quality. Three things made it work:
 
