@@ -30,6 +30,8 @@ showMetadata: false
 
 ### Developer Tools
 
+**[claudewatch](https://github.com/blackwell-systems/claudewatch)** - Get measurably better at AI-assisted development. Generates CLAUDE.md improvements from your actual Claude Code session data, then proves whether they worked with before/after effectiveness scoring. Reads local files under `~/.claude/`, finds friction patterns, and tracks cost per outcome. Zero network calls.
+
 **[scout-and-wave](https://github.com/blackwell-systems/scout-and-wave)** - Methodology for reducing conflict with parallel AI agents. A throwaway scout maps the dependency graph, interface contracts, and file ownership before any code is written. Development agents execute in waves, revising a living coordination artifact between each wave. Includes canonical prompts and a Claude Code `/saw` skill.
 
 **[blackdot](https://blackwell-systems.github.io/blackdot/#/)** - Modular development framework with multi-vault secrets, Claude Code integration, extensible hooks, and health checks.
