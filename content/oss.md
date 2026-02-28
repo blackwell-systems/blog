@@ -48,6 +48,8 @@ showMetadata: false
 
 ### Utilities
 
+**[brewprune](https://github.com/blackwell-systems/brewprune)** - Free up GB of disk space by removing unused Homebrew packages. Tracks actual usage via FSEvents monitoring, scores removal safety (0-100 confidence), and creates automatic snapshots for instant rollback. Categorizes packages into Safe/Medium/Risky tiers based on usage frequency, dependency relationships, and package age.
+
 **[shelfctl](https://github.com/blackwell-systems/shelfctl)** - CLI tool for organizing PDF and book libraries using GitHub Release assets. Interactive TUI and scriptable CLI modes. Migrate PDFs from bloated git repos, browse with covers and metadata, and distribute via on-demand downloads. Zero infrastructure - your GitHub account is the storage backend.
 
 **[mdfx](https://github.com/blackwell-systems/mdfx)** - Make your GitHub README stand out — tech badges (like shields.io, but better), progress bars, gauges, and Unicode text effects. Local and customizable.
