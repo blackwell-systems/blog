@@ -30,7 +30,9 @@ showMetadata: false
 
 ### AI Development Tools
 
-**[claudewatch](https://github.com/blackwell-systems/claudewatch)** - Get measurably better at AI-assisted development. Generates CLAUDE.md improvements from your actual Claude Code session data, then proves whether they worked with before/after effectiveness scoring. Reads local files under `~/.claude/`, finds friction patterns, and tracks cost per outcome. Zero network calls.
+**[claudewatch](https://github.com/blackwell-systems/claudewatch)** - Full-cycle AI development observability platform. Scores project AI readiness, surfaces friction patterns, generates CLAUDE.md patches from session data, snapshots metrics to SQLite for before/after effectiveness scoring, and runs a background daemon alerting on friction spikes and budget overruns. Ships as both CLI and MCP server — exposes cache-adjusted session cost, AI-generated friction scores, and cross-session trends as tools the agent can query mid-session, surfacing data the Claude ecosystem records locally but never exposes. Zero network calls.
+
+**[commitmux](https://github.com/blackwell-systems/commitmux)** - Local MCP server giving AI coding agents structured, credential-free access to git history across multiple repos. Builds a read-optimized SQLite index via libgit2 and exposes four read-only tools (search, touches, get_commit, get_patch) over JSON-RPC stdio. FTS5 full-text search over commit subjects, bodies, and patch previews. No git binary, no credentials, no network.
 
 **[scout-and-wave](https://github.com/blackwell-systems/scout-and-wave)** - Methodology for reducing conflict with parallel AI agents. A throwaway scout maps the dependency graph, interface contracts, and file ownership before any code is written. Development agents execute in waves, revising a living coordination artifact between each wave. Includes canonical prompts and a Claude Code `/saw` skill.
 
