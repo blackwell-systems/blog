@@ -109,6 +109,16 @@ Wave N+1 does not launch until Wave N is verified. Worktrees isolate agents from
 
 After each wave: review outputs, fix any compiler errors, commit, update the status checklist.
 
+### The Artifact Revises Itself
+
+Most planning systems treat the plan as immutable once execution begins. The scout produces a plan, agents execute it, and if reality diverges from assumptions, you're on your own.
+
+Scout-and-wave treats the coordination artifact as a living document. When an agent discovers that an interface contract needs to change, that a function signature doesn't fit the data it actually encounters, or that a file needs to move to a different agent, it records the deviation directly in the IMPL doc. The agent reports what it actually built, not just whether it succeeded. Status checkboxes get ticked, but more importantly, interface contracts get corrected and ownership changes get recorded.
+
+This matters because downstream agents in Wave N+1 read the artifact before they start. They get the corrected signatures, not the scout's original guesses. A spec written before implementation can't anticipate every detail. An artifact updated by the agents who did the work can. The plan converges toward reality with each wave instead of drifting further from it.
+
+This is what makes the artifact "living" in a meaningful sense. It's not just a checklist that tracks completion. It's a shared document that agents actively revise so the next wave starts with accurate context rather than stale assumptions.
+
 ## Worked Example: brewprune
 
 The feature was shim management for brewprune, a new subsystem touching shim generation, version checking, path disambiguation, self-test, and onboarding. The scout mapped 7 agent slots across 3 waves, with interface contracts for `RefreshShims`, `RunShimTest`, `EnsurePathEntry`, and `buildOptPathMap`.
@@ -166,6 +176,7 @@ The result wasn't luck or model quality. Three things made it work:
 | Integration tax: failures surface at the end | Verification gate per wave catches breaks at wave boundaries |
 | Context window waste: 7 agents × full feature brief | Scout pays the context cost once; agents carry only their slice |
 | Hard to reason about dependencies | Explicit DAG → waves fall out naturally |
+| Plan drifts from reality during execution | Agents revise the artifact; downstream waves get corrected context |
 
 ## When to Use It
 
@@ -326,8 +337,8 @@ After each wave completes:
 1. Review agent outputs for correctness.
 2. Fix any compiler errors or integration issues.
 3. Run the full verification gate (build + test).
-4. Commit the wave's changes.
-5. Update the Status checklist below.
+4. Update the coordination artifact: tick status checkboxes, correct any interface contracts that changed during implementation, and record any file ownership changes. Downstream agents read this document before they start.
+5. Commit the wave's changes.
 6. Launch the next wave.
 
 If verification fails, fix before proceeding. Do not launch the next wave
@@ -421,6 +432,7 @@ When done, report:
 - What you implemented (function names, key decisions)
 - Test results (pass/fail, count)
 - Any deviations from the spec and why
+- Any interface contract changes (signature differences from the original spec that downstream agents need to know about)
 ````
 
 I've been running this pattern for a while without a name for it. If you've been doing something similar, or something better, I'd like to hear about it.
