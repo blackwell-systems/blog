@@ -138,28 +138,10 @@ The status checklist becomes a living artifact: each wave updates it before the 
 
 The full protocol flow, from feature description to final merge:
 
-{{< mermaid >}}
-flowchart TD
-    A["/saw scout feature"] --> B["Suitability gate\n5 checks"]
-    B -- NOT SUITABLE --> C["Emit verdict · stop"]
-    B -- SUITABLE --> D["Scout reads codebase\nmaps seams · defines interfaces · builds DAG"]
-    D --> E["Writes IMPL doc\ncontracts · ownership · wave structure"]
-    E --> F["Human review\ninterface freeze checkpoint"]
-    F -. revise contracts .-> E
-    F -- contracts final --> G{"Solo agent\nin wave?"}
-    G -- yes --> H["Run on main\nno worktrees needed"]
-    G -- no --> I["Pre-create worktrees\nfor each agent"]
-    H --> J["Agent executes\nfocused verification gate"]
-    I --> K["Agents execute in parallel\nfocused verification each"]
-    J & K --> L["Write structured\ncompletion reports"]
-    L --> M["Orchestrator: parse reports\npredict conflicts · review deviations"]
-    M --> N["Merge worktrees\nunscoped verification gate"]
-    N -- FAIL --> O["Fix · re-verify"]
-    O --> N
-    N -- PASS --> P{"More waves?"}
-    P -- yes --> G
-    P -- no --> Q["IMPL doc finalized · done"]
-{{< /mermaid >}}
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="/images/scout-and-wave/saw-scout-wave-dark.svg">
+  <img src="/images/scout-and-wave/saw-scout-wave-light.svg" alt="SAW scout + wave execution flow" style="max-width: 100%;">
+</picture>
 
 ## Wave Execution
 
