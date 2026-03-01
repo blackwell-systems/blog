@@ -493,3 +493,11 @@ Include:
 ````
 
 I've been running this pattern for a while without a name for it. If you've been doing something similar, or something better, I'd like to hear about it.
+
+---
+
+**Continue reading:**
+- [Part 2: What Dogfooding Taught Us](./scout-and-wave-part2) — The audit-fix-audit loop, an honest overhead measurement (88% slower when you ignore the scout's verdict), Quick mode for small disjoint work, and the bootstrap problem for new projects.
+- [Part 3: The Skill Is Software](./scout-and-wave-part3) — How `saw-skill.md` decomposed from a 400-line monolith into focused modules, why version headers matter when users copy prompts to `~/.claude/commands/`, and five scout prompt fixes driven by real production failures.
+
+The canonical prompts are at [github.com/blackwell-systems/scout-and-wave](https://github.com/blackwell-systems/scout-and-wave).
