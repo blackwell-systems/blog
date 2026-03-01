@@ -136,6 +136,31 @@ Type renames deserve special attention here: when an interface contract introduc
 
 The status checklist becomes a living artifact: each wave updates it before the next wave launches. Downstream agents consume the actual state of what was built, not stale pre-flight assumptions.
 
+The full protocol flow, from feature description to final merge:
+
+{{< mermaid >}}
+flowchart TD
+    A["/saw scout feature"] --> B["Suitability gate\n5 checks"]
+    B -- NOT SUITABLE --> C["Emit verdict · stop"]
+    B -- SUITABLE --> D["Scout reads codebase\nmaps seams · defines interfaces · builds DAG"]
+    D --> E["Writes IMPL doc\ncontracts · ownership · wave structure"]
+    E --> F["Human review\ninterface freeze checkpoint"]
+    F -. revise contracts .-> E
+    F -- contracts final --> G{"Solo agent\nin wave?"}
+    G -- yes --> H["Run on main\nno worktrees needed"]
+    G -- no --> I["Pre-create worktrees\nfor each agent"]
+    H --> J["Agent executes\nfocused verification gate"]
+    I --> K["Agents execute in parallel\nfocused verification each"]
+    J & K --> L["Write structured\ncompletion reports"]
+    L --> M["Orchestrator: parse reports\npredict conflicts · review deviations"]
+    M --> N["Merge worktrees\nunscoped verification gate"]
+    N -- FAIL --> O["Fix · re-verify"]
+    O --> N
+    N -- PASS --> P{"More waves?"}
+    P -- yes --> G
+    P -- no --> Q["IMPL doc finalized · done"]
+{{< /mermaid >}}
+
 ## Wave Execution
 
 Each wave is a set of agents that can run fully in parallel because their file sets don't overlap and they depend only on interfaces already defined in the spec.
@@ -318,5 +343,3 @@ Scout-and-wave ships as a `/saw` skill for [Claude Code](https://docs.anthropic.
 The skill routes to focused modules: `saw-merge.md` owns the merge procedure (completion report parsing, conflict prediction, interface deviation review, post-merge verification); `saw-worktree.md` owns the worktree lifecycle (pre-creation, verification, self-healing, cleanup); `saw-bootstrap.md` handles design-first architecture for new projects; `saw-quick.md` covers lightweight 2-3 agent work without a full IMPL doc. All files carry version headers at line 1 (`<!-- saw-skill v0.3.0 -->`) so installed copies can be checked with `head -1 ~/.claude/commands/saw.md`.
 
 The prompts are at [github.com/blackwell-systems/scout-and-wave](https://github.com/blackwell-systems/scout-and-wave).
-
-The canonical prompts are at [github.com/blackwell-systems/scout-and-wave](https://github.com/blackwell-systems/scout-and-wave).
