@@ -2,6 +2,8 @@
 title: "Scout-and-Wave, Part 2: What Dogfooding Taught Us"
 date: 2026-02-28
 draft: false
+series: ["scout-and-wave"]
+seriesOrder: 2
 tags: ["ai", "multi-agent", "claude-code", "developer-tools", "patterns", "prompt-engineering", "productivity"]
 categories: ["ai", "tools"]
 description: "After shipping the scout-and-wave pattern, we used it to improve itself — and discovered it was the wrong tool for the job. Here's what three rounds of cold-start audits, an honest overhead measurement, and a bootstrap problem taught us about when parallelism actually pays off."
@@ -194,6 +196,3 @@ SAW v0.3.0 — with the pre-implementation check, self-healing isolation, Quick 
 
 The thing I keep coming back to: the pattern that emerged from all of this wasn't a better parallelization algorithm. It was a better understanding of when not to parallelize. The scout's suitability verdict is doing real work. Ignoring it costs exactly as much as the math says it will.
 
----
-
-**Up next:** [Part 3: The Skill Is Software](./scout-and-wave-part3) — How `saw-skill.md` decomposed from a 400-line monolith into focused modules, why version headers matter, and five scout prompt fixes driven by real production failures.

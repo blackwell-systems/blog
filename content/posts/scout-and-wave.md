@@ -2,6 +2,8 @@
 title: "Scout-and-Wave: A Coordination Pattern for Parallel AI Agents"
 date: 2026-02-27
 draft: false
+series: ["scout-and-wave"]
+seriesOrder: 1
 tags: ["ai", "multi-agent", "claude-code", "developer-tools", "patterns", "prompt-engineering", "productivity", "openclaw", "autogen", "crewai", "langchain", "agent-orchestration"]
 categories: ["ai", "tools"]
 description: "A pattern for running multiple AI agents in parallel without conflicts — using a throwaway scout agent to map seams and dependencies before any code is written, then executing in waves against a shared coordination artifact."
@@ -316,11 +318,5 @@ Scout-and-wave ships as a `/saw` skill for [Claude Code](https://docs.anthropic.
 The skill routes to focused modules: `saw-merge.md` owns the merge procedure (completion report parsing, conflict prediction, interface deviation review, post-merge verification); `saw-worktree.md` owns the worktree lifecycle (pre-creation, verification, self-healing, cleanup); `saw-bootstrap.md` handles design-first architecture for new projects; `saw-quick.md` covers lightweight 2-3 agent work without a full IMPL doc. All files carry version headers at line 1 (`<!-- saw-skill v0.3.0 -->`) so installed copies can be checked with `head -1 ~/.claude/commands/saw.md`.
 
 The prompts are at [github.com/blackwell-systems/scout-and-wave](https://github.com/blackwell-systems/scout-and-wave).
-
----
-
-**Continue reading:**
-- [Part 2: What Dogfooding Taught Us](./scout-and-wave-part2) — The audit-fix-audit loop, an honest overhead measurement (88% slower when you ignore the scout's verdict), Quick mode for small disjoint work, and the bootstrap problem for new projects.
-- [Part 3: The Skill Is Software](./scout-and-wave-part3) — How `saw-skill.md` decomposed from a 400-line monolith into focused modules, why version headers matter when users copy prompts to `~/.claude/commands/`, and five scout prompt fixes driven by real production failures.
 
 The canonical prompts are at [github.com/blackwell-systems/scout-and-wave](https://github.com/blackwell-systems/scout-and-wave).
