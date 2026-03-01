@@ -130,13 +130,19 @@ A few things worth noting in this structure:
 
 **Cascade candidates** are files that call code being modified but don't need changes themselves. If Agent K changes a function signature in a shared module, and three other files call that function, those callers are cascade candidates. They don't get their own agents, but naming them upfront means the post-merge verification gate watches them deliberately rather than discovering failures by accident.
 
+Type renames deserve special attention here: when an interface contract introduces a renamed struct, trait, or type alias — not just new fields, an actual rename — the scout runs a workspace-wide search for the old name and lists every file that references it, even those inside another agent's ownership scope. Syntax-level cascades (import errors, "type not found") are distinct from semantic ones: they cause compilation failures in isolated agent worktrees, and agents under build pressure will self-heal by touching files outside their ownership scope. Naming type rename cascades explicitly prevents that improvisation.
+
 The status checklist becomes a living artifact: each wave updates it before the next wave launches. Downstream agents consume the actual state of what was built, not stale pre-flight assumptions.
 
 ## Wave Execution
 
 Each wave is a set of agents that can run fully in parallel because their file sets don't overlap and they depend only on interfaces already defined in the spec.
 
-Before launching any agents in a multi-agent wave, the orchestrator pre-creates a git worktree for each agent:
+If a wave has exactly one agent, skip worktree creation entirely. A solo agent cannot conflict with itself, so the isolation overhead is pure waste — and running on main means its output (new types, interfaces) is immediately visible to later waves without waiting for a merge. Worktrees exist to prevent inter-agent conflict; the solo case has none.
+
+For multi-agent waves: don't create worktrees until interface contracts are finalized. The window between "IMPL doc written" and "agents launched" is the right time to revise type signatures or restructure APIs. Once worktrees branch from HEAD, any interface change in the IMPL doc requires removing and recreating them — otherwise agents implement against a stale version of the contracts. Treat that review window as an interface freeze checkpoint.
+
+When contracts are final, the orchestrator pre-creates a worktree for each agent:
 
 ```bash
 for agent in A B C; do
@@ -156,7 +162,7 @@ After all agents in a wave complete, the orchestrator:
 
 1. **Parses completion reports** from the IMPL doc. Each agent writes a structured YAML block: files changed, interface deviations, out-of-scope dependencies discovered, verification result.
 2. **Predicts conflicts** by cross-referencing all agents' file lists before touching the working tree. If the same file appears in two agents' lists, that's a disjoint ownership violation — flag and resolve before merging.
-3. **Reviews interface deviations.** If an agent changed a signature from the spec, downstream agents (in later waves) may depend on the original contract. Deviations that affect downstream agents get flagged with `downstream_action_required: true` — the orchestrator updates those agent prompts before launching the next wave.
+3. **Reviews interface deviations.** If an agent changed a signature from the spec, downstream agents (in later waves) may depend on the original contract. Deviations that affect downstream agents are flagged in the completion report with `downstream_action_required: true` — the orchestrator updates those agent prompts before launching the next wave. Common examples: a lint suppression attribute that must appear on all stub implementations, a serialization annotation required by a changed type, an API call pattern that differs from the spec. These are caught at deviation review, not discovered mid-wave.
 4. **Merges each worktree** in sequence, cleans up worktrees and branches, runs the full unscoped verification gate.
 5. **Updates the IMPL doc:** tick status checkboxes, correct interface contracts, queue any out-of-scope dependency fixes for pre-launch cleanup.
 

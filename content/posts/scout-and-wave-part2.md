@@ -172,6 +172,18 @@ The Wave 0 pattern solves the core chicken-and-egg problem of new project parall
 
 Bootstrap produces an IMPL doc for a project that doesn't exist yet — a coordination artifact in the same format as any other SAW artifact, but with the initial project structure and Wave 0 types as the starting point. The result is a project where the seams were designed for agents, not retrofitted after the fact.
 
+## The Interface Freeze Window
+
+One more thing that emerged from running the pattern repeatedly: there's a specific window in the workflow where interface changes are cheap, and a point after which they become expensive.
+
+The window is between "IMPL doc written" and "worktrees created." This is the natural human review step — you read the scout's output, verify the suitability verdict makes sense, check that file ownership is clean, confirm the interface contracts look right. It's also the only time when changing a contract costs nothing. You edit the IMPL doc. Done.
+
+Once worktrees branch from HEAD, the economics change. If an interface contract needs revision after agents are running, you either accept drift (agents implement against the old spec and you fix the mismatch at merge time) or you stop, remove the worktrees, update the contracts, and recreate them. Either way you've paid extra. The second worktree creation is more expensive than reading the IMPL doc more carefully the first time.
+
+The discipline this implies is treating that review window as an explicit interface freeze checkpoint: don't create worktrees until every type signature in the IMPL doc is final. In practice this means reading the agent prompts before launching, not just the wave structure. The agent prompts contain the contracts agents will actually implement against. If a signature looks wrong in an agent prompt, fix it before the worktree exists.
+
+This is a soft lesson — nothing in the protocol enforces it — but it's the kind of thing you discover by paying the cost once.
+
 ## Where This Leaves Things
 
 The audit-fix-audit cycle turned out to be the most durable workflow pattern to emerge from this. A round of cold-start audits produces structured findings. A scout digests the findings, runs the pre-implementation check to filter already-done work, assigns parallel agents to the remainder, and executes in waves. Results merge, tests pass, and the output feeds the next audit round. Three rounds of this on brewprune caught issues that sequential review missed, primarily because the simulated new-user perspective surfaced assumptions baked into the code that a developer working in the codebase doesn't notice.
