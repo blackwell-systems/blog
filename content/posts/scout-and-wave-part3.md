@@ -6,8 +6,8 @@ series: ["scout-and-wave"]
 seriesOrder: 3
 tags: ["ai", "multi-agent", "claude-code", "developer-tools", "patterns", "prompt-engineering", "productivity"]
 categories: ["ai", "tools"]
-description: "How the scout-and-wave skill file itself evolved through two major versions — decomposing a 400-line monolith into focused modules, adding version headers so installed copies don't go stale, and iterating the scout prompt through five behavior-changing fixes. Prompt engineering as software engineering."
-summary: "A 400-line prompt that handles routing, worktree creation, merge logic, and conflict detection has the same problems as a monolithic codebase. This post covers how saw-skill.md evolved from a single-file monolith to a thin router delegating to focused modules, why version headers matter when users copy prompts to ~/.claude/commands/, and how five specific failures drove five specific changes to the scout prompt's behavior."
+description: "Five real failures drove five specific changes to the scout-and-wave prompt — from a scout that refused to write its own output, to wasted agent compute, to a 400-line monolith that needed decomposing. Each fix has a root cause. Each root cause came from a production run."
+summary: "The scout refused to write the IMPL doc. Forty-five percent of agents arrived at work already done. The skill file grew to 400 lines with no separation of concerns. Each failure drove a specific fix — and each fix is traceable to an exact incident in an exact run. This is the scout prompt's bug tracker."
 ---
 
 [Part 1](./scout-and-wave) covered the pattern. [Part 2](./scout-and-wave-part2) covered what we learned from running it. This post is about the skill file itself — how `saw-skill.md` evolved, why it needed refactoring, and what that refactoring looks like in practice.
