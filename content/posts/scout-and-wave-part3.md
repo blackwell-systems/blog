@@ -1,7 +1,7 @@
 ---
 title: "Scout-and-Wave, Part 3: The Skill Is Software"
 date: 2026-02-28
-draft: true
+draft: false
 tags: ["ai", "multi-agent", "claude-code", "developer-tools", "patterns", "prompt-engineering", "productivity"]
 categories: ["ai", "tools"]
 description: "How the scout-and-wave skill file itself evolved through two major versions — decomposing a 400-line monolith into focused modules, adding version headers so installed copies don't go stale, and iterating the scout prompt through five behavior-changing fixes. Prompt engineering as software engineering."
@@ -178,3 +178,10 @@ Version headers are the equivalent of `go.mod` version pins. You need to be able
 The scout prompt's iteration history is the equivalent of a bug tracker and a changelog. Every change has a root cause. Every root cause came from a real failure in a real run. The prompt's behavior converged toward correctness through the same feedback loop that any software module uses — except the "bugs" are agent behaviors and the "tests" are production runs on actual codebases.
 
 The scout-and-wave prompts are at [github.com/blackwell-systems/scout-and-wave](https://github.com/blackwell-systems/scout-and-wave). The version headers are at line 1 of each file.
+
+---
+
+**This is part 3 of a three-part series:**
+- [Part 1: A Coordination Pattern for Parallel AI Agents](./scout-and-wave)
+- [Part 2: What Dogfooding Taught Us](./scout-and-wave-part2)
+- Part 3: The Skill Is Software *(this post)*
