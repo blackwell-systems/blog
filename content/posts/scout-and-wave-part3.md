@@ -1,5 +1,5 @@
 ---
-title: "Scout-and-Wave, Part 3: The Skill Is Software"
+title: "Scout-and-Wave, Part 3: Five Failures, Five Fixes"
 date: 2026-02-28
 draft: false
 series: ["scout-and-wave"]
