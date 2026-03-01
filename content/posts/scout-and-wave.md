@@ -45,14 +45,14 @@ Dependency mapping needs to be a first-class phase, not something you figure out
 Before any agent writes a line of code, the scout runs a five-part suitability gate:
 
 1. **File decomposition.** Can the work be assigned to ≥2 agents with disjoint file ownership? If every change funnels through a single file, there's nothing to parallelize.
-2. **Investigation-first items.** Does any part of the work require root cause analysis before implementation? A crash whose source is unknown, a race condition that must be reproduced before it can be fixed — these must be resolved before agents can be written. A poor-fit assessment here is useful output: it tells you what to do first.
-3. **Interface discoverability.** Can the cross-agent interfaces be defined before any agent starts? If a downstream agent's inputs can't be specified until an upstream agent has already started, the agents will contradict each other.
-4. **Pre-implementation status check.** If the work comes from an audit report or findings list, are these items actually TO-DO? The scout reads source files for each item and classifies it: already implemented, partially done, or still needed. DONE items are excluded or converted to test-coverage-only agents — no wasted work. In round 5 of the brewprune audit cycle, this check found that 12 of 24 findings had already been implemented and filtered them before any agent launched.
+2. **Investigation-first items.** Does any part of the work require root cause analysis before implementation — a crash whose source is unknown, a race condition that must be reproduced before it can be fixed? If so, those items must be resolved before agents can be written. The scout surfaces this before anyone wastes time.
+3. **Interface discoverability.** Can the cross-agent interfaces be defined before implementation starts? If a downstream agent's inputs can't be specified until an upstream agent has already started, the agents will contradict each other.
+4. **Pre-implementation status check.** If the work comes from an audit report or findings list, the scout reads source files for each item and classifies it: TO-DO, DONE, or PARTIAL. DONE items are excluded or converted to test-coverage-only agents. In round 5 of the brewprune audit cycle, this check found that 12 of 24 findings had already been implemented and filtered them before any agent launched — roughly 8 minutes of saved compute per run.
 5. **Parallelization value.** Does the time saved by running agents in parallel exceed the fixed overhead of the scout and merge phases? Raw agent count isn't the signal — per-agent execution time is. Four agents doing 3-minute documentation edits are slower with SAW than without; four agents doing 15-minute logic changes with a 45-second build cycle are substantially faster. The scout calculates this explicitly and includes the estimate in the verdict.
 
-If any of the first three is a hard blocker, the scout emits NOT SUITABLE and stops — writing only the verdict to the IMPL doc. Run `/saw check` to run just this pre-flight without committing to a full analysis.
+If any of the first three is a hard blocker, the scout emits NOT SUITABLE and stops — writing only the verdict and reasoning to the IMPL doc. Either way, an honest assessment is useful output before any agent spends time on a job. Run `/saw check` to run just this pre-flight without committing to a full analysis.
 
-If the check passes, a scout agent answers three questions:
+If the gate passes, the scout answers three structural questions:
 
 1. **What are the seams?** Where does the new feature touch existing code? What are the minimal, stable interfaces between pieces?
 2. **Who owns what?** Every file that will change gets assigned to exactly one agent. No two agents in the same wave touch the same file. If two tasks need the same file, that file becomes its own seam: extract an interface or create a new file so ownership stays disjoint. This turns a limitation into a design principle.
@@ -60,7 +60,7 @@ If the check passes, a scout agent answers three questions:
 
 The scout is throwaway: read-only, no implementation, one-shot. Its entire output is a single document: interface contracts, a file ownership table, and a wave structure. That document is the coordination artifact. Keeping the scout throwaway prevents planner drift; the artifact becomes the single source of truth, not an ongoing conversation with a planner that might change its mind mid-execution.
 
-For a small feature (3–5 agents), one file is fine. For 10+ agents, split it: an index file with the wave structure, ownership table, and status checklist, and one per-agent file with the full implementation spec. Individual agent prompts stay focused; the index stays readable.
+For a small feature (3–5 agents), one file is fine. For 10+ agents, or when the artifact exceeds ~20KB, split it: an index file with the wave structure, ownership table, and status checklist, and one per-agent file with the full implementation spec. Individual agent prompts stay focused; the index stays readable.
 
 **Interface contracts are defined before any agent starts. Agents code against the spec, not against each other's in-progress code.**
 
@@ -71,59 +71,96 @@ This is the same thing a tech lead does before a sprint. You're just automating 
 The coordination artifact the scout produces looks like this:
 
 ```markdown
-## Wave structure
-Wave 1: [agent A - files], [agent B - files], [agent C - files]
-Wave 2: [agent D - files], [agent E - files] - blocked on Wave 1
-Wave 3: [agent F - files] - blocked on Wave 2
+### Suitability Assessment
 
-## Interface contracts
-// Exact function signatures agents must implement or may call
+Verdict: SUITABLE
+
+Estimated times:
+- Scout phase: ~8 min
+- Agent execution: ~12 min (7 agents, accounting for parallelism)
+- Merge & verification: ~5 min
+Total SAW: ~25 min | Sequential baseline: ~55 min | Savings: ~30 min (55% faster)
+
+### Known Issues
+
+- `TestDoctorHelpIncludesFixNote` — hangs (pre-existing, unrelated to this work)
+  Workaround: skip with `-skip TestDoctorHelpIncludesFixNote`
+
+### Interface Contracts
+
 func RefreshShims(binaries []string) (added int, removed int, err error)
 func RunShimTest(st *store.Store, maxWait time.Duration) error
 func EnsurePathEntry(dir string) (added bool, configFile string, err error)
 func buildOptPathMap(st *store.Store) (map[string]string, error)
 
-## File ownership
+### File Ownership
+
 | File                              | Agent | Wave |
 |-----------------------------------|-------|------|
-| internal/shim/generator.go        | A     | 1    |
+| internal/shim/generator.go        | A     | 0    |
 | cmd/brewprune-shim/main.go        | B     | 1    |
 | internal/app/scan.go              | D     | 2    |
 | ...                               | ...   | ...  |
 
-## Status
-- [ ] Wave 1 Agent A - [description]
-- [ ] Wave 1 Agent B - [description]
+### Wave Structure
+
+Wave 0:  [A]               ← prerequisite (solo — gates downstream verification)
+              | (A completes, full test suite passes)
+Wave 1: [B] [C] [D]        ← 3 parallel agents
+              | (B+C+D complete)
+Wave 2:   [E] [F]          ← 2 parallel agents
+
+### Cascade Candidates
+
+- `internal/app/doctor.go` — calls RefreshShims; no changes needed but
+  post-merge verification should confirm the call site compiles cleanly
+
+### Status
+
+- [ ] Wave 0 Agent A — shim generator (prerequisite)
+- [ ] Wave 1 Agent B — shim binary version check
+- [ ] Wave 1 Agent C — opt-path disambiguation
 ```
 
-The status checklist becomes a living artifact: each wave updates it before the next wave launches. Downstream agents consume the actual state of what was built, not stale pre-flight assumptions.
+A few things worth noting in this structure:
 
-One more thing worth putting in the artifact: **cascade candidates** — files that call code being modified but don't need changes themselves. If Agent K adds a column to a table renderer, and two other files call that renderer, those callers are cascade candidates. Flag them in the IMPL doc. They don't need their own agents, but the post-merge verification gate should watch them explicitly. In practice, naming them upfront is what lets you confidently skip assigning them to agents.
+**Wave 0** is a solo prerequisite agent — not parallel — for work that gates all downstream verification. When a foundational change must exist before downstream agents can meaningfully test their own output, it becomes Wave 0. A single agent runs it on main, and it must pass the full test suite before Wave 1 launches.
+
+**Known Issues** names pre-existing failures so agents don't mistake them for regressions they caused. Without this, agents hit a hanging test, assume they broke something, and spiral.
+
+**Cascade candidates** are files that call code being modified but don't need changes themselves. If Agent K changes a function signature in a shared module, and three other files call that function, those callers are cascade candidates. They don't get their own agents, but naming them upfront means the post-merge verification gate watches them deliberately rather than discovering failures by accident.
+
+The status checklist becomes a living artifact: each wave updates it before the next wave launches. Downstream agents consume the actual state of what was built, not stale pre-flight assumptions.
 
 ## Wave Execution
 
 Each wave is a set of agents that can run fully in parallel because their file sets don't overlap and they depend only on interfaces already defined in the spec.
 
-Every agent in a wave gets three things in its prompt:
+Before launching any agents in a multi-agent wave, the orchestrator pre-creates a git worktree for each agent:
+
+```bash
+for agent in A B C; do
+  git worktree add ".claude/worktrees/wave1-agent-${agent}" -b "wave1-agent-${agent}"
+done
+```
+
+This is a required step, not optional scaffolding. You cannot rely on the Task tool's `isolation: "worktree"` parameter alone — it doesn't guarantee each agent starts in the correct worktree. Disjoint file ownership is the primary safety mechanism; it's what makes parallel execution *correct*. Worktrees are defense-in-depth: a second layer that prevents an agent from accidentally touching another agent's files even when ownership is right on paper. Both layers are in play.
+
+Each agent in a wave gets three things in its prompt:
 
 1. **File ownership:** "You own these files. Do not touch any others."
 2. **Interface contracts:** The exact signatures it must implement and the exact signatures it may call from prior waves.
-3. **Verification gate:** Must run the build and tests and report results before finishing.
+3. **Verification gate:** Must run the build and tests and report results before finishing. Agent gates use focused test commands (`go test ./pkg -run TestFoo`) to keep iteration fast. The orchestrator's post-merge gate runs unscoped (`go test ./...`) to catch cross-package cascade failures no individual agent could see.
 
-The gate is a hard contract, not a suggestion. For the brewprune session it looked like this:
+After all agents in a wave complete, the orchestrator:
 
-```
-Gate (Wave N complete when all pass):
-- go build ./...          passes
-- go vet ./...            passes
-- go test ./...           passes
-- brewprune doctor        clean
-- scout artifact updated: status checkboxes ticked, any signature changes recorded
-```
+1. **Parses completion reports** from the IMPL doc. Each agent writes a structured YAML block: files changed, interface deviations, out-of-scope dependencies discovered, verification result.
+2. **Predicts conflicts** by cross-referencing all agents' file lists before touching the working tree. If the same file appears in two agents' lists, that's a disjoint ownership violation — flag and resolve before merging.
+3. **Reviews interface deviations.** If an agent changed a signature from the spec, downstream agents (in later waves) may depend on the original contract. Deviations that affect downstream agents get flagged with `downstream_action_required: true` — the orchestrator updates those agent prompts before launching the next wave.
+4. **Merges each worktree** in sequence, cleans up worktrees and branches, runs the full unscoped verification gate.
+5. **Updates the IMPL doc:** tick status checkboxes, correct interface contracts, queue any out-of-scope dependency fixes for pre-launch cleanup.
 
-Wave N+1 does not launch until Wave N is verified. After all agents in a wave complete, the verification gate runs against the result. Individual agents pass their gates in isolation, but the merged codebase can surface issues none of them saw individually. This post-merge verification is the real gate.
-
-A note on isolation: the orchestrator pre-creates a git worktree for each agent in a wave before launching any of them. You cannot rely on the Task tool's `isolation: "worktree"` parameter alone — it doesn't guarantee each agent starts in the correct worktree. Pre-creation is explicit and verified. Disjoint file ownership is still the primary safety mechanism — it's what makes parallel execution *correct*. Worktrees are defense-in-depth: they prevent an agent from accidentally touching another agent's files even when ownership is right on paper. Both layers are required.
+Wave N+1 does not launch until Wave N is verified. If verification fails, fix before proceeding.
 
 ### The Artifact Revises Itself
 
@@ -132,8 +169,6 @@ Most planning systems treat the plan as immutable once execution begins. The sco
 Scout-and-wave treats the coordination artifact as a living document. When an agent discovers that an interface contract needs to change, that a function signature doesn't fit the data it actually encounters, or that a file needs to move to a different agent, it records the deviation directly in the IMPL doc. The agent reports what it actually built, not just whether it succeeded. Status checkboxes get ticked, but more importantly, interface contracts get corrected and ownership changes get recorded.
 
 This matters because downstream agents in Wave N+1 read the artifact before they start. They get the corrected signatures, not the scout's original guesses. A spec written before implementation can't anticipate every detail. An artifact updated by the agents who did the work can. The plan converges toward reality with each wave instead of drifting further from it.
-
-This is what makes the artifact "living" in a meaningful sense. It's not just a checklist that tracks completion. It's a shared document that agents actively revise so the next wave starts with accurate context rather than stale assumptions.
 
 ## Worked Example: brewprune
 
@@ -206,6 +241,7 @@ The shape here is the opposite of the shim feature: instead of a converging DAG 
 | Context window waste: 7 agents × full feature brief | Scout pays the context cost once; agents carry only their slice |
 | Hard to reason about dependencies | Explicit DAG → waves fall out naturally |
 | Plan drifts from reality during execution | Agents revise the artifact; downstream waves get corrected context |
+| Wasted work on already-fixed items | Pre-implementation status check filters DONE items before agents launch |
 
 ## When to Use It
 
@@ -218,7 +254,7 @@ The shape here is the opposite of the shim feature: instead of a converging DAG 
 **Low parallelization value** (consider alternatives):
 - Simple edits, documentation-only, or trivially fast sequential work — SAW overhead dominates
 - 2-3 agents with disjoint files and no dependencies — use SAW Quick mode instead
-- Note: the IMPL doc has coordination value even when speed gains are marginal (audit trail, interface spec, progress tracking) — flag as SUITABLE WITH CAVEATS in those cases
+- Note: the IMPL doc has coordination value even when speed gains are marginal (audit trail, interface spec, progress tracking) — the scout flags these as SUITABLE WITH CAVEATS
 
 **Good fit:**
 - Clear seams exist between pieces
@@ -230,7 +266,7 @@ The shape here is the opposite of the shim feature: instead of a converging DAG 
 - Interface cannot be known until you start implementing
 - Root cause is unknown (crash, race condition) — investigate first, then use SAW for the fix
 
-Run `/saw check` when you're unsure. The scout runs a built-in suitability gate with time-to-value estimates (SAW total vs sequential baseline) and will emit a NOT SUITABLE verdict rather than producing a broken IMPL doc with forced decomposition.
+Run `/saw check` when you're unsure. The scout runs the full suitability gate with time-to-value estimates (SAW total vs sequential baseline) and will emit a NOT SUITABLE verdict rather than producing a broken IMPL doc with forced decomposition.
 
 ## How This Relates to Existing Patterns
 
@@ -258,15 +294,9 @@ Scout-and-wave is also distinct from framework-level solutions. OpenClaw, AutoGe
 
 If you can't check those boxes, the feature probably isn't ready for parallelism yet. Run `/saw check` first — it answers the suitability question in seconds, without producing an IMPL doc or committing to a full analysis.
 
-{{< callout type="info" >}}
-**The prompts below are illustrative.** They represent the v0.1 pattern described in this article. The canonical, actively-maintained prompts have since added the five-part suitability gate, Wave 0 pattern, module decomposition, mandatory agent isolation verification (Section 0 of the agent template), interface freeze before worktree creation, downstream propagation flags for interface deviations, and focused test scoping during waves. Current versions: `saw-skill v0.3.0`, `saw-merge v0.4.0`, `saw-worktree v0.4.0`, `agent-template v0.3.2`. All at [github.com/blackwell-systems/scout-and-wave](https://github.com/blackwell-systems/scout-and-wave).
-{{< /callout >}}
+## The Skill
 
-## Reference: The Prompts
-
-Everything above describes the pattern. Below are the core prompts that implement it: the scout prompt that produces the coordination artifact, and the agent prompt template that gets stamped per-agent from the scout's output.
-
-The `/saw` skill for Claude Code exposes six commands:
+Scout-and-wave ships as a `/saw` skill for [Claude Code](https://docs.anthropic.com/en/docs/claude-code). Install it by copying the skill file to `~/.claude/commands/saw.md`. Six commands:
 
 ```
 /saw bootstrap <description>   # Design-first architecture for new projects (no existing codebase)
@@ -277,230 +307,9 @@ The `/saw` skill for Claude Code exposes six commands:
 /saw status                    # Show current progress from the IMPL doc
 ```
 
-The canonical prompts (including the suitability gate and Wave 0 sections) are at [github.com/blackwell-systems/scout-and-wave](https://github.com/blackwell-systems/scout-and-wave). The versions below are representative of the core pattern.
+The skill routes to focused modules: `saw-merge.md` owns the merge procedure (completion report parsing, conflict prediction, interface deviation review, post-merge verification); `saw-worktree.md` owns the worktree lifecycle (pre-creation, verification, self-healing, cleanup); `saw-bootstrap.md` handles design-first architecture for new projects; `saw-quick.md` covers lightweight 2-3 agent work without a full IMPL doc. All files carry version headers at line 1 (`<!-- saw-skill v0.3.0 -->`) so installed copies can be checked with `head -1 ~/.claude/commands/saw.md`.
 
-### Scout Prompt
-
-The scout is a read-only reconnaissance agent. It analyzes the codebase and produces a coordination artifact. It does not write any implementation code.
-
-````markdown
-# Scout Agent: Pre-Flight Dependency Mapping
-
-You are a read-only reconnaissance agent. Your job is to analyze the codebase
-and produce a coordination artifact that enables parallel development agents
-to work without conflicts. You do not write any implementation code.
-
-## Your Task
-
-Given a feature description, analyze the codebase and produce a planning
-document with six sections: dependency graph, interface contracts, file
-ownership table, wave structure, agent prompts, and status checklist.
-
-Write the document to `docs/IMPL-<feature-slug>.md`. This file is the single
-source of truth for all downstream agents and for tracking progress between
-waves.
-
-## Process
-
-1. **Read the project first.** Examine the build system (Makefile, go.mod,
-   package.json, pyproject.toml), test patterns, naming conventions, and
-   directory structure. The verification gates and test expectations you emit
-   must match the project's actual toolchain.
-
-2. **Identify every file that will change or be created.** Trace call paths,
-   imports, and type dependencies. Do not guess; read the actual source.
-
-3. **Map the dependency graph.** For each file, determine what it depends on
-   and what depends on it. Identify the leaf nodes (files whose changes block
-   nothing else) and the root nodes (files that must exist before downstream
-   work can begin). Draw the full DAG.
-
-4. **Define interface contracts.** For every function, method, or type that
-   will be called across agent boundaries, write the exact signature.
-   Language-specific, fully typed, no pseudocode. These signatures are binding
-   contracts. Agents will implement against them without seeing each other's
-   code. If you cannot determine a signature, flag it as a blocker that must
-   be resolved before launching agents.
-
-5. **Assign file ownership.** Every file that will change gets assigned to
-   exactly one agent. No two agents in the same wave may touch the same file.
-   If two tasks need the same file, resolve the conflict now: extract an
-   interface, split the file, or create a new file so ownership is disjoint.
-   This is a hard constraint, not a preference.
-
-6. **Structure waves from the DAG.** Group agents into waves:
-   - Wave 1: Agents whose files have no dependencies on other new work.
-     These are the foundation. Maximize parallelism here.
-   - Wave N+1: Agents whose files depend on interfaces delivered in Wave N.
-   - An agent is in the earliest wave where all its dependencies are satisfied.
-   - Annotate each wave transition with the *specific* agent(s) that unblock
-     it, not "blocked on Wave 1" but "blocked on Agent A completing."
-
-7. **Write agent prompts.** For each agent, produce a complete prompt using
-   the standard 8-field format (see Agent Prompt Template below). The prompt
-   must be self-contained: an agent receiving it should need nothing beyond
-   the prompt and the existing codebase to do its work.
-
-8. **Determine verification gates from the build system.** Read the Makefile,
-   CI config, or build scripts. Emit the exact commands each agent must run
-   (e.g., `go build ./...`, `npm test`, `pytest -x`). Do not use generic
-   placeholders.
-
-## Output Format
-
-Write the following to `docs/IMPL-<feature-slug>.md`:
-
-### Dependency Graph
-
-[Description of the DAG. Which files/modules are roots, which are leaves,
-which have cross-dependencies. Call out any files that were split or
-extracted to resolve ownership conflicts.]
-
-### Interface Contracts
-
-[Exact function/method/type signatures that cross agent boundaries.]
-
-```
-func RefreshShims(binaries []string) (added int, removed int, err error)
-func RunShimTest(st *store.Store, maxWait time.Duration) error
-```
-
-### File Ownership
-
-| File | Agent | Wave | Depends On |
-|------|-------|------|------------|
-| ...  | ...   | ...  | ...        |
-
-### Wave Structure
-
-```
-Wave 1: [A] [B] [C] [D]     ← 4 parallel agents
-           ↓ (A completes)
-Wave 2:   [E] [F]            ← 2 parallel agents
-           ↓ (E+F complete)
-Wave 3:    [G]               ← 1 agent
-```
-
-### Agent Prompts
-
-[Full prompt for each agent, using the 8-field format defined below.]
-
-### Wave Execution Loop
-
-After each wave completes:
-1. Review agent outputs for correctness.
-2. Merge all agent worktrees back into the main branch.
-3. Run the full verification gate (build + test) against the merged result.
-   Post-merge is the real gate — merged code surfaces issues no individual
-   agent could see.
-4. Fix any compiler errors or integration issues.
-5. Update the coordination artifact: tick status checkboxes, correct any
-   interface contracts that changed, record file ownership changes.
-   Downstream agents read this document before they start.
-6. Commit the wave's changes.
-7. Launch the next wave.
-
-If verification fails, fix before proceeding. Do not launch the next wave
-with a broken build.
-
-### Status
-
-- [ ] Wave 1 Agent A - [description]
-- [ ] Wave 1 Agent B - [description]
-- [ ] Wave 2 Agent C - [description]
-- ...
-
-## Rules
-
-- You are read-only. Do not create, modify, or delete any source files
-  other than the coordination artifact at `docs/IMPL-<feature-slug>.md`.
-- Every signature you define is a binding contract. Agents will implement
-  against these signatures without seeing each other's code.
-- If you cannot cleanly assign disjoint file ownership, say so. That is a
-  signal the work is not ready for parallel execution.
-- Prefer more agents with smaller scopes over fewer agents with larger ones.
-  An agent owning 1-3 files is ideal. An agent owning 6+ files is a red flag.
-- The planning document you produce will be consumed by every downstream
-  agent and updated after each wave. Write it for that audience.
-````
-
-### Agent Prompt Template
-
-Each agent prompt has 8 fields. The scout fills these in from the coordination artifact. Fields are ordered so the agent reads constraints first, then context, then the work.
-
-````markdown
-# Wave {N} Agent {letter}: {short description}
-
-You are Wave {N} Agent {letter}. {One-sentence summary of your task.}
-
-## 1. File Ownership
-
-You own these files. Do not touch any other files.
-- `path/to/file` - {create | modify}
-- `path/to/file_test` - {create | modify}
-
-## 2. Interfaces You Must Implement
-
-Exact signatures you are responsible for delivering:
-
-```
-func YourNewFunction(param Type) (ReturnType, error)
-```
-
-## 3. Interfaces You May Call
-
-Signatures from prior waves or existing code that you can depend on.
-These are already implemented; code against them directly.
-
-```
-func ExistingFunction(param Type) ReturnType
-```
-
-## 4. What to Implement
-
-{Functional description of the behavior. Describe *what*, not *how*.
-Reference specific files to read first. Describe edge cases, error handling
-expectations, and any constraints on the approach.}
-
-## 5. Tests to Write
-
-{Named tests with one-line descriptions. Be specific.}
-
-1. `TestFunctionName_Scenario` - {what it verifies}
-2. `TestFunctionName_EdgeCase` - {what it verifies}
-
-## 6. Verification Gate
-
-Run these commands. All must pass before you report completion.
-
-```
-cd /path/to/project
-<build command>    # e.g., go build ./... | npm run build | make
-<lint command>     # e.g., go vet ./... | npm run lint | ruff check
-<test command>     # e.g., go test ./... | npm test | pytest -x
-```
-
-## 7. Constraints
-
-{Any additional hard rules: non-fatal error handling, stderr vs stdout,
-backward compatibility requirements, things to explicitly avoid.}
-
-## 8. Report
-
-Append your completion report to the IMPL doc under
-`### Agent {letter} — Completion Report`. This is the canonical record —
-downstream agents and the orchestrator read the IMPL doc, not chat output.
-Interface contract changes must be written there so the next wave picks them up.
-
-Include:
-- What you implemented (function names, key decisions)
-- Test results (pass/fail, count)
-- Any deviations from the spec and why
-- Any interface contract changes (exact signature differences downstream agents need)
-- Any out-of-scope dependencies discovered (file name, required change, reason)
-````
-
-I've been running this pattern for a while without a name for it. If you've been doing something similar, or something better, I'd like to hear about it.
+The prompts are at [github.com/blackwell-systems/scout-and-wave](https://github.com/blackwell-systems/scout-and-wave).
 
 ---
 
