@@ -42,7 +42,15 @@ These aren't edge cases. They're the default outcome of uncoordinated parallelis
 
 Dependency mapping needs to be a first-class phase, not something you figure out on the fly.
 
-Before any agent writes a line of code, the scout runs a suitability check. Three questions: Can the work decompose into ≥2 disjoint file groups? Are there investigation-first items — a crash to reproduce, a race condition whose root cause is unknown — that must be understood before they can be fixed? Can the cross-agent interfaces be defined before implementation starts? If the answer to any of these is no, the scout emits a NOT SUITABLE verdict and stops. A crash with an unknown root cause needs investigation before agents can be written to fix it; scout-and-wave isn't the right tool until you know what's broken. Run `/saw check` to run just this pre-flight without committing to a full analysis.
+Before any agent writes a line of code, the scout runs a five-part suitability gate:
+
+1. **File decomposition.** Can the work be assigned to ≥2 agents with disjoint file ownership? If every change funnels through a single file, there's nothing to parallelize.
+2. **Investigation-first items.** Does any part of the work require root cause analysis before implementation? A crash whose source is unknown, a race condition that must be reproduced before it can be fixed — these must be resolved before agents can be written. A poor-fit assessment here is useful output: it tells you what to do first.
+3. **Interface discoverability.** Can the cross-agent interfaces be defined before any agent starts? If a downstream agent's inputs can't be specified until an upstream agent has already started, the agents will contradict each other.
+4. **Pre-implementation status check.** If the work comes from an audit report or findings list, are these items actually TO-DO? The scout reads source files for each item and classifies it: already implemented, partially done, or still needed. DONE items are excluded or converted to test-coverage-only agents — no wasted work. In round 5 of the brewprune audit cycle, this check found that 12 of 24 findings had already been implemented and filtered them before any agent launched.
+5. **Parallelization value.** Does the time saved by running agents in parallel exceed the fixed overhead of the scout and merge phases? Raw agent count isn't the signal — per-agent execution time is. Four agents doing 3-minute documentation edits are slower with SAW than without; four agents doing 15-minute logic changes with a 45-second build cycle are substantially faster. The scout calculates this explicitly and includes the estimate in the verdict.
+
+If any of the first three is a hard blocker, the scout emits NOT SUITABLE and stops — writing only the verdict to the IMPL doc. Run `/saw check` to run just this pre-flight without committing to a full analysis.
 
 If the check passes, a scout agent answers three questions:
 
@@ -115,7 +123,7 @@ Gate (Wave N complete when all pass):
 
 Wave N+1 does not launch until Wave N is verified. After all agents in a wave complete, the verification gate runs against the result. Individual agents pass their gates in isolation, but the merged codebase can surface issues none of them saw individually. This post-merge verification is the real gate.
 
-A note on isolation: worktrees *can* isolate agents from each other during execution, but in practice with Claude Code Task agents, all agents write to the main working tree — and that works fine, because disjoint file ownership is what actually prevents conflicts. Worktrees are optional isolation; ownership is the hard constraint.
+A note on isolation: the orchestrator pre-creates a git worktree for each agent in a wave before launching any of them. You cannot rely on the Task tool's `isolation: "worktree"` parameter alone — it doesn't guarantee each agent starts in the correct worktree. Pre-creation is explicit and verified. Disjoint file ownership is still the primary safety mechanism — it's what makes parallel execution *correct*. Worktrees are defense-in-depth: they prevent an agent from accidentally touching another agent's files even when ownership is right on paper. Both layers are required.
 
 ### The Artifact Revises Itself
 
@@ -251,7 +259,7 @@ Scout-and-wave is also distinct from framework-level solutions. OpenClaw, AutoGe
 If you can't check those boxes, the feature probably isn't ready for parallelism yet. Run `/saw check` first — it answers the suitability question in seconds, without producing an IMPL doc or committing to a full analysis.
 
 {{< callout type="info" >}}
-**The prompts below are illustrative.** They represent the v0.1 pattern described in this article. The canonical, actively-maintained prompts (including the suitability gate, Wave 0 pattern, module decomposition, and v0.3.0 improvements) are at [github.com/blackwell-systems/scout-and-wave](https://github.com/blackwell-systems/scout-and-wave).
+**The prompts below are illustrative.** They represent the v0.1 pattern described in this article. The canonical, actively-maintained prompts have since added the five-part suitability gate, Wave 0 pattern, module decomposition, mandatory agent isolation verification (Section 0 of the agent template), interface freeze before worktree creation, downstream propagation flags for interface deviations, and focused test scoping during waves. Current versions: `saw-skill v0.3.0`, `saw-merge v0.4.0`, `saw-worktree v0.4.0`, `agent-template v0.3.2`. All at [github.com/blackwell-systems/scout-and-wave](https://github.com/blackwell-systems/scout-and-wave).
 {{< /callout >}}
 
 ## Reference: The Prompts
