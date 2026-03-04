@@ -6,7 +6,21 @@ showMetadata: false
 draft: false
 ---
 
+## FDA Compliance Guard
+
+**Real-time FDA compliance validation for Shopify merchants selling health and supplement products.**
+
+**FDA Compliance Guard** is a full-stack compliance validation platform that detects prohibited disease claims, drug comparisons, and evasive marketing language in product listings before they trigger FDA enforcement actions.
+
+The Rust semantic engine processes validations with sub-4ms latency.
+The Shopify embedded app makes compliance checking seamless.
+
+---
+
 ## What It Does
+
+- **Semantic Pattern Detection**
+  9,967 disease-claim patterns combined with 558 linguistic feature detectors across 8 NLP subsystems (presupposition, intensifiers, hedging, comparative claims, rhetorical questions, testimonial framing, indirect claims, scope modifiers).
 
 - **Validated Against Real Enforcement Actions**
   Pattern library derived from 17 FDA warning letters spanning 2014-2025, achieving 0.5% false positive rate on production data.
