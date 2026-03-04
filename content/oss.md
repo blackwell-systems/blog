@@ -38,6 +38,8 @@ showMetadata: false
 
 **[ai-cold-start-audit](https://github.com/blackwell-systems/ai-cold-start-audit)** - Turn AI's lack of context into a feature. Agents cold-start your CLI in a container and report every friction point a new user would hit. Structured severity-tiered findings with reproduction steps. Includes a Claude Code `/cold-start-audit` skill.
 
+**[github-release-engineer](https://github.com/blackwell-systems/github-release-engineer)** - Claude Code skill automating the full GitHub release lifecycle: version detection from language-specific manifests, changelog validation, tag safety checks, CI/CD monitoring with background-aware polling, intelligent failure diagnosis with automated fix-retag-rewatch loops, release asset polling with stability checks, and companion skill composition for downstream distribution. 11-step gated pipeline with a 15-row error matrix defining behavior for every failure mode.
+
 **[dotclaude](https://blackwell-systems.github.io/dotclaude/#/)** - Profile manager for Claude Code. Switch between work/personal contexts, multi-backend routing.
 
 ### Developer Tools
@@ -55,6 +57,8 @@ showMetadata: false
 **[vaultmux](https://github.com/blackwell-systems/vaultmux)** ([Go pkg](https://pkg.go.dev/github.com/blackwell-systems/vaultmux)) | **[vaultmux-rs](https://github.com/blackwell-systems/vaultmux-rs)** ([Rust crate](https://crates.io/crates/vaultmux)) - Unified secret management library across Bitwarden, 1Password, pass, AWS, GCP, Azure. Available in Go and Rust with 95%+ test coverage. Powers vaultmux-server.
 
 **[err-envelope](https://github.com/blackwell-systems/err-envelope)** ([Go pkg](https://pkg.go.dev/github.com/blackwell-systems/err-envelope)) - Structured HTTP error responses for Go. Works with net/http, Chi, Gin, and Echo. Machine-readable codes, field validation, trace IDs.
+
+**[bubbletea-components](https://github.com/blackwell-systems/bubbletea-components)** - Reusable Bubble Tea TUI component library: carousel (peeking single-row card layout), command palette (fuzzy-search overlay), Miller columns (hierarchical navigation), multiselect (checkbox wrapper), and picker (base selection foundation). Five composable packages designed for drop-in use in interactive Go terminal applications. Used in shelfctl for the interactive TUI interface.
 
 ### Utilities
 
