@@ -104,7 +104,7 @@ FDA Compliance Guard is a full-stack platform combining a Rust semantic validati
 - **PostgreSQL** storage with 6-model schema (Prisma ORM)
 - **GDPR-compliant** data lifecycle management
 
-[View Details](/products/fda-compliance-guard) · [Contact Sales](mailto:support@blackwell-systems.com)
+[Contact Sales](mailto:support@blackwell-systems.com)
 
 ---
 
