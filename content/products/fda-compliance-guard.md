@@ -19,9 +19,6 @@ The Shopify embedded app makes compliance checking seamless.
 
 ## What It Does
 
-- **Semantic Pattern Detection**
-  9,967 disease-claim patterns combined with 558 linguistic feature detectors across 8 NLP subsystems (presupposition, intensifiers, hedging, comparative claims, rhetorical questions, testimonial framing, indirect claims, scope modifiers).
-
 - **Validated Against Real Enforcement Actions**
   Pattern library derived from 17 FDA warning letters spanning 2014-2025, achieving 0.5% false positive rate on production data.
 
