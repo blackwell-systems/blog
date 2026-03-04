@@ -12,6 +12,8 @@ summary: "The Scaffold Agent doesn't add capability. It restores a review gate t
 
 [Part 1](./scout-and-wave) introduced the pattern. [Part 2](./scout-and-wave-part2) covered what running it taught us about when parallelism actually pays off. [Part 3](./scout-and-wave-part3) covered how a 400-line prompt monolith was decomposed and why prompt files have the same problems as software modules.
 
+Scout-and-Wave (SAW) parallelizes AI agent work. A Scout agent analyzes a feature, splits it into independent pieces with disjoint file ownership, and writes an implementation plan. A human reviews the plan. Then multiple Wave Agents implement their pieces simultaneously in isolated git worktrees, and the Orchestrator merges the results. The protocol's job is making that merge safe and the results trustworthy.
+
 This post is about v0.6.0. Not about new features, but restoration. Two specific changes, both driven by production incidents, both addressing the same underlying problem: something worked but violated a structural guarantee.
 
 The Scaffold Agent restores a human review gate that was cosmetically present but structurally bypassed. The worktree isolation trip wire catches failures that three cooperative defense layers missed. Neither fixes a bug in the sense of "agent produced wrong output." Both fix trust in the sense of "the protocol's guarantees must be enforceable, not aspirational."
