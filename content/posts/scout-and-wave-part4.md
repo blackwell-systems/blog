@@ -251,9 +251,9 @@ The Orchestrator legitimately commits to main (scaffold files, post-merge commit
 
 ### Ephemeral Hooks
 
-The hook is ephemeral. The Orchestrator creates it during worktree setup (a `cat > .git/hooks/pre-commit` command defined inline in the worktree docs), and removes it during cleanup after the wave merges. It backs up any existing pre-commit hook and restores it afterward. Between waves, the hook doesn't exist. Outside of SAW sessions, the project's git workflow is unaffected.
+The hook is ephemeral. It ships as a file in the SAW repository (`hooks/pre-commit-guard.sh`), and the Orchestrator copies it to `.git/hooks/pre-commit` during worktree setup, then removes it during cleanup after the wave merges. It backs up any existing pre-commit hook and restores it afterward. Between waves, the hook doesn't exist. Outside of SAW sessions, the project's git workflow is unaffected.
 
-This is unusual. Normally git hooks are committed to the repo or managed by a framework like `husky`. SAW has no runtime, no binary, no installed tooling. The entire protocol is instructions that Claude Code follows. The hook is just another instruction: "run this bash command to create this file." The Orchestrator is the runtime, and its code is the markdown it reads.
+This is unusual. Normally git hooks are committed to the target repo or managed by a framework like `husky`. SAW ships the hook in its own repo but installs it temporarily into the target project. There's no permanent footprint. The Orchestrator copies one file, uses it for the duration of the wave, and deletes it.
 
 The ephemeral lifecycle fits the constraint. SAW isn't a project you install into your repo. It's a skill you invoke. Temporary safety mechanisms for a temporary activity. The hook is a guest, not a resident.
 
@@ -293,7 +293,7 @@ The worktree isolation defense model went from three cooperative layers to five,
 
 Neither change fixes a bug in the traditional sense. An agent producing wrong output is a bug. An agent producing correct output while bypassing a structural guarantee is a protocol violation. Bugs break functionality. Protocol violations break trust.
 
-The Scaffold Agent is 174 lines. The trip wire is 15 lines of bash. The pre-commit hook is 20 lines of shell created on the fly and deleted when the wave is done. Small changes. But they're not optimizations or features. They're restorations. v0.6.0 took things that worked and made them trustworthy.
+The Scaffold Agent is 174 lines. The trip wire is 15 lines of bash. The pre-commit hook is 20 lines of shell, shipped in the SAW repo and copied into the target project for the duration of a wave. Small changes. But they're not optimizations or features. They're restorations. v0.6.0 took things that worked and made them trustworthy.
 
 A protocol that works is necessary. A protocol you can trust is the goal.
 
