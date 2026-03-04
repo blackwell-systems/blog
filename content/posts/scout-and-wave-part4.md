@@ -1,7 +1,7 @@
 ---
 title: "Scout-and-Wave, Part 4: Trust Is Structural"
 date: 2026-03-03
-draft: true
+draft: false
 series: ["scout-and-wave"]
 seriesOrder: 4
 tags: ["ai", "multi-agent", "claude-code", "developer-tools", "patterns", "prompt-engineering", "productivity"]
