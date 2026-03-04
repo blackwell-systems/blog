@@ -18,6 +18,11 @@ The Scaffold Agent restores a human review gate that was cosmetically present bu
 
 ## Arc 1: Wave 0 to Scout Phase to Scaffold Agent
 
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="/images/scout-and-wave/saw-scout-wave-dark.svg">
+  <img src="/images/scout-and-wave/saw-scout-wave-light.svg" alt="SAW scout + wave execution flow" style="max-width: 100%;">
+</picture>
+
 The story runs chronologically through three protocol versions, each solving a problem the previous one created.
 
 ### v0.3.0: Wave 0 Introduced
@@ -27,6 +32,11 @@ Bootstrap mode (the design-first architecture variant for new projects with no e
 The solution was Wave 0. A dedicated pre-wave containing exactly one agent: the types agent. Its job was to read the Scout's interface contract specifications from the IMPL doc and materialize them as source files: a `types.go` package in Go, a `types.rs` module in Rust, whatever the language required. Once committed, Wave 1 agents could import from those types and implement in parallel.
 
 Wave 0 ran through full wave machinery: worktree creation, async agent launch, verification gate, merge procedure. The only difference was wave size: one agent instead of N. This worked. Builds passed. Agents got their types. Bootstrap mode shipped.
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="/images/scout-and-wave/saw-bootstrap-dark.svg">
+  <img src="/images/scout-and-wave/saw-bootstrap-light.svg" alt="SAW bootstrap mode flow" style="max-width: 100%;">
+</picture>
 
 But it had a structural smell. Wave machinery exists to coordinate parallel execution. Applying it to a single agent produces overhead with no corresponding parallelism benefit. You create one worktree, launch one agent, wait for one completion notification, merge one branch. The merge step can't produce conflicts because there's nothing to conflict with. The coordination artifact is solving a problem that doesn't exist when N=1.
 
