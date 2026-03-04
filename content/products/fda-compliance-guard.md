@@ -19,8 +19,6 @@ The Shopify embedded app makes compliance checking seamless.
 
 ## What It Does
 
-FDA Compliance Guard validates product listings against FDA regulations (21 CFR 101.93(g)) and enforcement patterns:
-
 - **Semantic Pattern Detection**
   9,967 disease-claim patterns combined with 558 linguistic feature detectors across 8 NLP subsystems (presupposition, intensifiers, hedging, comparative claims, rhetorical questions, testimonial framing, indirect claims, scope modifiers).
 
