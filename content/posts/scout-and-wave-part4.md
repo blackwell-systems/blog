@@ -74,6 +74,11 @@ The flow becomes:
 4. Scaffold Agent creates files, verifies compilation, commits.
 5. Orchestrator creates worktrees for Wave 1.
 
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="/images/scout-and-wave/saw-status-dark.svg">
+  <img src="/images/scout-and-wave/saw-status-light.svg" alt="SAW participant flow with Scaffold Agent" style="max-width: 100%;">
+</picture>
+
 The review gate is structural again. Changing an interface contract during review is an IMPL doc edit. No source files to uncommit, no compilation required, no git history to rewrite. Once the user approves, the Scaffold Agent materializes the contracts. After that point, E2 (interface freeze) applies, but the freeze happens after review, not before.
 
 ### Why Not Alternatives?
@@ -101,6 +106,11 @@ Cross-wave coordination doesn't need scaffolds either. Waves execute sequentiall
 Why not per-wave scaffolding? Because E2 (interface freeze) makes it unnecessary. All interface contracts are known at the REVIEWED state, before any wave launches. The Scout defines every interface that crosses agent boundaries in the IMPL doc during the scouting phase. Once human review completes, those contracts are frozen. The Scaffold Agent materializes them once, before Wave 1. When Wave 1 completes and Wave 2 begins, there's nothing new to scaffold. Wave 2 agents import from Wave 1's committed work.
 
 The state machine encodes this. The loop-back arc from "more waves?" to WAVE_PENDING bypasses the Scout phase and the Scaffold Agent gate. It goes straight to worktree creation because all contracts are already known and materialized.
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="/images/scout-and-wave/saw-state-machine-dark.svg">
+  <img src="/images/scout-and-wave/saw-state-machine-light.svg" alt="SAW state machine diagram" style="max-width: 100%;">
+</picture>
 
 ## Arc 2: From Loose Spec to Formal Protocol
 
