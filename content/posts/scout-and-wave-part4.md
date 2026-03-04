@@ -283,7 +283,7 @@ The protocol is converging.
 
 Early sessions produced structural changes. New participants (Scout, Wave Agent, now Scaffold Agent). New invariants (I1 through I6). New execution rules (E1 through E14). The shape of the protocol was forming.
 
-Recent sessions produce hardening. Failure modes identified. Recovery paths documented. Defense layers added. The shape isn't changing, just the resilience.
+Recent sessions produce hardening. Failure modes identified. Recovery paths documented. Defense layers added. The shape isn't changing, just the resilience. And the blast radius of each change is shrinking. v0.3 restructures rewrote the state machine. v0.5 restructures changed participant roles. v0.6 restructures moved a shell script from inline to a file. The protocol is settling.
 
 Both stories in this post follow the same pattern: something worked but violated a structural guarantee.
 
