@@ -192,6 +192,8 @@ Correctness guarantees belong in infrastructure, not cooperation.
 
 Asking agents to maintain worktree isolation through prompt instructions is like asking programs to manage their own memory safety. The abstraction boundary is wrong. Agents can cooperate when isolation works, but they can't detect when isolation fails. That's not their job.
 
+This points to a failure category that prompt-defined protocols don't share with traditional software protocols. A compiled protocol fails at compile time (type error), link time (missing implementation), or runtime (assertion). A prompt-defined protocol fails at compliance time: the spec is correct, the agent parsed it, the agent did something else. You can't add a type constraint to prevent it. You can't write a unit test for "agent follows instruction." The only fix is infrastructure that enforces the constraint regardless of whether the agent cooperates.
+
 The three layers (tool parameter, self-verification, prompt instructions) are all either tool-level or agent-level. They run during execution. If the execution environment fails silently (Layer 1 doesn't work, no error emitted), the agent has no signal to detect the failure. Field 0 verification depends on the agent being able to see its own working directory. If the tool launched the agent in the wrong place but didn't surface an error, Field 0 might report success because it's verifying the wrong thing.
 
 The missing piece: a deterministic check at merge time, before any `git merge` runs, that verifies each agent branch has commits.
