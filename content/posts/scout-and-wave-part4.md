@@ -227,22 +227,33 @@ The Orchestrator is explicitly instructed: "Do not choose a recovery path autono
 
 This is critical. Path 1 costs compute time but restores trust. Path 3 costs trust but preserves the work. That tradeoff is a human decision. The trip wire's job is to make the failure visible and force the decision to be explicit, not let the Orchestrator quietly proceed with an invalid merge.
 
-### The 4-Layer Defense Model
+### The 5-Layer Defense Model
 
 Now encoded in E4 of PROTOCOL.md:
 
 | Layer | Mechanism | Type | Catches |
 |-------|-----------|------|---------|
+| 0 | Pre-commit hook | Infrastructure | Agent commits to main |
 | 1 | Manual worktree pre-creation | Deterministic | Primary isolation |
 | 2 | `isolation: "worktree"` parameter | Tool-level | Secondary isolation |
 | 3 | Field 0 self-verification | Cooperative | Agent in wrong directory |
 | 4 | Merge-time trip wire | Deterministic | All isolation failures |
 
-Belt (manual pre-creation) and suspenders (isolation parameter) and trip wire (merge-time check).
+Layer 0 prevents. Layers 1 through 3 guide. Layer 4 detects.
 
-Layers 1 and 2 may both fire. That's fine. Redundant isolation is harmless. If both fail, Layer 3 may catch it. If all three fail, Layer 4 catches it before any incorrect merge.
+Layer 0 is a git `pre-commit` hook installed during worktree setup that blocks any commit to `main` while SAW worktrees exist. If an agent tries to commit to main, git rejects the commit and the hook outputs an instructive error listing the available worktrees and telling the agent where to go. The agent can self-correct: cd to its assigned worktree and retry.
 
-The trip wire doesn't prevent isolation failures. It detects them. That's the boundary between what agents can do and what infrastructure must enforce. Agents can cooperate to maintain isolation. Infrastructure must detect when cooperation fails.
+The Orchestrator legitimately commits to main (scaffold files, post-merge commits, lint fixes). It bypasses the hook with `SAW_ALLOW_MAIN_COMMIT=1` before its own commits. Agents never have this variable set.
+
+### Ephemeral Hooks
+
+The hook is ephemeral. The Orchestrator creates it during worktree setup (a `cat > .git/hooks/pre-commit` command defined inline in the worktree docs), and removes it during cleanup after the wave merges. It backs up any existing pre-commit hook and restores it afterward. Between waves, the hook doesn't exist. Outside of SAW sessions, the project's git workflow is unaffected.
+
+This is unusual. Normally git hooks are committed to the repo or managed by a framework like `husky`. SAW has no runtime, no binary, no installed tooling. The entire protocol is instructions that Claude Code follows. The hook is just another instruction: "run this bash command to create this file." The Orchestrator is the runtime, and its code is the markdown it reads.
+
+The ephemeral lifecycle fits the constraint. SAW isn't a project you install into your repo. It's a skill you invoke. Temporary safety mechanisms for a temporary activity. The hook is a guest, not a resident.
+
+The trip wire (Layer 4) still exists as the final safety net. Layer 0 prevents the most common failure mode (agent commits to main). Layer 4 catches everything else, including failure modes that Layer 0 can't prevent (agent working on main but never committing, agent committing to the wrong worktree branch). Both layers are deterministic. Neither depends on agent cooperation.
 
 ### Why Worktree Isolation and Disjoint Ownership Are Both Required
 
@@ -259,7 +270,7 @@ Example: Agent A and Agent B both run `go test ./...` at the same time in the sa
 Disjoint ownership without worktrees: merge is safe, but concurrent execution is flaky. Worktrees without disjoint ownership: execution is clean, but merge produces unresolvable conflicts. Both constraints must hold simultaneously for parallel waves to be correct and reproducible.
 
 {{< callout type="info" >}}
-The four-layer defense model was developed iteratively. Layer 1 (manual worktree creation) was present from v0.1.0. Layers 2 and 3 (the `isolation: "worktree"` parameter and Field 0 self-verification) were both added in v0.2.0, driven by a brewprune Round 5 incident where 5 agents were launched but 0 worktrees were created. All agents modified main directly; zero conflicts occurred only due to perfect file disjointness. Layer 4 (trip wire) was added in v0.6.0 after all three cooperative layers failed simultaneously in a 6-agent wave. Each layer catches failures the previous layers missed.
+The five-layer defense model was developed iteratively. Layer 1 (manual worktree creation) was present from v0.1.0. Layers 2 and 3 (the `isolation: "worktree"` parameter and Field 0 self-verification) were both added in v0.2.0, driven by a brewprune Round 5 incident where 5 agents were launched but 0 worktrees were created. All agents modified main directly; zero conflicts occurred only due to perfect file disjointness. Layer 4 (trip wire) was added in v0.6.0 after all three cooperative layers failed simultaneously in a 6-agent wave. Layer 0 (ephemeral pre-commit hook) followed immediately after, closing the gap between prevention and detection: agents that try to commit to main are blocked and redirected before the commit happens. Each layer catches failures the previous layers missed.
 {{< /callout >}}
 
 ## Closing: Convergence
