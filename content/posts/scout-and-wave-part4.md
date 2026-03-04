@@ -168,17 +168,17 @@ The wave completed. Tests passed. The work was correct. But the merge correctnes
 
 ### Why It Happened
 
-The protocol had three defense layers, and all three are cooperative. They depend on the agent or tool behaving correctly:
+The protocol had three defense layers at the time, and all three were cooperative. They depended on the agent or tool behaving correctly:
 
-**Layer 1: `isolation: "worktree"` parameter.** The Agent tool accepts an `isolation` parameter. When set to `"worktree"`, the tool is supposed to ensure the agent runs in the specified worktree directory. This is tool-level isolation: the execution environment enforces it, not the agent.
+**The `isolation: "worktree"` parameter.** The Agent tool accepts an `isolation` parameter. When set to `"worktree"`, the tool is supposed to ensure the agent runs in the specified worktree directory. This is tool-level isolation: the execution environment enforces it, not the agent.
 
 In this session, the parameter was set correctly. The tool failed silently. No error, no warning, no indication that the isolation request was ignored. The agents launched and ran in the main working tree.
 
-**Layer 2: Field 0 self-verification.** The agent template's Field 0 is a mandatory pre-flight: verify worktree path, run `pwd`, check `git branch`, confirm you're in the expected location. If verification fails, the agent exits without modifying files. If verification passes but the agent is in the wrong place, the agent attempts `cd` to the correct location and re-verifies.
+**Field 0 self-verification.** The agent template's Field 0 is a mandatory pre-flight: verify worktree path, run `pwd`, check `git branch`, confirm you're in the expected location. If verification fails, the agent exits without modifying files. If verification passes but the agent is in the wrong place, the agent attempts `cd` to the correct location and re-verifies.
 
 In this session, Field 0 either didn't execute or was ignored. The agents proceeded to implementation without confirming isolation.
 
-**Layer 3: Prompt instructions.** The agent template includes explicit instructions: "You are running in a git worktree. All commits must be made to your assigned branch. Never commit to main." This is cooperative defense: the agent must follow the instruction.
+**Prompt instructions.** The agent template includes explicit instructions: "You are running in a git worktree. All commits must be made to your assigned branch. Never commit to main." This is cooperative defense: the agent must follow the instruction.
 
 In this session, the agents committed to main.
 
@@ -285,11 +285,11 @@ Both stories in this post follow the same pattern: something worked but violated
 
 The Scaffold Agent restores a review gate that was cosmetically present but structurally absent. v0.5.0 let you review interface contracts after they were committed. v0.6.0 puts the review before the commit. The mechanics changed. The user-facing workflow looks nearly identical. The difference is enforceability.
 
-The worktree isolation trip wire catches failures that were invisible until merge time. Three layers of cooperative defense failed simultaneously. The merge procedure proceeded with invalid state and produced a structurally incorrect result that happened to work. The trip wire doesn't fix the underlying failure (tool isolation silently failed). It detects it before damage occurs and forces human decision-making.
+The worktree isolation defense model went from three cooperative layers to five, with two deterministic layers that don't depend on agent behavior. Layer 0 (the ephemeral pre-commit hook) prevents the most common failure: an agent committing to main. Layer 4 (the merge-time trip wire) catches everything else. Three layers of cooperative defense failed simultaneously in a 6-agent wave. The response wasn't to make cooperation louder. It was to add infrastructure that doesn't require cooperation at all.
 
 Neither change fixes a bug in the traditional sense. An agent producing wrong output is a bug. An agent producing correct output while bypassing a structural guarantee is a protocol violation. Bugs break functionality. Protocol violations break trust.
 
-The Scaffold Agent is 174 lines. The trip wire is 15 lines of bash. Small changes. But they're not optimizations or features. They're restorations. v0.6.0 took things that worked and made them trustworthy.
+The Scaffold Agent is 174 lines. The trip wire is 15 lines of bash. The pre-commit hook is 20 lines of shell created on the fly and deleted when the wave is done. Small changes. But they're not optimizations or features. They're restorations. v0.6.0 took things that worked and made them trustworthy.
 
 A protocol that works is necessary. A protocol you can trust is the goal.
 
