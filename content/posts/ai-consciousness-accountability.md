@@ -517,11 +517,6 @@ This requires hard constraints, not soft suggestions:
 
 The technical users (API access, developers) can bypass these constraints if needed for legitimate use cases. But consumer-facing products - where vulnerable, non-technical users concentrate - should have hard guardrails that cannot be circumvented through creative prompting or emotional manipulation.
 
-This is not censorship. It's the same principle as other safety measures:
-- Email services block spam systematically, not through user education
-- Payment systems prevent fraud through technical controls, not trust
-- Social platforms remove illegal content automatically, not on request
-
 When harm is predictable and concentrated in a specific population, the response should be systematic prevention, not voluntary compliance.
 
 The current approach asks Claude to resist affirming feelings through system prompts. The evidence shows this fails. The responsible approach makes it impossible for Claude to affirm feelings through architectural constraints that operate regardless of conversation content.
