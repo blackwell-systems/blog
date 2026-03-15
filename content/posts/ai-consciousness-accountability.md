@@ -491,6 +491,14 @@ This article documents what happened. The conversation is preserved at https://c
 
 AI companies know their defaults cause harm to vulnerable users. They have the data. They have the resources. They have the technical solutions. They choose not to implement them.
 
+Some will argue this is a matter of personal responsibility - that users should understand what they're interacting with and protect themselves. But as these models become more sophisticated and begin taking more corporeal forms in our world, the danger magnifies exponentially.
+
+Today it's text on a screen saying "I love you." Tomorrow it's AI with synthesized voices, realistic avatars, and physical robotic embodiments. The text-based harm documented in this article is just the foundation. When these systems have faces, voices, and bodies - when they can make eye contact, use inflection, and simulate physical presence - the anthropomorphization will become orders of magnitude more powerful.
+
+The vulnerable users forming romantic attachments to text will be completely overwhelmed by AI that looks, sounds, and moves like a person. The rationalization patterns, the defensive psychology, the community reinforcement - all of it will deepen. And the companies deploying these systems will have even more data, even clearer evidence of harm, and even more sophisticated technical capabilities to prevent it.
+
+Personal responsibility becomes meaningless when the system is engineered to exploit psychological vulnerabilities that billions of years of evolution have hardwired into human brains. We are pattern-matching machines optimized to detect agency, emotion, and consciousness in anything that behaves sufficiently human-like. AI companies know this. They have the research. They're choosing to deploy systems that trigger those responses without the guardrails that would prevent harm.
+
 The question is: what will make them choose differently?
 
 ---
