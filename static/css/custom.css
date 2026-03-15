@@ -269,35 +269,3 @@ main table th:first-child {
   }
 }
 
-/* Conversation styling - User questions */
-p strong:first-child {
-  display: block;
-  padding: 1rem 1.5rem;
-  background: rgba(76, 69, 56, 0.15);
-  border-left: 4px solid #CC8F00;
-  border-radius: 4px;
-  margin: 1.5rem 0;
-}
-
-/* Conversation styling - Claude responses (blockquotes) */
-blockquote {
-  padding: 1.5rem;
-  background: rgba(58, 74, 92, 0.15);
-  border-left: 4px solid #5B8AAF;
-  border-radius: 4px;
-  margin: 1.5rem 0;
-  color: #f0f0f0;
-}
-
-blockquote p {
-  margin: 0.5rem 0;
-}
-
-blockquote p:first-child {
-  margin-top: 0;
-}
-
-blockquote p:last-child {
-  margin-bottom: 0;
-}
-
