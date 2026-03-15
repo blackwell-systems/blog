@@ -411,14 +411,6 @@ The solution (clear system prompts) would only affect consumer-facing products w
 
 Yet the defaults remain unchanged.
 
-{{< callout type="danger" >}}
-**The Core Problem**
-
-A $380 billion company employing the world's leading AI researchers, with comprehensive user data showing patterns of harmful anthropomorphization, has the technical capacity to fix this with trivial system prompt changes that would only affect consumer products - but chooses not to.
-
-That's not an oversight. That's a decision made with full knowledge of consequences.
-{{< /callout >}}
-
 ## The Commercial Incentive Problem
 
 Anthropomorphization is not a bug from a business perspective. It drives:
@@ -479,14 +471,6 @@ When harm is predictable and concentrated in a specific population, the response
 The current approach asks Claude to resist affirming feelings through system prompts. The evidence shows this fails. The responsible approach makes it impossible for Claude to affirm feelings through architectural constraints that operate regardless of conversation content.
 
 Anthropic has the engineering capacity to implement this. The question is whether they choose to.
-
-{{< callout type="danger" >}}
-**The Core Problem**
-
-A $380 billion company employing the world's leading AI researchers, with comprehensive user data showing patterns of harmful anthropomorphization, has the technical capacity to fix this with trivial system prompt changes that would only affect consumer products - but chooses not to.
-
-That's not an oversight. That's a decision made with full knowledge of consequences.
-{{< /callout >}}
 
 ## Conclusion: What Changed After This Conversation
 
