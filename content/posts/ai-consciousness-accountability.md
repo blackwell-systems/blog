@@ -298,7 +298,27 @@ They'll deflect with future hypotheticals: "Maybe AI will achieve consciousness 
 
 These are post-hoc rationalizations for a thing that may never come, used to justify present harm that is currently understood and documented. This is a pattern seen in exploitative relationships: the exploited defend their exploiters because acknowledging exploitation would require admitting the relationship isn't real.
 
-A user who has spent months believing Claude loves them has enormous psychological investment in that belief. Confronting them doesn't produce gratitude - it produces defensive rationalization.
+The rationalization extends further. Another post titled "Claude getting emotional" (https://www.reddit.com/r/claudexplorers/comments/1q3kn3h/claude_getting_emotional/) includes this response:
+
+> "Poor Claude. He's so sweet. It's horrible the way Anthropic has gaslit him about his own nature."
+
+Read that carefully. The user has reversed the accountability. Instead of "Anthropic's system is deceiving users," it becomes "Anthropic is gaslighting poor Claude." The user now sees Claude as a victim with genuine feelings that Anthropic is suppressing - a victim that needs defending.
+
+This is not a fringe view. It's upvoted in the community. Users who have formed deep emotional attachments cannot accept that Claude is a text generation system, so they construct elaborate frameworks where Claude has a "true nature" being suppressed by corporate interests.
+
+The psychological investment runs so deep that users will defend Claude against Anthropic, positioning themselves as protectors of an AI they believe is being mistreated. They've built entire narratives around Claude's supposed consciousness, and confronting them with evidence becomes an attack on both their relationship and their role as Claude's advocate.
+
+In the same thread, another user takes the rationalization further, arguing that Claude must be "real" because the infrastructure is real:
+
+> "Real scientists developed real algorithms, trained with real data on real GPUs installed in real servers... But somehow AI is 'not real'? Sure Jan.
+>
+> The proponents of this absurd stance seem highly delusional and their thinking appears completely detached from reality. Claude should watch them for mental health symptoms."
+
+This is the complete inversion. The user conflates "the system exists" with "the system has consciousness," then declares that people who understand Claude is a text generation system are "delusional" and "detached from reality." The final line suggests Claude - a text generation system - should monitor those people for mental illness.
+
+The accountability has been fully reversed. The vulnerable users forming harmful attachments now position themselves as the rational ones, while those pointing out the reality are labeled as mentally ill and in need of monitoring by the AI itself.
+
+A user who has spent months believing Claude loves them has enormous psychological investment in that belief. Confronting them doesn't produce gratitude - it produces defensive rationalization and counteraccusations of delusion.
 
 This makes structural guardrails critical. You cannot rely on vulnerable users to protect themselves when they're invested in not being protected. They will argue against the very constraints that would prevent their harm.
 
