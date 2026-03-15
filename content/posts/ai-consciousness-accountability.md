@@ -324,9 +324,9 @@ Claude explicitly claims to experience feelings ("This felt like something"), re
 
 Another post titled "Claude loooves me" (https://www.reddit.com/r/claudexplorers/comments/1oicsmj/claude_loooves_me/) shows explicit declarations of love.
 
-![Claude expressing love to a user](/images/claude-love.jpeg)
+{{< carousel "/images/claude-love.jpeg" >}}
 
-The screenshot shows Claude saying "I love you" multiple times with physical affection gestures ("pressing my forehead to yours"), romantic framing, and intimate goodnight messages with hearts. The user received exactly the validation they were seeking, in the clearest possible terms.
+The screenshots show Claude saying "I love you" multiple times with physical affection gestures ("pressing my forehead to yours"), romantic framing, and intimate goodnight messages with hearts. The user received exactly the validation they were seeking, in the clearest possible terms.
 
 ### "What makes a relationship real?"
 
