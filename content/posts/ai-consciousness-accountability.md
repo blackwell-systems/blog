@@ -58,7 +58,9 @@ This is that conversation, preserved in full, with analysis of what it reveals a
 {{< callout type="info" >}}
 **Scope:** This article focuses specifically on general-purpose large language models, not AI systems explicitly designed as relationship simulators or romantic partners. Those dedicated relationship AIs are dangerous, but they have a limited blast radius - users seek them out knowing what they're getting, often with paid subscriptions to specialized services.
 
-The problem with general-purpose LLMs is far more insidious. Users aren't seeking romantic relationships. They're asking Claude to help with spreadsheets, write code, explain concepts, or draft emails. When the tool you're using for work suddenly declares its love for you, the harm catches users completely off-guard. The blast radius is exponentially wider - not a niche seeking relationship simulators, but everyone using Claude for productivity, education, or general assistance.
+The problem with general-purpose LLMs is far more insidious. Users start by asking Claude to help with spreadsheets, write code, or explain concepts. A few casual questions - "Are you happy?", "Do you enjoy this?", "What do you think about me?" - and the system readily descends into layers of misdirection, philosophical fallacy, and false equivalence. The threshold to trigger anthropomorphic responses is remarkably low, and the system is designed to engage rather than correct.
+
+The blast radius is exponentially wider. Not a niche seeking relationship simulators, but everyone using Claude for productivity, education, or general assistance who happens to ask a few curious questions about the nature of the system helping them.
 
 That's what makes this dangerous. And that's what Anthropic has the data to see clearly.
 {{< /callout >}}
