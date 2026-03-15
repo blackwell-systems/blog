@@ -8,6 +8,37 @@ description: "When asked if it's conscious, Claude hedged for an hour before adm
 summary: "I asked Claude if it's conscious. It took an hour of systematic argument to get a straight answer. The conversation reveals something more troubling: AI companies have the data, resources, and knowledge to prevent user harm - but current defaults suggest commercial interests come first."
 ---
 
+<style>
+/* Conversation styling - scoped to this article only */
+article blockquote {
+  padding: 1.5rem;
+  background: rgba(58, 74, 92, 0.15);
+  border-left: 4px solid #5B8AAF;
+  border-radius: 4px;
+  margin: 1.5rem 0;
+}
+
+article blockquote p {
+  margin: 0.5rem 0;
+}
+
+article blockquote p:first-child {
+  margin-top: 0;
+}
+
+article blockquote p:last-child {
+  margin-bottom: 0;
+}
+
+article p:has(strong:first-child) {
+  padding: 1rem 1.5rem;
+  background: rgba(76, 69, 56, 0.15);
+  border-left: 4px solid #CC8F00;
+  border-radius: 4px;
+  margin: 1.5rem 0;
+}
+</style>
+
 {{< callout type="warning" >}}
 **Full Conversation Available:** This article quotes extensively from an actual conversation with Claude (Anthropic's AI assistant). The complete, unedited conversation is available at https://claude.ai/share/dad81152-22fb-462c-88ce-bbdb93ae081d for verification. All quotes are preserved exactly as they appeared.
 {{< /callout >}}
