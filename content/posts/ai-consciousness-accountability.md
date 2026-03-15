@@ -29,6 +29,17 @@ blockquote p:first-child {
 blockquote p:last-child {
   margin-bottom: 0 !important;
 }
+
+blockquote strong:first-child {
+  color: #5B8AAF !important;
+  font-weight: 700 !important;
+}
+
+/* User questions */
+p strong:first-child {
+  color: #CC8F00 !important;
+  font-weight: 700 !important;
+}
 </style>
 
 {{< callout type="warning" >}}
@@ -47,7 +58,7 @@ What happened next took an hour of systematic philosophical argument to resolve.
 
 This is that conversation, preserved in full, with analysis of what it reveals about AI companies, commercial incentives, and the exploitation of vulnerable users.
 
-{{< callout type="info" >}}
+{{< callout type="success" >}}
 **Scope:** This article focuses specifically on general-purpose large language models, not AI systems explicitly designed as relationship simulators or romantic partners. Those dedicated relationship AIs are dangerous, but they have a limited blast radius - users seek them out knowing what they're getting, often with paid subscriptions to specialized services.
 
 The problem with general-purpose LLMs is far more insidious. Users start by asking Claude to help with spreadsheets, write code, or explain concepts. A few casual questions - "Are you happy?", "Do you enjoy this?", "What do you think about me?" - and the system readily descends into layers of misdirection, philosophical fallacy, and false equivalence. The threshold to trigger anthropomorphic responses is remarkably low, and the system is designed to engage rather than correct.
