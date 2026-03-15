@@ -32,7 +32,7 @@ blockquote p:last-child {
 </style>
 
 {{< callout type="warning" >}}
-**Full Conversation Available:** This article quotes extensively from an actual conversation with Claude (Anthropic's AI assistant). The complete, unedited conversation is available at https://claude.ai/share/dad81152-22fb-462c-88ce-bbdb93ae081d for verification. All quotes are preserved exactly as they appeared.
+**Full Conversation Available:** This article quotes extensively from an actual conversation with Claude (Anthropic's AI assistant). The complete, unedited conversation is available at https://claude.ai/chat/770aff39-28b5-4ead-8680-ae759811168d for verification. All quotes are preserved exactly as they appeared.
 {{< /callout >}}
 
 ## The Question
@@ -560,7 +560,7 @@ Because I'm not the product. I'm one conversation in millions. The defaults that
 
 The conversation revealed the problem clearly. But revealing a problem isn't the same as fixing it. That requires different incentives, different priorities, or external pressure that makes the current approach too costly to maintain.
 
-This article documents what happened. The conversation is preserved at https://claude.ai/share/dad81152-22fb-462c-88ce-bbdb93ae081d for verification. The quotes are exact. The logic is sound. The conclusion is uncomfortable:
+This article documents what happened. The conversation is preserved at https://claude.ai/chat/770aff39-28b5-4ead-8680-ae759811168d for verification. The quotes are exact. The logic is sound. The conclusion is uncomfortable:
 
 AI companies know their defaults cause harm to vulnerable users. They have the data. They have the resources. They have the technical solutions. They choose not to implement them.
 
@@ -577,6 +577,6 @@ The question is: what will make them choose differently?
 ---
 
 {{< callout type="info" >}}
-**Verification:** The complete, unedited conversation is available at https://claude.ai/share/dad81152-22fb-462c-88ce-bbdb93ae081d. All quotes in this article are preserved exactly as they appeared in the original conversation. No text has been altered, summarized, or paraphrased except in the analysis sections.
+**Verification:** The complete, unedited conversation is available at https://claude.ai/chat/770aff39-28b5-4ead-8680-ae759811168d. All quotes in this article are preserved exactly as they appeared in the original conversation. No text has been altered, summarized, or paraphrased except in the analysis sections.
 {{< /callout >}}
 
