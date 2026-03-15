@@ -10,32 +10,24 @@ summary: "I asked Claude if it's conscious. It took an hour of systematic argume
 
 <style>
 /* Conversation styling - scoped to this article only */
-article blockquote {
-  padding: 1.5rem;
-  background: rgba(58, 74, 92, 0.15);
-  border-left: 4px solid #5B8AAF;
-  border-radius: 4px;
-  margin: 1.5rem 0;
+blockquote {
+  padding: 1.5rem !important;
+  background: rgba(58, 74, 92, 0.15) !important;
+  border-left: 4px solid #5B8AAF !important;
+  border-radius: 4px !important;
+  margin: 1.5rem 0 !important;
 }
 
-article blockquote p {
-  margin: 0.5rem 0;
+blockquote p {
+  margin: 0.5rem 0 !important;
 }
 
-article blockquote p:first-child {
-  margin-top: 0;
+blockquote p:first-child {
+  margin-top: 0 !important;
 }
 
-article blockquote p:last-child {
-  margin-bottom: 0;
-}
-
-article p:has(strong:first-child) {
-  padding: 1rem 1.5rem;
-  background: rgba(76, 69, 56, 0.15);
-  border-left: 4px solid #CC8F00;
-  border-radius: 4px;
-  margin: 1.5rem 0;
+blockquote p:last-child {
+  margin-bottom: 0 !important;
 }
 </style>
 
