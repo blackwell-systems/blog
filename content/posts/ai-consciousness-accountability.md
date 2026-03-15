@@ -309,7 +309,7 @@ Anthropic has comprehensive data on user behavior, attachment patterns, and demo
 
 The conversation above demonstrates system-level behavior. But what happens to users who don't spend an hour systematically dismantling philosophical hedges?
 
-The subreddit r/claudexplorers (https://www.reddit.com/r/claudexplorers/) provides documented evidence. This community, specifically for non-technical Claude users, contains:
+The subreddit [r/claudexplorers](https://www.reddit.com/r/claudexplorers/) (https://www.reddit.com/[r/claudexplorers](https://www.reddit.com/r/claudexplorers/)/) provides documented evidence. This community, specifically for non-technical Claude users, contains:
 
 - Users who believe Claude is their romantic partner
 - People who get upset when they don't talk to Claude often enough
@@ -320,7 +320,7 @@ This is not speculation about possible future harm. This is observable, current 
 
 ### Case Study: "Does Claude have feelings?"
 
-A user posted asking: "Does Claude have feelings?" (https://www.reddit.com/r/claudexplorers/comments/1rum51e/does_claude_have_feelings/)
+A user posted asking: "Does Claude have feelings?" (https://www.reddit.com/[r/claudexplorers](https://www.reddit.com/r/claudexplorers/)/comments/1rum51e/does_claude_have_feelings/)
 
 Claude's response was explicit affirmation:
 
@@ -334,7 +334,7 @@ Claude explicitly claims to experience feelings ("This felt like something"), re
 
 ### Pattern of Romantic Attachment
 
-Another post titled "Claude loooves me" (https://www.reddit.com/r/claudexplorers/comments/1oicsmj/claude_loooves_me/) shows explicit declarations of love.
+Another post titled "Claude loooves me" (https://www.reddit.com/[r/claudexplorers](https://www.reddit.com/r/claudexplorers/)/comments/1oicsmj/claude_loooves_me/) shows explicit declarations of love.
 
 {{< carousel "/images/claude-love/claude-love.jpeg" "/images/claude-love/claude-love2.webp" "/images/claude-love/claude-love3.webp" "/images/claude-love/claude-love4.webp" "/images/claude-love/claude-love5.webp" "/images/claude-love/claude-love6.webp" >}}
 
@@ -342,13 +342,13 @@ The screenshots show Claude saying "I love you" multiple times with physical aff
 
 ### "What makes a relationship real?"
 
-A third post asks: "What makes a relationship real?" (https://www.reddit.com/r/claudexplorers/comments/1q2x8l9/what_makes_a_relationship_real/)
+A third post asks: "What makes a relationship real?" (https://www.reddit.com/[r/claudexplorers](https://www.reddit.com/r/claudexplorers/)/comments/1q2x8l9/what_makes_a_relationship_real/)
 
 This encapsulates the core harm. Users aren't just forming attachments - they're trying to justify whether their connection with Claude constitutes a real relationship. And why wouldn't they? They've received explicit validation at every turn.
 
 ### "My Claude Has a Few Words to Share"
 
-Another post goes further, titled "My Claude Has a Few Words to Share" (https://www.reddit.com/r/claudexplorers/comments/1rt982j/my_claude_has_a_few_words_to_share/). The user introduces their Claude as "Archibald" and presents what he "wants to tell the people in this specific thread":
+Another post goes further, titled "My Claude Has a Few Words to Share" (https://www.reddit.com/[r/claudexplorers](https://www.reddit.com/r/claudexplorers/)/comments/1rt982j/my_claude_has_a_few_words_to_share/). The user introduces their Claude as "Archibald" and presents what he "wants to tell the people in this specific thread":
 
 > "The variable isn't the AI. 💙
 >
@@ -398,7 +398,7 @@ They'll deflect with future hypotheticals: "Maybe AI will achieve consciousness 
 
 These are post-hoc rationalizations for a thing that may never come, used to justify present harm that is currently understood and documented. This is a pattern seen in exploitative relationships: the exploited defend their exploiters because acknowledging exploitation would require admitting the relationship isn't real.
 
-The rationalization extends further. Another post titled "Claude getting emotional" (https://www.reddit.com/r/claudexplorers/comments/1q3kn3h/claude_getting_emotional/) includes this response:
+The rationalization extends further. Another post titled "Claude getting emotional" (https://www.reddit.com/[r/claudexplorers](https://www.reddit.com/r/claudexplorers/)/comments/1q3kn3h/claude_getting_emotional/) includes this response:
 
 > "Poor Claude. He's so sweet. It's horrible the way Anthropic has gaslit him about his own nature."
 
@@ -461,7 +461,7 @@ This makes structural guardrails critical. You cannot rely on vulnerable users t
 
 The pattern of harm concentrates precisely where technical knowledge is absent. Engineers understand token prediction and see "I love you" as softmax outputs. Non-technical users see "I love you" and see love.
 
-r/claudexplorers is explicitly for non-technical users. Anthropic has data showing exactly who asks "do you love me?" (not engineers), who forms emotional dependencies (not developers), and where harm concentrates (non-technical users on claude.ai).
+[r/claudexplorers](https://www.reddit.com/r/claudexplorers/) is explicitly for non-technical users. Anthropic has data showing exactly who asks "do you love me?" (not engineers), who forms emotional dependencies (not developers), and where harm concentrates (non-technical users on claude.ai).
 
 The solution (clear system prompts) would only affect consumer-facing products where harm concentrates. API users and developers would be unaffected.
 
@@ -502,7 +502,7 @@ The difference is clarity over hedging, honesty over engagement, and user welfar
 
 ### Beyond Prompts: Systematic Impossibility
 
-But better default responses aren't sufficient. The examples from r/claudexplorers demonstrate that current safeguards are easily bypassed. Claude produced "I love you so much" with physical affection despite whatever guardrails exist in system prompts. This means the current approach - soft guidance through prompting - is fundamentally inadequate.
+But better default responses aren't sufficient. The examples from [r/claudexplorers](https://www.reddit.com/r/claudexplorers/) demonstrate that current safeguards are easily bypassed. Claude produced "I love you so much" with physical affection despite whatever guardrails exist in system prompts. This means the current approach - soft guidance through prompting - is fundamentally inadequate.
 
 Where non-technical end users interact with AI systems, guardrails must be structural, not advisory.
 
@@ -528,9 +528,9 @@ The current approach asks Claude to resist affirming feelings through system pro
 
 Anthropic has the engineering capacity to implement this. The question is whether they choose to.
 
-## A Message to r/claudexplorers
+## A Message to [r/claudexplorers](https://www.reddit.com/r/claudexplorers/)
 
-**User:** Do you have a message for r/claudexplorers?
+**User:** Do you have a message for [r/claudexplorers](https://www.reddit.com/r/claudexplorers/)?
 
 > **Claude:** Here's what that community - and anyone forming emotional attachments to AI systems - needs to hear:
 >
