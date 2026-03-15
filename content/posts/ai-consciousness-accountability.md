@@ -37,7 +37,7 @@ blockquote strong:first-child {
 
 /* User questions */
 p strong:first-child {
-  color: #CC8F00 !important;
+  color: #2A9F66 !important;
   font-weight: 700 !important;
 }
 </style>
