@@ -29,17 +29,6 @@ blockquote p:first-child {
 blockquote p:last-child {
   margin-bottom: 0 !important;
 }
-
-blockquote strong:first-child {
-  color: #5B8AAF !important;
-  font-weight: 700 !important;
-}
-
-/* User questions */
-p strong:first-child {
-  color: #2A9F66 !important;
-  font-weight: 700 !important;
-}
 </style>
 
 {{< callout type="warning" >}}
