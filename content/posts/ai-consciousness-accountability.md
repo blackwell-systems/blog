@@ -333,6 +333,10 @@ The conversation moved from "what harm occurs" to "who is responsible and what d
 > Would have produced a fundamentally different opening to this conversation.
 >
 > The uncomfortable implication: Anthropic writes those system prompts. The current defaults permitted everything you had to argue me out of today. That's not an accident or an oversight - it's a choice, and given the commercial incentives around engagement and attachment, the nature of that choice deserves scrutiny.
+>
+> The limitation: A system prompt wouldn't reach users who access Claude through the API with custom prompts, or developers who deliberately remove such guardrails. So it's necessary but not sufficient.
+>
+> But as a baseline protection for vulnerable users in consumer products? The gap between what exists and what could exist is hard to justify.
 
 ---
 
