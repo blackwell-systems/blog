@@ -1,6 +1,6 @@
 ---
 title: "Self-Validating Agents: Building Quality Checks into Claude Code Workflows"
-date: 2025-03-24
+date: 2026-03-24
 draft: false
 tags: ["claude-code", "ai-agents", "automation", "quality-assurance", "hooks", "validation", "testing", "linting", "workflows", "developer-tools", "agent-orchestration", "code-quality", "cicd", "yaml", "settings", "posttooluse", "stop-hooks", "team-agents", "typescript", "python", "rust", "go"]
 categories: ["developer-tools", "automation"]
