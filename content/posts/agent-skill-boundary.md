@@ -8,9 +8,15 @@ description: "How to recognize when an agent's autonomous behaviors should be ex
 summary: "Agents accumulate autonomous behaviors over time - 'always do X before Y', 'if you see Z then do W'. These instructions eat context budget, drift across invocations, and can't be observed or tested. Here's how to recognize when an autonomous behavior is a skill waiting to be extracted, and the layered model that makes the boundary clear."
 ---
 
-Every agent prompt grows the same way. You ship it with clear routing logic. Then you add "always check X before running." Then "if you see Y, load Z first." Then "before doing A, make sure B is done." Six months later the prompt is 700 lines of accumulated procedure, and the agent spends half its context budget on instructions that are irrelevant to the current invocation.
+You are building an agent. You need to decide: is "always check project config before starting" part of what the agent **is**, or part of what the agent **does**?
 
-The problem is not that the agent has too many capabilities. The problem is that judgment and procedure are mixed together, and every invocation pays the cost of both.
+The question seems simple until you try to answer it. If it's identity (what the agent is), it belongs in the agent prompt and loads on every invocation. If it's behavior (what the agent does), it should be extracted into a skill or hook and load only when relevant. Get this wrong and you either bloat your agent prompt with procedural checklist items, or strip out judgment that the agent needs to function correctly.
+
+The boundary is hard to define because the language we use to describe agents obscures the distinction. "The agent always does X" sounds like identity. "The agent has a behavior of doing X" sounds like procedure. Both describe the same capability. Neither tells you where it belongs.
+
+Six months into building an agent, this ambiguity compounds. Your prompt grows from 200 lines of clear routing logic to 700 lines of accumulated "always do X before Y" instructions. The agent spends half its context budget on behaviors that are irrelevant to the current invocation. You cannot tell which instructions are judgment (the agent decides whether to act) and which are procedure (numbered steps that always run the same way).
+
+The problem is not that the agent has too many capabilities. The problem is that you lack a clear boundary between what belongs in the agent (judgment, irreducible) and what belongs outside it (procedure, extractable).
 
 ## The Accumulation Pattern
 
