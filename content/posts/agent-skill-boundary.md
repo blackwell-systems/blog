@@ -29,21 +29,44 @@ Each addition is reasonable in isolation. Together, they create an agent that is
 
 {{< mermaid >}}
 flowchart TB
-    subgraph v1["v1: Clean Router"]
-        r1[Parse subcommand] --> r2[Dispatch to handler]
+    subgraph v1["v1: Clean Router (2 steps)"]
+        direction TB
+        v1a[Parse subcommand]
+        v1b[Dispatch to handler]
+        v1a --> v1b
     end
 
-    subgraph v6["v6: Accumulated Behaviors"]
-        a1[Check project config] --> a2[Load failure log if needed]
-        a2 --> a3[Parse subcommand]
-        a3 --> a4[Load reference files]
-        a4 --> a5[Verify isolation]
-        a5 --> a6[Dispatch to handler]
-        a6 --> a7[Run validation]
+    subgraph v6["v6: Accumulated Behaviors (7 steps)"]
+        direction TB
+        v6a["1. Check project config<br/>(added v6)"]
+        v6b["2. Load failure log<br/>(added v3)"]
+        v6c["3. Parse subcommand<br/>(original)"]
+        v6d["4. Load reference files<br/>(added v2)"]
+        v6e["5. Verify isolation<br/>(added v5)"]
+        v6f["6. Dispatch to handler<br/>(original)"]
+        v6g["7. Run validation<br/>(added v4)"]
+
+        v6a --> v6b
+        v6b --> v6c
+        v6c --> v6d
+        v6d --> v6e
+        v6e --> v6f
+        v6f --> v6g
     end
+
+    note1["Simple status check:<br/>executes all 7 steps<br/>only needs steps 3 + 6"]
+
+    v1 -.->|"grew into"| v6
+    v6 --- note1
 
     style v1 fill:#3A4C43,stroke:#6b7280,color:#f0f0f0
     style v6 fill:#4C3A3C,stroke:#6b7280,color:#f0f0f0
+    style note1 fill:#3A4A5C,stroke:#6b7280,color:#f0f0f0
+    style v6a fill:#4C3A3C,stroke:#C24F54,color:#f0f0f0
+    style v6b fill:#4C3A3C,stroke:#C24F54,color:#f0f0f0
+    style v6d fill:#4C3A3C,stroke:#C24F54,color:#f0f0f0
+    style v6e fill:#4C3A3C,stroke:#C24F54,color:#f0f0f0
+    style v6g fill:#4C3A3C,stroke:#C24F54,color:#f0f0f0
 {{< /mermaid >}}
 
 The v6 agent loads every behavior on every invocation. A user who runs a simple status check pays the same context cost as a user who launches a complex multi-agent operation.
@@ -330,24 +353,34 @@ The agent's prompt should be short because most of what it does is delegate. The
 
 {{< mermaid >}}
 flowchart TB
-    subgraph complexity["Where Complexity Lives"]
+    subgraph before["Before Extraction"]
         direction TB
-        prompt["Agent Prompt: ~300 lines"]
-        skills_total["Skills: ~400 lines across 3 files"]
-        knowledge_total["Knowledge: ~100 lines across 3 references"]
-        hooks_total["Hooks: 11 scripts, deterministic"]
+        b1["Every invocation loads:<br/>703 lines (all behaviors)"]
+        b2["Status check: 703 lines"]
+        b3["Complex operation: 703 lines"]
+        b4["Failure recovery: 703 lines"]
     end
 
-    subgraph cost["Context Cost Per Invocation"]
+    subgraph after["After Extraction"]
         direction TB
-        always["Always loaded: ~300 lines (agent prompt)"]
-        sometimes["Sometimes loaded: 0-250 lines (matching skill)"]
-        rarely["Rarely loaded: 0-55 lines (failure knowledge)"]
-        never["Never loaded by model: hooks (pre-model)"]
+        a1["Agent prompt: 300 lines<br/>(always loaded)"]
+
+        a2["Status check:<br/>300 lines only"]
+
+        a3["Complex operation:<br/>300 (agent)<br/>+ 250 (skill)<br/>= 550 lines"]
+
+        a4["Failure recovery:<br/>300 (agent)<br/>+ 250 (skill)<br/>+ 55 (knowledge)<br/>= 605 lines"]
     end
 
-    style complexity fill:#3A4A5C,stroke:#6b7280,color:#f0f0f0
-    style cost fill:#3A4C43,stroke:#6b7280,color:#f0f0f0
+    note1["Hooks: 11 scripts<br/>Never loaded by model<br/>(run pre-model)"]
+
+    before -.->|"extraction"| after
+    after --- note1
+
+    style before fill:#4C3A3C,stroke:#6b7280,color:#f0f0f0
+    style after fill:#3A4C43,stroke:#6b7280,color:#f0f0f0
+    style note1 fill:#3A4A5C,stroke:#6b7280,color:#f0f0f0
+    style b1 fill:#4C3A3C,stroke:#C24F54,color:#f0f0f0
 {{< /mermaid >}}
 
 The total capability is ~800 lines. The per-invocation cost ranges from 300 (simple status check) to 550 (complex wave with failure). Before extraction, it was 703 lines on every invocation regardless of what the user asked for.
