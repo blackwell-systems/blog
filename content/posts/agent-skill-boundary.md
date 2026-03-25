@@ -69,6 +69,30 @@ Not every behavior should be extracted. The test is: does this behavior require 
 The test applies recursively. Inside a judgment call, there may be procedural steps that can be extracted. Inside a procedure, there may be a judgment call that should stay in the agent.
 {{< /callout >}}
 
+As a decision filter:
+
+{{< mermaid >}}
+flowchart TB
+    start["New behavior to add"] --> q1{"Can a pattern\ntrigger it?"}
+    q1 -->|Yes| hook["HOOK\ndeterministic, pre-model"]
+    q1 -->|No| q2{"Is it\nnumbered steps?"}
+    q2 -->|Yes| skill["SKILL / REFERENCE\nprocedure, on-demand"]
+    q2 -->|No| q3{"Does it require\n'it depends'?"}
+    q3 -->|Yes| agent["AGENT\njudgment, keep it"]
+    q3 -->|No| cut["CUT IT\nprobably redundant"]
+
+    style hook fill:#3A4C43,stroke:#6b7280,color:#f0f0f0
+    style skill fill:#4C4538,stroke:#6b7280,color:#f0f0f0
+    style agent fill:#3A4A5C,stroke:#6b7280,color:#f0f0f0
+    style cut fill:#4C3A3C,stroke:#6b7280,color:#f0f0f0
+    style start fill:#3A4A5C,stroke:#6b7280,color:#f0f0f0
+    style q1 fill:#3A4A5C,stroke:#6b7280,color:#f0f0f0
+    style q2 fill:#3A4A5C,stroke:#6b7280,color:#f0f0f0
+    style q3 fill:#3A4A5C,stroke:#6b7280,color:#f0f0f0
+{{< /mermaid >}}
+
+The fourth outcome - "cut it" - is real. If a behavior is not triggered by a pattern, is not a procedure, and does not require judgment, it is probably restating something that already exists elsewhere in the system.
+
 ## The Layered Model
 
 Once you can distinguish procedure from judgment, the architecture becomes clear. There are four layers, and each has a different enforcement model:
@@ -197,7 +221,32 @@ flowchart LR
     style knowledge_layer fill:#4C3A3C,stroke:#6b7280,color:#f0f0f0
 {{< /mermaid >}}
 
-Before extraction, the orchestrator prompt contained all of this inline - 703 lines loaded on every invocation. After extraction, the core prompt is 310 lines of routing and judgment. The remaining 393 lines load only when needed.
+Before extraction, the orchestrator prompt contained all of this inline - 703 lines loaded on every invocation. After extraction, the per-invocation cost depends on what the user asked for:
+
+{{< mermaid >}}
+flowchart LR
+    subgraph before["Before: Every Invocation"]
+        b1["703 lines loaded\nregardless of subcommand"]
+    end
+
+    subgraph after["After: Pay for What You Use"]
+        a1["Agent core\n310 lines"] --> a2["+ matching skill\n0-250 lines"]
+        a2 --> a3["+ knowledge\n0-55 lines"]
+    end
+
+    subgraph examples["Cost by Subcommand"]
+        e1["/saw status\n310 lines"]
+        e2["/saw wave\n310 lines"]
+        e3["/saw program execute\n560 lines"]
+        e4["/saw wave + failure\n365 lines"]
+    end
+
+    style before fill:#4C3A3C,stroke:#6b7280,color:#f0f0f0
+    style after fill:#3A4C43,stroke:#6b7280,color:#f0f0f0
+    style examples fill:#3A4A5C,stroke:#6b7280,color:#f0f0f0
+{{< /mermaid >}}
+
+The core prompt is 310 lines of routing and judgment. The remaining 393 lines load only when needed.
 
 ### What Was Extracted
 
@@ -306,3 +355,32 @@ The total capability is ~800 lines. The per-invocation cost ranges from 300 (sim
 Progressive disclosure is a design principle, not a performance optimization. When the agent sees only what is relevant to the current task, it makes better judgments. When procedure is isolated in skills, it can be tested and versioned independently. When routing is deterministic, it can be observed and debugged without reading the model's internal reasoning.
 
 The boundary between agent and skill is the boundary between judgment and procedure. Find it, enforce it, and both sides get better.
+
+## Quick Reference
+
+Bookmark this section. Come back to it when reviewing an agent prompt.
+
+**The four layers:**
+
+| Layer | Handles | Enforcement | Loaded |
+|-------|---------|-------------|--------|
+| Hooks | Deterministic routing | Infrastructure (pre-model) | Never by model |
+| Agent | Judgment and decisions | Prompt (irreducible) | Always |
+| Skills | Step-by-step procedure | On-demand (skill activation) | When matched |
+| Knowledge | Reference material | On-demand (trigger or request) | When needed |
+
+**The decision filter:**
+1. Can a pattern trigger it? - Make it a **hook**
+2. Is it numbered steps? - Make it a **skill** or **reference**
+3. Does it require "it depends"? - Keep it in the **agent**
+4. None of the above? - **Cut it**
+
+**The extraction checklist:**
+- "Always" or "before" instructions - hook or move into skill
+- Numbered step sequences (3+) - reference file
+- Decision tables - knowledge reference
+- Example outputs - cut (model generates its own)
+- Duplicate prose - cut
+- Runtime-conditional blocks - skill logic or agent judgment
+
+**The test:** If you can write it as a numbered list, it belongs in a skill. If it requires "it depends," it belongs in the agent.
