@@ -217,7 +217,7 @@ Available for:
 
 ## Open Source Portfolio
 
-16+ production projects. All consulting work is informed by real production experience.
+20+ production projects. All consulting work is informed by real production experience.
 
 - [scout-and-wave-web](https://github.com/blackwell-systems/scout-and-wave-web) - Full-stack AI agent orchestration platform (Go/React)
 - [scout-and-wave](https://github.com/blackwell-systems/scout-and-wave) - Multi-agent coordination protocol (formal specification)
