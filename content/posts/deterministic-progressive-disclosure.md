@@ -58,6 +58,10 @@ This is the same reason compiled type checks are more reliable than "please writ
 The spec's progressive disclosure section is correct about the three-tier model. But the spec doesn't specify how Tier 3 loading should be triggered - it leaves that to implementations. Convention-based loading is the simplest implementation, but not the most reliable.
 {{< /callout >}}
 
+{{< callout type="success" >}}
+**Progressive disclosure solves a broader problem:** Once you extract procedural behaviors from your agent prompt into skills and references (see [The Agent-Skill Boundary]({{< ref "agent-skill-boundary" >}})), you need a way to load them efficiently. Loading everything wastes context. Trusting the model to load selectively fails 15% of the time. Deterministic progressive disclosure gives you both efficiency and reliability - extracted behaviors load only when needed, guaranteed.
+{{< /callout >}}
+
 ## The Four-Tier Model
 
 Before solving Tier 3, we need to address a gap the spec doesn't cover: discovery. Tier 0 answers: "How does the model know which skills exist before any skill is activated?"

@@ -122,6 +122,10 @@ flowchart TB
 
 The fourth outcome - "cut it" - is real. If a behavior is not triggered by a pattern, is not a procedure, and does not require judgment, it is probably restating something that already exists elsewhere in the system.
 
+{{< callout type="success" >}}
+**Extraction creates the problem progressive disclosure solves:** Once you extract procedural behaviors into skills and references, you need a way to load them efficiently. Loading everything on every invocation wastes context. Trusting the model to load selectively fails ~15% of the time. [Deterministic progressive disclosure]({{< ref "deterministic-progressive-disclosure" >}}) solves this - extracted behaviors load only when needed, with infrastructure guarantees that loading happens correctly.
+{{< /callout >}}
+
 ## The Layered Model
 
 Once you can distinguish procedure from judgment, the architecture becomes clear. There are four layers, and each has a different enforcement model:
