@@ -14,6 +14,8 @@ This works until it doesn't. A routing table that says "if the user runs `/skill
 
 The solution is deterministic progressive disclosure: context injection that happens before the model runs, enforced by infrastructure rather than convention.
 
+This implementation is also a proposal to the Agent Skills spec. The `triggers:` field works today via YAML extensibility - platforms that understand it act on it, others ignore it. But every major Agent Skills platform (Claude Code, Gemini CLI, OpenAI Codex, Cursor, OpenCode) has independently built a pre-invocation hook. The ecosystem has converged on this pattern. The proposal asks the spec to formally recognize `triggers:` as a standard field, so skill authors declare intent once and all conforming platforms honor it.
+
 ## The Progressive Disclosure Problem
 
 The [Agent Skills spec](https://agentskills.io/specification#progressive-disclosure) defines three tiers:
@@ -182,15 +184,67 @@ Triggers should match dispatch-time conditions (user invocations), not mid-execu
 
 Broad keyword triggers (error, failed, blocked) false-positive when the hook receives the expanded skill body, which contains those words in its own instructions. Mid-execution references should use Layer 3 (conventional loading), not triggers.
 
+### Portable Format Constraints
+
+To ensure any platform can implement a conforming trigger parser without requiring a full YAML library, the `triggers:` field uses a restricted, portable subset of YAML:
+
+**Allowed:**
+- Flat list of `{match, inject}` entries
+- Single-line scalar values (quoted or unquoted)
+- `match` and `inject` on consecutive lines within each list item
+
+**Not allowed:**
+- Multi-line strings or block scalars (`|`, `>`)
+- YAML anchors (`&`), aliases (`*`), or tags (`!!`)
+- Nested objects within trigger entries
+
+This constraint is deliberate. Full YAML parsers handle this subset correctly. Lightweight parsers (awk, line-oriented regex) can also conform. The constraint ensures both approaches produce identical results, making the standard accessible to implementations in any language or runtime.
+
+**Example of portable format:**
+
+```yaml
+triggers:
+  - match: "^/skill subcommand"
+    inject: references/flow.md
+  - match: "pattern"
+    inject: references/other.md
+```
+
+**Non-portable (avoid for cross-platform compatibility):**
+
+```yaml
+triggers:
+  - match: |
+      multi-line
+      pattern
+    inject: references/flow.md
+  - match: "pattern"
+    inject: &anchor references/flow.md
+```
+
+Triggers that don't conform to the portable format may not be correctly parsed by lightweight implementations. Stick to single-line patterns and paths for maximum compatibility.
+
 ## Layer Implementation Details
 
 Now that we understand the conceptual model (three layers, trigger-based routing, graceful degradation), let's see how each layer is implemented.
 
-### Layer 1: UserPromptSubmit Hook
+### Layer 1: Pre-Invocation Hooks (Cross-Platform)
 
-Layer 1 is a thin orchestrator. It delegates all trigger logic to each skill's `scripts/inject-context`, then aggregates results as `additionalContext`. The hook itself is skill-agnostic - adding a new skill requires zero hook changes.
+Layer 1 uses pre-invocation hooks - lifecycle hooks that fire before the model processes the user's prompt. Every major Agent Skills platform has independently implemented this pattern:
 
-The hook fires in Claude Code's prompt lifecycle, before the model's context is constructed. This timing is critical - by the time the model starts processing, references are already injected. The model cannot skip loading because loading happened pre-model, enforced by infrastructure.
+| Platform | Hook Name | Status |
+|----------|-----------|--------|
+| Claude Code | `UserPromptSubmit` | Production |
+| Gemini CLI | `BeforeAgent` | Production |
+| OpenAI Codex | `UserPromptSubmit` | Production |
+| Cursor | `beforeSubmitPrompt` | Production |
+| OpenCode | `chat.message` | Production |
+
+The ecosystem has converged on pre-invocation hooks as the right place for deterministic context injection. The reference implementation shown below is for Claude Code's `UserPromptSubmit` hook, but the same pattern applies to all platforms listed above.
+
+The hook is a thin orchestrator. It delegates all trigger logic to each skill's `scripts/inject-context`, then aggregates results as `additionalContext` (or equivalent platform-specific mechanism). The hook itself is skill-agnostic - adding a new skill requires zero hook changes.
+
+The hook fires before the model's context is constructed. This timing is critical - by the time the model starts processing, references are already injected. The model cannot skip loading because loading happened pre-model, enforced by infrastructure.
 
 Here's the complete implementation:
 
@@ -587,7 +641,7 @@ flowchart LR
 Copy the injection script into your skill's `scripts/` directory:
 
 ```bash
-# From agentskills-context-injection repo
+# From agentskills-subcommand-dispatch repo
 cp scripts/inject-context ~/.claude/skills/my-skill/scripts/
 chmod +x ~/.claude/skills/my-skill/scripts/inject-context
 ```
@@ -619,7 +673,7 @@ This enables Layer 2 (vendor-neutral script). Works on any Agent Skills client w
 Install the hook script:
 
 ```bash
-# From agentskills-context-injection repo
+# From agentskills-subcommand-dispatch repo
 cp hooks/inject_skill_context ~/.local/bin/
 chmod +x ~/.local/bin/inject_skill_context
 ```
@@ -647,21 +701,25 @@ This enables Layer 1 (deterministic hook). The hook iterates all skill directori
 
 ## Redundancy Model
 
-All three layers are active simultaneously:
+All layers are active simultaneously. Each platform gets the best mechanism it supports:
 
-| Layer | Mechanism | Vendor-neutral | Enforcement |
-|-------|-----------|----------------|-------------|
-| Hook | `UserPromptSubmit` | Claude Code only | Deterministic (pre-model) |
+| Layer | Mechanism | Platform | Enforcement |
+|-------|-----------|----------|-------------|
+| Hook | `UserPromptSubmit` | Claude Code | Deterministic (pre-model) |
+| Hook | `BeforeAgent` | Gemini CLI | Deterministic (pre-model) |
+| Hook | `UserPromptSubmit` | OpenAI Codex | Deterministic (pre-model) |
+| Hook | `beforeSubmitPrompt` | Cursor | Deterministic (pre-model) |
+| Hook | `chat.message` | OpenCode | Deterministic (pre-model) |
 | Script | `scripts/inject-context` | Any agent with Bash | Model-initiated |
 | Fallback | Routing table in SKILL.md | Any agent | Convention-based |
 
 Users automatically get the best available layer:
 
-- **Claude Code with hook:** Layer 1 (deterministic)
+- **Platforms with pre-invocation hooks:** Layer 1 (deterministic)
 - **Any client with Bash:** Layer 2 (vendor-neutral)
 - **Any client:** Layer 3 (fallback)
 
-No configuration needed. No regression at any level.
+No configuration needed. No regression at any level. The reference implementation includes Claude Code's `UserPromptSubmit` hook, but the same pattern applies to all platforms listed above.
 
 {{< callout type="warning" >}}
 The hook and script are redundant by design. Both may execute on the same invocation. The hook runs first (pre-model), the script runs if the model follows Layer 2 instructions. Duplicate injection is harmless - the same content appears twice in context, which is wasteful but not incorrect. Future versions may detect Layer 1 execution and skip Layer 2.
@@ -716,6 +774,38 @@ The trade-off: slightly larger context (deterministic loading) vs potential re-r
 Triggers optimize the common case: skills with multiple subcommands, each needing different reference files. If your skill has one flow and one reference file, load it conventionally.
 
 ## Debugging
+
+### Validate Triggers for False-Positive Risk
+
+Before deploying triggers, use the validation tool to check if patterns will match the skill's own body content:
+
+```bash
+bash scripts/validate-triggers path/to/skill/
+```
+
+The script tests each trigger regex against the skill's SKILL.md body. Patterns that match the body will fire on every invocation when a pre-invocation hook receives the expanded prompt (which includes the full skill body):
+
+```
+$ bash scripts/validate-triggers examples/saw/
+OK    ^/saw program -> references/program-flow.md
+OK    ^/saw amend -> references/amend-flow.md
+
+2 triggers checked, 0 false-positive risk(s)
+```
+
+A failing check looks like:
+
+```
+FAIL  failure|blocked -> references/bad.md
+      Pattern matches the skill body - will fire on every invocation
+      First match: 4:When an agent reports failure or becomes blocked...
+```
+
+Exit code 0 means clean, 1 means false-positive risk detected. Run this after adding or changing triggers to catch false-positive patterns before deployment.
+
+The validation tool is included in the `agentskills-subcommand-dispatch` repository at `scripts/validate-triggers`.
+
+### Other Debugging Commands
 
 **Check if hook is installed:**
 
@@ -816,7 +906,7 @@ Trigger-based injection keeps Tier 2 small and loads only what's needed.
 
 Full implementation available at:
 
-**https://github.com/blackwell-systems/agentskills-context-injection**
+**https://github.com/blackwell-systems/agentskills-subcommand-dispatch**
 
 Includes:
 - `scripts/inject-context` - vendor-neutral injection script
@@ -844,24 +934,28 @@ These limitations are acceptable for the majority of skills. The three-layer red
 
 Progressive disclosure works when all three tiers are reliable. Tiers 1 and 2 are infrastructure-enforced. Tier 3 was convention-based, creating a reliability gap.
 
-Deterministic context injection closes the gap. Trigger-based loading moves Tier 3 from convention to infrastructure, with three layers of redundancy:
+Deterministic context injection closes the gap. Trigger-based loading moves Tier 3 from convention to infrastructure, with layers of redundancy:
 
-1. **Hook layer** - Deterministic, Claude Code-specific
-2. **Script layer** - Vendor-neutral, model-initiated
-3. **Fallback layer** - Universal, convention-based
+1. **Hook layer** - Deterministic, pre-model enforcement (Claude Code, Gemini CLI, OpenAI Codex, Cursor, OpenCode)
+2. **Script layer** - Vendor-neutral, model-initiated (any agent with Bash)
+3. **Fallback layer** - Universal, convention-based (any agent)
 
 The four-tier model (Tier 0 discovery + Tiers 1-3 progressive disclosure) creates a complete system for efficient, reliable context management.
 
 Skills using this pattern load only what's needed, when it's needed, with infrastructure guarantees that loading happens correctly. No model guessing. No token waste. No loading failures.
 
-The implementation uses only existing Agent Skills spec conventions. No modifications required. Works today on Claude Code, Cursor, GitHub Copilot, Windsurf, and any Agent Skills-compliant tool.
+**Spec proposal status:** This implementation works today via YAML extensibility. The `triggers:` field is proposed for formal recognition in the Agent Skills spec, based on convergent evidence - every major platform has independently built pre-invocation hooks. The proposal asks the spec to standardize the declaration so skill authors write intent once and all conforming platforms honor it.
 
-Start with Tier 0 discovery in CLAUDE.md. Add `triggers:` to your skill's frontmatter. Bundle `scripts/inject-context`. Optionally install the UserPromptSubmit hook for deterministic loading.
+**Production usage:** This implementation has been in production use in the Scout-and-Wave protocol across 16+ repositories, demonstrating real-world viability at scale.
+
+The implementation uses only existing Agent Skills spec conventions - `scripts/` directory, `references/` directory, and YAML extensibility. No spec modifications required to use it today. Works on Claude Code, Gemini CLI, OpenAI Codex, Cursor, OpenCode, and any Agent Skills-compliant tool.
+
+Start with Tier 0 discovery in CLAUDE.md. Add `triggers:` to your skill's frontmatter. Bundle `scripts/inject-context`. Optionally install the pre-invocation hook for deterministic loading. Use `scripts/validate-triggers` to check for false-positive patterns before deployment.
 
 Build skills that scale reliably without token bloat or routing failures.
 
 ---
 
-**Implementation:** [github.com/blackwell-systems/agentskills-context-injection](https://github.com/blackwell-systems/agentskills-context-injection)
+**Implementation:** [github.com/blackwell-systems/agentskills-subcommand-dispatch](https://github.com/blackwell-systems/agentskills-subcommand-dispatch)
 
 **Agent Skills Spec:** [agentskills.io/specification](https://agentskills.io/specification)
