@@ -59,7 +59,7 @@ The spec's progressive disclosure section is correct about the three-tier model.
 {{< /callout >}}
 
 {{< callout type="success" >}}
-**Progressive disclosure solves a broader problem:** Once you extract procedural behaviors from your agent prompt into skills and references (see [The Agent-Skill Boundary]({{< ref "agent-skill-boundary" >}})), you need a way to load them efficiently. Loading everything wastes context. Trusting the model to load selectively fails 15% of the time. Deterministic progressive disclosure gives you both efficiency and reliability - extracted behaviors load only when needed, guaranteed. Hook infrastructure enables dynamic context injection: delivering runtime-generated content (retry errors, prior execution results, cross-boundary coordination) that can't exist until launch time. This is where the pattern provides maximum value.
+**Progressive disclosure solves a broader problem:** Once you extract procedural behaviors from your agent prompt into skills and references (see [The Agent-Skill Boundary]({{< ref "agent-skill-boundary" >}})), you need a way to load them efficiently. Loading everything wastes context. Trusting the model to load selectively can fail - the model may skip loading, pre-load everything, or load at the wrong time. Deterministic progressive disclosure gives you both efficiency and reliability - extracted behaviors load only when needed, guaranteed. Hook infrastructure enables dynamic context injection: delivering runtime-generated content (retry errors, prior execution results, cross-boundary coordination) that can't exist until launch time. This is where the pattern provides maximum value.
 {{< /callout >}}
 
 ## The Four-Tier Model
@@ -113,6 +113,20 @@ Making Tier 3 deterministic requires infrastructure-enforced context injection.
 ## Inline vs Inject: The Decision Framework
 
 Before reaching for hook injection, ask: should this content be inlined instead?
+
+### The Observability Gap
+
+With convention-based loading (breadcrumbs), you don't know if the agent loaded the reference until execution fails. Was context missing because the agent skipped loading, or because the reference was incomplete, or because the agent loaded the wrong file? This observability gap makes debugging non-deterministic.
+
+The question that drives deterministic approaches: **How can we make it undeniable that agents have the context they need?**
+
+Two answers:
+
+**Inline (for always-needed content):** Put it directly in the agent definition. No loading step means no loading failure. Content is present from the start, visible in the definition, zero ambiguity.
+
+**Inject (for conditional/dynamic content):** Use infrastructure to inject before execution starts. Hook logs show exactly what was injected. Eliminates "did loading happen?" uncertainty without paying context cost for unused content.
+
+The observability gap drove the search for deterministic injection. But for always-needed content, inline eliminates the gap entirely. For conditional content where inlining would cause bloat, injection eliminates the gap while preserving context economy.
 
 **Inline when content is:**
 - Always needed by this agent/subprocess type
@@ -181,17 +195,19 @@ This redundancy strategy ensures graceful degradation. Claude Code users with ho
 
 ### Dynamic Context Injection: The True Value Proposition
 
-Hook infrastructure delivers its highest value through runtime-generated context that varies per launch.
+Hook infrastructure delivers its highest value through runtime-generated context that varies per launch. This is where injection solves the observability gap without alternatives.
 
 **Static file loading** (what the three-layer model demonstrates):
 - Reference files exist before agent launches
 - Could be inlined with identical token cost
 - Hook adds complexity for organizational benefit only
+- Inline eliminates the observability gap more simply
 
 **Dynamic context injection** (the pattern's natural use case):
 - Content generated at launch time based on execution state
 - Can't be inlined because it doesn't exist until runtime
 - Hook is the right delivery mechanism
+- Eliminates observability gap while preserving context economy
 
 **Dynamic Context Examples:**
 
@@ -529,7 +545,7 @@ Deterministic loading preserves the efficiency progressive disclosure provides w
 - Model loads SKILL.md (~5000 tokens)
 - Model reads routing table, may load all references "just in case" (~15000 tokens)
 - Total: ~20000 tokens per invocation
-- Loading failures: ~15% of invocations (model skips or misroutes)
+- Loading failures: model sometimes skips or misroutes
 
 **With triggers (deterministic injection):**
 - Model loads SKILL.md (~5000 tokens)
@@ -544,7 +560,7 @@ The larger the `references/` directory, the bigger the savings. For a project wi
 Before triggers:
 - Tier 2 size: 5200 tokens (SKILL.md + all references inline)
 - Every invocation: 5200 tokens
-- Loading failures: ~15% (model skipped reference loading)
+- Loading failures: model sometimes skipped reference loading
 - Total for 10 invocations: 52000 tokens
 
 After triggers:
@@ -553,7 +569,7 @@ After triggers:
 - Loading failures: 0% (infrastructure-enforced)
 - Total for 10 invocations: 46000 tokens (mixed subcommands)
 
-11% reduction in token usage. Zero loading failures. Before triggers, the model skipped reference loading ~15% of the time, causing execution errors. After triggers: zero skips, zero errors.
+11% reduction in token usage. Zero loading failures. Before triggers, the model sometimes skipped reference loading, causing execution errors. After triggers: zero skips, zero errors.
 
 ## Tier 0 Example: CLAUDE.md
 
