@@ -4,19 +4,19 @@ date: 2026-03-24
 draft: false
 tags: ["agent-skills", "claude-code", "context-injection", "progressive-disclosure", "hooks", "ai-agents", "automation", "bash", "yaml", "lifecycle-hooks", "userpromptrsubmit", "skill-design", "token-optimization", "cursor", "github-copilot", "windsurf", "agentskills-spec", "orchestration", "agent-coordination", "deterministic-systems"]
 categories: ["developer-tools", "automation"]
-description: "Move from convention-based to infrastructure-enforced context loading for Agent Skills. Three-layer redundancy model using UserPromptSubmit hooks, vendor-neutral Bash scripts, and frontmatter-declared triggers. Compatible with Claude Code, Cursor, and all Agent Skills clients."
-summary: "Agent Skills progressive disclosure is convention-based - the model decides when to load reference files. This works until it doesn't. Here's how to make Tier 3 resource loading deterministic using prompt lifecycle hooks and trigger-based context injection, with three layers of redundancy from infrastructure-enforced to vendor-neutral fallbacks."
+description: "Infrastructure-enforced context injection for Agent Skills: conditional loading of static references and dynamic injection of runtime-generated context. Three-layer redundancy using UserPromptSubmit hooks, vendor-neutral Bash scripts, and frontmatter-declared triggers."
+summary: "Agent Skills progressive disclosure is convention-based - the model decides when to load references. This works until it doesn't. Infrastructure-enforced context injection solves two problems: conditional loading of static files (context economy) and dynamic injection of runtime-generated content like retry errors, prior execution results, and cross-boundary coordination. Three layers of redundancy ensure graceful degradation across platforms."
 ---
 
 The Agent Skills spec defines progressive disclosure: load metadata at startup, instructions on activation, and resources when needed. The first two tiers are deterministic. The third is convention-based - the model decides when to read reference files.
 
 This works until it doesn't. A routing table that says "if the user runs `/skill subcommand`, read `references/subcommand-flow.md`" is an instruction to the model, not enforcement. The model can skip it, pre-load everything, or load references at the wrong time.
 
-The solution is deterministic progressive disclosure: context injection that happens before the model runs, enforced by infrastructure rather than convention.
+Deterministic progressive disclosure solves this: context injection that happens before the model runs, enforced by infrastructure rather than convention. This enables conditional loading of static references (context economy) and dynamic injection of runtime-generated context that varies per launch (retry errors, prior execution results, cross-boundary coordination).
 
 This implementation is also a proposal to the Agent Skills spec. The `triggers:` field works today via YAML extensibility - platforms that understand it act on it, others ignore it. But every major Agent Skills platform (Claude Code, Gemini CLI, OpenAI Codex, Cursor, OpenCode) has independently built a pre-invocation hook. The ecosystem has converged on this pattern. The proposal asks the spec to formally recognize `triggers:` as a standard field, so skill authors declare intent once and all conforming platforms honor it.
 
-## The Progressive Disclosure Problem
+## Progressive Disclosure: Convention vs Infrastructure
 
 The [Agent Skills spec](https://agentskills.io/specification#progressive-disclosure) defines three tiers:
 
@@ -59,7 +59,7 @@ The spec's progressive disclosure section is correct about the three-tier model.
 {{< /callout >}}
 
 {{< callout type="success" >}}
-**Progressive disclosure solves a broader problem:** Once you extract procedural behaviors from your agent prompt into skills and references (see [The Agent-Skill Boundary]({{< ref "agent-skill-boundary" >}})), you need a way to load them efficiently. Loading everything wastes context. Trusting the model to load selectively fails 15% of the time. Deterministic progressive disclosure gives you both efficiency and reliability - extracted behaviors load only when needed, guaranteed.
+**Progressive disclosure solves a broader problem:** Once you extract procedural behaviors from your agent prompt into skills and references (see [The Agent-Skill Boundary]({{< ref "agent-skill-boundary" >}})), you need a way to load them efficiently. Loading everything wastes context. Trusting the model to load selectively fails 15% of the time. Deterministic progressive disclosure gives you both efficiency and reliability - extracted behaviors load only when needed, guaranteed. Hook infrastructure enables dynamic context injection: delivering runtime-generated content (retry errors, prior execution results, cross-boundary coordination) that can't exist until launch time. This is where the pattern provides maximum value.
 {{< /callout >}}
 
 ## The Four-Tier Model
@@ -108,11 +108,48 @@ flowchart TB
 
 **Tiers 1-3 are progressive disclosure WITHIN the skill.** Once activated, the skill loads metadata, instructions, and resources incrementally.
 
-The problem we're solving is making Tier 3 deterministic.
+Making Tier 3 deterministic requires infrastructure-enforced context injection.
+
+## Inline vs Inject: The Decision Framework
+
+Before reaching for hook injection, ask: should this content be inlined instead?
+
+**Inline when content is:**
+- Always needed by this agent/subprocess type
+- Agent-specific (not shared with other types)
+- Static (exists before launch time)
+
+**Inject when content is:**
+- Conditionally needed (context economy)
+- Shared across multiple types (DRY benefit)
+- Dynamically generated at runtime (can't inline what doesn't exist yet)
+
+### Token Cost Reality
+
+For always-needed content, inline and inject have **identical token costs**:
+- Inline: content in agent definition, loaded as system prompt
+- Inject: content prepended via hook, loaded before agent starts
+- Both: agent sees content immediately, zero latency, no choice
+
+The difference is complexity and transparency:
+- Inline: one file, visible in definition
+- Inject: two files, requires logging to verify
+
+Hook injection only wins when it provides functional benefit beyond always-loading content.
+
+### Measuring Sharing Ratio
+
+Calculate: `truly_shared_refs / total_refs`
+
+- >50% shared: hook infrastructure justified broadly
+- 25-50% shared: hybrid (inline specific, inject shared)
+- <25% shared: inline almost everything
+
+**Caveat:** "Similar" is not "shared." If each agent type has its own version of a concept (e.g., completion-report-format), that's agent-specific content following a pattern, not shared content. Only inject when the exact same file is consumed by multiple types.
 
 ## Deterministic Context Injection
 
-The solution uses three layers to make Tier 3 loading deterministic. Each layer has different reliability guarantees and compatibility, but all three are active simultaneously. Users automatically get the best mechanism their environment supports - deterministic if possible, vendor-neutral if available, convention-based as fallback.
+Three layers make Tier 3 loading deterministic. Each layer has different reliability guarantees and compatibility, but all three are active simultaneously. Users automatically get the best mechanism their environment supports - deterministic if possible, vendor-neutral if available, convention-based as fallback.
 
 This redundancy strategy ensures graceful degradation. Claude Code users with hooks get deterministic loading. Users on other clients with Bash get vendor-neutral script-based loading. Users on any client get the conventional routing table fallback. No configuration needed - the system adapts to the environment.
 
@@ -141,6 +178,52 @@ This redundancy strategy ensures graceful degradation. Claude Code users with ho
 | Hook | `UserPromptSubmit` | Claude Code only | Deterministic (pre-model) | 100% |
 | Script | `scripts/inject-context` | Any agent with Bash | Model-initiated | High |
 | Fallback | Routing table in SKILL.md | Any agent | Convention-based | Variable |
+
+### Dynamic Context Injection: The True Value Proposition
+
+Hook infrastructure delivers its highest value through runtime-generated context that varies per launch.
+
+**Static file loading** (what the three-layer model demonstrates):
+- Reference files exist before agent launches
+- Could be inlined with identical token cost
+- Hook adds complexity for organizational benefit only
+
+**Dynamic context injection** (the pattern's natural use case):
+- Content generated at launch time based on execution state
+- Can't be inlined because it doesn't exist until runtime
+- Hook is the right delivery mechanism
+
+**Dynamic Context Examples:**
+
+**1. Retry Context**
+
+When relaunching a failed agent (attempt > 1), inject structured failure context:
+- Prior attempt's error classification
+- Files committed before failure
+- Suggested fix approach from build analysis
+
+**2. Prior Wave Summaries**
+
+Wave 2+ agents launch blind. Inject context about prior wave:
+- Which agents completed, which files changed
+- Post-merge build status
+- Interface deviations from contracts
+
+**3. Cross-Repo Coordination**
+
+For multi-repo implementations, inject repo boundaries:
+- Repo map (which files in which repo)
+- Per-repo build commands
+- Agent's working repo clearly identified
+
+**4. Integration Gap Details**
+
+Integration agents receive generic instructions. Inject specifics:
+- Unconnected exports from merge analysis
+- Call-site locations, wiring patterns
+- Generated from post-merge static analysis
+
+These can't be inlined - they're generated after planning based on runtime state. This is where hooks earn their complexity cost.
 
 ### How Triggers Work
 
@@ -230,7 +313,7 @@ Triggers that don't conform to the portable format may not be correctly parsed b
 
 ## Layer Implementation Details
 
-Now that we understand the conceptual model (three layers, trigger-based routing, graceful degradation), let's see how each layer is implemented.
+The conceptual model (three layers, trigger-based routing, graceful degradation) translates to specific implementations for each layer.
 
 ### Layer 1: Pre-Invocation Hooks (Cross-Platform)
 
@@ -244,13 +327,13 @@ Layer 1 uses pre-invocation hooks - lifecycle hooks that fire before the model p
 | Cursor | `beforeSubmitPrompt` | Production |
 | OpenCode | `chat.message` | Production |
 
-The ecosystem has converged on pre-invocation hooks as the right place for deterministic context injection. The reference implementation shown below is for Claude Code's `UserPromptSubmit` hook, but the same pattern applies to all platforms listed above.
+The ecosystem has converged on pre-invocation hooks as the right place for deterministic context injection - both for conditional loading of static references and for dynamic injection of runtime-generated content. The reference implementation shown below is for Claude Code's `UserPromptSubmit` hook, but the same pattern applies to all platforms listed above.
 
 The hook is a thin orchestrator. It delegates all trigger logic to each skill's `scripts/inject-context`, then aggregates results as `additionalContext` (or equivalent platform-specific mechanism). The hook itself is skill-agnostic - adding a new skill requires zero hook changes.
 
 The hook fires before the model's context is constructed. This timing is critical - by the time the model starts processing, references are already injected. The model cannot skip loading because loading happened pre-model, enforced by infrastructure.
 
-Here's the complete implementation:
+Complete implementation:
 
 ```bash
 #!/usr/bin/env bash
@@ -314,7 +397,7 @@ The script can be invoked two ways:
 1. By the Layer 1 hook (Claude Code) - automatic, pre-model
 2. By the model following Layer 2 instructions (any client) - model-initiated
 
-Here's the complete implementation:
+Complete implementation:
 
 ```bash
 #!/usr/bin/env bash
@@ -470,11 +553,11 @@ After triggers:
 - Loading failures: 0% (infrastructure-enforced)
 - Total for 10 invocations: 46000 tokens (mixed subcommands)
 
-11% reduction in token usage. More importantly: zero loading failures. Before triggers, the model skipped reference loading ~15% of the time, causing execution errors. After triggers: zero skips, zero errors.
+11% reduction in token usage. Zero loading failures. Before triggers, the model skipped reference loading ~15% of the time, causing execution errors. After triggers: zero skips, zero errors.
 
 ## Tier 0 Example: CLAUDE.md
 
-Here's how Tier 0 discovery looks for the SAW skill:
+Tier 0 discovery for the SAW skill:
 
 ```markdown
 # Available Skills
@@ -524,7 +607,7 @@ The heuristic: if removing it from the index would prevent the model from routin
 
 ## Complete SAW Skill Example
 
-Here's how all four tiers work together for the Scout-and-Wave skill:
+All four tiers working together for the Scout-and-Wave skill:
 
 ### Tier 0: Discovery (CLAUDE.md)
 
@@ -767,15 +850,19 @@ The trade-off: slightly larger context (deterministic loading) vs potential re-r
 
 ## When Not to Use Triggers
 
+**Always-needed, agent-specific content:** If every invocation of an agent type requires this content and no other agent type uses it, inline it in the agent definition. Injection adds indirection without functional benefit. Same token cost, more complexity.
+
 **Mid-execution references:** Triggers fire at prompt submission. Content loaded after skill activation (failure routing, dynamic lookups) should use conventional loading.
 
-**Dynamic content:** If reference content changes based on codebase state, triggers can't help. Use runtime scripts instead.
+**Dynamic content (consider alternative):** If reference content changes based on codebase state, triggers can't help. Use runtime scripts OR consider dynamic context injection (see Dynamic Context section) if the content varies per launch.
 
 **User-specific content:** Triggers match prompts, not user identity or permissions. Use conventional loading for personalization.
 
 **Tiny skills:** If your entire skill is <2000 tokens including all references, triggers add overhead for no benefit. Just load everything in Tier 2.
 
-Triggers optimize the common case: skills with multiple subcommands, each needing different reference files. If your skill has one flow and one reference file, load it conventionally.
+**Low sharing ratio:** If less than 25% of references are shared across agent types, consider inlining agent-specific content and using hooks only for conditional or dynamic content.
+
+Triggers optimize for conditional loading and dynamic context injection. For always-needed, agent-specific content: just inline it.
 
 ## Debugging
 
@@ -902,9 +989,9 @@ Embed all reference content directly in SKILL.md:
 
 **Pros:** Everything in one file, no loading needed.
 
-**Cons:** Tier 2 becomes massive (>10000 tokens). Every invocation pays the full cost.
+**Cons:** Tier 2 becomes massive (>10000 tokens). Every invocation pays the full cost. Can't deliver dynamic content (runtime-generated context).
 
-Trigger-based injection keeps Tier 2 small and loads only what's needed.
+Trigger-based injection keeps Tier 2 small, loads only what's needed conditionally, and enables dynamic context injection that inlining cannot support.
 
 ## Implementation Repository
 
@@ -930,7 +1017,7 @@ Licensed under MIT. Compatible with Claude Code, Cursor, GitHub Copilot, Windsur
 
 **Duplicate injection possible.** If both Layer 1 and Layer 2 execute, the same reference appears twice in context. Wasteful but harmless.
 
-**No conditional injection.** Triggers match prompts, not codebase state or runtime conditions. Complex routing still needs conventional loading.
+**Static trigger patterns.** Triggers match prompts using regex patterns. For dynamic context injection (runtime-generated content), the hook script generates content programmatically rather than matching static file paths. The trigger mechanism supports both static files and dynamic generation.
 
 These limitations are acceptable for the majority of skills. The three-layer redundancy ensures graceful degradation - users get the best available mechanism automatically.
 
@@ -947,6 +1034,8 @@ Deterministic context injection closes the gap. Trigger-based loading moves Tier
 The four-tier model (Tier 0 discovery + Tiers 1-3 progressive disclosure) creates a complete system for efficient, reliable context management.
 
 Skills using this pattern load only what's needed, when it's needed, with infrastructure guarantees that loading happens correctly. No model guessing. No token waste. No loading failures.
+
+For always-needed, agent-specific content: inline it. For conditional loading: use triggers. For dynamic context injection (retry errors, prior wave results, cross-repo coordination, integration gaps): hooks deliver runtime-generated content that can't be inlined. This is where the pattern provides maximum value.
 
 **Spec proposal status:** This implementation works today via YAML extensibility. The `triggers:` field is proposed for formal recognition in the Agent Skills spec, based on convergent evidence - every major platform has independently built pre-invocation hooks. The proposal asks the spec to standardize the declaration so skill authors write intent once and all conforming platforms honor it.
 
