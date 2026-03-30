@@ -1,11 +1,11 @@
 ---
 title: "The Agent-Skill Boundary: When Autonomous Behaviors Become Skills"
-date: 2026-03-25
+date: 2026-03-29
 draft: false
 tags: ["agent-skills", "ai-agents", "skill-design", "progressive-disclosure", "agent-architecture", "claude-code", "hooks", "automation", "orchestration", "context-injection", "token-optimization", "prompt-engineering", "agent-coordination", "deterministic-systems", "lifecycle-hooks", "agentskills-spec", "bash", "yaml", "developer-tools", "software-architecture", "design-patterns"]
 categories: ["developer-tools", "architecture"]
 description: "How to recognize when an agent's autonomous behaviors should be extracted into skills, hooks, or knowledge trees. A layered model for agent design."
-summary: "Agents accumulate autonomous behaviors over time - 'always do X before Y', 'if you see Z then do W'. These instructions eat context budget, drift across invocations, and can't be observed or tested. Here's how to recognize when an autonomous behavior is a skill waiting to be extracted, and the layered model that makes the boundary clear."
+summary: "Agents accumulate autonomous behaviors over time - 'always do X before Y', 'if you see Z then do W'. These instructions eat context budget, drift across invocations, and can't be observed or tested. How to recognize when an autonomous behavior is a skill waiting to be extracted, and the layered model that makes the boundary clear."
 ---
 
 You are building an agent. You need to decide: is "always check project config before starting" part of what the agent **is**, or part of what the agent **does**?
@@ -123,7 +123,7 @@ flowchart TB
 The fourth outcome - "cut it" - is real. If a behavior is not triggered by a pattern, is not a procedure, and does not require judgment, it is probably restating something that already exists elsewhere in the system.
 
 {{< callout type="success" >}}
-**Extraction creates the problem progressive disclosure solves:** Once you extract procedural behaviors into skills and references, you need a way to load them efficiently. Loading everything on every invocation wastes context. Trusting the model to load selectively fails ~15% of the time. [Deterministic progressive disclosure]({{< ref "deterministic-progressive-disclosure" >}}) solves this - extracted behaviors load only when needed, with infrastructure guarantees that loading happens correctly.
+**Extraction creates a loading problem:** Once you extract procedural behaviors into skills and references, you need a way to load them efficiently. Loading everything on every invocation wastes context. Trusting the model to load selectively can fail - the model may skip loading, pre-load everything, or load at the wrong time. Pre-invocation hooks solve this by loading the right references before the model runs, with infrastructure guarantees that loading happens correctly.
 {{< /callout >}}
 
 ## The Layered Model
@@ -168,11 +168,12 @@ flowchart TB
 Hooks fire before the model runs. No judgment involved. A hook matches a pattern and injects content, blocks an action, or validates output. The model never decides whether the hook should run.
 
 ```bash
-# UserPromptSubmit hook: if the prompt contains "/saw program",
-# inject references/program-flow.md before the model sees it
-triggers:
-  - match: "^/saw program"
-    inject: references/program-flow.md
+# UserPromptSubmit hook delegates to each skill's inject-context script.
+# The script matches the prompt and returns content to inject.
+case "$PROMPT" in
+  */saw\ program*) cat "$SKILL_DIR/references/program-flow.md" ;;
+  */saw\ amend*)   cat "$SKILL_DIR/references/amend-flow.md" ;;
+esac
 ```
 
 Hooks handle "always do X when you see Y" behaviors. If a behavior has a recognizable trigger and a fixed response, it is a hook, not an agent instruction.
@@ -208,7 +209,7 @@ The distinction between skills and knowledge: a skill defines what to do. Knowle
 
 ## A Worked Example
 
-[Scout-and-Wave](https://github.com/blackwell-systems/scout-and-wave) (SAW) is a parallel agent coordination system. Its orchestrator prompt started at 300 lines, grew to 703 lines, and was refactored back to 310 lines by extracting procedure into skills and knowledge.
+[Scout-and-Wave](https://github.com/blackwell-systems/scout-and-wave) (SAW) is a parallel agent coordination system. Its orchestrator prompt started at 300 lines, grew to 703 lines, and was refactored down to 141 lines by extracting procedure into skills and knowledge.
 
 Here is what each layer handles:
 
@@ -254,7 +255,7 @@ flowchart LR
     style knowledge_layer fill:#4C3A3C,stroke:#6b7280,color:#f0f0f0
 {{< /mermaid >}}
 
-Before extraction, the orchestrator prompt contained all of this inline - 703 lines loaded on every invocation. After extraction, the per-invocation cost depends on what the user asked for:
+Before extraction, the orchestrator prompt contained all of this inline - 703 lines loaded on every invocation. After extraction, the per-invocation cost depends on what the user asked for (always-needed agent procedures are inlined in agent definitions, not the orchestrator):
 
 {{< mermaid >}}
 flowchart LR
@@ -263,15 +264,15 @@ flowchart LR
     end
 
     subgraph after["After: Pay for What You Use"]
-        a1["Agent core\n310 lines"] --> a2["+ matching skill\n0-250 lines"]
-        a2 --> a3["+ knowledge\n0-55 lines"]
+        a1["Agent core\n141 lines"] --> a2["+ matching skill\n0-336 lines"]
+        a2 --> a3["+ knowledge\n0-69 lines"]
     end
 
     subgraph examples["Cost by Subcommand"]
-        e1["/saw status\n310 lines"]
-        e2["/saw wave\n310 lines"]
-        e3["/saw program execute\n560 lines"]
-        e4["/saw wave + failure\n365 lines"]
+        e1["/saw status\n141 lines"]
+        e2["/saw wave\n141 lines"]
+        e3["/saw program execute\n477 lines"]
+        e4["/saw wave + failure\n210 lines"]
     end
 
     style before fill:#4C3A3C,stroke:#6b7280,color:#f0f0f0
@@ -279,15 +280,15 @@ flowchart LR
     style examples fill:#3A4A5C,stroke:#6b7280,color:#f0f0f0
 {{< /mermaid >}}
 
-The core prompt is 310 lines of routing and judgment. The remaining 393 lines load only when needed.
+The core prompt is 141 lines of routing and judgment. The remaining ~560 lines of orchestrator-level references load only when needed. Agent-specific procedures (worktree isolation, completion report formats, suitability gates) are inlined directly in agent definitions - they never touch the orchestrator prompt.
 
 ### What Was Extracted
 
-**Program commands** (250 lines) became `references/program-flow.md`. These are step-by-step procedures for `/saw program plan`, `/saw program execute`, and `/saw program status`. They have a clear trigger (`^/saw program`) and fixed steps.
+**Program commands** (336 lines) became `references/program-flow.md`. Step-by-step procedures for `/saw program plan`, `/saw program execute`, and `/saw program status`. Loaded by a script when the prompt matches `/saw program`.
 
-**Failure routing** (55 lines) became `references/failure-routing.md`. This is a decision table for handling agent failures: retry logic, failure type classification, post-merge integration. It loads only when an agent reports non-complete status - a runtime condition, not a dispatch-time trigger, so it is loaded by the agent's judgment rather than a hook.
+**Failure routing** (69 lines) became `references/failure-routing.md`. A decision table for handling agent failures: retry logic, failure type classification, post-merge integration. Loaded only when an agent reports non-complete status - a runtime condition, not a dispatch-time trigger, so it is loaded by the agent's judgment rather than a hook.
 
-**Amend flow** (38 lines) became `references/amend-flow.md`. Three variants of the amend subcommand, each with orchestrator steps. Clear trigger, fixed procedure.
+**Amend flow** (39 lines) became `references/amend-flow.md`. Three variants of the amend subcommand, each with orchestrator steps. Loaded by a script when the prompt matches `/saw amend`.
 
 ### What Was Cut
 
@@ -327,7 +328,7 @@ The fix: move conditional prerequisites into the skills that need them. The wave
 
 "When you need reference X, read file Y." The model decides when it "needs" something. This works until it does not - the model skips the reference, loads it too early, or loads everything at once.
 
-The fix: [deterministic progressive disclosure]({{< ref "deterministic-progressive-disclosure" >}}). Hooks load references based on trigger patterns before the model runs. The model receives the reference in context without deciding to load it.
+Pre-invocation hooks solve this. The hook runs `scripts/inject-context` before the model starts, loading the right reference based on which subcommand was invoked. The model receives the reference in context without deciding to load it.
 
 ## The Extraction Checklist
 
@@ -373,16 +374,16 @@ flowchart TB
 
     subgraph after["After Extraction"]
         direction TB
-        a1["Agent prompt: 300 lines<br/>(always loaded)"]
+        a1["Agent prompt: 141 lines<br/>(always loaded)"]
 
-        a2["Status check:<br/>300 lines only"]
+        a2["Status check:<br/>141 lines only"]
 
-        a3["Complex operation:<br/>300 (agent)<br/>+ 250 (skill)<br/>= 550 lines"]
+        a3["Complex operation:<br/>141 (agent)<br/>+ 336 (skill)<br/>= 477 lines"]
 
-        a4["Failure recovery:<br/>300 (agent)<br/>+ 250 (skill)<br/>+ 55 (knowledge)<br/>= 605 lines"]
+        a4["Failure recovery:<br/>141 (agent)<br/>+ 336 (skill)<br/>+ 69 (knowledge)<br/>= 546 lines"]
     end
 
-    note1["Hooks: 11 scripts<br/>Never loaded by model<br/>(run pre-model)"]
+    note1["Hooks: 15 scripts<br/>Never loaded by model<br/>(run pre-model)"]
 
     before -.->|"extraction"| after
     after --- note1
@@ -393,7 +394,7 @@ flowchart TB
     style b1 fill:#4C3A3C,stroke:#C24F54,color:#f0f0f0
 {{< /mermaid >}}
 
-The total capability is ~800 lines. The per-invocation cost ranges from 300 (simple status check) to 550 (complex wave with failure). Before extraction, it was 703 lines on every invocation regardless of what the user asked for.
+The total orchestrator capability is ~590 lines (141 core + 444 in references). The per-invocation cost ranges from 141 (simple status check) to 546 (complex wave with failure recovery). Before extraction, it was 703 lines on every invocation regardless of what the user asked for.
 
 Progressive disclosure is a design principle, not a performance optimization. When the agent sees only what is relevant to the current task, it makes better judgments. When procedure is isolated in skills, it can be tested and versioned independently. When routing is deterministic, it can be observed and debugged without reading the model's internal reasoning.
 
