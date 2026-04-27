@@ -88,6 +88,8 @@ Issues filed and fix PRs submitted to open source projects, primarily discovered
 | [steipete/Peekaboo#108](https://github.com/steipete/Peekaboo/issues/108) | Issue | `image` returns internal error without Screen Recording permission | Open |
 | [sammcj/mcp-devtools#258](https://github.com/sammcj/mcp-devtools/pull/258) | Fix PR | Tool handler returns internal error instead of `isError` for all validation failures | Open |
 | [modelcontextprotocol/python-sdk#2511](https://github.com/modelcontextprotocol/python-sdk/pull/2511) | Feature PR | Add custom content support to ToolError in the official MCP Python SDK | Open |
+| [vercel/ai#14758](https://github.com/vercel/ai/pull/14758) | Fix PR | Fix content: null for tool-only messages in Vercel AI SDK | Open |
+| [langchain-ai/langchain#37037](https://github.com/langchain-ai/langchain/pull/37037) | Fix PR | Remove dead C#/Elixir separators in RecursiveCharacterTextSplitter | **Merged** |
 | [grafana/grafana#123664](https://github.com/grafana/grafana/pull/123664) | Fix PR | Remove debug console.log in Explore scanning loop | Open |
 | [grafana/grafana#123665](https://github.com/grafana/grafana/pull/123665) | Fix PR | Fix typeof check in LegacyVariableWrapper + remove console.log | Open |
 | [grafana/grafana#123666](https://github.com/grafana/grafana/pull/123666) | Fix PR | Fix defer span.End() inside loop in expression pipeline | Open |
