@@ -75,7 +75,7 @@ showMetadata: false
 
 ## Upstream Contributions
 
-Issues filed and fix PRs submitted to open source projects, primarily discovered through [mcp-assert](https://github.com/blackwell-systems/mcp-assert) testing.
+Issues filed and fix PRs submitted to open source projects.
 
 | Project | Type | Description | Status |
 |---------|------|-------------|--------|
