@@ -1,11 +1,12 @@
 ---
-title: "We Tested 54 MCP Servers. Here's What Breaks."
+title: "We Tested 55 MCP Servers. Here's What Breaks."
 date: 2026-04-27
+lastmod: 2026-04-28
 draft: false
-tags: ["mcp", "model-context-protocol", "testing", "ai-agents", "developer-tools", "open-source", "go", "mcp-server", "quality-assurance", "grafana", "anthropic", "microsoft", "mozilla"]
+tags: ["mcp", "model-context-protocol", "testing", "ai-agents", "developer-tools", "open-source", "go", "mcp-server", "quality-assurance", "grafana", "anthropic", "microsoft", "mozilla", "ant-group"]
 categories: ["ai", "tools", "open-source"]
-description: "We scanned 54 MCP servers from Anthropic, Google, Microsoft, Mozilla, Sentry, Grafana, and AWS with mcp-assert. 20 bugs across 9 servers. The most common pattern: servers crash instead of returning errors agents can recover from."
-summary: "MCP servers are the tools AI agents rely on. We tested 54 of them with mcp-assert, found 20 bugs across 9 servers, and submitted fix PRs. Grafana merged ours. The most common failure: servers throw unhandled exceptions instead of returning isError, leaving agents unable to recover."
+description: "We scanned 55 MCP servers from Anthropic, Google, Microsoft, Mozilla, Sentry, Grafana, Ant Group, and AWS with mcp-assert. 20 bugs across 9 servers, 6 fix PRs submitted, 3 merged. Ant Group adopted mcp-assert in CI within 3 days of launch."
+summary: "MCP servers are the tools AI agents rely on. We tested 55 of them with mcp-assert, found 20 bugs across 9 servers, and submitted fix PRs. Grafana and Ant Group merged ours. Three days after launch, Ant Group's visualization team asked us to integrate mcp-assert into their CI. The most common failure: servers throw unhandled exceptions instead of returning isError, leaving agents unable to recover."
 ---
 
 I started scanning MCP servers because I wanted to know if they actually work. Not "does the demo run in MCP Inspector" but "what happens when an agent sends bad input at 2am in CI."
@@ -40,20 +41,20 @@ assert:
     contains: ["alice", "bob"]
 ```
 
-536 assertions across 54 servers, 7 languages, 3 transports. Here's what I found.
+570 assertions across 55 servers, 7 languages, 3 transports. Here's what I found.
 
 ## The Numbers
 
 | Metric | Count |
 |--------|-------|
-| Servers scanned | 54 |
+| Servers scanned | 55 |
 | Languages | 7 (Go, TypeScript, Python, Rust, Kotlin, Swift, C#) |
 | Transports | 3 (stdio, SSE, HTTP) |
-| Total assertions | 546 |
+| Total assertions | 570 |
 | Bugs found | 20 across 9 servers |
 | Fix PRs submitted | 6 |
-| Fix PRs merged | 1 (Grafana) |
-| Clean scans | 45 servers |
+| Fix PRs merged | 3 (Grafana, Ant Group x2) |
+| Clean scans | 46 servers |
 
 The full scorecard is at [blackwell-systems.github.io/mcp-assert/scorecard](https://blackwell-systems.github.io/mcp-assert/scorecard/).
 
@@ -84,11 +85,11 @@ The distinction matters because `-32603` is supposed to mean "something went wro
 
 ## The Bugs
 
-### Grafana (mcp-grafana): merged fix
+### Grafana (mcp-grafana): merged fix, 100% coverage achieved
 
 `get_assertions` crashes with an internal error when given an invalid timestamp string. Every other tool in the Grafana server validates input correctly and returns `isError: true`. This one tool skipped validation because `time.Time` unmarshal happens before the tool handler's input validation logic runs.
 
-We submitted [PR #793](https://github.com/grafana/mcp-grafana/pull/793). Grafana merged it.
+We submitted [PR #793](https://github.com/grafana/mcp-grafana/pull/793). Grafana merged it. We then expanded the assertion suite to 54 assertions covering all 50 tools (100% coverage), including 10 live-backend assertions that test against a real Grafana instance when credentials are available.
 
 ### Anthropic (server-puppeteer): fix PR submitted
 
@@ -96,11 +97,13 @@ We submitted [PR #793](https://github.com/grafana/mcp-grafana/pull/793). Grafana
 
 [PR #4051](https://github.com/modelcontextprotocol/servers/pull/4051) submitted. The server was recently archived to a separate branch, but the npm package is still published and widely used.
 
-### antvis/mcp-server-chart (Ant Group): fix PR submitted, CI integration requested
+### antvis/mcp-server-chart (Ant Group): both PRs merged, CI integration live
 
 This was the worst. 9 out of 25 tools crash with full JavaScript stack traces when called with default input. The charting tools don't validate their input before attempting to render, so any missing or malformed parameter produces an unhandled exception.
 
-We submitted [PR #292](https://github.com/antvis/mcp-server-chart/pull/292). The maintainer (from Ant Group's visualization team) reviewed it, asked how to use mcp-assert, and requested that we add CI integration to their repository. That follow-up PR is in progress.
+We submitted [PR #292](https://github.com/antvis/mcp-server-chart/pull/292) with the fix. The maintainer (from Ant Group's visualization team) merged it, then asked how to use mcp-assert and requested we add CI integration to their repository.
+
+Three days after mcp-assert launched, we submitted [PR #294](https://github.com/antvis/mcp-server-chart/pull/294) with 25 assertion YAML files and a GitHub Actions workflow. Every push and PR now runs all 25 assertions against the local build. If a tool regresses, the badge in their README turns red. This is a 4,000-star repo with 35,000 monthly npm downloads. It's the first external adoption of mcp-assert in CI.
 
 ### sammcj/mcp-devtools: fix PR submitted
 
@@ -117,7 +120,7 @@ We submitted [PR #292](https://github.com/antvis/mcp-server-chart/pull/292). The
 
 ## What Passed Clean
 
-45 of 54 servers had zero issues. The notable clean scans:
+46 of 55 servers had zero issues. The notable clean scans:
 
 **Anthropic's core servers** (filesystem, memory, sqlite, time, fetch, everything) all handled bad input correctly. These are the reference implementations that other servers should emulate.
 
@@ -154,4 +157,30 @@ mcp-assert run --suite evals/ --threshold 95
 
 The audit command is the fastest way to find out if your server has these issues. It takes about 10 seconds for a server with 20 tools.
 
-The full tool, all 546 assertions, and the complete scorecard are at [github.com/blackwell-systems/mcp-assert](https://github.com/blackwell-systems/mcp-assert).
+Native integrations for your existing test runner:
+
+```bash
+# Vitest (TypeScript)
+npm install -D vitest-mcp-assert
+```
+
+```ts
+import { describeMcpSuite } from 'vitest-mcp-assert'
+describeMcpSuite('mcp server', 'evals/')
+```
+
+```bash
+# pytest (Python)
+pip install pytest-mcp-assert
+pytest --mcp-suite evals/
+```
+
+Same YAML files work across Vitest, pytest, and the CLI. No framework lock-in.
+
+## Adoption
+
+Three days after launch, Ant Group's antvis team asked us to integrate mcp-assert into their CI for [mcp-server-chart](https://github.com/antvis/mcp-server-chart) (4K stars, 35K monthly npm downloads). The setup: 25 assertions covering every tool, running on every push and PR via GitHub Actions. If a tool regresses, the badge turns red.
+
+The [GitHub Action](https://github.com/blackwell-systems/mcp-assert-action) ([Marketplace](https://github.com/marketplace/actions/mcp-assert)) makes this a 5-line workflow file for any MCP server.
+
+The full tool, all 570 assertions, and the complete scorecard are at [github.com/blackwell-systems/mcp-assert](https://github.com/blackwell-systems/mcp-assert).
