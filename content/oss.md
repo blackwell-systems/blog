@@ -106,5 +106,5 @@ Issues filed and fix PRs submitted to open source projects.
 | [biomejs/biome#10113](https://github.com/biomejs/biome/issues/10113) | Fix PR [#10151](https://github.com/biomejs/biome/pull/10151) | `--suppress` with `--only` ignores overrides that disable a rule | Open |
 | [antvis/mcp-server-chart#294](https://github.com/antvis/mcp-server-chart/pull/294) | PR | Add mcp-assert CI integration with 25 assertions | Open |
 | [blazickjp/arxiv-mcp-server#92](https://github.com/blazickjp/arxiv-mcp-server/issues/92) | Issue | `get_abstract` returns error content without `isError` flag | Maintainer fix merged |
-| [steipete/Peekaboo#108](https://github.com/steipete/Peekaboo/issues/108) | Issue | `image` returns internal error without Screen Recording permission | Open |
+| [steipete/Peekaboo#108](https://github.com/steipete/Peekaboo/issues/108) | Issue | `image` returns internal error without Screen Recording permission | Community fix PR [#109](https://github.com/steipete/Peekaboo/pull/109) submitted |
 | [punkpeye/awesome-mcp-servers#5145](https://github.com/punkpeye/awesome-mcp-servers/pull/5145) | PR | Add agent-lsp listing | **Merged** |
