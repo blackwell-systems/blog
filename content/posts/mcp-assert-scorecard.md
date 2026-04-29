@@ -179,7 +179,9 @@ Same YAML files work across Vitest, pytest, and the CLI. No framework lock-in.
 
 ## Adoption
 
-Three days after launch, Ant Group's antvis team asked us to integrate mcp-assert into their CI for [mcp-server-chart](https://github.com/antvis/mcp-server-chart) (4K stars, 35K monthly npm downloads). The setup: 25 assertions covering every tool, running on every push and PR via GitHub Actions. If a tool regresses, the badge turns red.
+**[Wyre Technology](https://github.com/wyre-technology)** built a shared baseline workflow around `mcp-assert-action` and deployed it across 25 MCP servers (Autotask, Proofpoint, Datto RMM, Huntress, Mimecast, Xero, and more). Every server inherits the same assertion template via a reusable GitHub Actions workflow. This is exactly the pattern mcp-assert was designed for: one test standard, many servers.
+
+**[Ant Group (AntV)](https://github.com/antvis/mcp-server-chart)** integrated mcp-assert into CI within 3 days of launch (4K stars, 35K monthly npm downloads). 25 assertions covering every tool, running on every push and PR. If a tool regresses, the badge turns red.
 
 The [GitHub Action](https://github.com/blackwell-systems/mcp-assert-action) ([Marketplace](https://github.com/marketplace/actions/mcp-assert)) makes this a 5-line workflow file for any MCP server.
 
