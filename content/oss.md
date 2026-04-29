@@ -7,7 +7,7 @@ showMetadata: false
 
 ## Upstream Contributions
 
-Fix PRs and bug reports submitted to open source projects. 33 contributions across 23 repos. Bugs discovered via [mcp-assert](https://github.com/blackwell-systems/mcp-assert) scanning are marked with *.
+Fix PRs and bug reports submitted to open source projects. 33 contributions across 23 repos, 6 merged. Bugs discovered via [mcp-assert](https://github.com/blackwell-systems/mcp-assert) scanning are marked with *.
 
 ### Merged
 
@@ -16,6 +16,7 @@ Fix PRs and bug reports submitted to open source projects. 33 contributions acro
 | [grafana/mcp-grafana#793](https://github.com/grafana/mcp-grafana/pull/793) | `get_assertions` timestamp validation fix | Go. Validation ordering bug.* |
 | [langchain-ai/langchain#37037](https://github.com/langchain-ai/langchain/pull/37037) | Remove dead C#/Elixir separators in `RecursiveCharacterTextSplitter` | Python. Copy-paste from adjacent language defs. |
 | [antvis/mcp-server-chart#292](https://github.com/antvis/mcp-server-chart/pull/292) | 9 tools crash with unhandled exceptions on default input | TypeScript. Led to first mcp-assert CI adoption.* |
+| [google/go-containerregistry#2281](https://github.com/google/go-containerregistry/pull/2281) | `.local` FQDN incorrectly treated as non-HTTPS | Go. Regex fix per RFC 6761. |
 | [punkpeye/awesome-mcp-servers#5145](https://github.com/punkpeye/awesome-mcp-servers/pull/5145) | Add agent-lsp listing | |
 
 ### Highlights (open, under review)
@@ -28,7 +29,6 @@ Fix PRs and bug reports submitted to open source projects. 33 contributions acro
 | [hashicorp/terraform-provider-aws#47660](https://github.com/hashicorp/terraform-provider-aws/pull/47660) | GovCloud crash: `UnsupportedOperationException` in Directory Service Data | Go. Triaged by maintainer within 14 hours. |
 | [hashicorp/terraform-provider-aws#47661](https://github.com/hashicorp/terraform-provider-aws/pull/47661) | QuickSight `theme_arn` silently ignored in Create/Update/Read | Go. Field wired through full CRUD lifecycle. |
 | [traefik/traefik#13065](https://github.com/traefik/traefik/pull/13065) | `rewrite-target` regex breaks base path match for `ImplementationSpecific` paths | Go. 53k stars. Trailing slash in regex made optional to match nginx behavior. |
-| [google/go-containerregistry#2281](https://github.com/google/go-containerregistry/pull/2281) | `.local` FQDN incorrectly treated as non-HTTPS | Go. Regex fix per RFC 6761. |
 | [antvis/mcp-server-chart#294](https://github.com/antvis/mcp-server-chart/pull/294) | mcp-assert CI integration (25 assertions) | TypeScript. First external adoption. 4k stars, 35k npm downloads/mo. |
 | [charmbracelet/bubbletea#1687](https://github.com/charmbracelet/bubbletea/pull/1687) | `ExecProcess` leaks `View()` output to stdout | Go. Traced renderer flush lifecycle. |
 | [stretchr/testify#1877](https://github.com/stretchr/testify/pull/1877) | Panic when `SetupTest` skips with `HandleStats` | Go. `runtime.Goexit` ordering with deferred cleanup. |
