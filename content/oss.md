@@ -49,6 +49,7 @@ Fix PRs and bug reports submitted to open source projects. 30 contributions acro
 | [sammcj/mcp-devtools#258](https://github.com/sammcj/mcp-devtools/pull/258) | Tool handler returns internal error instead of `isError` for validation failures | Open* |
 | [modelcontextprotocol/servers#4044](https://github.com/modelcontextprotocol/servers/pull/4044) | `read_media_file` returns `type: "blob"`, violating MCP spec | Open* |
 | [modelcontextprotocol/servers#4051](https://github.com/modelcontextprotocol/servers/pull/4051) | `puppeteer_navigate` crashes on invalid URL with unhandled CDP error | Open* |
+| [tavily-ai/tavily-mcp#162](https://github.com/tavily-ai/tavily-mcp/pull/162) | Missing API key throws McpError instead of returning `isError: true` | Open* |
 
 ### Bugs Filed (fixed by others)
 
