@@ -7,7 +7,7 @@ showMetadata: false
 
 ## Upstream Contributions
 
-Fix PRs and bug reports submitted to open source projects. 30 contributions across 21 repos. Bugs discovered via [mcp-assert](https://github.com/blackwell-systems/mcp-assert) scanning are marked with *.
+Fix PRs and bug reports submitted to open source projects. 33 contributions across 23 repos. Bugs discovered via [mcp-assert](https://github.com/blackwell-systems/mcp-assert) scanning are marked with *.
 
 ### Merged
 
@@ -27,6 +27,7 @@ Fix PRs and bug reports submitted to open source projects. 30 contributions acro
 | [biomejs/biome#10151](https://github.com/biomejs/biome/pull/10151) | `--suppress` with `--only` ignores rule overrides | Rust. Two-line fix in a 24.5k-star codebase. Regression test added. |
 | [hashicorp/terraform-provider-aws#47660](https://github.com/hashicorp/terraform-provider-aws/pull/47660) | GovCloud crash: `UnsupportedOperationException` in Directory Service Data | Go. Triaged by maintainer within 14 hours. |
 | [hashicorp/terraform-provider-aws#47661](https://github.com/hashicorp/terraform-provider-aws/pull/47661) | QuickSight `theme_arn` silently ignored in Create/Update/Read | Go. Field wired through full CRUD lifecycle. |
+| [traefik/traefik#13065](https://github.com/traefik/traefik/pull/13065) | `rewrite-target` regex breaks base path match for `ImplementationSpecific` paths | Go. 53k stars. Trailing slash in regex made optional to match nginx behavior. |
 | [google/go-containerregistry#2281](https://github.com/google/go-containerregistry/pull/2281) | `.local` FQDN incorrectly treated as non-HTTPS | Go. Regex fix per RFC 6761. |
 | [antvis/mcp-server-chart#294](https://github.com/antvis/mcp-server-chart/pull/294) | mcp-assert CI integration (25 assertions) | TypeScript. First external adoption. 4k stars, 35k npm downloads/mo. |
 | [charmbracelet/bubbletea#1687](https://github.com/charmbracelet/bubbletea/pull/1687) | `ExecProcess` leaks `View()` output to stdout | Go. Traced renderer flush lifecycle. |
@@ -52,6 +53,8 @@ Fix PRs and bug reports submitted to open source projects. 30 contributions acro
 | [tavily-ai/tavily-mcp#162](https://github.com/tavily-ai/tavily-mcp/pull/162) | Missing API key throws McpError instead of returning `isError: true` | Open* |
 | [dvcrn/mcp-server-linear#5](https://github.com/dvcrn/mcp-server-linear/pull/5) | 24 tools throw McpError instead of returning `isError` when unauthenticated | Open* |
 | [pypa/pip#13960](https://github.com/pypa/pip/pull/13960) | Replace deprecated `locale.getpreferredencoding()` for Python 3.15 compat | Open |
+| [mark3labs/mcp-go#828](https://github.com/mark3labs/mcp-go/pull/828) | Redirect hook output to stderr in everything server example | Open |
+| [punkpeye/awesome-mcp-devtools#144](https://github.com/punkpeye/awesome-mcp-devtools/pull/144) | Add mcp-assert to Testing Tools listing | Open |
 
 ### Bugs Filed (fixed by others)
 
