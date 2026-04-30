@@ -77,7 +77,7 @@ showMetadata: false
 
 ## Upstream Contributions
 
-Fix PRs and bug reports submitted to open source projects. 37 contributions across 25 repos, 6 merged. Bugs discovered via [mcp-assert](https://github.com/blackwell-systems/mcp-assert) scanning are marked with *.
+Fix PRs and bug reports submitted to open source projects. 38 contributions across 25 repos, 6 merged. Bugs discovered via [mcp-assert](https://github.com/blackwell-systems/mcp-assert) scanning are marked with *.
 
 ### Merged
 
@@ -126,6 +126,7 @@ Fix PRs and bug reports submitted to open source projects. 37 contributions acro
 | [dvcrn/mcp-server-linear#5](https://github.com/dvcrn/mcp-server-linear/pull/5) | 24 tools throw McpError instead of returning `isError` when unauthenticated | Open* |
 | [modelcontextprotocol/kotlin-sdk#734](https://github.com/modelcontextprotocol/kotlin-sdk/pull/734) | Type-unsafe cast in polymorphic result deserialization | Kotlin. `ready for work` label. |
 | [modelcontextprotocol/kotlin-sdk#735](https://github.com/modelcontextprotocol/kotlin-sdk/pull/735) | Stdio transport hangs after EOF (supervisor job not cancelled) | Kotlin. P2 bug. Process hangs indefinitely after client disconnects. |
+| [modelcontextprotocol/kotlin-sdk#736](https://github.com/modelcontextprotocol/kotlin-sdk/pull/736) | Sequential message processing causes deadlocks | Kotlin. P1, `ready for work`. Long-running handlers block pings, elicitation, progress. |
 | [pypa/pip#13960](https://github.com/pypa/pip/pull/13960) | Replace deprecated `locale.getpreferredencoding()` for Python 3.15 compat | Open |
 | [mark3labs/mcp-go#828](https://github.com/mark3labs/mcp-go/pull/828) | Redirect hook output to stderr in everything server example | Open |
 | [punkpeye/awesome-mcp-devtools#144](https://github.com/punkpeye/awesome-mcp-devtools/pull/144) | Add mcp-assert to Testing Tools listing | Open |
