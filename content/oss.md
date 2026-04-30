@@ -83,12 +83,12 @@ Fix PRs and bug reports submitted to open source projects. 39 contributions acro
 
 | Project | Description | Details |
 |---------|-------------|---------|
-| [grafana/mcp-grafana#793](https://github.com/grafana/mcp-grafana/pull/793) | `get_assertions` timestamp validation fix | Go. Validation ordering bug.* |
-| [langchain-ai/langchain#37037](https://github.com/langchain-ai/langchain/pull/37037) | Remove dead C#/Elixir separators in `RecursiveCharacterTextSplitter` | Python. Copy-paste from adjacent language defs. |
-| [antvis/mcp-server-chart#292](https://github.com/antvis/mcp-server-chart/pull/292) | 9 tools crash with unhandled exceptions on default input | TypeScript. Led to first mcp-assert CI adoption.* |
-| [google/go-containerregistry#2281](https://github.com/google/go-containerregistry/pull/2281) | `.local` FQDN incorrectly treated as non-HTTPS | Go. Regex fix per RFC 6761. |
-| [google/go-containerregistry#2283](https://github.com/google/go-containerregistry/pull/2283) | Extract round-trip test for filesystem object preservation | Go. Covers symlinks, hard links, permissions. Requested in #2252. |
-| [mark3labs/mcp-go#828](https://github.com/mark3labs/mcp-go/pull/828) | Redirect hook output to stderr in everything server example | Go. stdio transport corruption fix.* |
+| [langchain-ai/langchain#37037](https://github.com/langchain-ai/langchain/pull/37037) | Remove dead C#/Elixir separators in `RecursiveCharacterTextSplitter` | Python. 136k stars. |
+| [google/go-containerregistry#2281](https://github.com/google/go-containerregistry/pull/2281) | `.local` FQDN incorrectly treated as non-HTTPS | Go. 3.8k stars. Regex fix per RFC 6761. Used by Kubernetes, Tekton, cosign. |
+| [google/go-containerregistry#2283](https://github.com/google/go-containerregistry/pull/2283) | Extract round-trip test for filesystem object preservation | Go. 3.8k stars. Covers symlinks, hard links, permissions. |
+| [mark3labs/mcp-go#828](https://github.com/mark3labs/mcp-go/pull/828) | Redirect hook output to stderr in everything server example | Go. 8.7k stars. stdio transport corruption fix.* |
+| [grafana/mcp-grafana#793](https://github.com/grafana/mcp-grafana/pull/793) | `get_assertions` timestamp validation fix | Go. 2.9k stars.* |
+| [antvis/mcp-server-chart#292](https://github.com/antvis/mcp-server-chart/pull/292) | 9 tools crash with unhandled exceptions on default input | TypeScript. 4k stars. Led to first mcp-assert CI adoption.* |
 | [punkpeye/awesome-mcp-servers#5145](https://github.com/punkpeye/awesome-mcp-servers/pull/5145) | Add agent-lsp listing | |
 
 ### Highlights (open, under review)
@@ -96,40 +96,40 @@ Fix PRs and bug reports submitted to open source projects. 39 contributions acro
 | Project | Description | Why it matters |
 |---------|-------------|----------------|
 | [etcd-io/etcd#21684](https://github.com/etcd-io/etcd/pull/21684) | `ErrNotPrimary` returns gRPC Unknown instead of Unavailable | Go. 51k stars. Clients can't retry on Unknown. Mapped to Unavailable, consistent with ErrLeaderChanged. |
-| [modelcontextprotocol/go-sdk#913](https://github.com/modelcontextprotocol/go-sdk/pull/913) | Race condition in `ClientSession.Close()` | Go. Traced from Alan Donovan's (Google) analysis of gopls CI flakes. Regression test verified. |
+| [modelcontextprotocol/go-sdk#913](https://github.com/modelcontextprotocol/go-sdk/pull/913) | Race condition in `ClientSession.Close()` | Go. 4.5k stars. Traced from Alan Donovan's (Google) analysis of gopls CI flakes. |
 | [biomejs/biome#10151](https://github.com/biomejs/biome/pull/10151) | `--suppress` with `--only` ignores rule overrides | Rust. Two-line fix in a 24.5k-star codebase. Regression test added. |
-| [hashicorp/terraform-provider-aws#47660](https://github.com/hashicorp/terraform-provider-aws/pull/47660) | GovCloud crash: `UnsupportedOperationException` in Directory Service Data | Go. Triaged by maintainer within 14 hours. |
-| [hashicorp/terraform-provider-aws#47661](https://github.com/hashicorp/terraform-provider-aws/pull/47661) | QuickSight `theme_arn` silently ignored in Create/Update/Read | Go. Field wired through full CRUD lifecycle. |
+| [hashicorp/terraform-provider-aws#47660](https://github.com/hashicorp/terraform-provider-aws/pull/47660) | GovCloud crash: `UnsupportedOperationException` in Directory Service Data | Go. 10.9k stars. |
+| [hashicorp/terraform-provider-aws#47661](https://github.com/hashicorp/terraform-provider-aws/pull/47661) | QuickSight `theme_arn` silently ignored in Create/Update/Read | Go. 10.9k stars. Full CRUD lifecycle fix. |
 | [github/github-mcp-server#2408](https://github.com/github/github-mcp-server/pull/2408) | Angle brackets stripped from code blocks by HTML sanitizer | Go. 30k stars. Sentinel-based protection for code content during bluemonday sanitization. |
 | [traefik/traefik#13089](https://github.com/traefik/traefik/pull/13089) | `rewrite-target` regex breaks base path match for `ImplementationSpecific` paths | Go. 53k stars. Trailing slash in regex made optional to match nginx behavior. |
 | [antvis/mcp-server-chart#294](https://github.com/antvis/mcp-server-chart/pull/294) | mcp-assert CI integration (25 assertions) | TypeScript. First external adoption. 4k stars, 35k npm downloads/mo. |
-| [charmbracelet/bubbletea#1687](https://github.com/charmbracelet/bubbletea/pull/1687) | `ExecProcess` leaks `View()` output to stdout | Go. Traced renderer flush lifecycle. |
+| [charmbracelet/bubbletea#1687](https://github.com/charmbracelet/bubbletea/pull/1687) | `ExecProcess` leaks `View()` output to stdout | Go. 42k stars. Traced renderer flush lifecycle. |
 | [charmbracelet/huh#777](https://github.com/charmbracelet/huh/pull/777) | V2 regression: blurred styles not applied on input fields | Go. 5.5k stars. Incomplete V1-to-V2 port. |
-| [stretchr/testify#1877](https://github.com/stretchr/testify/pull/1877) | Panic when `SetupTest` skips with `HandleStats` | Go. `runtime.Goexit` ordering with deferred cleanup. |
+| [stretchr/testify#1877](https://github.com/stretchr/testify/pull/1877) | Panic when `SetupTest` skips with `HandleStats` | Go. 26k stars. `runtime.Goexit` ordering with deferred cleanup. |
 
 ### All Open PRs
 
 | Project | Description | Status |
 |---------|-------------|--------|
-| [modelcontextprotocol/python-sdk#2511](https://github.com/modelcontextprotocol/python-sdk/pull/2511) | Add custom content support to `ToolError` for `isError` responses | All CI green |
-| [vercel/ai#14758](https://github.com/vercel/ai/pull/14758) | Send `content: null` for tool-only assistant messages (xai, deepseek, groq, mistral) | Open |
-| [sashabaranov/go-openai#1104](https://github.com/sashabaranov/go-openai/pull/1104) | Fix `stream` field omitted from non-streaming request JSON | Open |
-| [sashabaranov/go-openai#1105](https://github.com/sashabaranov/go-openai/pull/1105) | Use pointer for `ContentFilterResults` to distinguish absent from empty | Open |
-| [sashabaranov/go-openai#1106](https://github.com/sashabaranov/go-openai/pull/1106) | Detect Content-Type from file extension for gpt-image-1 uploads | Open |
-| [grafana/grafana#123664](https://github.com/grafana/grafana/pull/123664) | Remove debug `console.log` in Explore scanning loop | Open |
-| [grafana/grafana#123665](https://github.com/grafana/grafana/pull/123665) | Fix `typeof` check in LegacyVariableWrapper + remove `console.log` | Open |
-| [grafana/grafana#123666](https://github.com/grafana/grafana/pull/123666) | Fix `defer span.End()` inside loop in expression pipeline | Open |
-| [grafana/grafana#123691](https://github.com/grafana/grafana/pull/123691) | Propagate `QueryHistoryDetails` insert errors instead of silently discarding | Open |
+| [modelcontextprotocol/python-sdk#2511](https://github.com/modelcontextprotocol/python-sdk/pull/2511) | Add custom content support to `ToolError` for `isError` responses | 23k stars |
+| [vercel/ai#14758](https://github.com/vercel/ai/pull/14758) | Send `content: null` for tool-only assistant messages (xai, deepseek, groq, mistral) | 24k stars |
+| [sashabaranov/go-openai#1104](https://github.com/sashabaranov/go-openai/pull/1104) | Fix `stream` field omitted from non-streaming request JSON | 10.6k stars |
+| [sashabaranov/go-openai#1105](https://github.com/sashabaranov/go-openai/pull/1105) | Use pointer for `ContentFilterResults` to distinguish absent from empty | 10.6k stars |
+| [sashabaranov/go-openai#1106](https://github.com/sashabaranov/go-openai/pull/1106) | Detect Content-Type from file extension for gpt-image-1 uploads | 10.6k stars |
+| [grafana/grafana#123664](https://github.com/grafana/grafana/pull/123664) | Remove debug `console.log` in Explore scanning loop | 74k stars |
+| [grafana/grafana#123665](https://github.com/grafana/grafana/pull/123665) | Fix `typeof` check in LegacyVariableWrapper + remove `console.log` | 74k stars |
+| [grafana/grafana#123666](https://github.com/grafana/grafana/pull/123666) | Fix `defer span.End()` inside loop in expression pipeline | 74k stars |
+| [grafana/grafana#123691](https://github.com/grafana/grafana/pull/123691) | Propagate `QueryHistoryDetails` insert errors instead of silently discarding | 74k stars |
 | [mark3labs/mcp-go#828](https://github.com/mark3labs/mcp-go/pull/828) | stdio transport crash on slow tools (`fmt.Printf` corrupts JSON-RPC) | Open* |
 | [sammcj/mcp-devtools#258](https://github.com/sammcj/mcp-devtools/pull/258) | Tool handler returns internal error instead of `isError` for validation failures | Open* |
-| [modelcontextprotocol/servers#4044](https://github.com/modelcontextprotocol/servers/pull/4044) | `read_media_file` returns `type: "blob"`, violating MCP spec | Open* |
-| [modelcontextprotocol/servers#4051](https://github.com/modelcontextprotocol/servers/pull/4051) | `puppeteer_navigate` crashes on invalid URL with unhandled CDP error | Open* |
+| [modelcontextprotocol/servers#4044](https://github.com/modelcontextprotocol/servers/pull/4044) | `read_media_file` returns `type: "blob"`, violating MCP spec | 85k stars* |
+| [modelcontextprotocol/servers#4051](https://github.com/modelcontextprotocol/servers/pull/4051) | `puppeteer_navigate` crashes on invalid URL with unhandled CDP error | 85k stars* |
 | [tavily-ai/tavily-mcp#162](https://github.com/tavily-ai/tavily-mcp/pull/162) | Missing API key throws McpError instead of returning `isError: true` | Open* |
 | [dvcrn/mcp-server-linear#5](https://github.com/dvcrn/mcp-server-linear/pull/5) | 24 tools throw McpError instead of returning `isError` when unauthenticated | Open* |
 | [modelcontextprotocol/kotlin-sdk#734](https://github.com/modelcontextprotocol/kotlin-sdk/pull/734) | Type-unsafe cast in polymorphic result deserialization | Kotlin. `ready for work` label. |
 | [modelcontextprotocol/kotlin-sdk#735](https://github.com/modelcontextprotocol/kotlin-sdk/pull/735) | Stdio transport hangs after EOF (supervisor job not cancelled) | Kotlin. P2 bug. Process hangs indefinitely after client disconnects. |
 | [modelcontextprotocol/kotlin-sdk#736](https://github.com/modelcontextprotocol/kotlin-sdk/pull/736) | Sequential message processing causes deadlocks | Kotlin. P1, `ready for work`. Long-running handlers block pings, elicitation, progress. |
-| [pypa/pip#13960](https://github.com/pypa/pip/pull/13960) | Replace deprecated `locale.getpreferredencoding()` for Python 3.15 compat | Open |
+| [pypa/pip#13960](https://github.com/pypa/pip/pull/13960) | Replace deprecated `locale.getpreferredencoding()` for Python 3.15 compat | 10k stars |
 | [mark3labs/mcp-go#828](https://github.com/mark3labs/mcp-go/pull/828) | Redirect hook output to stderr in everything server example | Open |
 | [punkpeye/awesome-mcp-devtools#144](https://github.com/punkpeye/awesome-mcp-devtools/pull/144) | Add mcp-assert to Testing Tools listing | Open |
 
