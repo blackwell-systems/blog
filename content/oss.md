@@ -77,7 +77,7 @@ showMetadata: false
 
 ## Upstream Contributions
 
-Fix PRs and bug reports submitted to open source projects. 35 contributions across 25 repos, 6 merged. Bugs discovered via [mcp-assert](https://github.com/blackwell-systems/mcp-assert) scanning are marked with *.
+Fix PRs and bug reports submitted to open source projects. 36 contributions across 25 repos, 6 merged. Bugs discovered via [mcp-assert](https://github.com/blackwell-systems/mcp-assert) scanning are marked with *.
 
 ### Merged
 
@@ -87,6 +87,7 @@ Fix PRs and bug reports submitted to open source projects. 35 contributions acro
 | [langchain-ai/langchain#37037](https://github.com/langchain-ai/langchain/pull/37037) | Remove dead C#/Elixir separators in `RecursiveCharacterTextSplitter` | Python. Copy-paste from adjacent language defs. |
 | [antvis/mcp-server-chart#292](https://github.com/antvis/mcp-server-chart/pull/292) | 9 tools crash with unhandled exceptions on default input | TypeScript. Led to first mcp-assert CI adoption.* |
 | [google/go-containerregistry#2281](https://github.com/google/go-containerregistry/pull/2281) | `.local` FQDN incorrectly treated as non-HTTPS | Go. Regex fix per RFC 6761. |
+| [google/go-containerregistry#2283](https://github.com/google/go-containerregistry/pull/2283) | Extract round-trip test for filesystem object preservation | Go. Covers symlinks, hard links, permissions. Requested in #2252. |
 | [punkpeye/awesome-mcp-servers#5145](https://github.com/punkpeye/awesome-mcp-servers/pull/5145) | Add agent-lsp listing | |
 
 ### Highlights (open, under review)
