@@ -77,7 +77,7 @@ showMetadata: false
 
 ## Upstream Contributions
 
-Fix PRs and bug reports submitted to open source projects. 40 contributions across 27 repos, 8 merged. Bugs discovered via [mcp-assert](https://github.com/blackwell-systems/mcp-assert) scanning are marked with *.
+Fix PRs and bug reports submitted to open source projects. 41 contributions across 28 repos, 8 merged. Bugs discovered via [mcp-assert](https://github.com/blackwell-systems/mcp-assert) scanning are marked with *.
 
 ### Merged
 
@@ -104,6 +104,7 @@ Fix PRs and bug reports submitted to open source projects. 40 contributions acro
 | [traefik/traefik#13089](https://github.com/traefik/traefik/pull/13089) | `rewrite-target` regex breaks base path match for `ImplementationSpecific` paths | Go. 53k stars. Trailing slash in regex made optional to match nginx behavior. |
 | [antvis/mcp-server-chart#294](https://github.com/antvis/mcp-server-chart/pull/294) | mcp-assert CI integration (25 assertions) | TypeScript. First external adoption. 4k stars, 35k npm downloads/mo. |
 | [charmbracelet/bubbletea#1687](https://github.com/charmbracelet/bubbletea/pull/1687) | `ExecProcess` leaks `View()` output to stdout | Go. 42k stars. Traced renderer flush lifecycle. |
+| [astral-sh/uv#19237](https://github.com/astral-sh/uv/pull/19237) | `uv tool uninstall` silently aborts after first corrupt tool | Rust. 84k stars. Early return skips remaining tools. |
 | [jackc/pgx#2546](https://github.com/jackc/pgx/pull/2546) | `BeforeConnect` gets bare context from background healthcheck | Go. 14k stars. Breaks AWS IAM auth on pool refill. |
 | [charmbracelet/huh#777](https://github.com/charmbracelet/huh/pull/777) | V2 regression: blurred styles not applied on input fields | Go. 5.5k stars. Incomplete V1-to-V2 port. |
 | [stretchr/testify#1877](https://github.com/stretchr/testify/pull/1877) | Panic when `SetupTest` skips with `HandleStats` | Go. 26k stars. `runtime.Goexit` ordering with deferred cleanup. |
