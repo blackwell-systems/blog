@@ -77,7 +77,7 @@ showMetadata: false
 
 ## Upstream Contributions
 
-Fix PRs and bug reports submitted to open source projects. 42 contributions across 29 repos, 8 merged. Bugs discovered via [mcp-assert](https://github.com/blackwell-systems/mcp-assert) scanning are marked with *.
+Fix PRs and bug reports submitted to open source projects. 43 contributions across 29 repos, 8 merged. Bugs discovered via [mcp-assert](https://github.com/blackwell-systems/mcp-assert) scanning are marked with *.
 
 ### Merged
 
@@ -86,6 +86,7 @@ Fix PRs and bug reports submitted to open source projects. 42 contributions acro
 | [langchain-ai/langchain#37037](https://github.com/langchain-ai/langchain/pull/37037) | Remove dead C#/Elixir separators in `RecursiveCharacterTextSplitter` | Python. 136k stars. |
 | [google/go-containerregistry#2281](https://github.com/google/go-containerregistry/pull/2281) | `.local` FQDN incorrectly treated as non-HTTPS | Go. 3.8k stars. Regex fix per RFC 6761. Used by Kubernetes, Tekton, cosign. |
 | [google/go-containerregistry#2283](https://github.com/google/go-containerregistry/pull/2283) | Extract round-trip test for filesystem object preservation | Go. 3.8k stars. Covers symlinks, hard links, permissions. |
+| [google/go-containerregistry#2286](https://github.com/google/go-containerregistry/pull/2286) | OCI artifact mutate breaks Helm chart / WASM cross-repo push | Go. 3.8k stars. Config blob digest corrupted, layers dropped. |
 | [mark3labs/mcp-go#828](https://github.com/mark3labs/mcp-go/pull/828) | Redirect hook output to stderr in everything server example | Go. 8.7k stars. stdio transport corruption fix.* |
 | [grafana/mcp-grafana#793](https://github.com/grafana/mcp-grafana/pull/793) | `get_assertions` timestamp validation fix | Go. 2.9k stars.* |
 | [antvis/mcp-server-chart#292](https://github.com/antvis/mcp-server-chart/pull/292) | 9 tools crash with unhandled exceptions on default input | TypeScript. 4k stars. Led to first mcp-assert CI adoption.* |
