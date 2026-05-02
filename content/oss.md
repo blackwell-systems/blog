@@ -77,7 +77,7 @@ showMetadata: false
 
 ## Upstream Contributions
 
-Fix PRs and bug reports submitted to open source projects. 46 contributions across 30 repos, 8 merged. Bugs discovered via [mcp-assert](https://github.com/blackwell-systems/mcp-assert) scanning are marked with *.
+Fix PRs and bug reports submitted to open source projects. 47 contributions across 30 repos, 8 merged. Bugs discovered via [mcp-assert](https://github.com/blackwell-systems/mcp-assert) scanning are marked with *.
 
 ### Merged
 
@@ -109,6 +109,7 @@ Fix PRs and bug reports submitted to open source projects. 46 contributions acro
 | [jackc/pgx#2546](https://github.com/jackc/pgx/pull/2546) | `BeforeConnect` gets bare context from background healthcheck | Go. 14k stars. Breaks AWS IAM auth on pool refill. |
 | [modelcontextprotocol/typescript-sdk#2013](https://github.com/modelcontextprotocol/typescript-sdk/pull/2013) | `tools/call` with null arguments returns `-32603` instead of being accepted | TypeScript. 12k stars. Affects every server built on the TS SDK. Found by `mcp-assert fuzz` on first run.* |
 | [grafana/mcp-grafana#829](https://github.com/grafana/mcp-grafana/pull/829) | Server instructions list all capabilities regardless of disabled categories | Go. 2.9k stars. Dynamic instruction generation from enabled tool categories. |
+| [grafana/mcp-grafana#830](https://github.com/grafana/mcp-grafana/issues/830) | 72 fuzz crashes: type mismatches return -32603 instead of isError | Go. 2.9k stars. All 50 tools affected. Needs mcp-go `WithInputSchemaValidation()`.* |
 | [MoonshotAI/kimi-cli#2144](https://github.com/MoonshotAI/kimi-cli/pull/2144) | Multiline input text misaligned in shell mode | Python. 8.3k stars. Missing prompt continuation prefix. |
 | [charmbracelet/huh#777](https://github.com/charmbracelet/huh/pull/777) | V2 regression: blurred styles not applied on input fields | Go. 5.5k stars. Incomplete V1-to-V2 port. |
 | [stretchr/testify#1877](https://github.com/stretchr/testify/pull/1877) | Panic when `SetupTest` skips with `HandleStats` | Go. 26k stars. `runtime.Goexit` ordering with deferred cleanup. |
