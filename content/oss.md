@@ -77,7 +77,7 @@ showMetadata: false
 
 ## Upstream Contributions
 
-Fix PRs and bug reports submitted to open source projects. 48 contributions across 30 repos, 8 merged. Bugs discovered via [mcp-assert](https://github.com/blackwell-systems/mcp-assert) scanning are marked with *.
+Fix PRs and bug reports submitted to open source projects. 50 contributions across 30 repos, 8 merged. Bugs discovered via [mcp-assert](https://github.com/blackwell-systems/mcp-assert) scanning are marked with *.
 
 ### Merged
 
@@ -98,6 +98,8 @@ Fix PRs and bug reports submitted to open source projects. 48 contributions acro
 |---------|-------------|----------------|
 | [etcd-io/etcd#21684](https://github.com/etcd-io/etcd/pull/21684) | `ErrNotPrimary` returns gRPC Unknown instead of Unavailable | Go. 51k stars. Clients can't retry on Unknown. Mapped to Unavailable, consistent with ErrLeaderChanged. |
 | [modelcontextprotocol/go-sdk#913](https://github.com/modelcontextprotocol/go-sdk/pull/913) | Race condition in `ClientSession.Close()` | Go. 4.5k stars. Traced from Alan Donovan's (Google) analysis of gopls CI flakes. |
+| [modelcontextprotocol/go-sdk#929](https://github.com/modelcontextprotocol/go-sdk/pull/929) | HTTP response body leak in streamable HTTP session close | Go. 4.5k stars. Found via inspector. TCP connection leaked on every normal close. |
+| [modelcontextprotocol/python-sdk#2536](https://github.com/modelcontextprotocol/python-sdk/pull/2536) | Lost-wakeup race in `InMemoryTaskStore.wait_for_update` | Python. 23k stars. Concurrent pollers hang forever; notify-before-wait signal lost. Reproduced with script. |
 | [biomejs/biome#10151](https://github.com/biomejs/biome/pull/10151) | `--suppress` with `--only` ignores rule overrides | Rust. Two-line fix in a 24.5k-star codebase. Regression test added. |
 | [hashicorp/terraform-provider-aws#47660](https://github.com/hashicorp/terraform-provider-aws/pull/47660) | GovCloud crash: `UnsupportedOperationException` in Directory Service Data | Go. 10.9k stars. |
 | [hashicorp/terraform-provider-aws#47661](https://github.com/hashicorp/terraform-provider-aws/pull/47661) | QuickSight `theme_arn` silently ignored in Create/Update/Read | Go. 10.9k stars. Full CRUD lifecycle fix. |
@@ -135,6 +137,8 @@ Fix PRs and bug reports submitted to open source projects. 48 contributions acro
 | [tavily-ai/tavily-mcp#162](https://github.com/tavily-ai/tavily-mcp/pull/162) | Missing API key throws McpError instead of returning `isError: true` | Open* |
 | [dvcrn/mcp-server-linear#5](https://github.com/dvcrn/mcp-server-linear/pull/5) | 24 tools throw McpError instead of returning `isError` when unauthenticated | Open* |
 | [modelcontextprotocol/typescript-sdk#2013](https://github.com/modelcontextprotocol/typescript-sdk/pull/2013) | Null arguments crash: `-32603` with raw Zod error on every TS SDK server | 12k stars* |
+| [modelcontextprotocol/go-sdk#929](https://github.com/modelcontextprotocol/go-sdk/pull/929) | HTTP response body leak on every session close in streamable HTTP | 4.5k stars |
+| [modelcontextprotocol/python-sdk#2536](https://github.com/modelcontextprotocol/python-sdk/pull/2536) | Lost-wakeup race in task store: concurrent pollers hang forever | 23k stars |
 | [grafana/mcp-grafana#829](https://github.com/grafana/mcp-grafana/pull/829) | Server instructions don't reflect disabled tool categories | 2.9k stars |
 | [modelcontextprotocol/kotlin-sdk#734](https://github.com/modelcontextprotocol/kotlin-sdk/pull/734) | Type-unsafe cast in polymorphic result deserialization | Kotlin. `ready for work` label. |
 | [modelcontextprotocol/kotlin-sdk#735](https://github.com/modelcontextprotocol/kotlin-sdk/pull/735) | Stdio transport hangs after EOF (supervisor job not cancelled) | Kotlin. P2 bug. Process hangs indefinitely after client disconnects. |
