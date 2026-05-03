@@ -133,6 +133,7 @@ Fix PRs and bug reports submitted to open source projects. 51 contributions acro
 | [mark3labs/mcp-go#838](https://github.com/mark3labs/mcp-go/pull/838) | Everything server returns -32603 for input validation instead of isError | 8.7k stars. **Merged** |
 | [mark3labs/mcp-go#828](https://github.com/mark3labs/mcp-go/pull/828) | stdio transport crash on slow tools (`fmt.Printf` corrupts JSON-RPC) | Open* |
 | [sammcj/mcp-devtools#258](https://github.com/sammcj/mcp-devtools/pull/258) | Tool handler returns internal error instead of `isError` for validation failures | Open* |
+| [makenotion/notion-mcp-server#280](https://github.com/makenotion/notion-mcp-server/issues/280) | Schema quality: 8 required params undescribed across 22 tools | 4.2k stars |
 | [github/github-mcp-server#2425](https://github.com/github/github-mcp-server/issues/2425) | Schema quality: 20 required params undescribed, 92 optional params undescribed | 19k stars |
 | [modelcontextprotocol/servers#4095](https://github.com/modelcontextprotocol/servers/issues/4095) | filesystem: 16 required parameters missing descriptions (agents guess at values) | 85k stars |
 | [modelcontextprotocol/servers#4044](https://github.com/modelcontextprotocol/servers/pull/4044) | `read_media_file` returns `type: "blob"`, violating MCP spec | 85k stars* |
