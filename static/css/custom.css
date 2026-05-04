@@ -58,7 +58,7 @@ body {
 /* Mermaid diagrams */
 .mermaid {
   margin: 2rem 0;
-  padding: 1.5rem;
+  padding: 2rem 2.5rem;
   background: rgba(37, 38, 39, 0.5);
   border-radius: 8px;
   overflow-x: auto;
