@@ -71,15 +71,54 @@ The Go runtime implements a scheduler that manages goroutines the way an OS mana
 
 The hierarchy:
 
-```
-G (goroutines, thousands to millions)
-     ↕  multiplexed onto
-P (logical processors, GOMAXPROCS, e.g., 8)
-     ↕  each P runs on one
-M (OS threads, one per active P, plus extras for blocking syscalls)
-     ↕  scheduled onto
-CPU cores (physical hardware)
-```
+{{< mermaid >}}
+graph TD
+    subgraph G["G — Goroutines (thousands to millions)"]
+        g1(G1)
+        g2(G2)
+        g3(G3)
+        g4(G4)
+        g5(G5)
+        g6(G6)
+        gn(...)
+    end
+
+    subgraph P["P — Logical Processors (GOMAXPROCS, e.g. 4)"]
+        p0(P0\nrun queue)
+        p1(P1\nrun queue)
+        p2(P2\nrun queue)
+        p3(P3\nrun queue)
+    end
+
+    subgraph M["M — OS Threads"]
+        m0(M0)
+        m1(M1)
+        m2(M2)
+        m3(M3)
+    end
+
+    subgraph CPU["CPU Cores (physical hardware)"]
+        c0(Core 0)
+        c1(Core 1)
+        c2(Core 2)
+        c3(Core 3)
+    end
+
+    g1 & g2 --> p0
+    g3 & g4 --> p1
+    g5 --> p2
+    g6 & gn --> p3
+
+    p0 --> m0
+    p1 --> m1
+    p2 --> m2
+    p3 --> m3
+
+    m0 --> c0
+    m1 --> c1
+    m2 --> c2
+    m3 --> c3
+{{< /mermaid >}}
 
 {{< callout type="info" >}}
 **The OS Analogy, Made Precise**
@@ -142,6 +181,22 @@ P1 steals half:
   P1: [G4, G5, G6]
 ```
 
+{{< mermaid >}}
+graph LR
+    subgraph before["Before stealing"]
+        p0q["P0 queue\nG1 G2 G3 G4 G5 G6"]
+        p1q["P1 queue\n(empty)"]
+    end
+
+    subgraph after["After P1 steals half"]
+        p0a["P0 queue\nG1 G2 G3"]
+        p1a["P1 queue\nG4 G5 G6"]
+    end
+
+    p0q -- "P1 steals G4 G5 G6" --> p0a
+    p1q -- "P1 now has work" --> p1a
+{{< /mermaid >}}
+
 Work stealing keeps all cores busy without any programmer intervention. You don't need to manually shard work across goroutines for CPU-bound tasks; the scheduler redistributes automatically.
 
 ---
@@ -158,21 +213,29 @@ The answer depends on *why* it blocks.
 
 For blocking operations the runtime controls (channel receives, `sync.Mutex.Lock()`, `time.Sleep()`), the goroutine is **parked**. It leaves the run queue entirely. The P is immediately available for another goroutine. The OS thread is not blocked.
 
-```
-G1 running on M1/P0
-  G1 executes: val := <-ch  (channel empty, no sender waiting)
+{{< mermaid >}}
+sequenceDiagram
+    participant G1
+    participant Runtime
+    participant P0
+    participant M1
+    participant G2
 
-  Runtime:
-  1. G1 status → waiting (removed from run queue)
-  2. G1 registered in channel's recvq
-  3. P0 picks up G2 from its run queue
-  4. M1 continues executing G2
+    G1->>Runtime: val := <-ch (empty channel)
+    Runtime->>G1: status → waiting, remove from queue
+    Runtime->>G1: register in channel recvq
+    Runtime->>P0: pick next goroutine
+    P0->>M1: schedule G2
+    M1->>G2: executing (M1 never blocked)
 
-  Later, when a sender puts data on ch:
-  5. G1 dequeued from recvq, status → runnable
-  6. G1 added back to a P's run queue
-  7. G1 resumes from exactly the instruction after <-ch
-```
+    Note over G1: parked — no CPU, no thread
+
+    G2->>Runtime: sender writes to ch
+    Runtime->>G1: dequeue from recvq, status → runnable
+    Runtime->>P0: add G1 back to run queue
+    P0->>M1: schedule G1
+    M1->>G1: resumes from <-ch
+{{< /mermaid >}}
 
 The OS thread never slept. It was doing other work the entire time G1 was parked. This is how one OS thread can serve thousands of concurrent goroutines, the same way one CPU core serves hundreds of OS processes.
 
@@ -182,22 +245,31 @@ Some syscalls cannot be made non-blocking at the OS level: `read()` on a pipe wi
 
 The compiler inserts calls to `entersyscall` and `exitsyscall` around every syscall. `entersyscall` **detaches the P** from the M before the syscall executes. The now-free P can be picked up by another M (either an idle one from the thread pool, or a newly created one). The blocking M continues into the kernel call, P-less.
 
-```
-G1 on M1/P0: read(fd, buf, n)
+{{< mermaid >}}
+sequenceDiagram
+    participant G1
+    participant M1
+    participant P0
+    participant M2
+    participant Kernel
+    participant G2
 
-  entersyscall():
-    P0 detached from M1
-    P0 acquired by M2 (idle thread from pool, or new thread)
-    M2/P0 picks up G2 and continues
+    G1->>M1: read(fd, buf, n)
+    M1->>P0: entersyscall() — detach P0
+    P0->>M2: P0 acquired by M2
+    M2->>G2: M2/P0 picks up G2, continues
 
-  M1 now blocked in kernel, no P, purely waiting for I/O
+    M1->>Kernel: blocked syscall (no P)
+    Note over M1,Kernel: M1 stalled in kernel<br/>P0 is free, work continues on M2
 
-  syscall returns (I/O complete):
-  exitsyscall():
-    M1 tries to reacquire a P
-    If a P is free → M1 takes it, G1 continues running
-    If no P is free → G1 placed on global run queue, M1 goes idle
-```
+    Kernel->>M1: I/O complete, syscall returns
+    M1->>P0: exitsyscall() — try to reacquire P
+    alt P is free
+        P0->>M1: M1 takes P0, G1 continues
+    else no P available
+        M1->>G1: G1 → global run queue, M1 idles
+    end
+{{< /mermaid >}}
 
 This is how the Go runtime prevents one slow file read from stalling an entire GOMAXPROCS of goroutines. The M stalls; the P keeps working.
 
