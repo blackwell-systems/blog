@@ -81,19 +81,19 @@ Fix PRs and bug reports submitted to open source projects. 51 contributions acro
 
 ### Merged
 
-| Project | Description | Details |
-|---------|-------------|---------|
-| [langchain-ai/langchain#37037](https://github.com/langchain-ai/langchain/pull/37037) | Remove dead C#/Elixir separators in `RecursiveCharacterTextSplitter` | Python. 136k stars. |
-| [google/go-containerregistry#2281](https://github.com/google/go-containerregistry/pull/2281) | `.local` FQDN incorrectly treated as non-HTTPS | Go. 3.8k stars. Regex fix per RFC 6761. Used by Kubernetes, Tekton, cosign. |
-| [google/go-containerregistry#2283](https://github.com/google/go-containerregistry/pull/2283) | Extract round-trip test for filesystem object preservation | Go. 3.8k stars. Covers symlinks, hard links, permissions. |
-| [google/go-containerregistry#2286](https://github.com/google/go-containerregistry/pull/2286) | OCI artifact mutate breaks Helm chart / WASM cross-repo push | Go. 3.8k stars. Config blob digest corrupted, layers dropped. |
-| [mark3labs/mcp-go#828](https://github.com/mark3labs/mcp-go/pull/828) | Redirect hook output to stderr in everything server example | Go. 8.7k stars. stdio transport corruption fix.* |
-| [grafana/mcp-grafana#793](https://github.com/grafana/mcp-grafana/pull/793) | `get_assertions` timestamp validation fix | Go. 2.9k stars.* |
-| [antvis/mcp-server-chart#292](https://github.com/antvis/mcp-server-chart/pull/292) | 9 tools crash with unhandled exceptions on default input | TypeScript. 4k stars. Led to first mcp-assert CI adoption.* |
-| [mark3labs/mcp-go#838](https://github.com/mark3labs/mcp-go/pull/838) | Everything server returns -32603 for input validation instead of isError | Go. 8.7k stars. Found by mcp-assert fuzz. |
-| [mark3labs/mcp-go#839](https://github.com/mark3labs/mcp-go/pull/839) | listenForever retries indefinitely on session terminated (404) | Go. 8.7k stars. |
-| [modelcontextprotocol/go-sdk#929](https://github.com/modelcontextprotocol/go-sdk/pull/929) | HTTP response body leak in streamable HTTP session close | Go. 4.5k stars. Official Anthropic MCP SDK. |
-| [punkpeye/awesome-mcp-servers#5145](https://github.com/punkpeye/awesome-mcp-servers/pull/5145) | Add agent-lsp listing | |
+| Organization | PR | Description | Stars |
+|-------------|-----|-------------|------:|
+| **Anthropic** (MCP Go SDK) | [go-sdk#929](https://github.com/modelcontextprotocol/go-sdk/pull/929) | HTTP response body leak in streamable HTTP session close | 4.5K |
+| **Google** | [go-containerregistry#2281](https://github.com/google/go-containerregistry/pull/2281) | `.local` FQDN incorrectly treated as non-HTTPS (RFC 6761) | 3.8K |
+| **Google** | [go-containerregistry#2283](https://github.com/google/go-containerregistry/pull/2283) | Extract round-trip test for filesystem object preservation | 3.8K |
+| **Google** | [go-containerregistry#2286](https://github.com/google/go-containerregistry/pull/2286) | OCI artifact mutate breaks Helm chart / WASM cross-repo push | 3.8K |
+| **Grafana** | [mcp-grafana#793](https://github.com/grafana/mcp-grafana/pull/793) | `get_assertions` timestamp validation fix | 2.9K |
+| **Ant Group** | [mcp-server-chart#292](https://github.com/antvis/mcp-server-chart/pull/292) | 9 tools crash with unhandled exceptions on default input | 4K |
+| **LangChain** | [langchain#37037](https://github.com/langchain-ai/langchain/pull/37037) | Remove dead C#/Elixir separators in `RecursiveCharacterTextSplitter` | 136K |
+| **mark3labs** (mcp-go SDK) | [mcp-go#828](https://github.com/mark3labs/mcp-go/pull/828) | Redirect hook output to stderr (stdio transport corruption) | 8.7K |
+| **mark3labs** (mcp-go SDK) | [mcp-go#838](https://github.com/mark3labs/mcp-go/pull/838) | Return isError for input validation instead of -32603 | 8.7K |
+| **mark3labs** (mcp-go SDK) | [mcp-go#839](https://github.com/mark3labs/mcp-go/pull/839) | listenForever retries indefinitely on session terminated (404) | 8.7K |
+| **Microsoft** | [winget-pkgs](https://github.com/microsoft/winget-pkgs) | Winget manifests for mcp-assert and agent-lsp | 10K |
 
 ### Highlights (open, under review)
 
