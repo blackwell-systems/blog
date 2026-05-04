@@ -97,63 +97,51 @@ Fix PRs and bug reports submitted to open source projects. 51 contributions acro
 
 ### Highlights (open, under review)
 
-| Project | Description | Why it matters |
-|---------|-------------|----------------|
-| [etcd-io/etcd#21684](https://github.com/etcd-io/etcd/pull/21684) | `ErrNotPrimary` returns gRPC Unknown instead of Unavailable | Go. 51k stars. Clients can't retry on Unknown. Mapped to Unavailable, consistent with ErrLeaderChanged. |
-| [modelcontextprotocol/go-sdk#913](https://github.com/modelcontextprotocol/go-sdk/pull/913) | Race condition in `ClientSession.Close()` | Go. 4.5k stars. Traced from Alan Donovan's (Google) analysis of gopls CI flakes. |
-| [modelcontextprotocol/go-sdk#929](https://github.com/modelcontextprotocol/go-sdk/pull/929) | HTTP response body leak in streamable HTTP session close | Go. 4.5k stars. **Merged**. |
-| [modelcontextprotocol/python-sdk#2536](https://github.com/modelcontextprotocol/python-sdk/pull/2536) | Lost-wakeup race in `InMemoryTaskStore.wait_for_update` | Python. 23k stars. Concurrent pollers hang forever; notify-before-wait signal lost. Reproduced with script. |
-| [modelcontextprotocol/php-sdk#297](https://github.com/modelcontextprotocol/php-sdk/pull/297) | URI regex rejects valid RFC 3986 URIs (urn:, mailto:, data:, custom schemes) | PHP. P2 bug. Maintainer requested PR. Fixes Resource and ResourceTemplate. |
-| [biomejs/biome#10151](https://github.com/biomejs/biome/pull/10151) | `--suppress` with `--only` ignores rule overrides | Rust. Two-line fix in a 24.5k-star codebase. Regression test added. |
-| [hashicorp/terraform-provider-aws#47660](https://github.com/hashicorp/terraform-provider-aws/pull/47660) | GovCloud crash: `UnsupportedOperationException` in Directory Service Data | Go. 10.9k stars. |
-| [hashicorp/terraform-provider-aws#47661](https://github.com/hashicorp/terraform-provider-aws/pull/47661) | QuickSight `theme_arn` silently ignored in Create/Update/Read | Go. 10.9k stars. Full CRUD lifecycle fix. |
-| [github/github-mcp-server#2408](https://github.com/github/github-mcp-server/pull/2408) | Angle brackets stripped from code blocks by HTML sanitizer | Go. 30k stars. Sentinel-based protection for code content during bluemonday sanitization. |
-| [traefik/traefik#13089](https://github.com/traefik/traefik/pull/13089) | `rewrite-target` regex breaks base path match for `ImplementationSpecific` paths | Go. 53k stars. Trailing slash in regex made optional to match nginx behavior. |
-| [antvis/mcp-server-chart#294](https://github.com/antvis/mcp-server-chart/pull/294) | mcp-assert CI integration (25 assertions) | TypeScript. Maintainer-requested. 4k stars. |
-| [charmbracelet/bubbletea#1687](https://github.com/charmbracelet/bubbletea/pull/1687) | `ExecProcess` leaks `View()` output to stdout | Go. 42k stars. Traced renderer flush lifecycle. |
-| [astral-sh/uv#19237](https://github.com/astral-sh/uv/pull/19237) | `uv tool uninstall` silently aborts after first corrupt tool | Rust. 84k stars. Closed (AI policy false flag). |
-| [jackc/pgx#2546](https://github.com/jackc/pgx/pull/2546) | `BeforeConnect` gets bare context from background healthcheck | Go. 14k stars. Breaks AWS IAM auth on pool refill. |
-| [modelcontextprotocol/typescript-sdk#2013](https://github.com/modelcontextprotocol/typescript-sdk/pull/2013) | `tools/call` with null arguments returns `-32603` instead of being accepted | TypeScript. 12k stars. Affects every server built on the TS SDK. Found by `mcp-assert fuzz` on first run.* |
-| [grafana/mcp-grafana#829](https://github.com/grafana/mcp-grafana/pull/829) | Server instructions list all capabilities regardless of disabled categories | Go. 2.9k stars. Dynamic instruction generation from enabled tool categories. |
-| [grafana/mcp-grafana#830](https://github.com/grafana/mcp-grafana/issues/830) | 72 fuzz crashes: type mismatches return -32603 instead of isError | Go. 2.9k stars. All 50 tools affected. Needs mcp-go `WithInputSchemaValidation()`.* |
-| [MoonshotAI/kimi-cli#2144](https://github.com/MoonshotAI/kimi-cli/pull/2144) | Multiline input text misaligned in shell mode | Python. 8.3k stars. Missing prompt continuation prefix. |
-| [charmbracelet/huh#777](https://github.com/charmbracelet/huh/pull/777) | V2 regression: blurred styles not applied on input fields | Go. 5.5k stars. Incomplete V1-to-V2 port. |
-| [stretchr/testify#1877](https://github.com/stretchr/testify/pull/1877) | Panic when `SetupTest` skips with `HandleStats` | Go. 26k stars. `runtime.Goexit` ordering with deferred cleanup. |
+| Organization | PR | Description | Stars |
+|-------------|-----|-------------|------:|
+| **Anthropic** (MCP Go SDK) | [go-sdk#913](https://github.com/modelcontextprotocol/go-sdk/pull/913) | Race condition in `ClientSession.Close()` | 4.5K |
+| **Anthropic** (MCP TS SDK) | [typescript-sdk#2013](https://github.com/modelcontextprotocol/typescript-sdk/pull/2013) | Null arguments crash every TS SDK server | 12K |
+| **Anthropic** (MCP Python SDK) | [python-sdk#2536](https://github.com/modelcontextprotocol/python-sdk/pull/2536) | Lost-wakeup race: concurrent pollers hang forever | 23K |
+| **Anthropic** (MCP PHP SDK) | [php-sdk#297](https://github.com/modelcontextprotocol/php-sdk/pull/297) | URI regex rejects valid RFC 3986 URIs | PHP |
+| **Anthropic** (MCP Kotlin SDK) | [kotlin-sdk#736](https://github.com/modelcontextprotocol/kotlin-sdk/pull/736) | Sequential processing causes deadlocks (P1) | Kotlin |
+| **etcd** (CNCF) | [etcd#21684](https://github.com/etcd-io/etcd/pull/21684) | `ErrNotPrimary` returns wrong gRPC code | 51K |
+| **Traefik** | [traefik#13089](https://github.com/traefik/traefik/pull/13089) | rewrite-target regex breaks base path match | 53K |
+| **Charmbracelet** | [bubbletea#1687](https://github.com/charmbracelet/bubbletea/pull/1687) | `ExecProcess` leaks `View()` output to stdout | 42K |
+| **GitHub** | [github-mcp-server#2408](https://github.com/github/github-mcp-server/pull/2408) | Angle brackets stripped from code blocks | 30K |
+| **Stretchr** | [testify#1877](https://github.com/stretchr/testify/pull/1877) | Panic when `SetupTest` skips with `HandleStats` | 26K |
+| **HashiCorp** | [terraform-provider-aws#47660](https://github.com/hashicorp/terraform-provider-aws/pull/47660) | GovCloud crash in Directory Service Data | 10.9K |
+| **HashiCorp** | [terraform-provider-aws#47661](https://github.com/hashicorp/terraform-provider-aws/pull/47661) | QuickSight `theme_arn` silently ignored | 10.9K |
+| **jackc** (pgx) | [pgx#2546](https://github.com/jackc/pgx/pull/2546) | BeforeConnect gets bare context from healthcheck | 14K |
+| **Grafana** | [mcp-grafana#829](https://github.com/grafana/mcp-grafana/pull/829) | Server instructions ignore disabled categories | 2.9K |
+| **Biome** | [biome#10151](https://github.com/biomejs/biome/pull/10151) | `--suppress` with `--only` ignores overrides | 24.5K |
 
-### All Open PRs
+### Issues filed
 
-| Project | Description | Status |
-|---------|-------------|--------|
-| [modelcontextprotocol/python-sdk#2511](https://github.com/modelcontextprotocol/python-sdk/pull/2511) | Add custom content support to `ToolError` for `isError` responses | 23k stars |
-| [vercel/ai#14758](https://github.com/vercel/ai/pull/14758) | Send `content: null` for tool-only assistant messages (xai, deepseek, groq, mistral) | 24k stars |
-| [sashabaranov/go-openai#1104](https://github.com/sashabaranov/go-openai/pull/1104) | Fix `stream` field omitted from non-streaming request JSON | 10.6k stars |
-| [sashabaranov/go-openai#1105](https://github.com/sashabaranov/go-openai/pull/1105) | Use pointer for `ContentFilterResults` to distinguish absent from empty | 10.6k stars |
-| [sashabaranov/go-openai#1106](https://github.com/sashabaranov/go-openai/pull/1106) | Detect Content-Type from file extension for gpt-image-1 uploads | 10.6k stars |
-| [grafana/grafana#123664](https://github.com/grafana/grafana/pull/123664) | Remove debug `console.log` in Explore scanning loop | 74k stars |
-| [grafana/grafana#123665](https://github.com/grafana/grafana/pull/123665) | Fix `typeof` check in LegacyVariableWrapper + remove `console.log` | 74k stars |
-| [grafana/grafana#123666](https://github.com/grafana/grafana/pull/123666) | Fix `defer span.End()` inside loop in expression pipeline | 74k stars |
-| [grafana/grafana#123691](https://github.com/grafana/grafana/pull/123691) | Propagate `QueryHistoryDetails` insert errors instead of silently discarding | 74k stars |
-| [mark3labs/mcp-go#828](https://github.com/mark3labs/mcp-go/pull/828) | stdio transport crash on slow tools (`fmt.Printf` corrupts JSON-RPC) | Open* |
-| [sammcj/mcp-devtools#258](https://github.com/sammcj/mcp-devtools/pull/258) | Tool handler returns internal error instead of `isError` for validation failures | Open* |
-| [steipete/Peekaboo#108](https://github.com/steipete/Peekaboo/issues/108) | image tool: -32603 instead of isError for missing Screen Recording permission | **Fixed by Peter Steinberger** (PSPDFKit founder), credited mcp-assert in commit message |
-| [bankless/onchain-mcp#21](https://github.com/Bankless/onchain-mcp/issues/21) | All 10 tools return -32603 for missing API token instead of isError | Web3 |
-| [makenotion/notion-mcp-server#280](https://github.com/makenotion/notion-mcp-server/issues/280) | Schema quality: 8 required params undescribed across 22 tools | 4.2k stars |
-| [github/github-mcp-server#2425](https://github.com/github/github-mcp-server/issues/2425) | Schema quality: 20 required params undescribed, 92 optional params undescribed | 19k stars |
-| [modelcontextprotocol/servers#4095](https://github.com/modelcontextprotocol/servers/issues/4095) | filesystem: 16 required parameters missing descriptions (agents guess at values) | 85k stars |
-| [modelcontextprotocol/servers#4044](https://github.com/modelcontextprotocol/servers/pull/4044) | `read_media_file` returns `type: "blob"`, violating MCP spec | 85k stars* |
-| [modelcontextprotocol/servers#4051](https://github.com/modelcontextprotocol/servers/pull/4051) | `puppeteer_navigate` crashes on invalid URL with unhandled CDP error | 85k stars* |
-| [tavily-ai/tavily-mcp#162](https://github.com/tavily-ai/tavily-mcp/pull/162) | Missing API key throws McpError instead of returning `isError: true` | Open* |
-| [dvcrn/mcp-server-linear#5](https://github.com/dvcrn/mcp-server-linear/pull/5) | 24 tools throw McpError instead of returning `isError` when unauthenticated | Open* |
-| [modelcontextprotocol/typescript-sdk#2013](https://github.com/modelcontextprotocol/typescript-sdk/pull/2013) | Null arguments crash: `-32603` with raw Zod error on every TS SDK server | 12k stars* |
-| [modelcontextprotocol/python-sdk#2536](https://github.com/modelcontextprotocol/python-sdk/pull/2536) | Lost-wakeup race in task store: concurrent pollers hang forever | 23k stars |
-| [modelcontextprotocol/php-sdk#297](https://github.com/modelcontextprotocol/php-sdk/pull/297) | URI regex rejects valid RFC 3986 URIs without `://` | PHP SDK. P2 bug. |
-| [grafana/mcp-grafana#829](https://github.com/grafana/mcp-grafana/pull/829) | Server instructions don't reflect disabled tool categories | 2.9k stars |
-| [modelcontextprotocol/kotlin-sdk#734](https://github.com/modelcontextprotocol/kotlin-sdk/pull/734) | Type-unsafe cast in polymorphic result deserialization | Kotlin. `ready for work` label. |
-| [modelcontextprotocol/kotlin-sdk#735](https://github.com/modelcontextprotocol/kotlin-sdk/pull/735) | Stdio transport hangs after EOF (supervisor job not cancelled) | Kotlin. P2 bug. Process hangs indefinitely after client disconnects. |
-| [modelcontextprotocol/kotlin-sdk#736](https://github.com/modelcontextprotocol/kotlin-sdk/pull/736) | Sequential message processing causes deadlocks | Kotlin. P1, `ready for work`. Long-running handlers block pings, elicitation, progress. |
-| [pypa/pip#13960](https://github.com/pypa/pip/pull/13960) | Replace deprecated `locale.getpreferredencoding()` for Python 3.15 compat | 10k stars |
-| [mark3labs/mcp-go#828](https://github.com/mark3labs/mcp-go/pull/828) | Redirect hook output to stderr in everything server example | Open |
-| [punkpeye/awesome-mcp-devtools#144](https://github.com/punkpeye/awesome-mcp-devtools/pull/144) | Add mcp-assert to Testing Tools listing | Open |
+| Organization | Issue | Description | Stars |
+|-------------|-------|-------------|------:|
+| **Anthropic** (filesystem) | [servers#4095](https://github.com/modelcontextprotocol/servers/issues/4095) | 16 required params missing descriptions | 85K |
+| **GitHub** | [github-mcp-server#2425](https://github.com/github/github-mcp-server/issues/2425) | 112 schema quality issues (20 errors, 92 warnings) | 19K |
+| **Notion** | [notion-mcp-server#280](https://github.com/makenotion/notion-mcp-server/issues/280) | 8 required params undescribed across 22 tools | 4.2K |
+| **Bankless** | [onchain-mcp#21](https://github.com/Bankless/onchain-mcp/issues/21) | All 10 tools return -32603 for missing API token | Web3 |
+| **Peekaboo** | [Peekaboo#108](https://github.com/steipete/Peekaboo/issues/108) | -32603 for missing Screen Recording permission | **Fixed by Peter Steinberger**, credited mcp-assert |
+| **Grafana** | [mcp-grafana#830](https://github.com/grafana/mcp-grafana/issues/830) | 72 fuzz crashes on type mismatches | 2.9K |
+
+### Other open PRs
+
+| Organization | PR | Description | Stars |
+|-------------|-----|-------------|------:|
+| **Grafana** (core) | [grafana#123664-123691](https://github.com/grafana/grafana/pull/123664) | 4 PRs: console.log removal, typeof fix, span.End loop, error propagation | 74K |
+| **Vercel** | [ai#14758](https://github.com/vercel/ai/pull/14758) | Send `content: null` for tool-only messages (4 providers) | 24K |
+| **sashabaranov** | [go-openai#1104-1106](https://github.com/sashabaranov/go-openai/pull/1104) | 3 PRs: stream field, ContentFilter pointer, MIME detection | 10.6K |
+| **Anthropic** (Kotlin SDK) | [kotlin-sdk#734-735](https://github.com/modelcontextprotocol/kotlin-sdk/pull/734) | Type-unsafe cast + stdio transport hang | Kotlin |
+| **Anthropic** (servers) | [servers#4044, #4051](https://github.com/modelcontextprotocol/servers/pull/4044) | blob content type violation + puppeteer crash | 85K |
+| **MoonshotAI** | [kimi-cli#2144](https://github.com/MoonshotAI/kimi-cli/pull/2144) | Multiline input text misaligned | 8.3K |
+| **Charmbracelet** | [huh#777](https://github.com/charmbracelet/huh/pull/777) | V2 regression: blurred styles not applied | 5.5K |
+| **pypa** | [pip#13960](https://github.com/pypa/pip/pull/13960) | locale deprecation fix for Python 3.15 | 10K |
+| **mark3labs** | [mcp-go#828](https://github.com/mark3labs/mcp-go/pull/828) | stdio transport corruption on slow tools | 8.7K |
+| **Tavily** | [tavily-mcp#162](https://github.com/tavily-ai/tavily-mcp/pull/162) | Missing API key throws McpError instead of isError | Open |
+| **dvcrn** | [mcp-server-linear#5](https://github.com/dvcrn/mcp-server-linear/pull/5) | 24 tools throw McpError when unauthenticated | Open |
+| **sammcj** | [mcp-devtools#258](https://github.com/sammcj/mcp-devtools/pull/258) | Internal error instead of isError for validation | Open |
 
 ### Bugs Filed (fixed by others)
 
