@@ -90,6 +90,9 @@ Fix PRs and bug reports submitted to open source projects. 51 contributions acro
 | [mark3labs/mcp-go#828](https://github.com/mark3labs/mcp-go/pull/828) | Redirect hook output to stderr in everything server example | Go. 8.7k stars. stdio transport corruption fix.* |
 | [grafana/mcp-grafana#793](https://github.com/grafana/mcp-grafana/pull/793) | `get_assertions` timestamp validation fix | Go. 2.9k stars.* |
 | [antvis/mcp-server-chart#292](https://github.com/antvis/mcp-server-chart/pull/292) | 9 tools crash with unhandled exceptions on default input | TypeScript. 4k stars. Led to first mcp-assert CI adoption.* |
+| [mark3labs/mcp-go#838](https://github.com/mark3labs/mcp-go/pull/838) | Everything server returns -32603 for input validation instead of isError | Go. 8.7k stars. Found by mcp-assert fuzz. |
+| [mark3labs/mcp-go#839](https://github.com/mark3labs/mcp-go/pull/839) | listenForever retries indefinitely on session terminated (404) | Go. 8.7k stars. |
+| [modelcontextprotocol/go-sdk#929](https://github.com/modelcontextprotocol/go-sdk/pull/929) | HTTP response body leak in streamable HTTP session close | Go. 4.5k stars. Official Anthropic MCP SDK. |
 | [punkpeye/awesome-mcp-servers#5145](https://github.com/punkpeye/awesome-mcp-servers/pull/5145) | Add agent-lsp listing | |
 
 ### Highlights (open, under review)
@@ -98,7 +101,7 @@ Fix PRs and bug reports submitted to open source projects. 51 contributions acro
 |---------|-------------|----------------|
 | [etcd-io/etcd#21684](https://github.com/etcd-io/etcd/pull/21684) | `ErrNotPrimary` returns gRPC Unknown instead of Unavailable | Go. 51k stars. Clients can't retry on Unknown. Mapped to Unavailable, consistent with ErrLeaderChanged. |
 | [modelcontextprotocol/go-sdk#913](https://github.com/modelcontextprotocol/go-sdk/pull/913) | Race condition in `ClientSession.Close()` | Go. 4.5k stars. Traced from Alan Donovan's (Google) analysis of gopls CI flakes. |
-| [modelcontextprotocol/go-sdk#929](https://github.com/modelcontextprotocol/go-sdk/pull/929) | HTTP response body leak in streamable HTTP session close | Go. 4.5k stars. **Merged**. TCP connection leaked on every normal close. |
+| [modelcontextprotocol/go-sdk#929](https://github.com/modelcontextprotocol/go-sdk/pull/929) | HTTP response body leak in streamable HTTP session close | Go. 4.5k stars. **Merged**. |
 | [modelcontextprotocol/python-sdk#2536](https://github.com/modelcontextprotocol/python-sdk/pull/2536) | Lost-wakeup race in `InMemoryTaskStore.wait_for_update` | Python. 23k stars. Concurrent pollers hang forever; notify-before-wait signal lost. Reproduced with script. |
 | [modelcontextprotocol/php-sdk#297](https://github.com/modelcontextprotocol/php-sdk/pull/297) | URI regex rejects valid RFC 3986 URIs (urn:, mailto:, data:, custom schemes) | PHP. P2 bug. Maintainer requested PR. Fixes Resource and ResourceTemplate. |
 | [biomejs/biome#10151](https://github.com/biomejs/biome/pull/10151) | `--suppress` with `--only` ignores rule overrides | Rust. Two-line fix in a 24.5k-star codebase. Regression test added. |
@@ -142,7 +145,6 @@ Fix PRs and bug reports submitted to open source projects. 51 contributions acro
 | [tavily-ai/tavily-mcp#162](https://github.com/tavily-ai/tavily-mcp/pull/162) | Missing API key throws McpError instead of returning `isError: true` | Open* |
 | [dvcrn/mcp-server-linear#5](https://github.com/dvcrn/mcp-server-linear/pull/5) | 24 tools throw McpError instead of returning `isError` when unauthenticated | Open* |
 | [modelcontextprotocol/typescript-sdk#2013](https://github.com/modelcontextprotocol/typescript-sdk/pull/2013) | Null arguments crash: `-32603` with raw Zod error on every TS SDK server | 12k stars* |
-| [modelcontextprotocol/go-sdk#929](https://github.com/modelcontextprotocol/go-sdk/pull/929) | HTTP response body leak on every session close in streamable HTTP | 4.5k stars. **Merged** |
 | [modelcontextprotocol/python-sdk#2536](https://github.com/modelcontextprotocol/python-sdk/pull/2536) | Lost-wakeup race in task store: concurrent pollers hang forever | 23k stars |
 | [modelcontextprotocol/php-sdk#297](https://github.com/modelcontextprotocol/php-sdk/pull/297) | URI regex rejects valid RFC 3986 URIs without `://` | PHP SDK. P2 bug. |
 | [grafana/mcp-grafana#829](https://github.com/grafana/mcp-grafana/pull/829) | Server instructions don't reflect disabled tool categories | 2.9k stars |
