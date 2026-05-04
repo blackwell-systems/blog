@@ -516,6 +516,42 @@ The Go concurrency model is not an event loop with a nicer syntax. It's a fully 
 
 ---
 
+## Comparison: Java Virtual Threads (Project Loom)
+
+Java 21 shipped virtual threads — lightweight threads that are scheduled by the JVM rather than the OS, in direct response to the same problem goroutines solved in 2009. If you're moving between Java and Go, the similarities are real but the design choices diverge in ways that matter.
+
+Both virtual threads and goroutines are M:N: many lightweight threads multiplexed onto fewer OS threads. Both park the lightweight thread (not the OS thread) when it blocks on I/O. Both allow you to write blocking sequential code without the function coloring problem that `async/await` imposes.
+
+The differences:
+
+**Continuations vs stacks.** Go goroutines have their own growable stack — a real call stack that starts at 8KB and copies to a larger allocation when it overflows. Java virtual threads are implemented as continuations: when a virtual thread mounts onto a carrier thread (Java's equivalent of M), the JVM copies the relevant stack frames onto the carrier's stack. When it unmounts (blocks), those frames are saved to the heap. There is no separate per-goroutine stack. The implications are subtle but real: Java's approach avoids Go's stack copy cost, but the JVM must intercept every blocking operation to implement unmounting, whereas Go handles this more uniformly at the scheduler level.
+
+**No work stealing by default.** Go's scheduler steals work aggressively across P's. Java virtual threads run on a `ForkJoinPool` (the carrier thread pool), which does implement work stealing, but the virtual thread scheduler is less exposed and less tunable than Go's. `GOMAXPROCS` in Go is explicit and well-documented. The Java carrier pool is configured via system properties and less obvious to operators.
+
+**Pinning.** A Java virtual thread can become *pinned* to its carrier thread — effectively turning it into a 1:1 OS thread for the duration of the pinning. This happens when the virtual thread holds a `synchronized` lock or calls native code. A pinned virtual thread blocks its carrier, negating the benefit. Go has no equivalent concept; goroutines can always be descheduled (since Go 1.14's asynchronous preemption). Migrating an existing Java codebase to virtual threads requires auditing `synchronized` blocks; Go has no such migration cost.
+
+**Structured concurrency.** Java's `StructuredTaskScope` (previewing in Java 21+) formalizes the relationship between parent and child threads: when the scope exits, all spawned threads are cancelled. Go has no built-in equivalent. `context.Context` propagates cancellation, but the programmer is responsible for wiring it up. Goroutine lifecycle management is manual; Java's structured concurrency makes the relationship explicit.
+
+The practical summary: Java virtual threads and Go goroutines solve the same problem with similar mechanisms. If your Java service is I/O-bound and was thread-per-request, virtual threads are a near-drop-in improvement. Go's model is older, more battle-tested, and exposes more of the machinery to the programmer. Java's model integrates more tightly with the existing JVM ecosystem and adds structured concurrency on top.
+
+---
+
+## Comparison: Erlang Processes
+
+Erlang was doing this before Go existed. The BEAM virtual machine has run millions of lightweight processes on a small pool of OS threads since the 1980s, and the design is more uncompromising than Go's in ways that illuminate the trade-offs Go made.
+
+**True isolation.** Erlang processes share no memory. None. Every message between processes is copied. There are no shared variables, no mutexes, no data races — not because programmers are disciplined, but because the runtime makes sharing structurally impossible. Go allows shared memory and provides `sync.Mutex` for managing it. The Go documentation says to prefer channels, but the language doesn't enforce it. Erlang enforces it at the VM level.
+
+**Preemptive scheduling by reduction count.** The BEAM scheduler preempts a process after a fixed number of *reductions* — roughly, function calls and operations. This gives Erlang extremely low and predictable scheduling latency: no process can starve another by doing CPU work in a tight loop, and the preemption doesn't rely on signals (Go's approach since 1.14). The BEAM's scheduling model is closer to the OS process scheduler than Go's hybrid cooperative-preemptive model.
+
+**Supervision trees as a first-class concept.** Erlang's OTP framework provides supervisors — processes whose entire job is to monitor other processes and restart them when they crash. This is the "let it crash" philosophy: rather than defensively handling every error, you write processes that do their job and crash on unexpected failure, trusting the supervisor to restart them with fresh state. Go has no equivalent. Goroutine lifecycle is the programmer's problem. `context.Context` propagates cancellation but there is no restart semantics, no supervision hierarchy, no automatic recovery.
+
+**The cost of isolation.** Copying every message has overhead. For large data structures passed frequently between processes, this is significant. Go's channel model passes references (or small values) without copying, which is faster for high-throughput communication between goroutines on the same machine. Erlang's copy semantics are the right trade-off for distributed systems (where serialization is required anyway) and fault-isolated services, but they impose a cost in pure throughput scenarios.
+
+The practical summary: Erlang processes are a more pure realization of CSP/actor principles than goroutines. If fault tolerance and isolation are the primary concern — building a phone switch, a payment processor, a chat system with millions of simultaneous sessions — the BEAM's supervision trees and process isolation are genuinely superior tools. Go makes the pragmatic trade-off of allowing shared memory, which is faster and more familiar, at the cost of the correctness guarantees isolation provides.
+
+---
+
 ## The Mental Model That Changes How You Write Go
 
 Return to the OS analogy. An operating system is responsible for:
