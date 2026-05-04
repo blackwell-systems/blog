@@ -98,7 +98,7 @@ Fix PRs and bug reports submitted to open source projects. 51 contributions acro
 |---------|-------------|----------------|
 | [etcd-io/etcd#21684](https://github.com/etcd-io/etcd/pull/21684) | `ErrNotPrimary` returns gRPC Unknown instead of Unavailable | Go. 51k stars. Clients can't retry on Unknown. Mapped to Unavailable, consistent with ErrLeaderChanged. |
 | [modelcontextprotocol/go-sdk#913](https://github.com/modelcontextprotocol/go-sdk/pull/913) | Race condition in `ClientSession.Close()` | Go. 4.5k stars. Traced from Alan Donovan's (Google) analysis of gopls CI flakes. |
-| [modelcontextprotocol/go-sdk#929](https://github.com/modelcontextprotocol/go-sdk/pull/929) | HTTP response body leak in streamable HTTP session close | Go. 4.5k stars. Found via inspector. TCP connection leaked on every normal close. |
+| [modelcontextprotocol/go-sdk#929](https://github.com/modelcontextprotocol/go-sdk/pull/929) | HTTP response body leak in streamable HTTP session close | Go. 4.5k stars. **Merged**. TCP connection leaked on every normal close. |
 | [modelcontextprotocol/python-sdk#2536](https://github.com/modelcontextprotocol/python-sdk/pull/2536) | Lost-wakeup race in `InMemoryTaskStore.wait_for_update` | Python. 23k stars. Concurrent pollers hang forever; notify-before-wait signal lost. Reproduced with script. |
 | [modelcontextprotocol/php-sdk#297](https://github.com/modelcontextprotocol/php-sdk/pull/297) | URI regex rejects valid RFC 3986 URIs (urn:, mailto:, data:, custom schemes) | PHP. P2 bug. Maintainer requested PR. Fixes Resource and ResourceTemplate. |
 | [biomejs/biome#10151](https://github.com/biomejs/biome/pull/10151) | `--suppress` with `--only` ignores rule overrides | Rust. Two-line fix in a 24.5k-star codebase. Regression test added. |
@@ -108,7 +108,7 @@ Fix PRs and bug reports submitted to open source projects. 51 contributions acro
 | [traefik/traefik#13089](https://github.com/traefik/traefik/pull/13089) | `rewrite-target` regex breaks base path match for `ImplementationSpecific` paths | Go. 53k stars. Trailing slash in regex made optional to match nginx behavior. |
 | [antvis/mcp-server-chart#294](https://github.com/antvis/mcp-server-chart/pull/294) | mcp-assert CI integration (25 assertions) | TypeScript. Maintainer-requested. 4k stars. |
 | [charmbracelet/bubbletea#1687](https://github.com/charmbracelet/bubbletea/pull/1687) | `ExecProcess` leaks `View()` output to stdout | Go. 42k stars. Traced renderer flush lifecycle. |
-| [astral-sh/uv#19237](https://github.com/astral-sh/uv/pull/19237) | `uv tool uninstall` silently aborts after first corrupt tool | Rust. 84k stars. Early return skips remaining tools. |
+| [astral-sh/uv#19237](https://github.com/astral-sh/uv/pull/19237) | `uv tool uninstall` silently aborts after first corrupt tool | Rust. 84k stars. Closed (AI policy false flag). |
 | [jackc/pgx#2546](https://github.com/jackc/pgx/pull/2546) | `BeforeConnect` gets bare context from background healthcheck | Go. 14k stars. Breaks AWS IAM auth on pool refill. |
 | [modelcontextprotocol/typescript-sdk#2013](https://github.com/modelcontextprotocol/typescript-sdk/pull/2013) | `tools/call` with null arguments returns `-32603` instead of being accepted | TypeScript. 12k stars. Affects every server built on the TS SDK. Found by `mcp-assert fuzz` on first run.* |
 | [grafana/mcp-grafana#829](https://github.com/grafana/mcp-grafana/pull/829) | Server instructions list all capabilities regardless of disabled categories | Go. 2.9k stars. Dynamic instruction generation from enabled tool categories. |
@@ -130,11 +130,9 @@ Fix PRs and bug reports submitted to open source projects. 51 contributions acro
 | [grafana/grafana#123665](https://github.com/grafana/grafana/pull/123665) | Fix `typeof` check in LegacyVariableWrapper + remove `console.log` | 74k stars |
 | [grafana/grafana#123666](https://github.com/grafana/grafana/pull/123666) | Fix `defer span.End()` inside loop in expression pipeline | 74k stars |
 | [grafana/grafana#123691](https://github.com/grafana/grafana/pull/123691) | Propagate `QueryHistoryDetails` insert errors instead of silently discarding | 74k stars |
-| [mark3labs/mcp-go#839](https://github.com/mark3labs/mcp-go/pull/839) | listenForever retries indefinitely on session terminated (404) | 8.7k stars. **Merged** |
-| [mark3labs/mcp-go#838](https://github.com/mark3labs/mcp-go/pull/838) | Everything server returns -32603 for input validation instead of isError | 8.7k stars. **Merged** |
 | [mark3labs/mcp-go#828](https://github.com/mark3labs/mcp-go/pull/828) | stdio transport crash on slow tools (`fmt.Printf` corrupts JSON-RPC) | Open* |
 | [sammcj/mcp-devtools#258](https://github.com/sammcj/mcp-devtools/pull/258) | Tool handler returns internal error instead of `isError` for validation failures | Open* |
-| [steipete/Peekaboo#108](https://github.com/steipete/Peekaboo/issues/108) | image tool: -32603 instead of isError for missing Screen Recording permission | **Fixed by maintainer**, credited mcp-assert |
+| [steipete/Peekaboo#108](https://github.com/steipete/Peekaboo/issues/108) | image tool: -32603 instead of isError for missing Screen Recording permission | **Fixed by Peter Steinberger** (PSPDFKit founder), credited mcp-assert in commit message |
 | [bankless/onchain-mcp#21](https://github.com/Bankless/onchain-mcp/issues/21) | All 10 tools return -32603 for missing API token instead of isError | Web3 |
 | [makenotion/notion-mcp-server#280](https://github.com/makenotion/notion-mcp-server/issues/280) | Schema quality: 8 required params undescribed across 22 tools | 4.2k stars |
 | [github/github-mcp-server#2425](https://github.com/github/github-mcp-server/issues/2425) | Schema quality: 20 required params undescribed, 92 optional params undescribed | 19k stars |
@@ -160,7 +158,6 @@ Fix PRs and bug reports submitted to open source projects. 51 contributions acro
 | Project | Description | Outcome |
 |---------|-------------|---------|
 | [blazickjp/arxiv-mcp-server#92](https://github.com/blazickjp/arxiv-mcp-server/issues/92) | `get_abstract` returns error content without `isError` flag | Maintainer fix merged* |
-| [steipete/Peekaboo#108](https://github.com/steipete/Peekaboo/issues/108) | `image` returns internal error without Screen Recording permission | Community fix PR [#109](https://github.com/steipete/Peekaboo/pull/109)* |
 
 ### Pending (ready, blocked on process)
 
