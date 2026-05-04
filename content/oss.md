@@ -144,7 +144,7 @@ Fix PRs and bug reports submitted to open source projects. 51 contributions acro
 | [tavily-ai/tavily-mcp#162](https://github.com/tavily-ai/tavily-mcp/pull/162) | Missing API key throws McpError instead of returning `isError: true` | Open* |
 | [dvcrn/mcp-server-linear#5](https://github.com/dvcrn/mcp-server-linear/pull/5) | 24 tools throw McpError instead of returning `isError` when unauthenticated | Open* |
 | [modelcontextprotocol/typescript-sdk#2013](https://github.com/modelcontextprotocol/typescript-sdk/pull/2013) | Null arguments crash: `-32603` with raw Zod error on every TS SDK server | 12k stars* |
-| [modelcontextprotocol/go-sdk#929](https://github.com/modelcontextprotocol/go-sdk/pull/929) | HTTP response body leak on every session close in streamable HTTP | 4.5k stars |
+| [modelcontextprotocol/go-sdk#929](https://github.com/modelcontextprotocol/go-sdk/pull/929) | HTTP response body leak on every session close in streamable HTTP | 4.5k stars. **Merged** |
 | [modelcontextprotocol/python-sdk#2536](https://github.com/modelcontextprotocol/python-sdk/pull/2536) | Lost-wakeup race in task store: concurrent pollers hang forever | 23k stars |
 | [modelcontextprotocol/php-sdk#297](https://github.com/modelcontextprotocol/php-sdk/pull/297) | URI regex rejects valid RFC 3986 URIs without `://` | PHP SDK. P2 bug. |
 | [grafana/mcp-grafana#829](https://github.com/grafana/mcp-grafana/pull/829) | Server instructions don't reflect disabled tool categories | 2.9k stars |
