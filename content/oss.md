@@ -77,7 +77,7 @@ showMetadata: false
 
 ## Upstream Contributions
 
-Fix PRs and bug reports submitted to open source projects. 53 contributions across 23 organizations, 11 merged. Bugs discovered via [mcp-assert](https://github.com/blackwell-systems/mcp-assert) scanning are marked with *.
+Fix PRs and bug reports submitted to open source projects. 54 contributions across 23 organizations, 11 merged. Bugs discovered via [mcp-assert](https://github.com/blackwell-systems/mcp-assert) scanning are marked with *.
 
 ### Merged
 
@@ -93,6 +93,7 @@ Fix PRs and bug reports submitted to open source projects. 53 contributions acro
 | **mark3labs** (mcp-go SDK) | [mcp-go#828](https://github.com/mark3labs/mcp-go/pull/828) | Redirect hook output to stderr (stdio transport corruption) | 8.7K |
 | **mark3labs** (mcp-go SDK) | [mcp-go#838](https://github.com/mark3labs/mcp-go/pull/838) | Return isError for input validation instead of -32603 | 8.7K |
 | **mark3labs** (mcp-go SDK) | [mcp-go#839](https://github.com/mark3labs/mcp-go/pull/839) | listenForever retries indefinitely on session terminated (404) | 8.7K |
+| **mark3labs** (mcp-go SDK) | [mcp-go#849](https://github.com/mark3labs/mcp-go/pull/849) | Response body leak on 404 in sendHTTP (TCP connection leaked per retry) | 8.7K |
 | **Microsoft** | [winget-pkgs](https://github.com/microsoft/winget-pkgs) | Winget manifests for mcp-assert and agent-lsp | 10K |
 
 ### Highlights (open, under review)
