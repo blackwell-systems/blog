@@ -77,6 +77,40 @@ body {
   margin: 0 auto;
 }
 
+/* Node label padding inside Mermaid SVGs */
+.mermaid svg .label {
+  padding: 8px 12px;
+}
+
+.mermaid svg .nodeLabel {
+  padding: 8px 12px;
+}
+
+.mermaid svg g.node rect,
+.mermaid svg g.node circle,
+.mermaid svg g.node ellipse,
+.mermaid svg g.node polygon {
+  rx: 6px;
+  ry: 6px;
+}
+
+/* Sequence diagram actor and message padding */
+.mermaid svg .actor {
+  padding: 12px 16px;
+}
+
+.mermaid svg text.actor {
+  font-size: 14px;
+}
+
+.mermaid svg .messageText {
+  font-size: 13px;
+}
+
+.mermaid svg .labelBox {
+  padding: 6px 10px;
+}
+
 /* Mermaid lightbox modal */
 .mermaid-modal {
   display: none;
