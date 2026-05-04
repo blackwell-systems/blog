@@ -8,12 +8,6 @@ description: "Most Go developers use goroutines as magic async functions. That's
 summary: "Most Go developers can start a goroutine. Far fewer can explain what actually happens when they do. This post builds the real mental model: the G/M/P scheduler, why goroutines aren't threads, what CSP actually means, and the analogy that makes everything click: the Go runtime is an operating system for goroutines."
 ---
 
-{{< callout type="info" >}}
-**Prerequisites**
-
-This article assumes you can read Go and have written goroutines before. If you're new to Go concurrency, start with the [Go Tour concurrency section](https://go.dev/tour/concurrency/1) and come back when channel syntax feels familiar.
-{{< /callout >}}
-
 Ask a Go developer what a goroutine is and you'll hear: "it's a lightweight thread." That's not wrong. It's just so incomplete it's nearly useless for reasoning about real concurrency problems.
 
 Here's a better answer: **a goroutine is to the Go runtime what a process is to the operating system.** The Go runtime is a miniature OS running inside your program. It schedules goroutines onto OS threads the same way an OS schedules processes onto CPU cores. It manages their memory, handles their blocking, and multiplexes thousands of them onto a handful of real threads, exactly as an OS multiplexes hundreds of processes onto a handful of physical cores.
