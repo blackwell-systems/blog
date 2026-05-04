@@ -428,6 +428,34 @@ With `GOMAXPROCS(1)`, all goroutines run on one OS thread, interleaved. True par
 4 CPU cores on a Linux machine doesn't limit you to 4 processes. It limits you to 4 processes executing simultaneously. The Go scheduler works identically.
 {{< /callout >}}
 
+### Fractional CPU Allocations in Containers
+
+The default of `runtime.NumCPU()` breaks in shared computing environments — Kubernetes pods, Docker containers, cloud VMs with fractional vCPU allocations.
+
+`runtime.NumCPU()` reads the host machine's physical core count, not your container's CPU quota. A pod with `resources.limits.cpu: 500m` (half a core) running on an 8-core node gets `GOMAXPROCS = 8`. The Go runtime creates 8 P's and 8 OS threads. The Linux CFS scheduler then throttles your cgroup to 50% of one core's time, leaving 8 threads competing for the equivalent of half a core. The constant preemption and context switching between those 8 threads costs more than the useful work they do.
+
+The fix is `go.uber.org/automaxprocs`. A single blank import in `main.go` is all it takes:
+
+```go
+import _ "go.uber.org/automaxprocs"
+```
+
+It reads the cgroup CPU quota (`cpu.cfs_quota_us / cpu.cfs_period_us`) at startup and sets `GOMAXPROCS` to match the actual allocation, rounded up to at least 1. Half a core becomes `GOMAXPROCS = 1`. 1.5 cores becomes `GOMAXPROCS = 2`. The Go scheduler now has an accurate picture of how much CPU it actually has.
+
+This is worth adding to any Go service running in Kubernetes or any container platform that throttles CPU. The default behavior isn't wrong in a bare-metal context, but in a shared environment it actively works against you.
+
+### "We Run Single-Core Containers, So Goroutines Don't Help Us"
+
+This argument conflates parallelism with concurrency, and it's wrong.
+
+With `GOMAXPROCS = 1`, only one goroutine executes at any CPU cycle. There is no parallelism. But a web server's bottleneck is almost never CPU — it's waiting: waiting for the database to respond, waiting for a downstream API, waiting for bytes to arrive on a socket. Goroutines spend the vast majority of their time parked, not running.
+
+On a single-core container handling 1,000 concurrent HTTP requests, those 1,000 goroutines are almost all parked at any given moment — waiting for their respective database queries to return. The one core cycles through whichever goroutines have data to process. The single core is never idle waiting for I/O because there is always another goroutine ready to run.
+
+Compare this to a single-threaded event loop (Node.js): the mechanics are similar, but goroutines let you write blocking code that reads sequentially. The Go scheduler parks the goroutine on the blocking operation and runs something else. With an event loop, you must explicitly yield via `async/await` or callbacks, and any accidental synchronous blocking stalls the entire server.
+
+Single-core Go is fast for I/O-bound workloads because of concurrency, not parallelism. The argument only holds if your service is CPU-bound — doing heavy computation rather than waiting on I/O. In that case, a single core is a real constraint. But for the typical API server, message processor, or proxy, `GOMAXPROCS = 1` with goroutines outperforms a single-threaded model because the scheduler keeps the one available core fully occupied.
+
 ---
 
 ## Goroutine Leaks: The OS Analogy Applied
