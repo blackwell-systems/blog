@@ -132,7 +132,7 @@ graph TD
 | Process context switch | Goroutine context switch |
 | Process scheduler | Go runtime scheduler |
 | `fork()` | `go func()` |
-| Process stack (1-8MB, fixed) | Goroutine stack (8KB initial, growable) |
+| Process stack (1-8MB, fixed at creation) | Goroutine stack (8KB initial, copied to a larger allocation on overflow — up to 1GB) |
 | Process blocked on I/O | Goroutine parked, P released |
 | Process scheduler per-CPU run queue | P's local run queue |
 | Scheduler work stealing | P steals from another P's queue |
