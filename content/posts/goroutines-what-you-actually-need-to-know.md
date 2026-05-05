@@ -67,7 +67,7 @@ The Go runtime implements a scheduler that manages goroutines the way an OS mana
 
 **M (Machine):** An OS thread. The entity that actually executes instructions on a CPU core. The Go runtime creates and parks M's as needed; the default limit is 10,000. Analogous to the physical thread executing a process.
 
-**P (Processor):** A logical scheduling context. Each P has a local run queue of goroutines ready to execute. The number of P's is controlled by `GOMAXPROCS` (default: `runtime.NumCPU()`). P is not a CPU core; it is a software abstraction that grants permission to run Go code. An M must hold a P to execute goroutines.
+**P (Processor):** A scheduling token and run queue, one per logical core of parallelism. P is not a CPU core and not an OS thread — it is the Go runtime's bookkeeping unit for "one slot of concurrent Go execution." Each P owns a local queue of runnable goroutines and a cache of runtime resources (memory allocator state, deferred work). An M must hold a P to execute any Go code at all; without one, an M sits idle. The number of P's is set by `GOMAXPROCS` (default: `runtime.NumCPU()`), which is why `GOMAXPROCS` controls the degree of true parallelism rather than the number of goroutines or threads. P exists to decouple "I have a runnable goroutine" from "I have an OS thread" — the separation that makes the blocking story work, as we'll see shortly.
 
 The hierarchy:
 
