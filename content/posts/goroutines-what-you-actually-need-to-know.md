@@ -128,7 +128,7 @@ The actual answers require understanding the Go scheduler.
 
 The Go runtime implements a scheduler that manages goroutines the way an OS manages processes. Three types of entities:
 
-**G (Goroutine):** The goroutine itself: its stack (starting at 8KB, growable), program counter, status, and the closure it's running. Analogous to a Process Control Block.
+**G (Goroutine):** The goroutine itself: its stack (starting at 2KB, growable), program counter, status, and the closure it's running. Analogous to a Process Control Block.
 
 **M (Machine):** An OS thread. The entity that actually executes instructions on a CPU core. The Go runtime creates and parks M's as needed; the default limit is 10,000. Analogous to the physical thread executing a process.
 
@@ -196,7 +196,7 @@ graph TD
 | Process context switch | Goroutine context switch |
 | Process scheduler | Go runtime scheduler |
 | `fork()` | `go func()` |
-| Process stack (1-8MB, fixed at creation) | Goroutine stack (8KB initial, copied to a larger allocation on overflow, up to 1GB) |
+| Process stack (1-8MB, fixed at creation) | Goroutine stack (2KB initial, copied to a larger allocation on overflow, up to 1GB) |
 | Process blocked on I/O | Goroutine parked, P released |
 | Process scheduler per-CPU run queue | P's local run queue |
 | Scheduler work stealing | P steals from another P's queue |
@@ -212,7 +212,7 @@ go func() {
 
 Most developers think: "this starts a goroutine, which runs on a separate thread." Here's what actually happens:
 
-1. The runtime allocates a G struct with an 8KB stack. Program counter is set to the start of the closure.
+1. The runtime allocates a G struct with a 2KB stack. Program counter is set to the start of the closure.
 2. The G is placed on the **local run queue** of the current P.
 3. The current goroutine continues executing. It is not interrupted.
 4. At the next scheduling point (a function call, channel operation, or system call), the scheduler may switch to the new G or continue with the current one.
@@ -220,7 +220,7 @@ Most developers think: "this starts a goroutine, which runs on a separate thread
 
 No OS thread is created. No kernel call. No `pthread_create`. Just a small heap allocation and a pointer added to a queue. This is why starting a goroutine costs roughly 3 microseconds and a few KB of memory, compared to 50 microseconds and 1MB for an OS thread.
 
-Starting 100,000 goroutines costs about 800MB of stack (100,000 × 8KB) plus negligible scheduling overhead. The same 100,000 OS threads would need 100GB, and your kernel would refuse long before that.
+Starting 100,000 goroutines costs about 200MB of stack (100,000 × 2KB) plus negligible scheduling overhead. The same 100,000 OS threads would need 100GB, and your kernel would refuse long before that.
 
 ### Work Stealing
 
@@ -421,9 +421,9 @@ When no case is ready, the goroutine parks itself simultaneously in the `recvq`/
 
 ### The Goroutine Stack
 
-OS threads have fixed stacks (1-8MB) allocated at creation. Goroutines start with an **8KB stack** and grow as needed. When the runtime detects insufficient stack space at a function's entry, it allocates a new stack (typically 2x), copies the entire current stack to the new allocation, updates all stack pointers, and continues. The stack can grow up to 1GB by default; in practice most goroutines use 8-64KB.
+OS threads have fixed stacks (1-8MB) allocated at creation. Goroutines start with a **2KB stack** and grow as needed. When the runtime detects insufficient stack space at a function's entry, it allocates a new stack (typically 2x), copies the entire current stack to the new allocation, updates all stack pointers, and continues. The stack can grow up to 1GB by default; in practice most goroutines use 8-64KB.
 
-This is what makes 100,000 goroutines viable at startup: you're reserving 8KB per goroutine, not 1MB.
+This is what makes 100,000 goroutines viable at startup: you're reserving 2KB per goroutine, not 1MB.
 
 **Escape analysis** exists partly because of this. When the compiler sees that a local variable's address escapes the current goroutine (taken by `go func()`, sent on a channel, stored in a heap-allocated struct), it moves the variable to the heap. A local variable's memory address changes when the stack grows, so any pointer that outlives the stack frame must live on the heap instead.
 
@@ -524,7 +524,7 @@ In Node.js, the single-threaded event loop is your programming model. Your code 
 
 **Where Node.js wins:**
 
-A single Node.js process can handle tens of thousands of concurrent I/O-bound connections with very low memory footprint. There is no stack per connection; the event loop has near-zero overhead between callbacks. For pure I/O workloads (HTTP proxies, WebSocket servers, API gateways), a tuned Node.js process can match or beat Go per CPU core. The zero-stack-per-connection model is genuinely more memory efficient than Go's 8KB per goroutine.
+A single Node.js process can handle tens of thousands of concurrent I/O-bound connections with very low memory footprint. There is no stack per connection; the event loop has near-zero overhead between callbacks. For pure I/O workloads (HTTP proxies, WebSocket servers, API gateways), a tuned Node.js process can match or beat Go per CPU core. The zero-stack-per-connection model is genuinely more memory efficient than Go's 2KB per goroutine.
 
 **The key difference in one sentence:** The Go netpoller and Node.js's libuv solve the same OS-level problem. libuv exposes the event loop to your code. Go's scheduler hides it. Your code just blocks, and the runtime ensures the thread is never idle.
 
@@ -536,7 +536,7 @@ OS threads (pthreads, `std::thread`, Java pre-Loom) are what you get when you ma
 
 The resource cost is the problem. Each OS thread carries 1-8MB of stack allocated at creation, regardless of whether the thread does anything. Creating one requires a kernel call (10-50 microseconds). The OS scheduler has no knowledge of your application; it sees all threads as equally worthy of CPU time, switching between them at fixed intervals whether they're doing useful work or sleeping.
 
-Goroutines address exactly this: 8KB instead of 1-8MB means 1,000x more concurrent units for the same memory. User-space context switches cost 100-300ns rather than 1-10µs. Goroutines waiting on I/O consume no CPU and no OS thread.
+Goroutines address exactly this: 2KB instead of 1-8MB means 1,000x+ more concurrent units for the same memory. User-space context switches cost 100-300ns rather than 1-10µs. Goroutines waiting on I/O consume no CPU and no OS thread.
 
 The programming model is otherwise identical: you write sequential, blocking code in both cases. The difference is entirely in what runs underneath.
 
@@ -568,7 +568,7 @@ Java 21 shipped virtual threads, lightweight threads scheduled by the JVM rather
 
 The differences:
 
-**Continuations vs stacks.** Go goroutines have their own growable stack: a real call stack that starts at 8KB and copies to a larger allocation when it overflows. Java virtual threads are implemented as continuations: when a virtual thread mounts onto a carrier thread, the JVM copies the relevant stack frames onto the carrier's stack. When it unmounts (blocks), those frames are saved to the heap. Java's approach avoids Go's stack copy cost, but the JVM must intercept every blocking operation to implement unmounting.
+**Continuations vs stacks.** Go goroutines have their own growable stack: a real call stack that starts at 2KB and copies to a larger allocation when it overflows. Java virtual threads are implemented as continuations: when a virtual thread mounts onto a carrier thread, the JVM copies the relevant stack frames onto the carrier's stack. When it unmounts (blocks), those frames are saved to the heap. Java's approach avoids Go's stack copy cost, but the JVM must intercept every blocking operation to implement unmounting.
 
 **Pinning.** A Java virtual thread can become *pinned* to its carrier thread, effectively turning it into a 1:1 OS thread for the duration of the pinning. This happens when the virtual thread holds a `synchronized` lock or calls native code. A pinned virtual thread blocks its carrier, negating the benefit. Go has no equivalent concept; goroutines can always be descheduled since Go 1.14.
 
@@ -633,7 +633,7 @@ If fault tolerance and isolation are the primary concern (building a phone switc
 | **Blocking I/O** | Park goroutine, release P | Unmount virtual thread | Suspend coroutine | Block thread (GIL released) | Park process | Await future | Callback / await |
 | **Shared memory** | Yes (with mutexes) | Yes (with synchronized) | Yes (with locks) | Yes (GIL limits races) | No (copy on send) | Yes (ownership enforced at compile time) | No (single-threaded) |
 | **Function coloring** | No | No | No | Yes (`async def`) | No | Yes (`async fn`) | Yes (`async`) |
-| **Unit cost** | ~8KB stack | ~few KB (continuation) | ~few hundred bytes | ~1MB stack | ~2KB heap | ~1MB stack / ~few KB async | N/A (event loop) |
+| **Unit cost** | ~2KB stack | ~few KB (continuation) | ~few hundred bytes | ~1MB stack | ~2KB heap | ~1MB stack / ~few KB async | N/A (event loop) |
 | **Max practical units** | Millions | Millions | Millions | Thousands | Millions | Thousands (threads) / millions (async) | N/A |
 | **Fault isolation** | None (shared process) | None | None | None | Per-process | None | None |
 | **Supervision / lifecycle** | Manual (context.Context) | Manual (StructuredTaskScope) | Structured (coroutineScope) | Manual | Built-in (OTP supervisors) | Manual | Manual |
