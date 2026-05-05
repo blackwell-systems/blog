@@ -96,7 +96,7 @@ Before the comparisons, a framework. Every concurrency model makes choices along
 
 **2. Communication model:** How does concurrent work exchange data? Shared memory with locks (threads), message passing with copying (Erlang), synchronous channels (Go CSP), asynchronous channels (Go buffered, actors), or implicit single-threaded access (Node.js, single-threaded Python).
 
-**3. Stack model:** How is the call stack managed for each concurrent unit? Fixed OS-allocated stack (threads), heap-allocated growable stack (goroutines), continuation frames saved to heap (virtual threads), no per-task stack (async/await state machines).
+**3. Stack model:** How is the call stack managed for each concurrent unit? Fixed OS-allocated stack (threads), runtime-managed contiguous stack that starts small and grows by copying (goroutines), continuation frames saved to heap on unmount (virtual threads), no per-task stack (async/await state machines).
 
 **4. Fault model:** What happens when a concurrent unit crashes? Process isolation with supervision (Erlang), unhandled panic takes down the process (Go, Rust), exception caught or propagates (Java, Python), unhandled rejection (Node.js).
 
@@ -218,7 +218,7 @@ Most developers think: "this starts a goroutine, which runs on a separate thread
 4. At the next scheduling point (a function call, channel operation, or system call), the scheduler may switch to the new G or continue with the current one.
 5. The new G is eventually picked up by a free P (either the current one, or another P via work stealing).
 
-No OS thread is created. No kernel call. No `pthread_create`. Just a small heap allocation and a pointer added to a queue. This is why starting a goroutine costs roughly 3 microseconds and a few KB of memory, compared to 50 microseconds and 1MB for an OS thread.
+No OS thread is created. No kernel call. No `pthread_create`. Just a small runtime allocation (the G struct plus an initial stack) and a pointer added to a queue. This is why starting a goroutine costs roughly 3 microseconds and a few KB of memory, compared to 50 microseconds and 1MB for an OS thread.
 
 Starting 100,000 goroutines costs about 200MB of stack (100,000 × 2KB) plus negligible scheduling overhead. The same 100,000 OS threads would need 100GB, and your kernel would refuse long before that.
 
