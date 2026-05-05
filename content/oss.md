@@ -114,7 +114,6 @@ Fix PRs and bug reports submitted to open source projects. 57 contributions acro
 | **HashiCorp** | [terraform-provider-aws#47660](https://github.com/hashicorp/terraform-provider-aws/pull/47660) | GovCloud crash in Directory Service Data | 10.9K |
 | **HashiCorp** | [terraform-provider-aws#47661](https://github.com/hashicorp/terraform-provider-aws/pull/47661) | QuickSight `theme_arn` silently ignored | 10.9K |
 | **jackc** (pgx) | [pgx#2546](https://github.com/jackc/pgx/pull/2546) | BeforeConnect gets bare context from healthcheck | 14K |
-| **Grafana** | [mcp-grafana#829](https://github.com/grafana/mcp-grafana/pull/829) | Server instructions ignore disabled categories | 2.9K |
 | **Biome** | [biome#10151](https://github.com/biomejs/biome/pull/10151) | `--suppress` with `--only` ignores overrides | 24.5K |
 
 ### Issues filed
