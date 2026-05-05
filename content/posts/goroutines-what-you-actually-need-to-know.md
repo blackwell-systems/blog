@@ -516,6 +516,30 @@ The Go concurrency model is not an event loop with a nicer syntax. It's a fully 
 
 ---
 
+## Comparison: Node.js
+
+Node.js is the sharpest contrast to Go's concurrency model, and the most important one for backend engineers moving between the two. Node.js is very good at concurrent I/O, it does it on a single thread, and any CPU work breaks the model entirely. Go is very good at concurrent I/O, does it across multiple threads, and CPU work has no special status.
+
+Node.js runs JavaScript on a single thread. The event loop processes one callback at a time. When your code calls `fs.readFile` or `fetch`, Node.js hands the I/O operation to libuv (its C++ I/O library), registers a callback, and moves on to the next event immediately. When libuv signals that the I/O is complete, the callback is queued. The event loop picks it up when the current callback finishes.
+
+This is exactly what Go's netpoller does for network I/O: register file descriptors with `epoll`/`kqueue`, park the goroutine, resume it when data arrives. The mechanics underneath are similar. The difference is the programming model on top. In Node.js, the single-threaded event loop is exposed to your code. In Go, it is invisible.
+
+The consequences of Node.js's single-threaded model:
+
+**CPU work stalls all I/O.** If a callback runs a CPU-intensive operation for 200ms, no other callbacks run during that 200ms. All in-flight requests are frozen. Go goroutines run on `GOMAXPROCS` threads simultaneously. CPU work in one goroutine does not affect others.
+
+**Function coloring.** To call an async function and get its result, your function must be `async`. This propagates upward through the entire call stack. A non-async function cannot `await`. Go has no equivalent distinction; any goroutine can block on any operation and the scheduler handles it.
+
+**No true parallelism in one process.** A single Node.js process uses one CPU core for JavaScript execution, regardless of how many CPU cores are available. Worker Threads exist for parallel CPU work, but they communicate via message passing and shared `ArrayBuffer` only. They do not share the event loop. They feel like separate processes. Go goroutines share memory and can communicate through channels or shared variables freely.
+
+**Where Node.js wins.** A single Node.js process can handle tens of thousands of concurrent I/O-bound connections with very low memory footprint. The event loop has near-zero overhead between callbacks. For pure I/O workloads (HTTP proxies, WebSocket servers, API gateways), a tuned Node.js process can match or beat Go per CPU core. The resource efficiency of zero-stack-per-connection (versus Go's 8KB per goroutine) is real.
+
+**Where Go wins.** The moment any request does non-trivial computation, Node.js's single-threaded model becomes a liability. Go distributes CPU work across all cores automatically. A Go service can handle mixed I/O and CPU workloads without the programmer needing to manually offload computation to Worker Threads. Goroutine stacks at 8KB are small enough that 100,000 goroutines cost 800MB; that's a large Node.js cluster's worth of concurrency in a single Go process.
+
+The Go netpoller and Node.js's libuv solve the same I/O multiplexing problem at the OS level. The difference is what they expose. libuv exposes the event loop directly; your code must be written to cooperate with it. Go's scheduler hides it entirely; your code just blocks, and the runtime ensures the thread is never actually idle.
+
+---
+
 ## Comparison: OS Threads
 
 OS threads are what most systems languages (C, C++, Rust `std::thread`, Java pre-Loom) give you directly. One thread per concurrent task. The OS schedules them onto CPU cores. They share an address space within a process.
