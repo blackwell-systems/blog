@@ -654,6 +654,47 @@ If fault tolerance and isolation are the primary concern (building a phone switc
 
 Given a problem profile, which model do you reach for?
 
+{{< mermaid >}}
+flowchart TD
+    A([Start: What is your primary constraint?])
+
+    A --> B{Fault tolerance\nis the top priority?}
+    B -- Yes --> C["Erlang / Elixir\n\nSupervision trees, process isolation,\nlet-it-crash philosophy.\nDecades ahead for systems\nthat must stay up."]
+
+    B -- No --> D{Existing codebase\nconstraint?}
+
+    D -- JVM / Java --> E{I/O-bound\nor mixed?}
+    E -- Pure I/O --> F["Java Virtual Threads\n(Project Loom)\n\nNear-drop-in over thread-per-request.\nNo function coloring. Integrates\nwith existing JVM libraries."]
+    E -- Mixed I/O + CPU --> G["Kotlin Coroutines\n\nGo-style CSP on the JVM.\nBe careful of blocking\non coroutine dispatchers."]
+
+    D -- Python ecosystem --> H{CPU-bound\nor I/O-bound?}
+    H -- CPU-bound --> I["Python multiprocessing\nor switch languages\n\nThe GIL prevents CPU\nparallelism in threads.\nasyncio for I/O only."]
+    H -- I/O-bound --> J["Python asyncio\n\nEvent loop, no parallelism.\nFunction coloring required.\nFamiliar ecosystem."]
+
+    D -- No constraint --> K{Workload type?}
+
+    K -- Pure I/O\nhigh connection count --> L["Node.js\n\nZero stack per connection.\nHighest I/O concurrency\nper CPU core. Accept\nfunction coloring + no\nCPU parallelism."]
+
+    K -- Mixed I/O\nand CPU --> M{Runtime overhead\nacceptable?}
+
+    M -- Yes --> N["Go\n\nM:N scheduler, no function\ncoloring, work stealing.\nBest default for\nmixed workloads."]
+
+    M -- No\nzero overhead needed --> O["Rust\n\nCompile-time race prevention,\nno GC pauses. async/await\nfor I/O. Accept the\nlearning curve."]
+
+    K -- CPU-bound\nno I/O --> P{Language preference?}
+    P -- Systems / performance --> O
+    P -- Simplicity --> N
+
+    style C fill:#4a7058,color:#fff,stroke:#2d5040
+    style F fill:#4a5568,color:#fff,stroke:#2d3748
+    style G fill:#4a5568,color:#fff,stroke:#2d3748
+    style I fill:#744a4a,color:#fff,stroke:#5c2d2d
+    style J fill:#4a5568,color:#fff,stroke:#2d3748
+    style L fill:#4a5568,color:#fff,stroke:#2d3748
+    style N fill:#2d6a8a,color:#fff,stroke:#1a4a63
+    style O fill:#6a4a2d,color:#fff,stroke:#4a2d10
+{{< /mermaid >}}
+
 **Pure I/O concurrency, maximum connections per CPU:** Node.js wins per-core. Zero stack per connection, near-zero callback overhead. Accept the function coloring constraint and the inability to use multiple cores without clustering.
 
 **Mixed I/O and CPU, single process:** Go. Distributes CPU work across all cores automatically. No function coloring. Goroutines park on I/O without wasting threads.
@@ -665,8 +706,6 @@ Given a problem profile, which model do you reach for?
 **Maximum CPU performance, zero runtime overhead:** Rust. Compile-time race prevention, no GC pauses, async tasks for I/O. Accept the learning curve and function coloring.
 
 **You're on the JVM and want Go-style concurrency:** Kotlin coroutines. The CSP vocabulary is nearly identical; be careful about blocking operations on coroutine dispatchers.
-
-**You need to explain to your team why the scheduler works the way it does:** Read this article again and start with the OS analogy.
 
 ---
 
