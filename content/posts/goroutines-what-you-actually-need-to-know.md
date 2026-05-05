@@ -516,6 +516,40 @@ The Go concurrency model is not an event loop with a nicer syntax. It's a fully 
 
 ---
 
+## Comparison: OS Threads
+
+OS threads are what most systems languages (C, C++, Rust `std::thread`, Java pre-Loom) give you directly. One thread per concurrent task. The OS schedules them onto CPU cores. They share an address space within a process.
+
+The problem is resource cost. Each OS thread carries a 1-8MB stack allocated at creation, regardless of whether the thread does anything. Creating one requires a kernel call (10-50 microseconds). The OS scheduler has no knowledge of your application — it sees all threads as equally worthy of CPU time, switching between them at fixed intervals whether they're doing useful work or sleeping. At 10,000 concurrent threads, the scheduler overhead and memory footprint become the bottleneck rather than the work itself.
+
+Goroutines address exactly this. The 8KB starting stack instead of 1-8MB means you can have 1,000x more concurrent units for the same memory. The user-space scheduler means context switches cost 100-300ns rather than 1-10µs and don't require kernel involvement. The P-based design means goroutines waiting on I/O consume no CPU and no OS thread.
+
+The deeper difference is in blocking behavior. When an OS thread blocks on a socket read, it is descheduled by the OS and another thread runs. That's fine if you have 100 threads. With 100,000 goroutines, the same mechanism at the OS level would require 100,000 OS threads — the very problem being solved. Goroutines park at the Go runtime level, releasing the P for another goroutine on the same OS thread. The OS never sees the blocking; it sees only the small pool of M's doing continuous work.
+
+The programming model is otherwise identical: you write sequential, blocking code in both cases. The difference is entirely in what runs underneath that code.
+
+---
+
+## Comparison: The Actor Model
+
+The actor model and CSP (the model Go's channels implement) solve the same problem from different angles. Both replace shared memory with message passing. The distinction is worth making explicit because they feel similar from the outside but differ in a way that shapes how you structure programs.
+
+In the actor model, the identity of the receiver matters. An actor has an address. You send a message *to actor A*. Actor A has a mailbox — an unbounded, asynchronous queue. The sender never blocks; it fires the message and moves on regardless of whether A is ready.
+
+In CSP, the channel matters, not who is reading from it. A goroutine sends *on a channel*. Any goroutine holding the other end can receive. The unbuffered channel is a synchronous rendezvous: both parties must be ready simultaneously. The sender blocks until a receiver is present.
+
+The practical consequences:
+
+**Backpressure.** CSP channels naturally propagate backpressure. If the consumer is slow, the producer blocks at the channel. This forces the system to slow down at the source rather than accumulate unbounded queues. Actor mailboxes are asynchronous by default — a slow consumer builds up an ever-growing mailbox, which can exhaust memory without any signal to the producer.
+
+**Identity.** Actors are addressable by name or PID. You can store an actor reference and send to it later, from anywhere. Go goroutines are anonymous — you cannot address one directly. Communication happens through channels, which are values, not addresses. This is a philosophical choice: channels decouple the sender from knowing who receives.
+
+**Fault isolation.** Erlang/Akka actors are isolated processes; a crash in one does not affect others. Goroutines share memory within a process. A panic in one goroutine, if unrecovered, takes down the whole program.
+
+Go is not a pure actor system and not a pure CSP system. It takes CSP's synchronous channels and `select`, allows shared memory alongside them, and leaves fault isolation to the programmer. The result is pragmatic and fast, at the cost of the formal guarantees that pure actor systems and pure CSP provide.
+
+---
+
 ## Comparison: Java Virtual Threads (Project Loom)
 
 Java 21 shipped virtual threads — lightweight threads that are scheduled by the JVM rather than the OS, in direct response to the same problem goroutines solved in 2009. If you're moving between Java and Go, the similarities are real but the design choices diverge in ways that matter.
@@ -549,6 +583,34 @@ Erlang was doing this before Go existed. The BEAM virtual machine has run millio
 **The cost of isolation.** Copying every message has overhead. For large data structures passed frequently between processes, this is significant. Go's channel model passes references (or small values) without copying, which is faster for high-throughput communication between goroutines on the same machine. Erlang's copy semantics are the right trade-off for distributed systems (where serialization is required anyway) and fault-isolated services, but they impose a cost in pure throughput scenarios.
 
 The practical summary: Erlang processes are a more pure realization of CSP/actor principles than goroutines. If fault tolerance and isolation are the primary concern — building a phone switch, a payment processor, a chat system with millions of simultaneous sessions — the BEAM's supervision trees and process isolation are genuinely superior tools. Go makes the pragmatic trade-off of allowing shared memory, which is faster and more familiar, at the cost of the correctness guarantees isolation provides.
+
+---
+
+## How They All Compare
+
+| | **Go** | **Java (Loom)** | **Kotlin** | **Python** | **Erlang** | **Rust** | **TypeScript / Node** |
+|---|---|---|---|---|---|---|---|
+| **Concurrency unit** | Goroutine | Virtual thread | Coroutine | Thread / coroutine | Process | Thread / async task | Async task |
+| **Scheduling** | User-space (G/M/P, work stealing) | JVM (ForkJoinPool) | JVM (Dispatchers) | OS (GIL-limited) | BEAM (reduction count) | OS / executor (Tokio) | Event loop (libuv) |
+| **Parallelism** | Yes (GOMAXPROCS) | Yes (carrier pool) | Yes (Dispatchers.Default) | No (GIL) | Yes (BEAM schedulers) | Yes | No (single thread) |
+| **Blocking I/O** | Park goroutine, release P | Unmount virtual thread | Suspend coroutine | Block thread (GIL released) | Park process | Await future | Callback / await |
+| **Shared memory** | Yes (with mutexes) | Yes (with synchronized) | Yes (with locks) | Yes (GIL limits races) | No (copy on send) | Yes (ownership enforced at compile time) | No (single-threaded) |
+| **Function coloring** | No | No | No | Yes (`async def`) | No | Yes (`async fn`) | Yes (`async`) |
+| **Unit cost** | ~8KB stack | ~few KB (continuation) | ~few hundred bytes | ~1MB stack | ~2KB heap | ~1MB stack / ~few KB async | N/A (event loop) |
+| **Max practical units** | Millions | Millions | Millions | Thousands | Millions | Thousands (threads) / millions (async) | N/A |
+| **Fault isolation** | None (shared process) | None | None | None | Per-process | None | None |
+| **Supervision / lifecycle** | Manual (context.Context) | Manual (StructuredTaskScope) | Structured (coroutineScope) | Manual | Built-in (OTP supervisors) | Manual | Manual |
+| **Race prevention** | Race detector (runtime) | None (compile-time for virtual threads: same as threads) | None | Partial (GIL) | Structural (no sharing) | Compile-time (ownership) | Structural (no sharing) |
+
+A few things this table makes clear:
+
+**Go and Kotlin are the closest pair.** Both use CSP-style channels as the primary coordination primitive, both have user-space schedulers multiplexing onto thread pools, and neither has function coloring. The main difference is that Kotlin's coroutines are cooperative and run on JVM thread pools, while Go's goroutines are preemptive (since 1.14) and run on Go's own scheduler.
+
+**Rust is the outlier on safety.** Every other language in this table relies on runtime checks, conventions, or structural isolation to prevent data races. Rust prevents them at compile time through the ownership system. The cost is a steeper learning curve and the `async fn` function coloring problem. The benefit is race freedom without a runtime.
+
+**Erlang stands alone on fault isolation.** No other language in this table provides process-level isolation, supervision trees, or automatic restart. If your primary concern is fault tolerance in a distributed system, no amount of Go's efficiency closes that gap.
+
+**Python's GIL makes it unique in a bad way.** It's the only language here where threading exists but true CPU parallelism does not. Python threads release the GIL for I/O (making them useful for I/O-bound concurrency), but CPU-bound code must use `multiprocessing` to achieve parallelism. `asyncio` sidesteps this by never using threads, but at the cost of function coloring.
 
 ---
 
