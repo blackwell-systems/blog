@@ -77,7 +77,7 @@ showMetadata: false
 
 ## Upstream Contributions
 
-Fix PRs and bug reports submitted to open source projects. 57 contributions across 23 organizations, 13 merged. Bugs discovered via [mcp-assert](https://github.com/blackwell-systems/mcp-assert) scanning are marked with *.
+Fix PRs and bug reports submitted to open source projects. 57 contributions across 23 organizations, 14 merged. Bugs discovered via [mcp-assert](https://github.com/blackwell-systems/mcp-assert) scanning are marked with *.
 
 ### Merged
 
@@ -87,6 +87,7 @@ Fix PRs and bug reports submitted to open source projects. 57 contributions acro
 | **Google** | [go-containerregistry#2281](https://github.com/google/go-containerregistry/pull/2281) | `.local` FQDN incorrectly treated as non-HTTPS (RFC 6761) | 3.8K |
 | **Google** | [go-containerregistry#2283](https://github.com/google/go-containerregistry/pull/2283) | Extract round-trip test for filesystem object preservation | 3.8K |
 | **Grafana** | [mcp-grafana#793](https://github.com/grafana/mcp-grafana/pull/793) | `get_assertions` timestamp validation fix | 2.9K |
+| **Grafana** | [mcp-grafana#829](https://github.com/grafana/mcp-grafana/pull/829) | Dynamic server instructions from enabled tool categories (feature) | 2.9K |
 | **Grafana** | [mcp-grafana#834](https://github.com/grafana/mcp-grafana/pull/834) | Sift unchecked type assertion panic | 2.9K |
 | **Ant Group** | [mcp-server-chart#292](https://github.com/antvis/mcp-server-chart/pull/292) | 9 tools crash with unhandled exceptions on default input | 4K |
 | **LangChain** | [langchain#37037](https://github.com/langchain-ai/langchain/pull/37037) | Remove dead C#/Elixir separators in `RecursiveCharacterTextSplitter` | 136K |
