@@ -138,51 +138,50 @@ The hierarchy:
 
 {{< mermaid >}}
 graph TD
-    subgraph G["G — Goroutines (thousands to millions)"]
-        g1(G1)
-        g2(G2)
-        g3(G3)
-        g4(G4)
-        g5(G5)
-        g6(G6)
-        gn(...)
-    end
+    G1["G1  goroutine"] & G2["G2  goroutine"] & G3["G3  goroutine"] & G4["G4  goroutine"] & G5["G5  goroutine"] & G6["G6  goroutine"]
 
-    subgraph P["P — Logical Processors (GOMAXPROCS, e.g. 4)"]
-        p0(P0\nrun queue)
-        p1(P1\nrun queue)
-        p2(P2\nrun queue)
-        p3(P3\nrun queue)
-    end
+    P0["P0  logical processor\nrun queue"] & P1["P1  logical processor\nrun queue"] & P2["P2  logical processor\nrun queue"] & P3["P3  logical processor\nrun queue"]
 
-    subgraph M["M — OS Threads"]
-        m0(M0)
-        m1(M1)
-        m2(M2)
-        m3(M3)
-    end
+    M0["M0  OS thread"] & M1["M1  OS thread"] & M2["M2  OS thread"] & M3["M3  OS thread"]
 
-    subgraph CPU["CPU Cores (physical hardware)"]
-        c0(Core 0)
-        c1(Core 1)
-        c2(Core 2)
-        c3(Core 3)
-    end
+    C0["Core 0"] & C1["Core 1"] & C2["Core 2"] & C3["Core 3"]
 
-    g1 & g2 --> p0
-    g3 & g4 --> p1
-    g5 --> p2
-    g6 & gn --> p3
+    G1 & G2 --> P0
+    G3 & G4 --> P1
+    G5 --> P2
+    G6 --> P3
 
-    p0 --> m0
-    p1 --> m1
-    p2 --> m2
-    p3 --> m3
+    P0 --> M0
+    P1 --> M1
+    P2 --> M2
+    P3 --> M3
 
-    m0 --> c0
-    m1 --> c1
-    m2 --> c2
-    m3 --> c3
+    M0 --> C0
+    M1 --> C1
+    M2 --> C2
+    M3 --> C3
+
+    style G1 fill:#4a5568,stroke:#718096,color:#fff
+    style G2 fill:#4a5568,stroke:#718096,color:#fff
+    style G3 fill:#4a5568,stroke:#718096,color:#fff
+    style G4 fill:#4a5568,stroke:#718096,color:#fff
+    style G5 fill:#4a5568,stroke:#718096,color:#fff
+    style G6 fill:#4a5568,stroke:#718096,color:#fff
+
+    style P0 fill:#2d6a8a,stroke:#4a9aba,color:#fff
+    style P1 fill:#2d6a8a,stroke:#4a9aba,color:#fff
+    style P2 fill:#2d6a8a,stroke:#4a9aba,color:#fff
+    style P3 fill:#2d6a8a,stroke:#4a9aba,color:#fff
+
+    style M0 fill:#4a7058,stroke:#6a9a78,color:#fff
+    style M1 fill:#4a7058,stroke:#6a9a78,color:#fff
+    style M2 fill:#4a7058,stroke:#6a9a78,color:#fff
+    style M3 fill:#4a7058,stroke:#6a9a78,color:#fff
+
+    style C0 fill:#744a4a,stroke:#9a6a6a,color:#fff
+    style C1 fill:#744a4a,stroke:#9a6a6a,color:#fff
+    style C2 fill:#744a4a,stroke:#9a6a6a,color:#fff
+    style C3 fill:#744a4a,stroke:#9a6a6a,color:#fff
 {{< /mermaid >}}
 
 {{< callout type="info" >}}
