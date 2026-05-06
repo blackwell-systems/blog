@@ -77,7 +77,7 @@ showMetadata: false
 
 ## Upstream Contributions
 
-Fix PRs and bug reports submitted to open source projects. 58 contributions across 23 organizations, 14 merged. Bugs discovered via [mcp-assert](https://github.com/blackwell-systems/mcp-assert) scanning are marked with *.
+Fix PRs and bug reports submitted to open source projects. 60 contributions across 23 organizations, 14 merged. Bugs discovered via [mcp-assert](https://github.com/blackwell-systems/mcp-assert) scanning are marked with *.
 
 ### Merged
 
@@ -101,6 +101,7 @@ Fix PRs and bug reports submitted to open source projects. 58 contributions acro
 
 | Organization | PR | Description | Stars |
 |-------------|-----|-------------|------:|
+| **Anthropic** (MCP Conformance) | [conformance#263](https://github.com/modelcontextprotocol/conformance/pull/263) | tier-check reports 0% despite all tests passing (server/client scenario lists swapped) | MCP |
 | **Anthropic** (MCP Go SDK) | [go-sdk#913](https://github.com/modelcontextprotocol/go-sdk/pull/913) | Race condition in `ClientSession.Close()` | 4.5K |
 | **Anthropic** (MCP TS SDK) | [typescript-sdk#2013](https://github.com/modelcontextprotocol/typescript-sdk/pull/2013) | Null arguments crash every TS SDK server | 12K |
 | **Anthropic** (MCP Python SDK) | [python-sdk#2536](https://github.com/modelcontextprotocol/python-sdk/pull/2536) | Lost-wakeup race: concurrent pollers hang forever | 23K |
