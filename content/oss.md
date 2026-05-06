@@ -101,6 +101,7 @@ Fix PRs and bug reports submitted to open source projects. 60 contributions acro
 
 | Organization | PR | Description | Stars |
 |-------------|-----|-------------|------:|
+| **Google** | [go-containerregistry#2286](https://github.com/google/go-containerregistry/pull/2286) | OCI artifact config corruption in mutate package (silent data loss in Cloud Build/Artifact Registry plumbing) | 3.8K |
 | **Anthropic** (MCP Conformance) | [conformance#263](https://github.com/modelcontextprotocol/conformance/pull/263) | tier-check reports 0% despite all tests passing (server/client scenario lists swapped) | MCP |
 | **Anthropic** (MCP Go SDK) | [go-sdk#913](https://github.com/modelcontextprotocol/go-sdk/pull/913) | Race condition in `ClientSession.Close()` | 4.5K |
 | **Anthropic** (MCP TS SDK) | [typescript-sdk#2013](https://github.com/modelcontextprotocol/typescript-sdk/pull/2013) | Null arguments crash every TS SDK server | 12K |
