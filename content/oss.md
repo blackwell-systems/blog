@@ -77,7 +77,7 @@ showMetadata: false
 
 ## Upstream Contributions
 
-Fix PRs and bug reports submitted to open source projects. 60 contributions across 23 organizations, 14 merged. Bugs discovered via [mcp-assert](https://github.com/blackwell-systems/mcp-assert) scanning are marked with *.
+Fix PRs and bug reports submitted to open source projects. 60 contributions across 23 organizations, 15 merged. Bugs discovered via [mcp-assert](https://github.com/blackwell-systems/mcp-assert) scanning are marked with *.
 
 ### Merged
 
@@ -95,6 +95,7 @@ Fix PRs and bug reports submitted to open source projects. 60 contributions acro
 | **mark3labs** (mcp-go SDK) | [mcp-go#838](https://github.com/mark3labs/mcp-go/pull/838) | Return isError for input validation instead of -32603 | 8.7K |
 | **mark3labs** (mcp-go SDK) | [mcp-go#839](https://github.com/mark3labs/mcp-go/pull/839) | listenForever retries indefinitely on session terminated (404) | 8.7K |
 | **mark3labs** (mcp-go SDK) | [mcp-go#849](https://github.com/mark3labs/mcp-go/pull/849) | Response body leak on 404 in sendHTTP (TCP connection leaked per retry) | 8.7K |
+| **mark3labs** (mcp-go SDK) | [mcp-go#852](https://github.com/mark3labs/mcp-go/pull/852) | Add CloseSessions + fix double-close panic race in SSE shutdown | 8.7K |
 | **Microsoft** | [winget-pkgs](https://github.com/microsoft/winget-pkgs) | Winget manifests for mcp-assert and agent-lsp | 10K |
 
 ### Highlights (open, under review)
@@ -142,7 +143,6 @@ Fix PRs and bug reports submitted to open source projects. 60 contributions acro
 | **Charmbracelet** | [huh#777](https://github.com/charmbracelet/huh/pull/777) | V2 regression: blurred styles not applied | 5.5K |
 | **pypa** | [pip#13960](https://github.com/pypa/pip/pull/13960) | locale deprecation fix for Python 3.15 | 10K |
 | **mark3labs** | [mcp-go#828](https://github.com/mark3labs/mcp-go/pull/828) | stdio transport corruption on slow tools | 8.7K |
-| **mark3labs** | [mcp-go#852](https://github.com/mark3labs/mcp-go/pull/852) | Add CloseSessions + fix double-close panic race in SSE shutdown | 8.7K |
 | **Tavily** | [tavily-mcp#162](https://github.com/tavily-ai/tavily-mcp/pull/162) | Missing API key throws McpError instead of isError | Open |
 | **dvcrn** | [mcp-server-linear#5](https://github.com/dvcrn/mcp-server-linear/pull/5) | 24 tools throw McpError when unauthenticated | Open |
 | **sammcj** | [mcp-devtools#258](https://github.com/sammcj/mcp-devtools/pull/258) | Internal error instead of isError for validation | Open |
