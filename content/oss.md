@@ -77,7 +77,7 @@ showMetadata: false
 
 ## Upstream Contributions
 
-Fix PRs and bug reports submitted to open source projects. 60 contributions across 23 organizations, 15 merged. Bugs discovered via [mcp-assert](https://github.com/blackwell-systems/mcp-assert) scanning are marked with *.
+Fix PRs and bug reports submitted to open source projects. 56 contributions across 22 organizations, 15 merged. Bugs discovered via [mcp-assert](https://github.com/blackwell-systems/mcp-assert) scanning are marked with *.
 
 ### Merged
 
@@ -108,7 +108,6 @@ Fix PRs and bug reports submitted to open source projects. 60 contributions acro
 | **Anthropic** (MCP TS SDK) | [typescript-sdk#2013](https://github.com/modelcontextprotocol/typescript-sdk/pull/2013) | Null arguments crash every TS SDK server | 12K |
 | **Anthropic** (MCP Python SDK) | [python-sdk#2536](https://github.com/modelcontextprotocol/python-sdk/pull/2536) | Lost-wakeup race: concurrent pollers hang forever | 23K |
 | **Anthropic** (MCP PHP SDK) | [php-sdk#297](https://github.com/modelcontextprotocol/php-sdk/pull/297) | URI regex rejects valid RFC 3986 URIs | PHP |
-| **Anthropic** (MCP Kotlin SDK) | [kotlin-sdk#736](https://github.com/modelcontextprotocol/kotlin-sdk/pull/736) | Sequential processing causes deadlocks (P1) | Kotlin |
 | **etcd** (CNCF) | [etcd#21684](https://github.com/etcd-io/etcd/pull/21684) | `ErrNotPrimary` returns wrong gRPC code | 51K |
 | **Traefik** | [traefik#13089](https://github.com/traefik/traefik/pull/13089) | rewrite-target regex breaks base path match | 53K |
 | **Charmbracelet** | [bubbletea#1687](https://github.com/charmbracelet/bubbletea/pull/1687) | `ExecProcess` leaks `View()` output to stdout | 42K |
@@ -137,7 +136,6 @@ Fix PRs and bug reports submitted to open source projects. 60 contributions acro
 | **Grafana** (core) | [grafana#123664-123691](https://github.com/grafana/grafana/pull/123664) | 4 PRs: console.log removal, typeof fix, span.End loop, error propagation | 74K |
 | **Vercel** | [ai#14758](https://github.com/vercel/ai/pull/14758) | Send `content: null` for tool-only messages (4 providers) | 24K |
 | **sashabaranov** | [go-openai#1104-1106](https://github.com/sashabaranov/go-openai/pull/1104) | 3 PRs: stream field, ContentFilter pointer, MIME detection | 10.6K |
-| **Anthropic** (Kotlin SDK) | [kotlin-sdk#734-735](https://github.com/modelcontextprotocol/kotlin-sdk/pull/734) | Type-unsafe cast + stdio transport hang | Kotlin |
 | **Anthropic** (servers) | [servers#4044, #4051](https://github.com/modelcontextprotocol/servers/pull/4044) | blob content type violation + puppeteer crash | 85K |
 | **MoonshotAI** | [kimi-cli#2144](https://github.com/MoonshotAI/kimi-cli/pull/2144) | Multiline input text misaligned | 8.3K |
 | **Charmbracelet** | [huh#777](https://github.com/charmbracelet/huh/pull/777) | V2 regression: blurred styles not applied | 5.5K |
