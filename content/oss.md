@@ -77,7 +77,7 @@ showMetadata: false
 
 ## Upstream Contributions
 
-Fix PRs and bug reports submitted to open source projects. 56 contributions across 22 organizations, 15 merged. Bugs discovered via [mcp-assert](https://github.com/blackwell-systems/mcp-assert) scanning are marked with *.
+Fix PRs and bug reports submitted to open source projects. 57 contributions across 22 organizations, 16 merged. Bugs discovered via [mcp-assert](https://github.com/blackwell-systems/mcp-assert) scanning are marked with *.
 
 ### Merged
 
@@ -96,6 +96,7 @@ Fix PRs and bug reports submitted to open source projects. 56 contributions acro
 | **mark3labs** (mcp-go SDK) | [mcp-go#839](https://github.com/mark3labs/mcp-go/pull/839) | listenForever retries indefinitely on session terminated (404) | 8.7K |
 | **mark3labs** (mcp-go SDK) | [mcp-go#849](https://github.com/mark3labs/mcp-go/pull/849) | Response body leak on 404 in sendHTTP (TCP connection leaked per retry) | 8.7K |
 | **mark3labs** (mcp-go SDK) | [mcp-go#852](https://github.com/mark3labs/mcp-go/pull/852) | Add CloseSessions + fix double-close panic race in SSE shutdown | 8.7K |
+| **Anthropic** (MCP Python SDK) | [python-sdk#2542](https://github.com/modelcontextprotocol/python-sdk/pull/2542) | Broken exception chains in get_prompt and read_resource | 23K |
 | **Microsoft** | [winget-pkgs](https://github.com/microsoft/winget-pkgs) | Winget manifests for mcp-assert and agent-lsp | 10K |
 
 ### Highlights (open, under review)
@@ -133,7 +134,7 @@ Fix PRs and bug reports submitted to open source projects. 56 contributions acro
 
 | Organization | PR | Description | Stars |
 |-------------|-----|-------------|------:|
-| **Grafana** (core) | [grafana#123664-123691](https://github.com/grafana/grafana/pull/123664) | 4 PRs: console.log removal, typeof fix, span.End loop, error propagation | 74K |
+| **Grafana** (core) | [grafana#124437-124440](https://github.com/grafana/grafana/pull/124437) | 4 PRs: console.log removal, typeof fix, span.End loop, error propagation | 74K |
 | **Vercel** | [ai#14758](https://github.com/vercel/ai/pull/14758) | Send `content: null` for tool-only messages (4 providers) | 24K |
 | **sashabaranov** | [go-openai#1104-1106](https://github.com/sashabaranov/go-openai/pull/1104) | 3 PRs: stream field, ContentFilter pointer, MIME detection | 10.6K |
 | **Anthropic** (servers) | [servers#4044, #4051](https://github.com/modelcontextprotocol/servers/pull/4044) | blob content type violation + puppeteer crash | 85K |
