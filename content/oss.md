@@ -77,7 +77,7 @@ showMetadata: false
 
 ## Upstream Contributions
 
-Fix PRs and bug reports submitted to open source projects. 58 contributions across 22 organizations, 16 merged. Bugs discovered via [mcp-assert](https://github.com/blackwell-systems/mcp-assert) scanning are marked with *.
+Fix PRs and bug reports submitted to open source projects. 58 contributions across 22 organizations, 17 merged. Bugs discovered via [mcp-assert](https://github.com/blackwell-systems/mcp-assert) scanning are marked with *.
 
 ### Merged
 
@@ -97,6 +97,7 @@ Fix PRs and bug reports submitted to open source projects. 58 contributions acro
 | **mark3labs** (mcp-go SDK) | [mcp-go#849](https://github.com/mark3labs/mcp-go/pull/849) | Response body leak on 404 in sendHTTP (TCP connection leaked per retry) | 8.7K |
 | **mark3labs** (mcp-go SDK) | [mcp-go#852](https://github.com/mark3labs/mcp-go/pull/852) | Add CloseSessions + fix double-close panic race in SSE shutdown | 8.7K |
 | **Anthropic** (MCP Python SDK) | [python-sdk#2542](https://github.com/modelcontextprotocol/python-sdk/pull/2542) | Broken exception chains in get_prompt and read_resource | 23K |
+| **Anthropic** (MCP PHP SDK) | [php-sdk#297](https://github.com/modelcontextprotocol/php-sdk/pull/297) | URI regex rejects valid RFC 3986 URIs | PHP |
 | **Microsoft** | [winget-pkgs](https://github.com/microsoft/winget-pkgs) | Winget manifests for mcp-assert and agent-lsp | 10K |
 
 ### Highlights (open, under review)
@@ -109,7 +110,6 @@ Fix PRs and bug reports submitted to open source projects. 58 contributions acro
 | **Anthropic** (MCP TS SDK) | [typescript-sdk#2013](https://github.com/modelcontextprotocol/typescript-sdk/pull/2013) | Null arguments crash every TS SDK server | 12K |
 | **Anthropic** (MCP Python SDK) | [python-sdk#2565](https://github.com/modelcontextprotocol/python-sdk/pull/2565) | 12 remaining `raise` sites missing exception chain (`from`) | 23K |
 | **Anthropic** (MCP Python SDK) | [python-sdk#2536](https://github.com/modelcontextprotocol/python-sdk/pull/2536) | Lost-wakeup race: concurrent pollers hang forever | 23K |
-| **Anthropic** (MCP PHP SDK) | [php-sdk#297](https://github.com/modelcontextprotocol/php-sdk/pull/297) | URI regex rejects valid RFC 3986 URIs | PHP |
 | **etcd** (CNCF) | [etcd#21684](https://github.com/etcd-io/etcd/pull/21684) | `ErrNotPrimary` returns wrong gRPC code | 51K |
 | **Traefik** | [traefik#13089](https://github.com/traefik/traefik/pull/13089) | rewrite-target regex breaks base path match | 53K |
 | **Charmbracelet** | [bubbletea#1687](https://github.com/charmbracelet/bubbletea/pull/1687) | `ExecProcess` leaks `View()` output to stdout | 42K |
