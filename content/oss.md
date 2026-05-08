@@ -77,7 +77,7 @@ showMetadata: false
 
 ## Upstream Contributions
 
-Fix PRs and bug reports submitted to open source projects. 58 contributions across 22 organizations, 17 merged. Bugs discovered via [mcp-assert](https://github.com/blackwell-systems/mcp-assert) scanning are marked with *.
+Fix PRs and bug reports submitted to open source projects. 61 contributions across 22 organizations, 17 merged. Bugs discovered via [mcp-assert](https://github.com/blackwell-systems/mcp-assert) scanning are marked with *.
 
 ### Merged
 
@@ -130,6 +130,7 @@ Fix PRs and bug reports submitted to open source projects. 58 contributions acro
 | **Bankless** | [onchain-mcp#21](https://github.com/Bankless/onchain-mcp/issues/21) | All 10 tools return -32603 for missing API token | Web3 |
 | **Peekaboo** | [Peekaboo#108](https://github.com/steipete/Peekaboo/issues/108) | -32603 for missing Screen Recording permission | **Fixed by Peter Steinberger**, credited mcp-assert |
 | **Grafana** | [mcp-grafana#830](https://github.com/grafana/mcp-grafana/issues/830) | 72 fuzz crashes on type mismatches | 2.9K |
+| **Anthropic** (MCP Python SDK) | [python-sdk#2564](https://github.com/modelcontextprotocol/python-sdk/issues/2564) | 12 remaining exception chain sites | 23K |
 
 ### Other open PRs
 
@@ -142,7 +143,8 @@ Fix PRs and bug reports submitted to open source projects. 58 contributions acro
 | **MoonshotAI** | [kimi-cli#2144](https://github.com/MoonshotAI/kimi-cli/pull/2144) | Multiline input text misaligned | 8.3K |
 | **Charmbracelet** | [huh#777](https://github.com/charmbracelet/huh/pull/777) | V2 regression: blurred styles not applied | 5.5K |
 | **pypa** | [pip#13960](https://github.com/pypa/pip/pull/13960) | locale deprecation fix for Python 3.15 | 10K |
-| **mark3labs** | [mcp-go#828](https://github.com/mark3labs/mcp-go/pull/828) | stdio transport corruption on slow tools | 8.7K |
+| **Anthropic** (MCP Python SDK) | [python-sdk#2511](https://github.com/modelcontextprotocol/python-sdk/pull/2511) | Custom content support for ToolError | 23K |
+| **Anthropic** (MCP TS SDK) | [typescript-sdk#2019](https://github.com/modelcontextprotocol/typescript-sdk/pull/2019) | Check AbortSignal in handleAutomaticTaskPolling | 12K |
 | **Tavily** | [tavily-mcp#162](https://github.com/tavily-ai/tavily-mcp/pull/162) | Missing API key throws McpError instead of isError | Open |
 | **dvcrn** | [mcp-server-linear#5](https://github.com/dvcrn/mcp-server-linear/pull/5) | 24 tools throw McpError when unauthenticated | Open |
 | **sammcj** | [mcp-devtools#258](https://github.com/sammcj/mcp-devtools/pull/258) | Internal error instead of isError for validation | Open |
