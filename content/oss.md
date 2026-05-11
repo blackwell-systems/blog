@@ -29,7 +29,7 @@ showMetadata: false
 
 ### AI-Native Developer Tooling and MCP Servers
 
-**[agent-lsp](https://github.com/blackwell-systems/agent-lsp)** ([agent-lsp.com](https://agent-lsp.com)) - Stateful MCP server runtime over real language servers. Maintains a persistent warm LSP session, reshapes LSP into agent-oriented workflows, and adds a transactional speculative execution layer for safe in-memory edits. 50 tools across navigation, analysis, refactoring, and formatting. CI-verified end-to-end against real language servers across 30 languages. Speculative execution lets agents simulate edits in-memory, evaluate the diagnostic delta (errors introduced vs resolved), then commit or discard atomically without touching disk. Ships 21 Agent Skills-compliant skills as the behavioral reliability layer over the raw tool surface. Listed on the [official MCP Registry](https://registry.modelcontextprotocol.io), [Glama](https://glama.ai/mcp/servers/blackwell-systems/agent-lsp) (A-tier), and [awesome-mcp-servers](https://github.com/punkpeye/awesome-mcp-servers).
+**[agent-lsp](https://github.com/blackwell-systems/agent-lsp)** ([agent-lsp.com](https://agent-lsp.com)) - Stateful MCP server runtime over real language servers. Maintains a persistent warm LSP session, reshapes LSP into agent-oriented workflows, and adds a transactional speculative execution layer for safe in-memory edits. 61 tools across navigation, analysis, refactoring, and formatting. CI-verified end-to-end against real language servers across 30 languages. Speculative execution lets agents simulate edits in-memory, evaluate the diagnostic delta (errors introduced vs resolved), then commit or discard atomically without touching disk. Ships 21 Agent Skills-compliant skills as the behavioral reliability layer over the raw tool surface. Listed on the [official MCP Registry](https://registry.modelcontextprotocol.io), [Glama](https://glama.ai/mcp/servers/blackwell-systems/agent-lsp) (A-tier), and [awesome-mcp-servers](https://github.com/punkpeye/awesome-mcp-servers).
 
 **[mcp-assert](https://github.com/blackwell-systems/mcp-assert)** ([mcp-assert.com](https://mcp-assert.com), [docs](https://blackwell-systems.github.io/mcp-assert)) - The testing standard for deterministic MCP tools. Single Go binary that connects over stdio, SSE, or HTTP, calls tools, and asserts results. 18 assertion types defined in YAML, run against any MCP server in any language. Zero-effort coverage: `generate` auto-scaffolds stub assertions for every tool a server exposes, `snapshot` captures actual outputs as golden files. Available on the [GitHub Actions Marketplace](https://github.com/blackwell-systems/mcp-assert-action), as a [pytest plugin](https://github.com/blackwell-systems/pytest-mcp-assert), [Vitest plugin](https://www.npmjs.com/package/vitest-mcp-assert), [Jest plugin](https://www.npmjs.com/package/jest-mcp-assert), [Bun plugin](https://www.npmjs.com/package/bun-mcp-assert), and [Go test plugin](https://github.com/blackwell-systems/mcp-assert/tree/main/go-plugin). 61 server suites scanned across 7 languages, 570 assertions, 20 upstream bugs found across 9 servers. Adopted as the CI testing standard by [antvis/mcp-server-chart](https://github.com/antvis/mcp-server-chart) (Ant Group, 4K stars) and [wyre-technology](https://github.com/wyre-technology) across 25+ MCP server repos as their company-wide testing layer. Full results on the [public scorecard](https://blackwell-systems.github.io/mcp-assert/scorecard/).
 
@@ -37,7 +37,7 @@ showMetadata: false
 
 **[claudewatch](https://github.com/blackwell-systems/claudewatch)** - Full-cycle AI development observability platform. Scores project AI readiness, surfaces friction patterns, generates CLAUDE.md patches from session data, snapshots metrics to SQLite for before/after effectiveness scoring. Ships as both CLI and MCP server. Zero network calls.
 
-**[scout-and-wave](https://github.com/blackwell-systems/scout-and-wave)** - Methodology for reducing conflict with parallel AI agents. A throwaway scout maps the dependency graph, interface contracts, and file ownership before any code is written. Development agents execute in waves, revising a living coordination artifact between each wave. Includes canonical prompts and a Claude Code `/saw` skill.
+**[polywave](https://github.com/blackwell-systems/polywave)** - Methodology for reducing conflict with parallel AI agents. A throwaway scout maps the dependency graph, interface contracts, and file ownership before any code is written. Development agents execute in waves, revising a living coordination artifact between each wave. Includes canonical prompts and a Claude Code `/saw` skill.
 
 **[ai-cold-start-audit](https://github.com/blackwell-systems/ai-cold-start-audit)** - Turn AI's lack of context into a feature. Agents cold-start your CLI in a container and report every friction point a new user would hit. Structured severity-tiered findings with reproduction steps.
 
@@ -77,7 +77,7 @@ showMetadata: false
 
 ## Upstream Contributions
 
-Fix PRs and bug reports submitted to open source projects. 62 contributions across 22 organizations, 17 merged. Bugs discovered via [mcp-assert](https://github.com/blackwell-systems/mcp-assert) scanning are marked with *.
+Fix PRs and bug reports submitted to open source projects. 65 contributions across 24 organizations, 18 merged. Bugs discovered via [mcp-assert](https://github.com/blackwell-systems/mcp-assert) scanning are marked with *.
 
 ### Merged
 
@@ -98,12 +98,14 @@ Fix PRs and bug reports submitted to open source projects. 62 contributions acro
 | **mark3labs** (mcp-go SDK) | [mcp-go#852](https://github.com/mark3labs/mcp-go/pull/852) | Go | Add CloseSessions + fix double-close panic race in SSE shutdown | 8.7K |
 | **Anthropic** (MCP Python SDK) | [python-sdk#2542](https://github.com/modelcontextprotocol/python-sdk/pull/2542) | Python | Broken exception chains in get_prompt and read_resource | 23K |
 | **Anthropic** (MCP PHP SDK) | [php-sdk#297](https://github.com/modelcontextprotocol/php-sdk/pull/297) | PHP | URI regex rejects valid RFC 3986 URIs | 1.5K |
+| **Stretchr** | [testify#1877](https://github.com/stretchr/testify/pull/1877) | Go | Suite panics when `SetupTest` skips with `HandleStats` (`runtime.Goexit` ordering) | 26K |
 | **Microsoft** | [winget-pkgs](https://github.com/microsoft/winget-pkgs) | YAML | Winget manifests for mcp-assert and agent-lsp | 10K |
 
 ### Highlights (open, under review)
 
 | Organization | PR | Lang | Description | Stars |
 |-------------|-----|------|-------------|------:|
+| **mark3labs** (mcp-go SDK) | [mcp-go#861](https://github.com/mark3labs/mcp-go/pull/861) | Go | Transport goroutines lack panic recovery (9 goroutines crash process on panic, found by inspector) | 8.7K |
 | **Google** | [go-containerregistry#2286](https://github.com/google/go-containerregistry/pull/2286) | Go | OCI artifact config corruption in mutate package (silent data loss in Cloud Build/Artifact Registry plumbing) | 3.8K |
 | **Anthropic** (MCP PHP SDK) | [php-sdk#301](https://github.com/modelcontextprotocol/php-sdk/pull/301) | PHP | Add missing `title` field to Resource and ResourceTemplate (spec compliance) | 1.5K |
 | **Anthropic** (MCP Conformance) | [conformance#263](https://github.com/modelcontextprotocol/conformance/pull/263) | TS | tier-check reports 0% despite all tests passing (server/client scenario lists swapped) | MCP |
@@ -115,7 +117,6 @@ Fix PRs and bug reports submitted to open source projects. 62 contributions acro
 | **Traefik** | [traefik#13089](https://github.com/traefik/traefik/pull/13089) | Go | rewrite-target regex breaks base path match | 53K |
 | **Charmbracelet** | [bubbletea#1687](https://github.com/charmbracelet/bubbletea/pull/1687) | Go | `ExecProcess` leaks `View()` output to stdout | 42K |
 | **GitHub** | [github-mcp-server#2408](https://github.com/github/github-mcp-server/pull/2408) | Go | Angle brackets stripped from code blocks | 30K |
-| **Stretchr** | [testify#1877](https://github.com/stretchr/testify/pull/1877) | Go | Panic when `SetupTest` skips with `HandleStats` | 26K |
 | **HashiCorp** | [terraform-provider-aws#47660](https://github.com/hashicorp/terraform-provider-aws/pull/47660) | Go | GovCloud crash in Directory Service Data | 10.9K |
 | **HashiCorp** | [terraform-provider-aws#47661](https://github.com/hashicorp/terraform-provider-aws/pull/47661) | Go | QuickSight `theme_arn` silently ignored | 10.9K |
 | **jackc** (pgx) | [pgx#2546](https://github.com/jackc/pgx/pull/2546) | Go | BeforeConnect gets bare context from healthcheck | 14K |
@@ -132,6 +133,8 @@ Fix PRs and bug reports submitted to open source projects. 62 contributions acro
 | **Peekaboo** | [Peekaboo#108](https://github.com/steipete/Peekaboo/issues/108) | -32603 for missing Screen Recording permission | **Fixed by Peter Steinberger**, credited mcp-assert |
 | **Grafana** | [mcp-grafana#830](https://github.com/grafana/mcp-grafana/issues/830) | 72 fuzz crashes on type mismatches | 2.9K |
 | **Anthropic** (MCP Python SDK) | [python-sdk#2564](https://github.com/modelcontextprotocol/python-sdk/issues/2564) | 12 remaining exception chain sites | 23K |
+| **Oraios** (Serena) | [serena#1467](https://github.com/oraios/serena/issues/1467) | 9 schema errors, 47 warnings across 29 tools; isError never set for exceptions* | 24K |
+| **AWS** (awslabs/mcp) | [awslabs/mcp#3486](https://github.com/awslabs/mcp/issues/3486) | 2,160 schema errors across 43 servers (870 tools); systemic: union types drop `type` field* | AWS |
 
 ### Other open PRs
 
