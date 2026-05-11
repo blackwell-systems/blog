@@ -10,6 +10,9 @@ description: "A pattern for running multiple AI agents in parallel without confl
 summary: "Naive parallel agents step on each other. The scout-and-wave pattern solves this by front-loading dependency mapping: one throwaway agent identifies seams and builds a living coordination artifact before any implementation begins. Development then proceeds in waves, each consuming and updating the artifact for the next."
 ---
 
+> **Note:** Scout-and-wave has been renamed to [polywave](https://github.com/blackwell-systems/polywave).
+
+
 The last time I ran a scout-and-wave session on [brewprune](https://github.com/blackwell-systems/brewprune), 11 agents fixed 18 UX issues across 35 files in a single wave. Net: +4,021 lines, all tests green, no post-merge integration failures.
 
 The time before that: 7 agents, 1,532 lines, 16 files, 3 waves — a new shim management subsystem. The feature was complete, building, and passing tests in under an hour.
@@ -324,4 +327,4 @@ Scout-and-wave ships as a `/saw` skill for [Claude Code](https://docs.anthropic.
 
 The skill routes to focused modules: `saw-merge.md` owns the merge procedure (completion report parsing, conflict prediction, interface deviation review, post-merge verification); `saw-worktree.md` owns the worktree lifecycle (pre-creation, verification, self-healing, cleanup); `saw-bootstrap.md` handles design-first architecture for new projects; `saw-quick.md` covers lightweight 2-3 agent work without a full IMPL doc. All files carry version headers at line 1 (`<!-- saw-skill v0.3.0 -->`) so installed copies can be checked with `head -1 ~/.claude/commands/saw.md`.
 
-The prompts are at [github.com/blackwell-systems/scout-and-wave](https://github.com/blackwell-systems/scout-and-wave).
+The prompts are at [github.com/blackwell-systems/polywave](https://github.com/blackwell-systems/polywave).

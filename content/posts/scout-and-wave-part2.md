@@ -10,6 +10,9 @@ description: "After shipping the scout-and-wave pattern, we used it to improve i
 summary: "Scout-and-wave v0.1.0 worked. Then we ran it on documentation agents, measured the overhead honestly, and learned that raw agent count is a bad proxy for when parallelism is worth it. This post covers the audit-fix-audit loop, the dogfooding experiment that confirmed SAW was 88% slower than sequential for that job, SAW Quick mode for small disjoint work, and the bootstrap problem for new projects."
 ---
 
+> **Note:** Scout-and-wave has been renamed to [polywave](https://github.com/blackwell-systems/polywave).
+
+
 Part 1 of this series covered the scout-and-wave pattern: one throwaway scout maps seams and defines interface contracts, then agents execute in waves against that coordination artifact. The pattern [worked well for brewprune's shim management feature](./scout-and-wave) — 7 agents, 3 waves, 1,532 lines, no post-merge integration failures.
 
 Then we started finding the edges.
@@ -192,7 +195,7 @@ The audit-fix-audit cycle turned out to be the most durable workflow pattern to 
 
 The dogfooding experiment was worth doing even though the result was "SAW was wrong for this job." It produced the overhead measurement that let us rewrite the "When to Use It" guidance with actual numbers instead of intuition. The scout predicted the overhead correctly. Running it anyway confirmed the prediction and gave us a concrete data point to reason from.
 
-SAW v0.3.0 — with the pre-implementation check, self-healing isolation, Quick mode, and bootstrap — is at [github.com/blackwell-systems/scout-and-wave](https://github.com/blackwell-systems/scout-and-wave).
+SAW v0.3.0 — with the pre-implementation check, self-healing isolation, Quick mode, and bootstrap — is at [github.com/blackwell-systems/polywave](https://github.com/blackwell-systems/polywave).
 
 The thing I keep coming back to: the pattern that emerged from all of this wasn't a better parallelization algorithm. It was a better understanding of when not to parallelize. The scout's suitability verdict is doing real work. Ignoring it costs exactly as much as the math says it will.
 

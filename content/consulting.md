@@ -47,8 +47,8 @@ I build production systems — AI agents, cloud infrastructure, backend services
 
 ### What I've Built
 
-- **[scout-and-wave](https://github.com/blackwell-systems/scout-and-wave):** Formally specified multi-agent coordination protocol for Claude Code (6 invariants, 37+ execution rules) validated across 16+ production repositories with 4-5x measured speedup. Published specification with state machine, message formats, and conformance criteria
-- **[scout-and-wave-web](https://github.com/blackwell-systems/scout-and-wave-web):** Full-stack orchestration platform for parallel Claude agents — Go backend (40+ REST endpoints, real-time SSE streaming), React frontend (live wave dashboard, interactive dependency graphs, streaming agent output), single binary deployment
+- **[polywave](https://github.com/blackwell-systems/polywave):** Formally specified multi-agent coordination protocol for Claude Code (6 invariants, 37+ execution rules) validated across 16+ production repositories with 4-5x measured speedup. Published specification with state machine, message formats, and conformance criteria
+- **[polywave-web](https://github.com/blackwell-systems/polywave-web):** Full-stack orchestration platform for parallel Claude agents — Go backend (40+ REST endpoints, real-time SSE streaming), React frontend (live wave dashboard, interactive dependency graphs, streaming agent output), single binary deployment
 - **[claudewatch](https://github.com/blackwell-systems/claudewatch):** Self-improving observability platform for Claude Code — 22-tool MCP server for live session metrics, PostToolUse hooks alerting on error loops and cost spikes, CLAUDE.md effectiveness scoring with before/after comparison, multi-agent workflow analytics
 - **[ai-cold-start-audit](https://github.com/blackwell-systems/ai-cold-start-audit):** UX audit methodology using Claude agents as surrogate new users in containerized sandboxes, producing severity-tiered findings reports
 - **[commitmux](https://github.com/blackwell-systems/commitmux):** Cross-repository semantic search engine with MCP server — in-process vector search (sqlite-vec), FTS5 full-text indexing, 6 read-only MCP tools over stdio JSON-RPC
@@ -219,8 +219,8 @@ Available for:
 
 20+ production projects. All consulting work is informed by real production experience.
 
-- [scout-and-wave-web](https://github.com/blackwell-systems/scout-and-wave-web) - Full-stack AI agent orchestration platform (Go/React)
-- [scout-and-wave](https://github.com/blackwell-systems/scout-and-wave) - Multi-agent coordination protocol (formal specification)
+- [polywave-web](https://github.com/blackwell-systems/polywave-web) - Full-stack AI agent orchestration platform (Go/React)
+- [polywave](https://github.com/blackwell-systems/polywave) - Multi-agent coordination protocol (formal specification)
 - [claudewatch](https://github.com/blackwell-systems/claudewatch) - Claude Code observability platform (22-tool MCP server)
 - [commitmux](https://github.com/blackwell-systems/commitmux) - Cross-repository semantic search (Rust, MCP server)
 - [gcp-secret-manager-emulator](https://github.com/blackwell-systems/gcp-secret-manager-emulator) - GCP emulator (13,000+ downloads)

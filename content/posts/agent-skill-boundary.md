@@ -209,7 +209,7 @@ The distinction between skills and knowledge: a skill defines what to do. Knowle
 
 ## A Worked Example
 
-[Scout-and-Wave](https://github.com/blackwell-systems/scout-and-wave) (SAW) is a parallel agent coordination system. Its orchestrator prompt started at 300 lines, grew to 703 lines, and was refactored down to 141 lines by extracting procedure into skills and knowledge.
+[Scout-and-Wave](https://github.com/blackwell-systems/polywave) (SAW) is a parallel agent coordination system. Its orchestrator prompt started at 300 lines, grew to 703 lines, and was refactored down to 141 lines by extracting procedure into skills and knowledge.
 
 Here is what each layer handles:
 

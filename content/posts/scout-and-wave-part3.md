@@ -10,6 +10,9 @@ description: "Five real failures drove five specific changes to the scout-and-wa
 summary: "The scout refused to write the IMPL doc. Forty-five percent of agents arrived at work already done. The skill file grew to 400 lines with no separation of concerns. Each failure drove a specific fix — and each fix is traceable to an exact incident in an exact run. This is the scout prompt's bug tracker."
 ---
 
+> **Note:** Scout-and-wave has been renamed to [polywave](https://github.com/blackwell-systems/polywave).
+
+
 [Part 1](./scout-and-wave) covered the pattern. [Part 2](./scout-and-wave-part2) covered what we learned from running it. This post is about the skill file itself — how `saw-skill.md` evolved, why it needed refactoring, and what that refactoring looks like in practice.
 
 The thesis is simple: a prompt file has the same problems as a software module. A 400-line file that handles routing, worktree creation, merge logic, and conflict detection is a monolith. It breaks in the same ways. It's hard to debug for the same reasons. It needs decomposition for the same reasons you'd decompose a large class or package.
@@ -179,5 +182,5 @@ Version headers are the equivalent of `go.mod` version pins. You need to be able
 
 The scout prompt's iteration history is the equivalent of a bug tracker and a changelog. Every change has a root cause. Every root cause came from a real failure in a real run. The prompt's behavior converged toward correctness through the same feedback loop that any software module uses — except the "bugs" are agent behaviors and the "tests" are production runs on actual codebases.
 
-The scout-and-wave prompts are at [github.com/blackwell-systems/scout-and-wave](https://github.com/blackwell-systems/scout-and-wave). The version headers are at line 1 of each file.
+The scout-and-wave prompts are at [github.com/blackwell-systems/polywave](https://github.com/blackwell-systems/polywave). The version headers are at line 1 of each file.
 

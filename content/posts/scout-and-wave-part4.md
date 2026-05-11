@@ -10,6 +10,9 @@ description: "v0.6.0 is about restoring guarantees that were silently lost. Two 
 summary: "The Scaffold Agent doesn't add capability. It restores a review gate that was cosmetically present but structurally absent. The worktree isolation trip wire catches failures that were invisible until merge time. Neither fixes a bug in the traditional sense. Both fix trust."
 ---
 
+> **Note:** Scout-and-wave has been renamed to [polywave](https://github.com/blackwell-systems/polywave).
+
+
 [Part 1](./scout-and-wave) introduced the pattern. [Part 2](./scout-and-wave-part2) covered what running it taught us about when parallelism actually pays off. [Part 3](./scout-and-wave-part3) covered how a 400-line prompt monolith was decomposed and why prompt files have the same problems as software modules.
 
 Scout-and-Wave (SAW) parallelizes AI agent work. A Scout agent analyzes a feature, splits it into independent pieces with disjoint file ownership, and writes an implementation plan. A human reviews the plan. Then multiple Wave Agents implement their pieces simultaneously in isolated git worktrees, and the Orchestrator merges the results. The protocol's job is making that merge safe and the results trustworthy.
@@ -297,4 +300,4 @@ The Scaffold Agent is 174 lines. The trip wire is 15 lines of bash. The pre-comm
 
 A protocol that works is necessary. A protocol you can trust is the goal.
 
-Scout-and-wave v0.6.0 is at [github.com/blackwell-systems/scout-and-wave](https://github.com/blackwell-systems/scout-and-wave). The Scaffold Agent prompt is at `prompts/scaffold-agent.md`. The trip wire is in `prompts/saw-merge.md` Step 1.5. PROTOCOL.md defines all invariants (I1 through I6) and execution rules (E1 through E14) with their enforcement points.
+Scout-and-wave v0.6.0 is at [github.com/blackwell-systems/polywave](https://github.com/blackwell-systems/polywave). The Scaffold Agent prompt is at `prompts/scaffold-agent.md`. The trip wire is in `prompts/saw-merge.md` Step 1.5. PROTOCOL.md defines all invariants (I1 through I6) and execution rules (E1 through E14) with their enforcement points.
