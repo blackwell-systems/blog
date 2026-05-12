@@ -39,6 +39,18 @@ The reason: these bugs belong to different classes, and only one class is visibl
   CAN see these       CAN see these     ONLY way to find
 ```
 
+## Why Three?
+
+The taxonomy falls out of a single distinction: **presence vs. absence.**
+
+Classes 1 and 2 are bugs of presence. Something wrong is happening. A race *produces* corruption. A leak *produces* accumulating goroutines. The wrongness manifests as observable state in a running program.
+
+Class 3 is a bug of absence. Nothing wrong is happening right now. The goroutine runs, completes, and exits cleanly. The bug exists only as a conditional: *if* a handler panics, *then* the process will crash. But right now, no handler is panicking. The code is missing something it should contain, but this absence produces no runtime artifact until the triggering condition occurs.
+
+This is why exactly two of the three classes yield to runtime observation. Runtime tools observe what *is*. They cannot observe what *isn't*. Two classes produce observable phenomena. One produces nothing until it's too late.
+
+The split also explains why test suites have blind spots. Tests exercise paths: "call this function, assert that result." You can achieve 100% line coverage and 100% branch coverage and still have structural bugs everywhere, because coverage measures which lines *executed*, not which lines *should exist but don't*. You cannot cover code that hasn't been written. A missing `recover()` has no line to cover. A missing timeout has no branch to exercise. The test framework literally cannot represent "this safety mechanism should be here" as a test case, unless you write a meta-test that asserts structural properties about the code itself (which is what linters are).
+
 ## Class 1: Behavioral Bugs
 
 The program does the wrong thing. Two goroutines corrupt shared state. A lock cycle deadlocks. A channel send blocks because the receiver closed early.
@@ -88,13 +100,21 @@ But if you're running gotrace, pprof, or any visual debugger, and no handler pan
 
 ## The Epistemological Gap
 
-This gap isn't a tooling limitation. It's a logical impossibility. A runtime observer can only observe what *happens*. Structural bugs are defined by what *would happen under conditions that haven't occurred*. No amount of instrumentation closes this gap:
+A runtime observer can only observe what *happens*. Structural bugs are defined by what *would happen under conditions that haven't occurred*. No amount of instrumentation closes this gap:
 
 - You can't observe "this goroutine lacks recovery" by watching it not crash
 - You can't observe "this sleep has no cancellation" by watching it successfully complete
 - You can't observe "this call has no timeout" by watching it return quickly
 
-The only way to detect these bugs is to examine the code structure and verify that required safety mechanisms are present at each boundary. This is inherently a static operation.
+This is a logical impossibility, not a tooling limitation. Even a hypothetical perfect tracer that records every goroutine state transition, every memory access, every channel operation, will show a structurally unsafe goroutine as identical to a structurally safe one during normal execution. The difference between them is what happens *on the error path*, and if the error path never fires during your observation window, they're indistinguishable.
+
+Distributed systems theory has a related concept. Lamport's safety properties ("bad things don't happen") and liveness properties ("good things eventually happen") are both about observable system behavior. Structural bugs don't fit cleanly into either category. They're about *preparedness*: "when bad things happen, the system degrades gracefully rather than catastrophically." Preparedness is a property of code structure, not of runtime behavior. You can't model-check for "this goroutine should contain a recover()" without first specifying the rule "all library goroutines that call user code must recover."
+
+Which leads to the real constraint: **detecting structural bugs requires a specification of what should be present.** Our grep for `go func()` without `recover()` was implicitly applying the specification "every library goroutine that calls user-provided code must have panic recovery." Without that rule (in your head, in a linter, in a code review checklist), the absence is invisible. The code works fine. The bomb is there, but there's no alarm until it detonates.
+
+This is why linters can catch *some* structural bugs (like `errcheck` catching ignored error returns) but not all of them. Every linter rule encodes a structural specification: "this pattern must be accompanied by that safety mechanism." The bug classes that don't have linter rules yet are the ones where nobody has formalized the specification. "Every spawned goroutine in a library must recover" is well-understood enough to encode. "Every blocking call should have a timeout proportional to the caller's SLA" requires too much domain context for a general linter.
+
+The only way to detect structural bugs is to examine the code structure against a specification of what should exist at each boundary. This is inherently a static operation.
 
 ## How We Actually Found the Bugs
 
@@ -179,7 +199,7 @@ Without the fix, this test crashes the test process itself.
 
 ## Why Visual Debuggers Are Still Valuable
 
-This post isn't anti-tooling. Runtime tools are essential for behavioral and resource bugs. `pprof` goroutine profiles are the fastest way to find leaks in production. The race detector catches data corruption before it reaches users. `go tool trace` reveals lock contention that benchmarks miss.
+Runtime tools are essential for behavioral and resource bugs. `pprof` goroutine profiles are the fastest way to find leaks in production. The race detector catches data corruption before it reaches users. `go tool trace` reveals lock contention that benchmarks miss.
 
 The point is narrower: know which class you're looking at before reaching for a tool. If you suspect a behavioral bug (race, deadlock), runtime tools are your best bet. If you suspect a resource bug (leak, exhaustion), profiling will show it. If you suspect a structural bug (missing safety code), the only tool is reading the code.
 
