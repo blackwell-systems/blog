@@ -1,26 +1,26 @@
 ---
-title: "Three Classes of Concurrency Bugs (and Why Visual Debuggers Only Find Two)"
+title: "Three Classes of Concurrency Bugs"
 date: 2026-05-12
 draft: false
-tags: ["concurrency", "go", "debugging", "goroutines", "static-analysis", "runtime-tools", "open-source", "mcp-go", "software-engineering"]
+tags: ["concurrency", "go", "debugging", "goroutines", "static-analysis", "runtime-tools", "software-engineering"]
 categories: ["programming", "debugging", "best-practices"]
 description: "Concurrency bugs fall into three distinct classes: behavioral, resource, and structural. Runtime tools and visual debuggers help with the first two. The third class, missing safety code, is invisible to any runtime tool in any language. Here's why, and what to do about it."
-summary: "After finding three concurrency bugs in mcp-go (8.7k stars) using static code reading, I asked: would a visual tool like gotrace have caught them? The answer reveals a fundamental taxonomy of concurrency bugs that holds across all programming languages."
+summary: "Would a visual debugger like gotrace have caught three concurrency bugs found via static code reading in a production Go library? The answer reveals a fundamental taxonomy that holds across all programming languages."
 ---
 
 You found a concurrency bug. You reach for a tool: the race detector, a goroutine visualizer, a thread profiler. Sometimes it helps. Sometimes you stare at a perfectly clean trace and the bug is still there.
 
-This isn't bad tooling. It's a category error. Concurrency bugs fall into three distinct classes, and runtime tools can only see two of them.
+The tool is fine. You're looking at the wrong class of bug. Concurrency bugs fall into three distinct classes, and runtime tools can only see two of them.
 
 ## The Taxonomy
 
-I found this taxonomy after contributing three concurrency fixes to [mcp-go](https://github.com/mark3labs/mcp-go) (the community MCP SDK for Go, 8.7k stars). The bugs were:
+I arrived at this taxonomy after finding three concurrency bugs in a production Go MCP server library via static code reading:
 
-1. **Missing panic recovery** in `executeTaskTool`: a goroutine running user-provided handlers had no `defer recover()`, so any panic crashed the entire process ([#880](https://github.com/mark3labs/mcp-go/pull/880))
-2. **Goroutine leak** in `scheduleTaskCleanup`: nested `time.Sleep` goroutines with no cancellation path accumulated proportionally to task volume ([#880](https://github.com/mark3labs/mcp-go/pull/880))
-3. **Missing panic recovery** in SSE/stdio message handlers: goroutines processing client messages had no recovery, so a malformed request could kill the server ([#882](https://github.com/mark3labs/mcp-go/pull/882))
+1. **Missing panic recovery** in `executeTaskTool`: a goroutine running user-provided handlers had no `defer recover()`, so any panic crashed the entire process
+2. **Goroutine leak** in `scheduleTaskCleanup`: nested `time.Sleep` goroutines with no cancellation path accumulated proportionally to task volume
+3. **Missing panic recovery** in SSE/stdio message handlers: goroutines processing client messages had no recovery, so a malformed request could kill the server
 
-After filing the PRs, I asked: would a visual concurrency debugger (like [gotrace](https://github.com/divan/gotrace) or [gotraceui](https://github.com/felixge/gotraceui)) have caught these? The answer is no for 2 out of 3, and "barely" for the third. That surprised me enough to think about why.
+Afterward I asked: would a visual concurrency debugger (like [gotrace](https://github.com/divan/gotrace) or [gotraceui](https://github.com/felixge/gotraceui)) have caught these? The answer is no for 2 out of 3, and "barely" for the third. That surprised me enough to think about why.
 
 The reason: these bugs belong to different classes, and only one class is visible at runtime.
 
@@ -53,7 +53,7 @@ The program accumulates things it should release. Goroutines pile up. Connection
 
 **Why runtime tools help:** The accumulation is *measurable*. A goroutine profiler shows 200 goroutines all sleeping at `scheduleTaskCleanup:55`. A goroutine count gauge climbs and never comes back down. A visual timeline shows goroutines that spawn and sit blocked for minutes.
 
-This is the one class where a visual tool *would* have helped with the mcp-go cleanup leak. If you ran the server under `pprof`, triggered 100 tasks, and looked at the goroutine dump, you'd see:
+This is the one class where a visual tool *would* have helped with the cleanup leak. If you ran the server under `pprof`, triggered 100 tasks, and looked at the goroutine dump, you'd see:
 
 ```
 100 goroutines blocked at:
@@ -74,7 +74,7 @@ The program is missing code that should exist. No crash handler on a goroutine. 
 
 A runtime tool observes *what the program does*. A structural bug is about *what the program doesn't do*. This is a fundamental epistemological gap.
 
-Consider the mcp-go panic bug:
+Consider the panic bug:
 
 ```go
 go s.executeTaskTool(ctx, entry, toolToUse, request)
@@ -108,7 +108,7 @@ grep -n "go func\|go s\." server/*.go
 # For each: does the blocking operation have a cancellation path?
 ```
 
-We used LSP tooling (`get_change_impact` to identify all goroutine-spawning functions, then read each one), but the technique is simple. Find spawn boundaries, check for safety code. It took one pass to find three PRs worth of bugs.
+We used LSP tooling (`get_change_impact` to identify all goroutine-spawning functions, then read each one), but the technique is simple. Find spawn boundaries, check for safety code. One pass through the codebase surfaced all three bugs.
 
 ## The Pattern Holds Across Languages
 
@@ -141,7 +141,7 @@ This matters most for library code. The principle:
 
 Go's `recover()` only works within the panicking goroutine. There is no parent-catches-child mechanism. This makes the rule absolute for library code: every goroutine you spawn must have its own `recover()`. No exceptions.
 
-mcp-go is a library consumed by thousands of applications. A panic in any task handler kills the consuming application. This is why the fix was prioritized despite the handlers working fine during testing.
+A library like this is consumed by thousands of applications. A panic in any task handler kills the consuming application. The fix is high priority despite the handlers working fine during testing.
 
 ## Practical Implications
 
