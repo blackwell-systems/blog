@@ -37,7 +37,13 @@ showMetadata: false
 
 **[claudewatch](https://github.com/blackwell-systems/claudewatch)** - Full-cycle AI development observability platform. Scores project AI readiness, surfaces friction patterns, generates CLAUDE.md patches from session data, snapshots metrics to SQLite for before/after effectiveness scoring. Ships as both CLI and MCP server. Zero network calls.
 
-**[polywave](https://github.com/blackwell-systems/polywave)** - Methodology for reducing conflict with parallel AI agents. A throwaway scout maps the dependency graph, interface contracts, and file ownership before any code is written. Development agents execute in waves, revising a living coordination artifact between each wave. Includes canonical prompts and a Claude Code `/saw` skill.
+**[polywave](https://github.com/blackwell-systems/polywave)** - Formal coordination protocol for parallel AI agents. 6 invariants, 48 execution rules, and a 10-state machine that makes merge conflicts structurally impossible. Disjoint file ownership enforced before worktrees are created. Five repositories:
+
+- [polywave-protocol](https://github.com/blackwell-systems/polywave-protocol) - Implementation-agnostic specification (invariants, execution rules, state machine, message formats)
+- [polywave](https://github.com/blackwell-systems/polywave) - Claude Code implementation (Agent Skill, 22 enforcement hooks, agent prompts)
+- [polywave-codex](https://github.com/blackwell-systems/polywave-codex) - Codex CLI implementation (same protocol, different platform; in progress)
+- [polywave-go](https://github.com/blackwell-systems/polywave-go) - Go engine + `polywave-tools` CLI (75+ commands, 4 LLM backends: Anthropic, OpenAI, Bedrock, Ollama)
+- [polywave-web](https://github.com/blackwell-systems/polywave-web) - Real-time web dashboard with live wave execution, IMPL review, and SSE streaming
 
 **[ai-cold-start-audit](https://github.com/blackwell-systems/ai-cold-start-audit)** - Turn AI's lack of context into a feature. Agents cold-start your CLI in a container and report every friction point a new user would hit. Structured severity-tiered findings with reproduction steps.
 
