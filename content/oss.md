@@ -105,6 +105,7 @@ Fix PRs and bug reports submitted to open source projects. 65 contributions acro
 
 | Organization | PR | Lang | Description | Stars |
 |-------------|-----|------|-------------|------:|
+| **mark3labs** (mcp-go SDK) | [mcp-go#880](https://github.com/mark3labs/mcp-go/pull/880) | Go | Task goroutine panic recovery + cleanup goroutine leak (found by inspector) | 8.7K |
 | **mark3labs** (mcp-go SDK) | [mcp-go#861](https://github.com/mark3labs/mcp-go/pull/861) | Go | Transport goroutines lack panic recovery (9 goroutines crash process on panic, found by inspector) | 8.7K |
 | **Google** | [go-containerregistry#2286](https://github.com/google/go-containerregistry/pull/2286) | Go | OCI artifact config corruption in mutate package (silent data loss in Cloud Build/Artifact Registry plumbing) | 3.8K |
 | **Anthropic** (MCP PHP SDK) | [php-sdk#301](https://github.com/modelcontextprotocol/php-sdk/pull/301) | PHP | Add missing `title` field to Resource and ResourceTemplate (spec compliance) | 1.5K |
