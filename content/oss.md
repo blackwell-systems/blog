@@ -83,7 +83,7 @@ showMetadata: false
 
 ## Upstream Contributions
 
-Fix PRs and bug reports submitted to open source projects. 68 contributions across 25 organizations, 24 merged. Bugs discovered via [mcp-assert](https://github.com/blackwell-systems/mcp-assert) scanning are marked with *.
+Fix PRs and bug reports submitted to open source projects. 68 contributions across 25 organizations, 25 merged. Bugs discovered via [mcp-assert](https://github.com/blackwell-systems/mcp-assert) scanning are marked with *.
 
 ### Merged
 
@@ -92,6 +92,7 @@ Fix PRs and bug reports submitted to open source projects. 68 contributions acro
 | **Anthropic** (MCP Go SDK) | [go-sdk#929](https://github.com/modelcontextprotocol/go-sdk/pull/929) | Go | HTTP response body leak in streamable HTTP session close | 4.5K |
 | **Google** | [go-containerregistry#2281](https://github.com/google/go-containerregistry/pull/2281) | Go | `.local` FQDN incorrectly treated as non-HTTPS (RFC 6761) | 3.8K |
 | **Google** | [go-containerregistry#2283](https://github.com/google/go-containerregistry/pull/2283) | Go | Extract round-trip test for filesystem object preservation | 3.8K |
+| **Google** | [go-containerregistry#2286](https://github.com/google/go-containerregistry/pull/2286) | Go | OCI artifact config corruption in mutate package (silent data loss in Cloud Build/Artifact Registry plumbing) | 3.8K |
 | **Grafana** | [mcp-grafana#793](https://github.com/grafana/mcp-grafana/pull/793) | Go | `get_assertions` timestamp validation fix | 2.9K |
 | **Grafana** | [mcp-grafana#829](https://github.com/grafana/mcp-grafana/pull/829) | Go | Dynamic server instructions from enabled tool categories (feature) | 2.9K |
 | **Grafana** | [mcp-grafana#834](https://github.com/grafana/mcp-grafana/pull/834) | Go | Sift unchecked type assertion panic | 2.9K |
@@ -115,7 +116,6 @@ Fix PRs and bug reports submitted to open source projects. 68 contributions acro
 
 | Organization | PR | Lang | Description | Stars |
 |-------------|-----|------|-------------|------:|
-| **Google** | [go-containerregistry#2286](https://github.com/google/go-containerregistry/pull/2286) | Go | OCI artifact config corruption in mutate package (silent data loss in Cloud Build/Artifact Registry plumbing) | 3.8K |
 | **Anthropic** (MCP PHP SDK) | [php-sdk#301](https://github.com/modelcontextprotocol/php-sdk/pull/301) | PHP | Add missing `title` field to Resource and ResourceTemplate (spec compliance) | 1.5K |
 | **Anthropic** (MCP Conformance) | [conformance#263](https://github.com/modelcontextprotocol/conformance/pull/263) | TS | tier-check reports 0% despite all tests passing (server/client scenario lists swapped) | MCP |
 | **Anthropic** (MCP Go SDK) | [go-sdk#913](https://github.com/modelcontextprotocol/go-sdk/pull/913) | Go | Race condition in `ClientSession.Close()` | 4.5K |
