@@ -83,7 +83,7 @@ showMetadata: false
 
 ## Upstream Contributions
 
-Fix PRs and bug reports submitted to open source projects. 67 contributions across 25 organizations, 21 merged. Bugs discovered via [mcp-assert](https://github.com/blackwell-systems/mcp-assert) scanning are marked with *.
+Fix PRs and bug reports submitted to open source projects. 67 contributions across 25 organizations, 23 merged. Bugs discovered via [mcp-assert](https://github.com/blackwell-systems/mcp-assert) scanning are marked with *.
 
 ### Merged
 
@@ -103,6 +103,8 @@ Fix PRs and bug reports submitted to open source projects. 67 contributions acro
 | **mark3labs** (mcp-go SDK) | [mcp-go#849](https://github.com/mark3labs/mcp-go/pull/849) | Go | Response body leak on 404 in sendHTTP (TCP connection leaked per retry) | 8.7K |
 | **mark3labs** (mcp-go SDK) | [mcp-go#852](https://github.com/mark3labs/mcp-go/pull/852) | Go | Add CloseSessions + fix double-close panic race in SSE shutdown | 8.7K |
 | **mark3labs** (mcp-go SDK) | [mcp-go#861](https://github.com/mark3labs/mcp-go/pull/861) | Go | Transport goroutines lack panic recovery (9 goroutines crash process on panic, found by inspector) | 8.7K |
+| **mark3labs** (mcp-go SDK) | [mcp-go#880](https://github.com/mark3labs/mcp-go/pull/880) | Go | Task goroutine panic recovery + cleanup goroutine leak (found by inspector) | 8.7K |
+| **mark3labs** (mcp-go SDK) | [mcp-go#882](https://github.com/mark3labs/mcp-go/pull/882) | Go | SSE + stdio transport panic recovery (completes #861 coverage, found by inspector) | 8.7K |
 | **Anthropic** (MCP Python SDK) | [python-sdk#2542](https://github.com/modelcontextprotocol/python-sdk/pull/2542) | Python | Broken exception chains in get_prompt and read_resource | 23K |
 | **Anthropic** (MCP PHP SDK) | [php-sdk#297](https://github.com/modelcontextprotocol/php-sdk/pull/297) | PHP | URI regex rejects valid RFC 3986 URIs | 1.5K |
 | **Stretchr** | [testify#1877](https://github.com/stretchr/testify/pull/1877) | Go | Suite panics when `SetupTest` skips with `HandleStats` (`runtime.Goexit` ordering) | 26K |
@@ -112,8 +114,6 @@ Fix PRs and bug reports submitted to open source projects. 67 contributions acro
 
 | Organization | PR | Lang | Description | Stars |
 |-------------|-----|------|-------------|------:|
-| **mark3labs** (mcp-go SDK) | [mcp-go#882](https://github.com/mark3labs/mcp-go/pull/882) | Go | SSE + stdio transport panic recovery (completes #861 coverage, found by inspector) | 8.7K |
-| **mark3labs** (mcp-go SDK) | [mcp-go#880](https://github.com/mark3labs/mcp-go/pull/880) | Go | Task goroutine panic recovery + cleanup goroutine leak (found by inspector) | 8.7K |
 | **Google** | [go-containerregistry#2286](https://github.com/google/go-containerregistry/pull/2286) | Go | OCI artifact config corruption in mutate package (silent data loss in Cloud Build/Artifact Registry plumbing) | 3.8K |
 | **Anthropic** (MCP PHP SDK) | [php-sdk#301](https://github.com/modelcontextprotocol/php-sdk/pull/301) | PHP | Add missing `title` field to Resource and ResourceTemplate (spec compliance) | 1.5K |
 | **Anthropic** (MCP Conformance) | [conformance#263](https://github.com/modelcontextprotocol/conformance/pull/263) | TS | tier-check reports 0% despite all tests passing (server/client scenario lists swapped) | MCP |
