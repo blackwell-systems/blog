@@ -83,7 +83,7 @@ showMetadata: false
 
 ## Upstream Contributions
 
-Fix PRs and bug reports submitted to open source projects. 67 contributions across 25 organizations, 23 merged. Bugs discovered via [mcp-assert](https://github.com/blackwell-systems/mcp-assert) scanning are marked with *.
+Fix PRs and bug reports submitted to open source projects. 68 contributions across 25 organizations, 23 merged. Bugs discovered via [mcp-assert](https://github.com/blackwell-systems/mcp-assert) scanning are marked with *.
 
 ### Merged
 
@@ -114,6 +114,7 @@ Fix PRs and bug reports submitted to open source projects. 67 contributions acro
 
 | Organization | PR | Lang | Description | Stars |
 |-------------|-----|------|-------------|------:|
+| **mark3labs** (mcp-go SDK) | [mcp-go#883](https://github.com/mark3labs/mcp-go/pull/883) | Go | Session hook goroutines panic recovery (9 goroutines, completes full coverage, found by inspector) | 8.7K |
 | **Google** | [go-containerregistry#2286](https://github.com/google/go-containerregistry/pull/2286) | Go | OCI artifact config corruption in mutate package (silent data loss in Cloud Build/Artifact Registry plumbing) | 3.8K |
 | **Anthropic** (MCP PHP SDK) | [php-sdk#301](https://github.com/modelcontextprotocol/php-sdk/pull/301) | PHP | Add missing `title` field to Resource and ResourceTemplate (spec compliance) | 1.5K |
 | **Anthropic** (MCP Conformance) | [conformance#263](https://github.com/modelcontextprotocol/conformance/pull/263) | TS | tier-check reports 0% despite all tests passing (server/client scenario lists swapped) | MCP |
