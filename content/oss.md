@@ -83,7 +83,7 @@ showMetadata: false
 
 ## Upstream Contributions
 
-Fix PRs and bug reports submitted to open source projects. 68 contributions across 25 organizations, 25 merged. Bugs discovered via [mcp-assert](https://github.com/blackwell-systems/mcp-assert) scanning are marked with *.
+Fix PRs and bug reports submitted to open source projects. 69 contributions across 25 organizations, 25 merged. Bugs discovered via [mcp-assert](https://github.com/blackwell-systems/mcp-assert) scanning are marked with *.
 
 ### Merged
 
@@ -144,6 +144,7 @@ Fix PRs and bug reports submitted to open source projects. 68 contributions acro
 | **Anthropic** (MCP Python SDK) | [python-sdk#2564](https://github.com/modelcontextprotocol/python-sdk/issues/2564) | 12 remaining exception chain sites | 23K |
 | **Oraios** (Serena) | [serena#1467](https://github.com/oraios/serena/issues/1467) | 9 schema errors, 47 warnings across 29 tools; isError never set for exceptions* | 24K |
 | **AWS** (awslabs/mcp) | [awslabs/mcp#3486](https://github.com/awslabs/mcp/issues/3486) | 2,160 schema errors across 43 servers (870 tools); systemic: union types drop `type` field* | AWS |
+| **Anthropic** (MCP Go SDK) | [go-sdk#958](https://github.com/modelcontextprotocol/go-sdk/issues/958) | 9 library goroutines lack panic recovery (can crash host process) | 4.5K |
 
 ### Other open PRs
 
