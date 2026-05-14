@@ -47,11 +47,13 @@ I build production systems — AI agents, cloud infrastructure, backend services
 
 ### What I've Built
 
-- **[polywave](https://github.com/blackwell-systems/polywave):** Formally specified multi-agent coordination protocol for Claude Code (6 invariants, 37+ execution rules) validated across 16+ production repositories with 4-5x measured speedup. Published specification with state machine, message formats, and conformance criteria
+- **[polywave](https://github.com/blackwell-systems/polywave):** Formally specified multi-agent coordination protocol for Claude Code (6 invariants, 45 execution rules) validated across 16+ production repositories with 4-5x measured speedup. Published specification with state machine, message formats, and conformance criteria
 - **[polywave-web](https://github.com/blackwell-systems/polywave-web):** Full-stack orchestration platform for parallel Claude agents — Go backend (40+ REST endpoints, real-time SSE streaming), React frontend (live wave dashboard, interactive dependency graphs, streaming agent output), single binary deployment
-- **[claudewatch](https://github.com/blackwell-systems/claudewatch):** Self-improving observability platform for Claude Code — 22-tool MCP server for live session metrics, PostToolUse hooks alerting on error loops and cost spikes, CLAUDE.md effectiveness scoring with before/after comparison, multi-agent workflow analytics
+- **[claudewatch](https://github.com/blackwell-systems/claudewatch):** Self-improving observability platform for Claude Code — 32-tool MCP server for live session metrics, PostToolUse hooks alerting on error loops and cost spikes, CLAUDE.md effectiveness scoring with before/after comparison, multi-agent workflow analytics
+- **[mcp-assert](https://github.com/blackwell-systems/mcp-assert):** Deterministic MCP server testing framework (~22,000 downloads). 102 servers scanned across 7 languages, 34 upstream bugs found, fix PRs merged into Grafana and LangChain. Adopted as CI standard by antvis/mcp-server-chart (4K stars) and wyre-technology (25+ repos). Distributed via GitHub Actions Marketplace, Homebrew, npm, PyPI, Docker
+- **[agent-lsp](https://github.com/blackwell-systems/agent-lsp):** Stateful MCP server runtime over real language servers. 65 tools, speculative execution engine (in-memory edit simulation with diagnostic delta), multi-server routing, persistent daemon broker, 24 Agent Skills. CI-verified across 30 language servers. Listed on official MCP Registry and Glama (A-tier)
 - **[ai-cold-start-audit](https://github.com/blackwell-systems/ai-cold-start-audit):** UX audit methodology using Claude agents as surrogate new users in containerized sandboxes, producing severity-tiered findings reports
-- **[commitmux](https://github.com/blackwell-systems/commitmux):** Cross-repository semantic search engine with MCP server — in-process vector search (sqlite-vec), FTS5 full-text indexing, 6 read-only MCP tools over stdio JSON-RPC
+- **[commitmux](https://github.com/blackwell-systems/commitmux):** Cross-repository semantic search engine with MCP server — in-process vector search (sqlite-vec), FTS5 full-text indexing, 8 read-only MCP tools over stdio JSON-RPC
 - **Led Claude Code adoption at Best Western** as founding member of the Agentic Development Group, driving enterprise-wide rollout of AI-enhanced engineering workflows
 
 ### Ideal For
@@ -110,7 +112,7 @@ I build production systems — AI agents, cloud infrastructure, backend services
 
 - 5 years operating revenue-critical backend systems serving millions of members across 100+ countries
 - Built real-time CDC pipeline replacing full-table-scan approach, processing in ~1.3 minutes regardless of dataset size
-- GCP emulator ecosystem (Secret Manager, IAM, KMS) with 13,000+ downloads and confirmed enterprise adoption
+- GCP emulator ecosystem (Secret Manager, IAM, KMS) with ~30K downloads and confirmed enterprise adoption
 - Designed serverless event-driven promotion system (Lambda, EventBridge, DynamoDB, Redis)
 - 3x AWS Certified, Azure, Terraform, Oracle certified
 
@@ -192,14 +194,6 @@ I build production systems — AI agents, cloud infrastructure, backend services
 
 ---
 
-## Speaking & Content
-
-Available for:
-- **Conference talks** on AI agent orchestration, Claude Code, distributed systems, cloud architecture
-- **Podcast interviews** on agentic development, multi-agent systems, developer productivity
-- **Corporate workshops** on Claude Code adoption and AI-assisted development workflows
-- **Book talks** on [You Don't Know JSON](https://leanpub.com/you-dont-know-json) (107,000 words)
-
 ---
 
 ## Contact
@@ -219,11 +213,13 @@ Available for:
 
 20+ production projects. All consulting work is informed by real production experience.
 
+- [mcp-assert](https://github.com/blackwell-systems/mcp-assert) - MCP server testing standard (~22K downloads, 34 bugs found, 102 servers scanned)
+- [agent-lsp](https://github.com/blackwell-systems/agent-lsp) - Stateful MCP server runtime (65 tools, 30 languages, A-tier on Glama)
 - [polywave-web](https://github.com/blackwell-systems/polywave-web) - Full-stack AI agent orchestration platform (Go/React)
 - [polywave](https://github.com/blackwell-systems/polywave) - Multi-agent coordination protocol (formal specification)
-- [claudewatch](https://github.com/blackwell-systems/claudewatch) - Claude Code observability platform (22-tool MCP server)
+- [claudewatch](https://github.com/blackwell-systems/claudewatch) - Claude Code observability platform (32-tool MCP server)
 - [commitmux](https://github.com/blackwell-systems/commitmux) - Cross-repository semantic search (Rust, MCP server)
-- [gcp-secret-manager-emulator](https://github.com/blackwell-systems/gcp-secret-manager-emulator) - GCP emulator (13,000+ downloads)
+- [gcp-secret-manager-emulator](https://github.com/blackwell-systems/gcp-secret-manager-emulator) - GCP emulator (~30K downloads)
 - [goldenthread](https://github.com/blackwell-systems/goldenthread) - Schema compiler (Go → TypeScript Zod)
 - [vaultmux](https://github.com/blackwell-systems/vaultmux) - Unified secret management (7+ backends)
 - [domainstack](https://crates.io/crates/domainstack) - Full-stack validation (Rust, 9 crates)
