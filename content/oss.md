@@ -83,7 +83,7 @@ showMetadata: false
 
 ## Upstream Contributions
 
-Fix PRs and bug reports submitted to open source projects. 69 contributions across 25 organizations, 25 merged. Bugs discovered via [mcp-assert](https://github.com/blackwell-systems/mcp-assert) scanning are marked with *.
+Fix PRs and bug reports submitted to open source projects. 70 contributions across 25 organizations, 25 merged. Bugs discovered via [mcp-assert](https://github.com/blackwell-systems/mcp-assert) scanning are marked with *.
 
 ### Merged
 
@@ -116,6 +116,7 @@ Fix PRs and bug reports submitted to open source projects. 69 contributions acro
 
 | Organization | PR | Lang | Description | Stars |
 |-------------|-----|------|-------------|------:|
+| **Anthropic** (MCP Go SDK) | [go-sdk#959](https://github.com/modelcontextprotocol/go-sdk/pull/959) | Go | Panic recovery for 5 goroutines that execute user code (tool handlers crash host process) | 4.5K |
 | **Anthropic** (MCP PHP SDK) | [php-sdk#301](https://github.com/modelcontextprotocol/php-sdk/pull/301) | PHP | Add missing `title` field to Resource and ResourceTemplate (spec compliance) | 1.5K |
 | **Anthropic** (MCP Conformance) | [conformance#263](https://github.com/modelcontextprotocol/conformance/pull/263) | TS | tier-check reports 0% despite all tests passing (server/client scenario lists swapped) | MCP |
 | **Anthropic** (MCP Go SDK) | [go-sdk#913](https://github.com/modelcontextprotocol/go-sdk/pull/913) | Go | Race condition in `ClientSession.Close()` | 4.5K |
