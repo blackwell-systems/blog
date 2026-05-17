@@ -50,6 +50,7 @@ I build production systems — AI agents, cloud infrastructure, backend services
 - **[polywave](https://github.com/blackwell-systems/polywave):** Formally specified multi-agent coordination protocol for Claude Code (6 invariants, 45 execution rules) validated across 16+ production repositories with 4-5x measured speedup. Published specification with state machine, message formats, and conformance criteria
 - **[polywave-web](https://github.com/blackwell-systems/polywave-web):** Full-stack orchestration platform for parallel Claude agents — Go backend (40+ REST endpoints, real-time SSE streaming), React frontend (live wave dashboard, interactive dependency graphs, streaming agent output), single binary deployment
 - **[claudewatch](https://github.com/blackwell-systems/claudewatch):** Self-improving observability platform for Claude Code — 32-tool MCP server for live session metrics, PostToolUse hooks alerting on error loops and cost spikes, CLAUDE.md effectiveness scoring with before/after comparison, multi-agent workflow analytics
+- **[knowing](https://github.com/blackwell-systems/knowing):** Content-addressed knowledge graph for software systems. 22 MCP tools, 17 extractors across 10+ languages, OTel runtime trace ingestion, Merkle DAG snapshots with full history. Includes GCF (Graph Compact Format), a token-optimized wire format achieving 84% fewer tokens than JSON. Two companion whitepapers with DOIs.
 - **[mcp-assert](https://github.com/blackwell-systems/mcp-assert):** Deterministic MCP server testing framework (~22,000 downloads). 102 servers scanned across 7 languages, 34 upstream bugs found, fix PRs merged into Grafana and LangChain. Adopted as CI standard by antvis/mcp-server-chart (4K stars) and wyre-technology (25+ repos). Distributed via GitHub Actions Marketplace, Homebrew, npm, PyPI, Docker
 - **[agent-lsp](https://github.com/blackwell-systems/agent-lsp):** Stateful MCP server runtime over real language servers. 65 tools, speculative execution engine (in-memory edit simulation with diagnostic delta), multi-server routing, persistent daemon broker, 24 Agent Skills. CI-verified across 30 language servers. Listed on official MCP Registry and Glama (A-tier)
 - **[ai-cold-start-audit](https://github.com/blackwell-systems/ai-cold-start-audit):** UX audit methodology using Claude agents as surrogate new users in containerized sandboxes, producing severity-tiered findings reports
@@ -213,6 +214,7 @@ I build production systems — AI agents, cloud infrastructure, backend services
 
 20+ production projects. All consulting work is informed by real production experience.
 
+- [knowing](https://github.com/blackwell-systems/knowing) - Content-addressed knowledge graph (22 MCP tools, 17 extractors, Merkle DAG, GCF wire format)
 - [mcp-assert](https://github.com/blackwell-systems/mcp-assert) - MCP server testing standard (~22K downloads, 34 bugs found, 102 servers scanned)
 - [agent-lsp](https://github.com/blackwell-systems/agent-lsp) - Stateful MCP server runtime (65 tools, 30 languages, A-tier on Glama)
 - [polywave-web](https://github.com/blackwell-systems/polywave-web) - Full-stack AI agent orchestration platform (Go/React)
