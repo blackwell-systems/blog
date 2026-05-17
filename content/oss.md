@@ -83,7 +83,7 @@ showMetadata: false
 
 ## Upstream Contributions
 
-Fix PRs and bug reports submitted to open source projects. 72 contributions across 26 organizations, 25 merged. Bugs discovered via [mcp-assert](https://github.com/blackwell-systems/mcp-assert) scanning are marked with *.
+Fix PRs and bug reports submitted to open source projects. 72 contributions across 26 organizations, 26 merged. Bugs discovered via [mcp-assert](https://github.com/blackwell-systems/mcp-assert) scanning are marked with *.
 
 ### Merged
 
@@ -109,6 +109,7 @@ Fix PRs and bug reports submitted to open source projects. 72 contributions acro
 | **mark3labs** (mcp-go SDK) | [mcp-go#883](https://github.com/mark3labs/mcp-go/pull/883) | Go | Session hook goroutine panic recovery (9 goroutines, completes full coverage, found by inspector) | 8.7K |
 | **Anthropic** (MCP Python SDK) | [python-sdk#2542](https://github.com/modelcontextprotocol/python-sdk/pull/2542) | Python | Broken exception chains in get_prompt and read_resource | 23K |
 | **Anthropic** (MCP PHP SDK) | [php-sdk#297](https://github.com/modelcontextprotocol/php-sdk/pull/297) | PHP | URI regex rejects valid RFC 3986 URIs | 1.5K |
+| **Anthropic** (MCP PHP SDK) | [php-sdk#301](https://github.com/modelcontextprotocol/php-sdk/pull/301) | PHP | Add missing `title` field to Resource and ResourceTemplate (spec compliance) | 1.5K |
 | **Stretchr** | [testify#1877](https://github.com/stretchr/testify/pull/1877) | Go | Suite panics when `SetupTest` skips with `HandleStats` (`runtime.Goexit` ordering) | 26K |
 | **Microsoft** | [winget-pkgs](https://github.com/microsoft/winget-pkgs) | YAML | Winget manifests for mcp-assert and agent-lsp | 10K |
 
@@ -118,7 +119,6 @@ Fix PRs and bug reports submitted to open source projects. 72 contributions acro
 |-------------|-----|------|-------------|------:|
 | **Anthropic** (MCP Go SDK) | [go-sdk#959](https://github.com/modelcontextprotocol/go-sdk/pull/959) | Go | Panic recovery for 5 goroutines that execute user code (tool handlers crash host process) | 4.5K |
 | **hibiken** (asynq) | [asynq#1133](https://github.com/hibiken/asynq/pull/1133) | Go | Panic recovery for 3 user-provided callbacks (HealthCheckFunc, GroupAggregator, PeriodicTaskConfigProvider) | 13.3K |
-| **Anthropic** (MCP PHP SDK) | [php-sdk#301](https://github.com/modelcontextprotocol/php-sdk/pull/301) | PHP | Add missing `title` field to Resource and ResourceTemplate (spec compliance) | 1.5K |
 | **Anthropic** (MCP Conformance) | [conformance#263](https://github.com/modelcontextprotocol/conformance/pull/263) | TS | tier-check reports 0% despite all tests passing (server/client scenario lists swapped) | MCP |
 | **Anthropic** (MCP Go SDK) | [go-sdk#913](https://github.com/modelcontextprotocol/go-sdk/pull/913) | Go | Race condition in `ClientSession.Close()` | 4.5K |
 | **Anthropic** (MCP TS SDK) | [typescript-sdk#2013](https://github.com/modelcontextprotocol/typescript-sdk/pull/2013) | TS | Null arguments crash every TS SDK server | 12K |
