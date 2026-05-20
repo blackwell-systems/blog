@@ -59,7 +59,7 @@ showMetadata: false
 
 ### Libraries
 
-**[merkle-forest](https://github.com/blackwell-systems/merkle-forest)** ([Go pkg](https://pkg.go.dev/github.com/blackwell-systems/merkle-forest)) - Stratified Merkle trees for grouped data. Builds 2-level (root → groups → leaves) or 3-level (root → groups → subgroups → leaves) hash trees with O(groups) diff, absence proofs via sorted adjacency, scoped subtree queries, and offline-verifiable inclusion proofs. Zero dependencies, stdlib only. Powers [knowing](https://github.com/blackwell-systems/knowing)'s snapshot layer.
+**[merkle-forest](https://github.com/blackwell-systems/merkle-forest)** ([Go pkg](https://pkg.go.dev/github.com/blackwell-systems/merkle-forest)) - Stratified Merkle trees for grouped data. Builds 2-level (root → groups → leaves) or 3-level (root → groups → subgroups → leaves) hash trees with O(groups) diff, absence proofs via sorted adjacency, scoped subtree queries, and offline-verifiable inclusion proofs. Zero dependencies, stdlib only. Powers [knowing](https://github.com/blackwell-systems/knowing)'s content-addressed identity layer: snapshots, hierarchical diff, inclusion/absence proofs, integrity verification, subgraph caching, and context pack deduplication.
 
 **[goldenthread](https://github.com/blackwell-systems/goldenthread)** ([Go pkg](https://pkg.go.dev/github.com/blackwell-systems/goldenthread)) - Build-time schema compiler generating TypeScript Zod schemas from Go struct tags. Single source of truth for validation with automatic drift detection in CI.
 
