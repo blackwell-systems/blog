@@ -59,6 +59,8 @@ showMetadata: false
 
 ### Libraries
 
+**[merkle-forest](https://github.com/blackwell-systems/merkle-forest)** ([Go pkg](https://pkg.go.dev/github.com/blackwell-systems/merkle-forest)) - Stratified Merkle trees for grouped data. Builds 2-level (root → groups → leaves) or 3-level (root → groups → subgroups → leaves) hash trees with O(groups) diff, absence proofs via sorted adjacency, scoped subtree queries, and offline-verifiable inclusion proofs. Zero dependencies, stdlib only. Powers [knowing](https://github.com/blackwell-systems/knowing)'s snapshot layer.
+
 **[goldenthread](https://github.com/blackwell-systems/goldenthread)** ([Go pkg](https://pkg.go.dev/github.com/blackwell-systems/goldenthread)) - Build-time schema compiler generating TypeScript Zod schemas from Go struct tags. Single source of truth for validation with automatic drift detection in CI.
 
 **[domainstack](https://github.com/blackwell-systems/domainstack)** ([Rust crate](https://crates.io/crates/domainstack)) - Full-stack validation ecosystem for Rust: Type-safe validation with automatic TypeScript/Zod schema generation, serde integration, OpenAPI schemas, and web framework adapters (Axum, Actix, Rocket).
