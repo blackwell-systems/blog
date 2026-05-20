@@ -127,7 +127,7 @@ The same principle applied to code *relationships* (not files) gives you all fiv
 
 This isn't a feature list. It's a single design choice (content-address the edges) with five structural consequences.
 
-## The Hierarchical Insight
+## The Hierarchical Structure
 
 A flat content-addressed system (hash all edges into one root) tells you "something changed" but not "what changed." The move that makes this practical: organize the tree by semantic boundaries.
 
