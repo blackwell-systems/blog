@@ -86,6 +86,14 @@ Git:     commit_hash = merkle_root(all file blobs, organized by directory)
 knowing: snapshot_hash = merkle_root(all edge hashes, organized by package and type)
 ```
 
+### Why edges, not nodes
+
+The tree is built from **edges** (relationships), not nodes (symbols). This is deliberate. A node's existence rarely changes: functions get added or removed occasionally. But relationships change constantly: new callers appear, imports shift, runtime traffic patterns evolve, dependencies get added or removed.
+
+Knowing that `CreateOwner` exists tells you almost nothing. Knowing that `CreateOwner` calls `save`, handles `POST /owners/new`, is called by 3 controllers, and was observed 10,000 times in production: that's the intelligence. Edges carry the meaning. Nodes are just anchor points.
+
+Building from edges means "did anything change?" captures: new callers, removed dependencies, changed routes, different runtime traffic. Every downstream operation (diff, cache invalidation, proofs, blast radius) cares about relationships, not symbol existence.
+
 ## What You Get For Free
 
 The same five properties git gets, applied to intelligence instead of text:
@@ -347,16 +355,24 @@ Without content-addressing, "has this package changed?" requires scanning all it
 For an AI coding agent, this means:
 
 **Before (grep-read-grep-read):**
-- 6-8 tool calls to build context
-- Forgets everything next turn
-- No learning across sessions
-- Can't answer "what breaks if I change this?"
+1. Read the file you're editing
+2. Grep for related symbols
+3. Read those files
+4. Grep again for callers
+5. Read more files
+6. Build a mental model from fragments
+7. Write code
+8. Next turn: forget everything and start over
+
+Six to eight tool calls per turn. 60% of context spent re-reading files from last turn. Relationships that span repos are invisible.
 
 **After (one call to a content-addressed graph):**
 - One call returns ranked, relevant symbols
 - Cached (83ns) if the code hasn't changed
 - Learns what's useful, forgets what's stale
 - Blast radius, test scope, diff are primitive operations
+
+Concrete example from knowing's own dogfooding: `BuildHierarchicalTree` has 10+ callers across 5 packages (SnapshotManager, prove commands, audit, feedback, tests). Change its signature? One graph query surfaces all 10 callers instantly. grep would need to find the function name, then chase each call site, then figure out which are actually calls vs comments vs strings. The graph already knows.
 
 For a security team:
 

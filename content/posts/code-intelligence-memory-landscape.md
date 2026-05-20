@@ -16,9 +16,20 @@ This article explores the code-specific intelligence landscape: what exists, wha
 
 ## The Problem All These Tools Are Solving
 
-An AI coding agent working on a 500K LOC codebase faces a fundamental information problem. It has a context window (maybe 200K tokens). The codebase is 2M+ tokens. It needs to select the right 1% to read.
+When an AI coding agent (Claude Code, Cursor, Copilot) works on your codebase, it does this:
 
-Today's agents solve this by searching: grep for symbols, read files, grep again, read more files. This works but is expensive (many tool calls), slow (sequential exploration), and amnesiac (next turn starts from scratch).
+1. Reads the file you're editing
+2. Greps for related symbols
+3. Reads those files
+4. Greps again for callers
+5. Reads more files
+6. Builds a mental model from fragments
+7. Writes code
+8. Next turn: forgets everything and starts over
+
+This costs tokens, time, and accuracy. The agent spends 60% of its context window re-reading files it saw last turn. It misses relationships that span multiple files or repos. It has no memory of what was useful last time.
+
+The codebase is 2M+ tokens. The context window is maybe 200K. The agent needs to select the right 1% to read, every single turn, with no history of what worked before.
 
 The market response has been four categories of tools, each solving one facet.
 
@@ -93,6 +104,17 @@ The memory landscape analysis correctly identifies the "drift problem": informat
 
 Runtime observability is the empirical layer. It tells you what DID happen. It cannot tell you what CAN happen or what's IMPOSSIBLE.
 
+### The Compressed View
+
+| Tool | What it knows | What it misses |
+|---|---|---|
+| **Context packers** | Important files for this query | History, learning, proofs, relationships |
+| **Code graphs** | References within one workspace | Cross-repo callers, history, runtime behavior |
+| **Agent memory** | What you discussed last session | Code structure, staleness detection |
+| **Runtime observability** | What happened in production | Static structure, blast radius, proofs |
+
+Each solves one facet. None addresses what ties them together: a versioned, provable identity for the intelligence itself.
+
 ## The Gap: Nothing Versions The Intelligence
 
 Here's what no current tool provides:
@@ -106,6 +128,22 @@ Here's what no current tool provides:
 **4. Self-healing memory.** Not "remember everything forever" (leads to noise). Not "forget after 7 days" (arbitrary). Memory that is tied to the state of the code it references, and automatically becomes invisible when that code changes.
 
 **5. Incremental everything.** Not "re-index the whole repo on every change." Change 3 files in a 10,000-file codebase? Process 3 files. Know exactly what's stale without scanning.
+
+To make this concrete: when you ask "what's the blast radius of changing `BuildHierarchicalTree`?", the answer isn't in any file. It's in the set of edges pointing TO that function:
+
+```
+BlastRadius(BuildHierarchicalTree) = {
+  SnapshotManager.ComputeSnapshot       --calls-->  BuildHierarchicalTree
+  cmd/knowing/prove.cmdProve            --calls-->  BuildHierarchicalTree
+  cmd/knowing/prove_absent.cmdProveAbsent --calls--> BuildHierarchicalTree
+  mcp/feedback.computeNeighborhoodRoot  --calls-->  BuildHierarchicalTree
+  TestBuildHierarchicalTree_Deterministic --calls--> BuildHierarchicalTree
+  cache.TestInvalidatePackages          --calls-->  BuildHierarchicalTree
+  ... (10+ callers across 5 packages)
+}
+```
+
+Change its signature? Every one of these breaks. No single file contains this information. The edges do. Edges are the intelligence; nodes are just vocabulary.
 
 These properties are not optimizations. They're structural consequences of one architectural choice: **content-addressing the intelligence itself.**
 
