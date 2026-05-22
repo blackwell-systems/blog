@@ -27,6 +27,26 @@ None of these are good in absolute terms. Code retrieval is hard. But the relati
 
 Your agent currently operates at 2% precision. Every "find relevant code" operation burns tokens on 98% noise. The agent reads irrelevant functions, reasons about them, discards them, and tries again. You pay for all of that.
 
+## What This Looks Like in Practice
+
+**Task:** "Write a Django management command that exports user data to CSV"
+
+**grep** returns 2,391 lines containing "command" across 247 files. Database commands, template tags, shell commands, migration commands, test utilities, docstrings. The agent reads all of it.
+
+**knowing** returns 10 ranked symbols in 60ms. Seven are exactly what the developer needs:
+
+```
+1. BaseCommand                 ← subclass this
+2. BaseCommand.handle          ← override this
+3. BaseCommand.add_arguments   ← add --output flag here
+4. OutputWrapper               ← self.stdout works through this
+5. call_command                ← how tests invoke your command
+6. BaseCommand.execute         ← lifecycle: validate → handle
+7. CommandParser               ← argument parsing internals
+```
+
+4,000 tokens. The developer (or agent) has everything they need without reading a single file. grep burned 300,000 tokens on the same question and left the agent to figure out which 7 lines out of 2,391 actually matter.
+
 ## What We Tested
 
 Five codebases covering the range of real engineering work:
