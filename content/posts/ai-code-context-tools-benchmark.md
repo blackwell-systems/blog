@@ -185,9 +185,23 @@ codebase-memory's BM25 engine spins at 100% CPU on repos with >40K nodes. Scale:
 | Flask (15K LOC) | 285ms | 0ms |
 | Cargo (150K LOC) | ~3s | 0ms |
 | Django (300K LOC) | **hangs (100% CPU)** | 0ms |
+| VS Code (1M LOC) | **hangs (>30s, killed)** | 0ms |
 | k8s (3.5M LOC) | **killed after 5min** | 2ms |
 
-It cannot serve as a production context tool for anything larger than a small project.
+Scale ceiling: ~150K LOC. Any enterprise codebase is unusable.
+
+## Where Each Competitor Dies
+
+Every tool has a breaking point. Only knowing handles the full range.
+
+| System | Max viable scale | Failure mode |
+|--------|-----------------|--------------|
+| **knowing** | **unlimited (tested 3.5M LOC)** | N/A |
+| codegraph | unlimited (but fails Java/C#) | 10/117 task failures |
+| codebase-memory | ~150K LOC | 100% CPU hang, no response |
+| GitNexus | ~150K LOC | OOM (5.7GB RAM), killed after 60min |
+| Gortex | unlimited (impractically slow) | 14min index, 14GB RAM |
+| Aider | unlimited (imprecise) | 3s/query, can't find new code |
 
 ### CodeGraphContext (KuzuDB)
 
