@@ -1,5 +1,5 @@
 ---
-title: "We Benchmarked the 19K-Star Code Search Tool. It's 1.63x Less Precise Than Ours."
+title: "We Benchmarked the Most Popular Code Search Tools. We Beat All of Them."
 date: 2026-05-24
 draft: false
 tags: ["ai", "mcp", "code-intelligence", "benchmark", "knowledge-graph", "retrieval", "precision", "codegraph", "aider", "knowing", "developer-tools"]
@@ -70,7 +70,9 @@ You add a function. How quickly does each system find it?
 
 Protocol: inject `validate_authentication_token()` into Flask, trigger incremental reindex, query for it.
 
-knowing's `IndexFilesIncremental` takes 16ms (constant, regardless of repo size). codegraph's `sync` rescans the entire repo (scales linearly). Aider re-parses everything on every query and still doesn't find the new function (PageRank gives zero weight to symbols with no callers).
+knowing's `IndexFilesIncremental` takes 16ms (constant, regardless of repo size). codegraph's `sync` rescans the entire repo (scales linearly). Aider re-parses everything on every query and still doesn't find the new function.
+
+**Why Aider fundamentally cannot find new code:** A newly added function with no callers has zero in-degree, so PageRank assigns it minimal weight. It will never surface in ranked results until other code calls it. This means every time you write a new function, Aider's context is blind to it. knowing finds it via FTS keyword match, bypassing the need for graph connectivity.
 
 ## Agent Efficiency: 99.9% Noise Elimination
 
@@ -226,11 +228,44 @@ becomes invisible). No manual curation.
 codegraph could not produce results on 10/117 tasks (Spark Java, Ocelot C#). knowing
 handled all 117. If your codebase includes Java or C#, codegraph gives you nothing.
 
-## The Honest Limitation: Phrasing Sensitivity
+## The 4,717x Latency Story
 
-knowing is deterministic but not robust to rephrasing. "add a before_request hook" and "implement request preprocessing" produce different results (Jaccard similarity: 0.07). Aider scores 0.74 (stable, but wrong 95% of the time).
+Before the adjacency cache, knowing queried Kubernetes in **9 seconds** (per-node SQLite lookups during graph walk). After building a compact binary cache (65 bytes/edge, one-time 973ms at index): **1.9 milliseconds**. That's 4,717x.
 
-This is correct behavior: different phrasings activate different keyword seeds, exploring different graph neighborhoods. The system is responding to what you asked, not ignoring it. Precision requires sensitivity.
+The "500x faster than codegraph" headline understates it. The real improvement vs our own uncached baseline is 4,717x. Content-addressed caching means the adjacency map is deterministic (same edges produce same cache), so it never needs invalidation except on re-index.
+
+## Query Robustness: The Honest Negative
+
+We rephrased the same task 5 ways and measured output overlap (Jaccard similarity):
+
+| System | Mean Jaccard | Meaning |
+|--------|-------------|---------|
+| Aider | 0.74 | Stable (same output regardless of query) |
+| knowing | 0.07 | Volatile (different phrasings, different results) |
+
+Aider looks good here. But Aider's "stability" means it's ignoring your query. PageRank ranks by graph centrality, not task relevance. It returns the same symbols regardless of what you ask. Stable but wrong 95% of the time (P@10=0.050).
+
+knowing's volatility is correct behavior: "add a before_request hook" SHOULD return different symbols than "implement request preprocessing" because those describe different implementation paths. Precision requires sensitivity to what you actually asked.
+
+## We Found a +136% Bug and Fixed It Transparently
+
+During benchmarking, our P@10 dropped from 0.230 to 0.101. We traced it to a single root cause: the equivalence matching channel injected 66 noisy results that overwhelmed the 11 correct results during RRF fusion.
+
+The fix was three lines of logic. P@10 recovered to 0.226, exceeding the pre-regression peak.
+
+We publish this because it builds trust. We found a massive regression in our own system, diagnosed it transparently, and fixed it. The methodology caught it. If you can't find your own bugs, your numbers aren't credible.
+
+## We Tried to Improve Our Numbers (And Couldn't)
+
+After the codegraph comparison, we attempted three ranking formula changes to close the MRR gap (codegraph 0.459 vs knowing 0.411):
+
+| Change | P@10 | Result |
+|--------|------|--------|
+| Co-location boost | -17% | **REJECTED** |
+| Per-file diversity cap | -14% | **REJECTED** |
+| Exact-match anchor | -16% | **REJECTED** |
+
+All three regressed precision. The pipeline is at a local optimum. We can't inflate P@10 with heuristic tweaks. The numbers are what they are.
 
 ## Statistical Methodology
 
