@@ -321,6 +321,10 @@ No configuration. No manual indexing. The MCP server auto-detects your git repo 
 
 ---
 
+We beat everyone who matters, on every dimension that matters, with statistical proof and honest acknowledgment of where we lose.
+
+---
+
 MIT license. Single Go binary. 94K LOC. Open source.
 
 [github.com/blackwell-systems/knowing](https://github.com/blackwell-systems/knowing)
