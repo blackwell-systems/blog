@@ -281,7 +281,7 @@ The fix was three lines of logic. P@10 recovered to 0.226, exceeding the pre-reg
 
 We publish this because it builds trust. We found a massive regression in our own system, diagnosed it transparently, and fixed it. The methodology caught it. If you can't find your own bugs, your numbers aren't credible.
 
-## We Tried to Cheat. We Couldn't.
+## We Tried to Beat Our Own Numbers. We Couldn't.
 
 We ran a 26-configuration parameter sweep across every tunable parameter in the pipeline: RWR restart probability, max seeds, score cutoffs, ranking weights, RRF constants, test penalties. Plus a 6-point sweep of BM25 column weights.
 
