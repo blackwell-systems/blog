@@ -37,22 +37,36 @@ knowing uses Random Walk with Restart on a content-addressed call graph. The wal
 
 The result: codegraph finds symbols that contain your keywords. knowing finds symbols that are structurally relevant to your task. These are often different things.
 
+## How We Got to 0.238: The Re-ranker Breakthrough
+
+P@10 was stuck at 0.207 for weeks. We tried everything: new edge types (neutral), concept thesaurus (marginal), field access extraction (neutral). A 32-config parameter sweep proved all ranking parameters produce identical output. P@10 is structurally determined by which symbols are reachable from keyword seeds.
+
+Then we tried embeddings. Three models (BGE-small, jina-code, nomic-embed) as an independent retrieval channel alongside BM25. All three: completely neutral. Zero improvement. The models weren't the problem. The architecture was.
+
+The insight: BM25 and embeddings find the **same symbols** (both match on keyword similarity). The graph walk already surfaces structurally relevant symbols that keywords alone would miss. But it ranks them poorly because graph distance doesn't perfectly correlate with task relevance.
+
+The fix: use embeddings as a **re-ranker** on the graph walk output, not as an independent candidate source. After RWR produces 50 candidates, embed the task description and each candidate, then reorder by cosine similarity. The graph finds the right neighborhood; the embedding picks the right symbols within it.
+
+Result: +15% P@10 across the full corpus. Kubernetes improved +92.8% because the re-ranker helps most when BM25 returns hundreds of equally-weighted candidates and the embedding breaks the tie.
+
+The architecture matters more than the model. Three different models all produced identical results as an independent channel. The same models as a re-ranker produced a 15% improvement. Same weights, same training data. Different integration point.
+
 ## Per-Repo Breakdown
 
-| Repo | Language | LOC | knowing P@10 | Tasks |
-|------|----------|-----|-------------|-------|
-| Flask | Python | 15K | **0.332** | 19 |
-| Terraform | Go | 2M | **0.275** | 20 |
-| Ocelot | C# | 30K | **0.260** | 5 |
-| Kafka | Java | 500K | **0.253** | 19 |
-| Cross-cutting | Mixed | - | 0.200 | 9 |
-| Django | Python | 300K | 0.182 | 33 |
-| Spark | Java | 14K | 0.180 | 5 |
-| Kubernetes | Go | 3.5M | 0.153 | 19 |
-| VS Code | TypeScript | 1M | 0.137 | 19 |
-| Cargo | Rust | 150K | 0.132 | 19 |
+| Repo | Language | LOC | P@10 | vs S14 | Tasks |
+|------|----------|-----|------|--------|-------|
+| Kafka | Java | 500K | **0.353** | +39.5% | 19 |
+| Flask | Python | 15K | **0.342** | +3.0% | 19 |
+| Kubernetes | Go | 3.5M | **0.295** | +92.8% | 19 |
+| Terraform | Go | 2M | **0.285** | +3.6% | 20 |
+| Spark | Java | 14K | 0.200 | +11.1% | 5 |
+| Cross-cutting | Mixed | - | 0.189 | -5.5% | 9 |
+| Django | Python | 300K | 0.188 | +3.3% | 33 |
+| Ocelot | C# | 30K | 0.180 | -30.8% | 5 |
+| Cargo | Rust | 150K | 0.153 | +15.9% | 19 |
+| VS Code | TypeScript | 1M | 0.137 | -16.0% | 19 |
 
-Repos with well-structured class hierarchies and documentation perform best (Flask 0.332, Terraform 0.275, Kafka 0.253). knowing's docstring FTS directly leverages developer-written documentation as a retrieval signal, and inheritance propagation creates paths through class hierarchies. Even the weakest repo (Cargo 0.132) exceeds grep's best (0.013).
+The embedding re-ranker helps most on large repos with many near-equal BM25 candidates. Kubernetes improved +92.8% (the graph walks surfaces hundreds of candidates; the re-ranker promotes the structurally relevant ones). Kafka +39.5% (dense call graphs benefit from semantic disambiguation). Even the weakest repo (VS Code 0.137) exceeds grep's best (0.013).
 
 ## Query Latency: 500x Faster on Enterprise Repos
 
@@ -221,11 +235,11 @@ Every tool has a breaking point. Only knowing handles the full range.
 
 Honesty matters. Here's where knowing is weaker:
 
-**Dense TypeScript repos** (VS Code P@10=0.137): on large TypeScript codebases with generic symbol names, keyword competition is intense (3,000+ matches for "action"). We mitigate this with density-adaptive type-seed preference (auto-enabled on graphs >40K nodes), but VS Code remains the weakest large repo.
+**Dense TypeScript repos** (VS Code P@10=0.137): on large TypeScript codebases with generic symbol names, keyword competition is intense (3,000+ matches for "action"). Density-adaptive type-seed preference and the embedding re-ranker both help, but VS Code remains the weakest large repo. The re-ranker actually regressed VS Code -16% (from 0.163 to 0.137) while improving Kubernetes +92.8%. The tradeoff is net positive but not universal.
 
-**Sparse documentation** (Cargo P@10=0.132): Rust repos without `///` doc comments don't benefit from docstring FTS. The vocabulary gap persists.
+**Embedding latency**: the re-ranker adds ~10s per query (50 embeddings at 14ms each via pure Go ONNX inference). This is fine for batch/CI use but too slow for interactive MCP queries. A custom inference engine (SIMD-optimized matmul) would reduce this to ~1-2s. Until then, embeddings are opt-in (`--embeddings` flag).
 
-**First-result accuracy**: codegraph sometimes places the single most relevant symbol at rank 1 more often. But it fills positions 2-10 with noise, dragging precision down. If you only need the #1 result, codegraph is competitive. If you need the top-10 to be useful (which agents do), knowing wins.
+**Small C# repos** (Ocelot P@10=0.180, down from 0.260): the re-ranker slightly hurts on small, well-connected codebases where the graph ranking was already good. 5 tasks, high variance.
 
 ## No Language Server Required
 
@@ -364,14 +378,21 @@ Every number in this post is reproducible from that command.
 
 ```bash
 brew install blackwell-systems/tap/knowing
-# MCP integration (auto-indexes on first query):
 ```
+
+Basic MCP integration (graph retrieval only, 2ms queries):
 
 ```json
 { "mcpServers": { "knowing": { "command": "knowing", "args": ["mcp", "--watch"] } } }
 ```
 
-No configuration. No manual indexing. The MCP server auto-detects your git repo and indexes on first launch.
+With embedding re-ranker (+15% precision, ~10s queries, downloads 30MB model on first use):
+
+```json
+{ "mcpServers": { "knowing": { "command": "knowing", "args": ["mcp", "--watch", "--embeddings", "--embed-model", "jina-code"] } } }
+```
+
+No manual indexing. The MCP server auto-detects your git repo and indexes on first launch. Embeddings build in the background.
 
 ## The Complete Picture
 
