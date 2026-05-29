@@ -4,8 +4,8 @@ date: 2026-05-24
 draft: false
 tags: ["ai", "mcp", "code-intelligence", "benchmark", "knowledge-graph", "retrieval", "precision", "codegraph", "aider", "knowing", "developer-tools"]
 categories: ["ai", "benchmarks", "open-source"]
-description: "Head-to-head benchmark: knowing vs codegraph (19K stars) vs Aider (20K stars) vs Gortex vs GitNexus across 167 tasks, 9 repos, 6 languages. knowing is 1.76x more precise than codegraph, 18.3x more precise than grep, 500x faster on enterprise repos, and finds new code in 167ms. Full statistical proof."
-summary: "codegraph has 19K GitHub stars. Aider has 20K. We benchmarked 7 systems on 167 tasks across 9 codebases (3.5M LOC to 14K LOC). knowing is 1.76x more precise than codegraph, 3.17x vs GitNexus, 3.78x vs Gortex, 18.3x vs grep. Queries Kubernetes in 2ms (codegraph: ~1s), eliminates 99.9% of grep noise on ambiguous queries."
+description: "Head-to-head benchmark: knowing vs codegraph (19K stars) vs Aider (20K stars) vs Gortex vs GitNexus (40K stars) across 277 tasks, 14 repos, 8 languages. knowing is 1.97x more precise than codegraph, 20.5x more precise than grep, 500x faster on enterprise repos, and finds new code in 167ms. Full statistical proof."
+summary: "codegraph has 19K GitHub stars. GitNexus has 40K. Aider has 20K. We benchmarked 7 systems on 277 tasks across 14 codebases (3.5M LOC to 14K LOC), 8 languages. knowing is 1.97x more precise than codegraph, 3.55x vs GitNexus, 4.22x vs Gortex, 5.32x vs Aider, 20.5x vs grep. Queries Kubernetes in 2ms (codegraph: ~1s)."
 ---
 
 codegraph has 19,459 GitHub stars. We have zero. So we stopped talking and started measuring.
@@ -14,20 +14,21 @@ codegraph has 19,459 GitHub stars. We have zero. So we stopped talking and start
 
 | System | P@10 | Query k8s | Time-to-consistency | Stars |
 |--------|------|-----------|---------------------|-------|
-| **knowing** | **0.238** | **2ms** | **167ms** | 0 |
+| **knowing** | **0.266** | **2ms** | **167ms** | 0 |
 | codegraph | 0.135 | ~1s | 805ms | 19,459 |
-| GitNexus | 0.075 | 612ms | minutes | - |
+| GitNexus | 0.075 | 612ms | minutes | 40,362 |
 | Gortex | 0.063 | ~6s | minutes | - |
-| Aider | - | ~3s | 3,150ms (timed out) | ~20K |
-| codebase-memory | - | 2,900ms | N/A (timed out) | 2,600 |
+| Aider | 0.050 | ~3s | 3,150ms (misses new symbols) | ~20K |
+| codebase-memory | 0.137 | 2,900ms | N/A (crashes >300K LOC) | 2,600 |
 | grep | 0.013 | instant | instant | N/A |
 
 P@10 = fraction of top-10 results that are relevant to the task. Higher is better.
 
-**knowing is 1.76x more precise than codegraph** (19K stars, tree-sitter + FTS5).
-**knowing is 3.17x more precise than GitNexus** (knowledge graph MCP).
-**knowing is 3.78x more precise than Gortex** (Go graph engine, 256 languages).
-**knowing is 18.3x more precise than grep.**
+**knowing is 1.97x more precise than codegraph** (19K stars, tree-sitter + FTS5).
+**knowing is 3.55x more precise than GitNexus** (40K stars, knowledge graph MCP).
+**knowing is 4.22x more precise than Gortex** (Go graph engine, 256 languages).
+**knowing is 5.32x more precise than Aider** (20K stars, PageRank repo-map).
+**knowing is 20.5x more precise than grep.**
 
 ## Why 19K Stars Means Nothing
 
