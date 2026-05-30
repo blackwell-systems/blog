@@ -22,7 +22,10 @@ codegraph has 19,459 GitHub stars. We have zero. So we stopped talking and start
 | codebase-memory | 0.137 | 2,900ms | N/A (crashes >300K LOC) | 2,600 |
 | grep | 0.013 | instant | instant | N/A |
 
-P@10 = fraction of top-10 results that are relevant to the task. Higher is better.
+**How to read these numbers:**
+- **P@10** (Precision at 10): of the top 10 symbols returned, what fraction are actually relevant. P@10 = 0.267 means ~3 of every 10 results are ground truth. Higher is better.
+- **Query latency**: wall clock time per query. knowing pre-computes an adjacency cache; competitors re-traverse on every call.
+- **Time-to-consistency**: you add a function; how fast can the system find it?
 
 **knowing is 1.98x more precise than codegraph** (19K stars, tree-sitter + FTS5).
 **knowing is 3.56x more precise than GitNexus** (40K stars, knowledge graph MCP).
