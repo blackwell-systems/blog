@@ -126,8 +126,6 @@ Honesty matters.
 
 **Django's vocabulary gap** (42% zero-rate): ground truth symbols share no keywords with task descriptions. Framework equivalence classes recovered many zeros (0.081 -> 0.183, +126%) but the fundamental problem persists for tasks that don't match any curated concept.
 
-**Enrichment can dilute Python apps**: pyright enrichment on saleor (Django e-commerce) regressed P@10 from 0.236 to 0.182. 115K phantom external nodes cause packing dilution. The ground truth is found (R@10=1.00) but noise fills budget slots. This is an active research area.
-
 ## Benchmark Methodology
 
 - 308 tasks, 16 repos, 8 languages (Go, Python, TypeScript, Rust, Java, C#, Ruby, multi)
