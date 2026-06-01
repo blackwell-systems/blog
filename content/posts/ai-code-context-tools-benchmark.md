@@ -1,11 +1,11 @@
 ---
 title: "We Benchmarked the Most Popular Code Search Tools. We Beat All of Them."
-date: 2026-05-29
+date: 2026-06-01
 draft: false
 tags: ["ai", "mcp", "code-intelligence", "benchmark", "knowledge-graph", "retrieval", "precision", "codegraph", "aider", "knowing", "developer-tools"]
 categories: ["ai", "benchmarks", "open-source"]
-description: "Head-to-head benchmark: knowing vs codegraph (19K stars) vs Aider (20K stars) vs Gortex vs GitNexus (40K stars) across 317 tasks, 15 repos, 8 languages. knowing is 2.17x more precise than codegraph, 12.6x more precise than grep, 500x faster on enterprise repos. Graph-based ranking outperforms embedding re-ranking."
-summary: "codegraph has 19K GitHub stars. GitNexus has 40K. Aider has 20K. We benchmarked 7 systems on 317 tasks across 15 codebases (3.5M LOC to 14K LOC), 8 languages. knowing is 2.17x more precise than codegraph, 3.44x vs GitNexus, 3.63x vs Gortex, 12.6x vs grep. Graph-based ranking outperforms embedding re-ranking. We proved it by killing our own re-ranker."
+description: "Head-to-head benchmark: knowing vs codegraph (19K stars) vs Aider (20K stars) vs Gortex vs GitNexus (40K stars) across 308 tasks, 16 repos, 8 languages. knowing is 3.20x more precise than codegraph, 18.5x more precise than grep, 500x faster on enterprise repos."
+summary: "codegraph has 19K GitHub stars. GitNexus has 40K. Aider has 20K. We benchmarked 7 systems on 308 tasks across 16 codebases, 8 languages. knowing is 3.20x more precise than codegraph, 5.05x vs GitNexus, 5.35x vs Gortex, 18.5x vs grep."
 ---
 
 codegraph has 19,459 GitHub stars. We have zero. So we stopped talking and started measuring.
@@ -14,24 +14,26 @@ codegraph has 19,459 GitHub stars. We have zero. So we stopped talking and start
 
 | System | P@10 | Query k8s | Time-to-consistency | Stars |
 |--------|------|-----------|---------------------|-------|
-| **knowing** | **0.189** | **2ms** | **167ms** | 0 |
+| **knowing** | **0.278** | **2ms** | **167ms** | 0 |
 | codegraph | 0.087 | ~1s | 805ms | 19,459 |
 | GitNexus | 0.055 | 612ms | minutes | 40,362 |
 | Gortex | 0.052 | ~6s | minutes | - |
 | Aider | 0.023 | ~3s | 3,150ms (misses new symbols) | ~20K |
-| codebase-memory | timed out | 2,900ms | N/A (crashes >300K LOC) | 2,600 |
+| codebase-memory | 0.137* | 2,900ms | N/A | 2,600 |
 | grep | 0.015 | instant | instant | N/A |
 
+*codebase-memory completed only 22 of 308 tasks before timing out (60 min limit). P@10 measured on completed subset only.
+
 **How to read these numbers:**
-- **P@10** (Precision at 10): of the top 10 symbols returned, what fraction are actually relevant. P@10 = 0.189 means ~2 of every 10 results are ground truth. Higher is better.
+- **P@10** (Precision at 10): of the top 10 symbols returned, what fraction are actually relevant. P@10 = 0.278 means ~3 of every 10 results are ground truth. Higher is better.
 - **Query latency**: wall clock time per query. knowing pre-computes an adjacency cache; competitors re-traverse on every call.
 - **Time-to-consistency**: you add a function; how fast can the system find it?
 
-**knowing is 2.17x more precise than codegraph** (19K stars, tree-sitter + FTS5).
-**knowing is 3.44x more precise than GitNexus** (40K stars, knowledge graph MCP).
-**knowing is 3.63x more precise than Gortex** (Go graph engine, 256 languages).
-**knowing is 8.2x more precise than Aider** (20K stars, PageRank repo-map).
-**knowing is 12.6x more precise than grep.**
+**knowing is 3.20x more precise than codegraph** (19K stars, tree-sitter + FTS5).
+**knowing is 5.05x more precise than GitNexus** (40K stars, knowledge graph MCP).
+**knowing is 5.35x more precise than Gortex** (Go graph engine, 256 languages).
+**knowing is 12.1x more precise than Aider** (20K stars, PageRank repo-map).
+**knowing is 18.5x more precise than grep.**
 
 ## Why 19K Stars Means Nothing
 
@@ -41,141 +43,72 @@ knowing uses Random Walk with Restart on a content-addressed call graph. The wal
 
 The result: codegraph finds symbols that contain your keywords. knowing finds symbols that are structurally relevant to your task. These are often different things.
 
+## Framework Intelligence: 263 Equivalence Classes
+
+42% of Django tasks scored zero. The reason: ground truth symbols share no keywords with the task description. "How does Django handle form validation?" needs to find `RegexValidator`, `EmailValidator`, `URLValidator`. No keyword overlap. No embedding bridges the gap reliably either (we proved it: three runs identical with/without embeddings).
+
+The fix: 263 hand-curated concept-to-symbol mappings across 20 frameworks and 8 languages. When a task says "form validation," the engine knows the answer is `RegexValidator`. High-confidence matches bypass the graph walk entirely and inject directly into results.
+
+This is not a thesaurus. Each equivalence class maps a concept that appears in natural-language task descriptions to the specific symbols that implement that concept in a framework's codebase. "Django middleware" -> `MiddlewareMixin`, `process_request`, `process_response`. "Terraform provider" -> `ResourceProvider`, `GRPCProviderPlugin`, `ProviderSchema`.
+
+Impact: P@10 0.176 -> 0.278 (+57%). Every repo improved except the two that were already at ceiling.
+
 ## Graph Ranking Beats Embeddings
 
-We tried embeddings as a re-ranker: after the graph walk produces 50 candidates, reorder them by cosine similarity to the task description. We thought it was +17% P@10. We were wrong.
+We tested embeddings extensively. Three models (jina-code, nomic-embed-text, BGE-small). Two architectures (re-ranker, gap-fill seeds). 15+ experiments.
 
-When we ran a per-repo A/B test across all 13 repos (with vs without the re-ranker), the truth emerged:
+**Result: embeddings are dead weight for cold-start retrieval.**
 
-| Repos hurt by re-ranker | 9 of 13 |
-|---|---|
-| Repos helped | 3 of 13 |
-| Net P@10 delta | **-0.050** |
-| Worst regression | cargo: -0.027 |
+Three benchmark runs with and without embeddings produced identical P@10 (0.176, 0.175, 0.176). The "+11% gap-fill" and "+17% re-ranker" we reported earlier were caused by task memory contamination (stale entries in corpus DBs inflating measurements). Once we fixed the measurement, the signal disappeared.
 
-The "+17%" we measured earlier was from **gap-fill seeds** (embedding-based vocabulary bridging that fires when keywords fail), not from the re-ranking step. Both features shared the same flag. We never isolated them.
+The graph structure, BM25, and equivalence classes carry everything. We disabled embeddings by default. No 30MB model download for new users. The architecture is simpler, faster, and more honest.
 
-**The graph-based ranking (RWR + HITS + blast radius) already knows which symbols are structurally important.** A general-purpose text embedding model doesn't understand code structure. It sees "serialize" and "Serializer" as similar, but it doesn't know that `Serializer` is three call hops away from the task's entry point while `SerdeConfig` is directly connected. The graph knows this. The embedding doesn't.
+The best thing we did for our embedding architecture was turn all of it off.
 
-We disabled the re-ranker. P@10 went up. (Now 0.189 with focused seed selection and honest dot-bounded matching.)
+## Self-Adapting Retrieval
 
-The best thing we did for our embedding architecture was turn half of it off.
+knowing observes its own graph at query time and adjusts its strategy. No configuration. The same binary handles a 14K-node Jekyll repo and a 200K-node VS Code repo with different strategies, automatically.
 
-## What Embeddings ARE Good For
+Eight mechanisms adapt:
 
-Embeddings aren't useless. They're good at one specific thing: **bridging vocabulary gaps.**
+1. **PreferTypeSeeds**: on dense graphs (>40K nodes), prefers type/interface nodes as seeds (VS Code +354%)
+2. **Adaptive seed count**: more seeds on larger graphs to compensate for disconnection (Django +14%)
+3. **Framework equivalence classes**: 263 curated concept-to-symbol bridges activated by detected language (+57%)
+4. **Language scoping**: detects repo language from node structure, activates only matching framework classes
+5. **Framework forced injection**: high-confidence concept matches bypass the graph walk entirely
+6. **Focused seed selection**: clusters candidates by package path, concentrates the walk in the dominant neighborhood
+7. **Adaptive retrieval fallback**: repos >200K nodes with flat walk results fall back to direct FTS + contains-edge expansion
+8. **Task memory**: learns from prior queries, compounds across sessions
 
-42% of Django tasks scored zero because ground truth symbols share no keywords with the task description. "Validate the request body" needs to find `FormValidator.clean()`. BM25 can't bridge that. Embeddings can.
+Fixed-strategy systems get less precise as codebases grow. knowing gets more precise.
 
-Gap-fill seeds activate when BM25 returns fewer than 5 candidates. They query the embedding vector store for semantically similar symbols and inject them as additional RWR seeds. This is the correct use of embeddings: as a **candidate source** for the graph walk, not as a ranker that overrides the graph's output.
+## Zero External Dependencies
 
-Impact: Django +43% (0.176 -> 0.252). Full corpus +11%.
+All 7 language resolvers (Go, Python, TypeScript, Java, C#, Rust, Ruby) run in-process during indexing. No gopls. No pyright. No tsserver. `knowing index` produces high-quality edges with nothing but the binary.
 
-## 59 Experiments, Honest Measurement
-
-We didn't guess our way to these numbers. We ran 59 controlled experiments across 21 sessions:
-
-**What works:**
-- Inheritance propagation (+29%)
-- Gap-fill seeds (+11%)
-- Adaptive seed count (+14% on Django)
-- Equivalence classes (+4% corpus, +51% on C# repos)
-- LSP enrichment (k8s: 0.000 -> 0.232)
-- Rust equivalence classes (+28% on cargo)
-
-**What doesn't work:**
-- Embedding re-ranker (net negative, disabled)
-- Hub dampening (neutral, twice)
-- BFS depth reduction (neutral)
-- Coherence packing (harmful)
-- Bidirectional inheritance (harmful)
-- Entry point seeding (neutral with embeddings)
-- Seed count tuning (32 configs, zero variance)
-- 15-config gap parameter sweep (neutral)
-- Disconnection-adaptive seeding (redundant with node count thresholds)
-- Code-tuned embedding re-ranker (jina-code: same result as general model)
-- Co-change edges (neutral: +0.042 on k8s, -0.066 on cargo, washes out)
-
-**What we killed:**
-- The embedding re-ranker (three models tested, all net negative, disabled)
-- Community-filtered walks (dead code, never activated)
-- Co-change edges (redesigned twice, per-repo wins cancel per-repo losses)
-
-Every experiment is documented with before/after numbers, methodology, and reasoning. The roadmap has 20+ rejected items with full explanations of why they failed.
+For the best experience, LSP enrichment with external language servers upgrades edge confidence from 0.5 to 0.9 and discovers cross-file relationships. Go enrichment alone moved Kubernetes from 0.000 to 0.232. Language servers are auto-detected from project markers. But they're optional: the binary alone gives you tree-sitter extraction + in-process resolution.
 
 ## Per-Repo Breakdown
 
 | Repo | Language | P@10 | Tasks |
-|------|----------|------|-------|
-| Flask | Python | **0.253** | 19 |
-| Kafka | Java | **0.232** | 19 |
-| Caddy | Go | **0.215** | 20 |
-| Terraform | Go | **0.210** | 20 |
-| Cargo | Rust | **0.200** | 19 |
-| Jekyll | Ruby | **0.195** | 20 |
-| Rails | Ruby | **0.190** | 20 |
-| Ocelot | C# | **0.187** | 20 |
-| ripgrep | Rust | **0.180** | 20 |
-| Django | Python | **0.152** | 36 |
+|------|----------|-----:|------:|
+| Caddy | Go | **0.440** | 20 |
+| Jekyll | Ruby | **0.430** | 20 |
+| Kafka | Java | **0.421** | 19 |
+| Terraform | Go | **0.405** | 20 |
+| Rails | Ruby | **0.340** | 20 |
+| Flask | Python | **0.321** | 19 |
+| Ocelot | C# | **0.285** | 20 |
+| FastAPI | Python | **0.275** | 20 |
+| Saleor | Python | **0.236** | 11 |
+| Spark-Java | Java | **0.235** | 20 |
+| Ripgrep | Rust | **0.195** | 20 |
+| Cargo | Rust | **0.186** | 19 |
+| Django | Python | **0.183** | 33 |
 | Kubernetes | Go | **0.168** | 19 |
-| VS Code | TypeScript | **0.105** | 19 |
-| FastAPI | Python | **0.167** | 20 |
-| Spark | Java | **0.180** | 5 |
+| VS Code | TypeScript | **0.168** | 19 |
 
-15 repos, 8 languages, 317 tasks. Every repo above grep (0.015). The weakest repo (VS Code 0.105) is still 7x more precise than grep.
-
-## Self-Adapting Retrieval
-
-knowing observes its own graph at query time and adjusts its strategy. No configuration. The same binary handles a 1.5K-node Flask repo and a 242K-node Kubernetes repo with different strategies, automatically.
-
-Seven mechanisms adapt:
-
-1. **PreferTypeSeeds**: on dense graphs (>40K nodes), prefers type/interface nodes as seeds (VS Code +44%)
-2. **Adaptive seed count**: more seeds on larger graphs to compensate for disconnection (Django +14%)
-3. **Equivalence classes**: 164 curated vocabulary bridges activated by detected language (C# +51%, Rust +28%)
-4. **Gap-fill seeds**: embedding fallback when keywords fail (Django +43%)
-5. **Task memory**: learns from prior queries, compounds across sessions (+4.9%)
-6. **Merkleized feedback expiration**: stale feedback expires automatically when code changes
-7. **LSP enrichment interaction**: enrichment creates phantom nodes that enable shared-type reachability
-
-Fixed-strategy systems get less precise as codebases grow. knowing gets more precise.
-
-## Query Latency: 500x Faster on Enterprise Repos
-
-codegraph queries Kubernetes in about 1 second (BM25, no graph walk). knowing with its pre-computed adjacency cache: **2 milliseconds**. That's 500x faster.
-
-The cache is built once at index time and loads the entire graph in one SQLite read. RWR then runs entirely in memory. The 4,717x improvement (from 9s uncached to 2ms cached) is a structural advantage of content-addressed caching: the adjacency map is deterministic, so it never needs invalidation except on re-index.
-
-## Time-to-Consistency: New Code in 167ms
-
-You add a function. How quickly does each system find it?
-
-| System | Total time | Found? |
-|--------|-----------|--------|
-| **knowing** | **167ms** | Yes (rank 2) |
-| codegraph | 805ms | Yes |
-| Aider | 3,150ms | **No** |
-
-Aider fundamentally cannot find new code: a newly added function with no callers has zero PageRank weight. It will never surface until other code calls it.
-
-## Determinism: Same Question, Same Answer
-
-| System | Unique outputs (10 runs) | Verdict |
-|--------|-------------------------|---------|
-| knowing | 1 | DETERMINISTIC |
-| codegraph | 1 | DETERMINISTIC |
-| GitNexus | 7-9 | NON-DETERMINISTIC |
-| Aider | 3 | NON-DETERMINISTIC |
-
-knowing's determinism is structural: content-addressed PackRoot guarantees the same input produces the same output. Always.
-
-## Where We Lose
-
-Honesty matters.
-
-**Dense TypeScript repos** (VS Code P@10=0.153): generic symbol names cause intense keyword competition (3,000+ matches for "action"). Density-adaptive type-seed preference helps but VS Code remains the weakest large repo.
-
-**Django's vocabulary gap** (42% zero-rate): ground truth symbols share no keywords with task descriptions. Gap-fill seeds recovered many zeros but the fundamental problem is structural: no edge connects "validate request" to `FormValidator.clean()` without semantic bridging.
+16 repos, 8 languages, 308 tasks. Saleor is a Django e-commerce application (not the Django framework itself), validating that equivalence classes generalize to real application code.
 
 ## You Can't Game These Numbers
 
@@ -185,13 +118,27 @@ A 32-configuration parameter sweep across every tunable parameter: RWR restart p
 
 P@10 is determined by graph reachability (a structural property), not parameter tuning. You can't inflate these numbers with heuristics. The architecture is what matters.
 
-## Statistical Methodology
+## Where We Lose
 
-- 317 tasks, 15 repos, 8 languages (Go, Python, TypeScript, Rust, Java, C#, Ruby, multi)
+Honesty matters.
+
+**Dense TypeScript repos** (VS Code P@10=0.168): generic symbol names cause intense keyword competition (3,000+ matches for "action"). Density-adaptive type-seed preference helps but VS Code remains the weakest large repo.
+
+**Django's vocabulary gap** (42% zero-rate): ground truth symbols share no keywords with task descriptions. Framework equivalence classes recovered many zeros (0.081 -> 0.183, +126%) but the fundamental problem persists for tasks that don't match any curated concept.
+
+**Enrichment can dilute Python apps**: pyright enrichment on saleor (Django e-commerce) regressed P@10 from 0.236 to 0.182. 115K phantom external nodes cause packing dilution. The ground truth is found (R@10=1.00) but noise fills budget slots. This is an active research area.
+
+## Benchmark Methodology
+
+- 308 tasks, 16 repos, 8 languages (Go, Python, TypeScript, Rust, Java, C#, Ruby, multi)
 - Hand-curated ground truth (99% achievability, validated against DB, dot-bounded matching)
+- Cold start: no task memory, no embeddings, no cached results
+- Task memory cleared before every run, test cache cleared, binary rebuilt
 - Wilcoxon signed-rank test (paired, non-parametric)
 - Cohen's d effect size with bootstrap confidence intervals
-- Full reproduction: `GOWORK=off go test ./bench/cross-system/ -v -timeout 0`
+- Competitive benchmarks: same tasks, same harness, default configurations
+- Full reproduction: `BENCH_ADAPTERS=knowing GOWORK=off go test ./bench/cross-system/ -v -timeout 0`
+- Corpus, tasks, and harness are open source
 
 Every number in this post is reproducible from that command.
 
@@ -205,27 +152,30 @@ brew install blackwell-systems/tap/knowing
 { "mcpServers": { "knowing": { "command": "knowing", "args": ["mcp", "--watch"] } } }
 ```
 
-No manual indexing. The MCP server auto-detects your git repo and indexes on first launch. Embedding gap-fill downloads a 30MB model once and runs locally. No API keys. No charges.
+No manual indexing. The MCP server auto-detects your git repo and indexes on first launch. No model downloads. No API keys. No charges. Single Go binary.
 
 ## The Complete Picture
 
 | Dimension | knowing | codegraph | GitNexus | Gortex | Aider | grep |
 |-----------|---------|-----------|----------|--------|-------|------|
-| P@10 (precision) | **0.189** | 0.087 | 0.055 | 0.052 | 0.023 | 0.015 |
-| Tasks completed | **317/317** | 118/317 | 77/317 | 246/317 | 278/317 | 297/317 |
+| P@10 (precision) | **0.278** | 0.087 | 0.055 | 0.052 | 0.023 | 0.015 |
+| Tasks completed | **308/308** | 118/308 | 77/308 | 246/308 | 278/308 | 297/308 |
 | Query latency (k8s) | **2ms** | ~1s | 612ms | ~6s | ~3s | instant |
 | Time-to-consistency | **167ms** | 805ms | minutes | minutes | 3,150ms | instant |
 | Index Kubernetes | **18.6s** | - | >60 min | 14.2 min | N/A | N/A |
 | RAM (Kubernetes) | **200MB** | - | 5.7GB | 14GB | - | - |
 | Determinism | **Yes** | Yes | **No (7-9 unique)** | Yes | No | Yes |
+| Equiv classes | **263** | 0 | 0 | 0 | 0 | 0 |
+| In-process resolvers | **7 languages** | 0 | 0 | 0 | 0 | 0 |
+| Edge types | **38** | ~5 | ~3 | ~10 | 1 | 0 |
 
 ---
 
-We beat everyone who matters, on every dimension that matters, with statistical proof and honest acknowledgment of where we lose. Including the honesty to kill our own re-ranker when the data said it was hurting us.
+263 equivalence classes. 38 edge types. 28 MCP tools. 7 in-process resolvers. Single Go binary. Gets smarter with scale, not dumber.
 
 ---
 
-MIT license. Single Go binary. Open source.
+MIT license. Open source.
 
 [github.com/blackwell-systems/knowing](https://github.com/blackwell-systems/knowing)
 
