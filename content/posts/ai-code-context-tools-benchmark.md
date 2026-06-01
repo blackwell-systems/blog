@@ -78,7 +78,7 @@ Eight mechanisms adapt:
 5. **Framework forced injection**: high-confidence concept matches bypass the graph walk entirely
 6. **Focused seed selection**: clusters candidates by package path, concentrates the walk in the dominant neighborhood
 7. **Adaptive retrieval fallback**: repos >200K nodes with flat walk results fall back to direct FTS + contains-edge expansion
-8. **Task memory**: learns from prior queries, compounds across sessions
+8. **Implicit noise demotion**: symbols returned but never used by the agent get demoted on future queries (+5.9% P@10 on Django after 3 rounds)
 
 Fixed-strategy systems get less precise as codebases grow. knowing gets more precise.
 
