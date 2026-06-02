@@ -5,99 +5,90 @@ draft: false
 showMetadata: false
 ---
 
-**Dayna Blackwell** builds reliable distributed systems at scale.
+**Dayna Blackwell** is a software engineer, open source author, and published researcher. Founder of [Blackwell Systems](https://github.com/blackwell-systems).
 
-I'm a software architect specializing in event-driven architectures at scale. Currently, I design and operate the global loyalty and promotions platform for a major hospitality brand - the backend services powering rewards programs, digital wallets, and promotional campaigns used by millions of customers worldwide.
-
-My work focuses on making distributed systems predictable: idempotent message handling, content-based deduplication, selective semantic hashing, and observability patterns that make production failures understandable when they happen. The goal is systems where 3 AM pages are rare and debuggable.
-
-The tech stack spans AWS (Lambda, EventBridge, DynamoDB, Step Functions, ECR, VPC networking, Glue, Redshift), backend services (Python FastAPI, Java Jakarta EE, Go microservices), infrastructure-as-code (CDK, Terraform), and Rust for performance-critical components. Deep AWS expertise across compute, networking, orchestration, and data layers. My career path - from operations leadership through backend architecture - shapes how I think about systems: they have to work for the people maintaining them at 3 AM, not just the people designing them at 3 PM.
+I build production backend systems, AI-native developer tooling, and the infrastructure that makes other engineers more effective. 25+ open source projects in Go, Rust, and C. 35,000+ monthly downloads across pip, npm, Docker, Homebrew, and Winget. 4 published research papers with DOIs. 26 PRs merged into Google, Anthropic, Grafana, LangChain, and Stretchr/testify.
 
 ---
 
-## What I Write About
+## What I've Built
 
-This blog provides comprehensive technical deep-dives into programming language fundamentals and distributed systems architecture. I write to build strong mental models - the kind you can't get from framework documentation or tutorials.
+**[knowing](https://github.com/blackwell-systems/knowing)** is a content-addressed code intelligence engine that beats every competitor in the category with statistical proof. P@10=0.278 across 308 tasks, 16 repos, 8 languages: 3.2x codegraph (19K stars), 5.05x GitNexus (40K stars), 5.35x Gortex, 12.1x Aider, 18.5x grep. 23 extractors spanning 26 languages/formats. 12 self-adapting retrieval mechanisms. 28 MCP tools and 8 resources across 7 planes. Supply chain detection without executing code (1.0% FP rate). OpenTelemetry runtime trace ingestion. Community detection with Merkle roots. GCF wire format (84% fewer tokens than JSON). Single Go binary, zero dependencies. Published whitepaper: [Content-Addressing as a Computation Primitive for Software Relationship Intelligence](https://zenodo.org/records/20342255) (DOI: 10.5281/zenodo.20342255).
 
-**Language Design & Mental Models:**
-- Value semantics vs reference semantics (Go, Rust vs Python, Java)
-- Why modern languages moved away from OOP patterns
-- Memory models, concurrency primitives, and performance implications
-- Cache locality, stack vs heap, escape analysis
-- Building strong mental models through polyglot comparison
+**[agent-lsp](https://github.com/blackwell-systems/agent-lsp)** is a stateful MCP server runtime over real language servers. 66 tools, 24 Agent Skills, speculative execution engine, 30 CI-verified languages. 5,500+ monthly downloads. Listed on the official MCP Registry, Glama (A-tier), and awesome-mcp-servers.
 
-**Distributed Systems:**
-- Event-driven architectures at scale
-- Idempotent message handling and deduplication patterns
-- Observability and debugging production failures
-- Serverless patterns and AWS architecture
-- API design (REST, GraphQL, WebSocket, gRPC)
+**[mcp-assert](https://github.com/blackwell-systems/mcp-assert)** is the deterministic testing standard for MCP servers. 28,000+ total downloads across 6 distribution channels. Shipped from 0-to-1 in one week. 102 servers scanned, 34 upstream bugs found. Adopted as CI standard by Ant Group (antvis) and wyre-technology (25+ repos).
 
-**Developer Tools:**
-- Claude Code workflows and AI-assisted development
-- Secret management and security patterns
-- Structured error handling across frameworks
-- Open source library design
+**[polywave](https://github.com/blackwell-systems/polywave)** is a formally specified parallel agent coordination protocol (6 invariants, 48 execution rules, 7 participant roles, 5-layer worktree isolation). 4-5x measured speedup. knowing (94K LOC) was built using polywave. Go SDK: 33 packages, 75+ CLI commands, 4 LLM backends, autonomous daemon mode. Listed on ComposioHQ/awesome-codex-skills (10.6K stars).
 
-These articles are the ones I wish existed when I was learning: comprehensive (5,000+ words is common), visual (Mermaid diagrams throughout), and focused on the "why" rather than the "how."
+**[claudewatch](https://github.com/blackwell-systems/claudewatch)** is a 32-tool MCP server for AI development observability. PostToolUse hooks, session analytics, CLAUDE.md effectiveness scoring, friction pattern classification.
+
+**GCP Emulator Platform**: 5 composable emulators (Secret Manager, KMS, IAM, Eventarc, auth) with shared hook architecture. The [Secret Manager emulator](https://github.com/blackwell-systems/gcp-secret-manager-emulator) is the most widely adopted community solution, ranked #1 on Google/Bing/DuckDuckGo, recommended by Google AI Overview, Gemini, and GitHub Copilot. 45K+ downloads. Enterprise adoption by Flipt (4.8K stars), Reindeer AI, and sugar-org/swarm-external-secrets.
+
+No. 6 all-time contributor to [mcp-go](https://github.com/mark3labs/mcp-go) (8.7K stars). Full [open source portfolio](/oss/).
 
 ---
 
-## Recent Articles
+## Professional Work
 
-- **[How Multicore CPUs Killed Object-Oriented Programming](/posts/multicore-killed-oop/)** - Why the 2005 hardware shift exposed OOP's fatal flaw: shared mutable state through references became catastrophic for concurrency
-- **[Go's Value Philosophy Series](/series/go-value-philosophy/)** - Deep dive into why Go treats everything as a value, not an object, and how this enables safe concurrency
-- **[Python Object Overhead](/posts/python-object-overhead/)** - Why a simple integer uses 28 bytes in Python, and what this means for performance
-- **[API Communication Patterns Guide](/posts/api-communication-patterns-guide/)** - REST, GraphQL, WebSocket, gRPC comparison with decision frameworks and real-world examples
-
----
-
-## Polyglot Programming Philosophy
-
-As a polyglot programmer (Python, Java, Go, Rust), I approach each language by building strong mental models: understanding why Go treats everything as a value, why Python makes everything an object, why Rust enforces ownership. Polyglot programming forces you to confront the underlying implementations and low-level details of each language - when something you're used to "just working" in one language completely breaks in another, you can't stay at the surface level anymore.
-
-Each language represents a fundamentally different way of thinking about memory, concurrency, and composition. This cross-language perspective shapes how I design systems and choose the right tool for each problem. Seeing the same concept across multiple languages reveals the tradeoffs behind each design decision - from memory models and type systems to the low-level implementation details that determine whether your architecture survives production.
-
----
-
-## Open Source & Technical Writing
-
-I build cloud-native infrastructure and developer tools in Go and Rust. My GCP Secret Manager emulator is the most widely adopted community solution for local GCP development — ranked #1 on Google, Bing, and DuckDuckGo, recommended by Google AI Overview, Gemini, and GitHub Copilot as the best available option, with ~20k downloads and confirmed enterprise adoption. My broader open source work includes a C library for detecting structural memory leaks invisible to conventional tools (libdrainprof), a language-agnostic Kubernetes secrets control plane (vaultmux-server), build-time schema compilation from Go to TypeScript (goldenthread), unified secret management across multiple vault backends (vaultmux, vaultmux-rs), profile management for Claude Code (dotclaude), type-safe validation with automatic TypeScript schema generation (domainstack), and structured error handling that works across different web frameworks (error-envelope, err-envelope).
-
-As a technical writer (3x AWS Certified, 225,000+ lines of documentation), I've authored **You Don't Know JSON** (127,000 words) - a comprehensive guide to JSON's ecosystem: from schema validation to binary formats (MessagePack, CBOR, Protocol Buffers), streaming architectures, security patterns, API design, data pipelines, and testing strategies. Learn when JSON works, when it doesn't, and what to use instead.
-
----
-
-## Books
-
-**[You Don't Know JSON](https://leanpub.com/you-dont-know-json)** - A comprehensive guide to JSON's ecosystem: from schema validation to binary formats (MessagePack, CBOR, Protocol Buffers), streaming architectures, security patterns, API design, data pipelines, and testing strategies. Learn when JSON works, when it doesn't, and what to use instead. Available on Leanpub.
+Backend Enterprise Developer at **Best Western Hotels & Resorts**, where I architect and operate the core loyalty platform backend serving millions of members across 5,000+ properties in 120 countries. This platform is the foundational layer consumed by nearly every engineering team in the company. I designed the Digital Wallet (5 currencies), the serverless promotion rules engine (Lambda, EventBridge, DynamoDB, Redis), and the real-time CDC pipeline. Revenue-critical systems with 24/7 on-call. Founding member of the Agentic Development Group, leading enterprise-wide rollout of AI-enhanced engineering workflows.
 
 ---
 
 ## Publications
 
+**Blackwell, D. (2026).** *Content-Addressing as a Computation Primitive for Software Relationship Intelligence.* Technical Report.<br>
+[doi:10.5281/zenodo.20342255](https://doi.org/10.5281/zenodo.20342255)
+
+Hierarchical Merkle trees over code relationship edges as a query-optimization substrate. Self-adapting retrieval, cryptographic proofs of relationship presence and absence, supply chain detection. No prior art found in a survey of Sourcegraph, Kythe, CodeQL, Bazel, Neo4j, IPFS, and Nix. Companion implementation: [knowing](https://github.com/blackwell-systems/knowing).
+
 **Blackwell, D. (2026).** *Normalization Confluence in Federated Registry Networks.* Technical Report.<br>
 [doi:10.5281/zenodo.18677400](https://doi.org/10.5281/zenodo.18677400)
 
-Extends normalization confluence to federated environments where multiple registries with independent invariants are connected by morphisms encoding cross-organizational constraints. For tree-shaped morphism networks, proves federated convergence requires only validity preservation - all other conditions derive from network acyclicity via an authority argument. Includes self-contained treatment of single-registry model with convergence theorem, necessity results, and verification calculus.
+Extends normalization confluence to federated environments where multiple registries with independent invariants are connected by morphisms encoding cross-organizational constraints. Proves federated convergence requires only validity preservation for tree-shaped networks.
 
 **Blackwell, D. (2026).** *Normalization Confluence for Registry-Governed Stream Processing.* Technical Report.<br>
 [doi:10.5281/zenodo.18671870](https://doi.org/10.5281/zenodo.18671870)
 
-Identifies a third regime for coordination-free convergence in distributed systems: normalization confluence, where non-commutative operations that may violate invariants converge through compensation. Formalizes registry-governed stream processing, proves termination and confluence under well-founded compensation (WFC) and compensation commutativity (CC), and develops a verification calculus for practical CC checking. Shows uniformly bounded compensation (UBC) yields constant per-event overhead matching conventional stream processing.
+A third regime for coordination-free convergence in distributed systems: normalization confluence, where non-commutative operations converge through compensation. Companion implementations: [nccheck](https://github.com/blackwell-systems/nccheck) (verification DSL) and [gsm](https://github.com/blackwell-systems/gsm) (Go runtime with O(1) event application).
 
 **Blackwell, D. (2026).** *Drainability: When Coarse-Grained Memory Reclamation Produces Bounded Retention.* Technical Report.<br>
 [doi:10.5281/zenodo.18653776](https://doi.org/10.5281/zenodo.18653776)
 
-Defines drainability as a structural property of memory allocators and proves the O(1) vs Ω(t) dichotomy: allocators with the drainability property achieve bounded retention (O(1) granules retained), while those without it suffer unbounded growth (Ω(t) granules retained over time t). Establishes theoretical foundations for epoch-based, arena, and slab allocators.
+Proves the O(1) vs Omega(t) dichotomy for coarse-grained allocators: drainability produces bounded retention, its absence produces unbounded growth. Companion implementation: [libdrainprof](https://github.com/blackwell-systems/drainability-profiler) (C profiler, sub-2ns overhead).
 
 ---
 
-## Open Source & Services
+## Books
 
-View my complete [open source portfolio](/oss/) and [consulting services](/consulting/) on their dedicated pages.
+**[You Don't Know JSON](https://leanpub.com/you-dont-know-json)** (107,000 words) covers JSON ecosystem architecture, schema validation, binary formats (MessagePack, CBOR, Protocol Buffers), streaming architectures, security patterns, API design, and testing strategies. Available on Leanpub.
 
-**Contact:**
+---
+
+## What I Write About
+
+This blog provides technical deep-dives into programming language fundamentals, distributed systems, and AI-native development tooling.
+
+**Code Intelligence & AI Tooling:**
+- [Benchmark methodology for code context retrieval](/posts/ai-code-context-tools-benchmark/)
+- MCP server development and testing
+- Multi-agent coordination and parallel development workflows
+- Claude Code extensibility (skills, hooks, subagents)
+
+**Language Design & Systems:**
+- Value semantics vs reference semantics across languages
+- Memory models, concurrency primitives, escape analysis
+- Why modern languages moved away from OOP patterns
+
+**Distributed Systems:**
+- Event-driven architectures at scale
+- Idempotent message handling and deduplication patterns
+- Serverless patterns and AWS architecture
+
+---
+
+## Contact
+
 - Email: dayna@blackwell-systems.com
 - GitHub: [@blackwell-systems](https://github.com/blackwell-systems)
-- Project issues: [drainability-profiler](https://github.com/blackwell-systems/drainability-profiler/issues) | [goldenthread](https://github.com/blackwell-systems/goldenthread/issues) | [blackdot](https://github.com/blackwell-systems/blackdot/issues) | [dotclaude](https://github.com/blackwell-systems/dotclaude/issues) | [gcp-secret-manager-emulator](https://github.com/blackwell-systems/gcp-secret-manager-emulator/issues) | [domainstack](https://github.com/blackwell-systems/domainstack/issues) | [error-envelope](https://github.com/blackwell-systems/error-envelope/issues) | [vaultmux](https://github.com/blackwell-systems/vaultmux/issues) | [err-envelope](https://github.com/blackwell-systems/err-envelope/issues) | [mdfx](https://github.com/blackwell-systems/mdfx/issues) | [pipeboard](https://github.com/blackwell-systems/pipeboard/issues)
+- Open source: [full portfolio](/oss/) | [consulting](/consulting/)
