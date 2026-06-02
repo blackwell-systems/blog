@@ -5,11 +5,7 @@ draft: false
 showMetadata: false
 ---
 
-<!-- meta:author=Dayna Blackwell -->
-<!-- meta:topic=claude,ai-agents,cloud-architecture,backend,cli-tools -->
-<!-- meta:last-updated=2026-03-22 -->
-
-I build production systems — AI agents, cloud infrastructure, backend services, and developer tooling. Not prototypes. Systems that run in production and handle real traffic.
+I build production systems: AI agents, code intelligence, cloud infrastructure, backend services, and developer tooling. 25+ open source projects, 35,000+ monthly downloads, 4 published research papers with DOIs.
 
 ---
 
@@ -42,19 +38,18 @@ I build production systems — AI agents, cloud infrastructure, backend services
 #### Team Adoption & Training
 - Claude Code rollout strategy for engineering organizations
 - Workshop facilitation on AI-assisted development workflows
-- Best practices documentation and internal knowledge sharing
 - Agentic development methodology training
 
 ### What I've Built
 
-- **[polywave](https://github.com/blackwell-systems/polywave):** Formally specified multi-agent coordination protocol for Claude Code (6 invariants, 45 execution rules) validated across 16+ production repositories with 4-5x measured speedup. Published specification with state machine, message formats, and conformance criteria
-- **[polywave-web](https://github.com/blackwell-systems/polywave-web):** Full-stack orchestration platform for parallel Claude agents — Go backend (40+ REST endpoints, real-time SSE streaming), React frontend (live wave dashboard, interactive dependency graphs, streaming agent output), single binary deployment
-- **[claudewatch](https://github.com/blackwell-systems/claudewatch):** Self-improving observability platform for Claude Code — 32-tool MCP server for live session metrics, PostToolUse hooks alerting on error loops and cost spikes, CLAUDE.md effectiveness scoring with before/after comparison, multi-agent workflow analytics
-- **[knowing](https://github.com/blackwell-systems/knowing):** Content-addressed knowledge graph for software systems. 22 MCP tools, 17 extractors across 10+ languages, OTel runtime trace ingestion, Merkle DAG snapshots with full history. Includes GCF (Graph Compact Format), a token-optimized wire format achieving 84% fewer tokens than JSON. Two companion whitepapers with DOIs.
-- **[mcp-assert](https://github.com/blackwell-systems/mcp-assert):** Deterministic MCP server testing framework (~22,000 downloads). 102 servers scanned across 7 languages, 34 upstream bugs found, fix PRs merged into Grafana and LangChain. Adopted as CI standard by antvis/mcp-server-chart (4K stars) and wyre-technology (25+ repos). Distributed via GitHub Actions Marketplace, Homebrew, npm, PyPI, Docker
-- **[agent-lsp](https://github.com/blackwell-systems/agent-lsp):** Stateful MCP server runtime over real language servers. 65 tools, speculative execution engine (in-memory edit simulation with diagnostic delta), multi-server routing, persistent daemon broker, 24 Agent Skills. CI-verified across 30 language servers. Listed on official MCP Registry and Glama (A-tier)
-- **[ai-cold-start-audit](https://github.com/blackwell-systems/ai-cold-start-audit):** UX audit methodology using Claude agents as surrogate new users in containerized sandboxes, producing severity-tiered findings reports
-- **[commitmux](https://github.com/blackwell-systems/commitmux):** Cross-repository semantic search engine with MCP server — in-process vector search (sqlite-vec), FTS5 full-text indexing, 8 read-only MCP tools over stdio JSON-RPC
+- **[knowing](https://github.com/blackwell-systems/knowing):** Content-addressed code intelligence engine (94K LOC). 28 MCP tools, 8 resources, 23 extractors spanning 26 languages/formats. P@10=0.278 across 308 tasks, 16 repos, 8 languages (3.2x codegraph, 5.05x GitNexus, 5.35x Gortex, 12.1x Aider, 18.5x grep). 12 self-adapting retrieval mechanisms. Supply chain detection without executing code (1.0% FP rate). OpenTelemetry runtime trace ingestion. Community detection with Merkle roots. GCF wire format (84% fewer tokens than JSON, 47% tool call reduction). Published whitepaper with DOI
+- **[polywave](https://github.com/blackwell-systems/polywave):** Formally specified multi-agent coordination protocol (6 invariants, 48 execution rules, 7 participant roles). 4-5x measured speedup. knowing was built using polywave. Go SDK: 33 packages, 75+ CLI commands, 4 LLM backends, autonomous daemon mode. Listed on ComposioHQ/awesome-codex-skills (10.6K stars)
+- **[polywave-web](https://github.com/blackwell-systems/polywave-web):** Full-stack orchestration platform for parallel Claude agents. Go backend (40+ REST endpoints, real-time SSE streaming), React frontend (live wave dashboard, interactive dependency graphs), single binary deployment
+- **[claudewatch](https://github.com/blackwell-systems/claudewatch):** 32-tool MCP server for AI development observability. PostToolUse hooks, session analytics, CLAUDE.md effectiveness scoring, friction pattern classification
+- **[mcp-assert](https://github.com/blackwell-systems/mcp-assert):** Deterministic MCP server testing. 28,000+ downloads across 6 distribution channels. 102 servers scanned, 34 upstream bugs found. Adopted as CI standard by Ant Group (antvis) and wyre-technology (25+ repos). Fix PRs merged into Grafana and LangChain
+- **[agent-lsp](https://github.com/blackwell-systems/agent-lsp):** Stateful MCP server runtime over real language servers. 66 tools, 24 Agent Skills, speculative execution engine, 30 CI-verified languages. 5,500+ monthly downloads. Listed on official MCP Registry, Glama (A-tier), awesome-mcp-servers
+- **[ai-cold-start-audit](https://github.com/blackwell-systems/ai-cold-start-audit):** UX audit methodology using Claude agents as surrogate new users in containerized sandboxes
+- **[commitmux](https://github.com/blackwell-systems/commitmux):** Cross-repository semantic search engine with MCP server (Rust, sqlite-vec, FTS5)
 - **Led Claude Code adoption at Best Western** as founding member of the Agentic Development Group, driving enterprise-wide rollout of AI-enhanced engineering workflows
 
 ### Ideal For
@@ -78,12 +73,12 @@ I build production systems — AI agents, cloud infrastructure, backend services
 - AI-driven automation (release engineering, UX audits, code review)
 - LLM output validation: Jaccard similarity, fuzzy matching, schema enforcement
 - Agentic workflow composition (audit-fix-verify, release-publish patterns)
+- Ecommerce backends (Shopify apps, payment integrations, subscription billing)
 
 ### What I've Built
 
-- **[FDA Compliance Guard](https://blog.blackwell-systems.com):** Production Shopify app with Rust semantic engine (9,967 disease-claim patterns, 8 NLP subsystems), validated against 17 FDA warning letters with 0.5% false positive rate. React/TypeScript frontend, PostgreSQL, subscription billing
-- **[agentic-workflows](https://github.com/blackwell-systems):** Composable multi-agent workflow system with data contract-based integration enabling deterministic handoffs between AI agents despite natural language interfaces
-- **[rezmakr](https://github.com/blackwell-systems):** AI-powered resume tailoring tool with weighted bullet validation, deterministic quality gates, and hash-based deduplication
+- **[FDA Compliance Guard](https://blog.blackwell-systems.com):** Production Shopify app with Rust semantic engine (9,967 disease-claim patterns, 8 NLP subsystems), validated against 17 FDA warning letters with 0.5% false positive rate. React/TypeScript frontend, PostgreSQL, three-tier subscription billing
+- **[agentic-workflows](https://github.com/blackwell-systems):** Composable multi-agent workflow system with data contract-based integration enabling deterministic handoffs between AI agents
 
 ### Ideal For
 
@@ -111,11 +106,11 @@ I build production systems — AI agents, cloud infrastructure, backend services
 
 ### Experience Highlights
 
-- 5 years operating revenue-critical backend systems serving millions of members across 100+ countries
+- 5+ years of experience in revenue-critical backend systems serving millions of members across 120 countries
 - Built real-time CDC pipeline replacing full-table-scan approach, processing in ~1.3 minutes regardless of dataset size
-- GCP emulator ecosystem (Secret Manager, IAM, KMS) with ~30K downloads and confirmed enterprise adoption
+- GCP emulator ecosystem (Secret Manager, IAM, KMS, Eventarc) with 45K+ downloads and confirmed enterprise adoption by Flipt (4.8K stars), Reindeer AI, and sugar-org/swarm-external-secrets
 - Designed serverless event-driven promotion system (Lambda, EventBridge, DynamoDB, Redis)
-- 3x AWS Certified, Azure, Terraform, Oracle certified
+- AWS (Solutions Architect, Developer, AI Practitioner), Azure, Terraform, Oracle certified
 
 ### Ideal For
 
@@ -138,27 +133,26 @@ I build production systems — AI agents, cloud infrastructure, backend services
 - Real-time data processing (CDC, streaming, caching)
 - Production reliability (idempotency, circuit breakers, graceful degradation)
 - Performance optimization and incident response
-- Ecommerce backends (Shopify apps, payment integrations, subscription billing)
 
 ### Experience Highlights
 
-- Backend developer for global loyalty platform — core infrastructure consumed by nearly every engineering team in the company
+- Backend developer for global loyalty platform serving millions of members, core infrastructure consumed by nearly every engineering team in the company
 - Architected Digital Wallet backend (5 currencies, payment gateway integration, distributed caching)
 - Built serverless promotion rules engine with plugin-style extensibility
-- Diagnosed and eliminated database connection exhaustion causing production outages (60% connection reduction with HikariCP)
-- Published researcher: 2 peer-reviewed papers with DOIs on [memory management](https://doi.org/10.5281/zenodo.18653776) and [distributed systems convergence](https://doi.org/10.5281/zenodo.18677400)
+- Diagnosed and eliminated database connection exhaustion causing production outages (60% connection reduction)
+- 4 published research papers with DOIs: [code intelligence](https://doi.org/10.5281/zenodo.20342255), [memory management](https://doi.org/10.5281/zenodo.18653776), and [distributed systems convergence](https://doi.org/10.5281/zenodo.18677400) (2 papers)
 
 ---
 
 ## CLI Tools & Developer Experience
 
-**Specialization:** Production-quality CLI tools in Go and Rust. Interactive TUIs, Homebrew distribution, cross-platform deployment.
+**Specialization:** Production-quality CLI tools in Go and Rust. Interactive TUIs, multi-channel distribution, cross-platform deployment.
 
 ### Services Offered
 
 - CLI tool design and implementation (Go, Rust)
 - Interactive TUI development (Bubble Tea)
-- Homebrew tap creation and distribution
+- Multi-channel distribution engineering (Homebrew, npm, PyPI, Docker, Winget, Snap)
 - MCP server development for AI tool integration
 - Developer workflow automation
 - Cross-platform deployment (single binary, go:embed, Wails)
@@ -170,7 +164,6 @@ I build production systems — AI agents, cloud infrastructure, backend services
 - **[goldenthread](https://github.com/blackwell-systems/goldenthread):** Schema compiler generating TypeScript/Zod from Go struct tags
 - **[vaultmux](https://github.com/blackwell-systems/vaultmux):** Vendor-agnostic secret management across AWS, GCP, Azure, 1Password, Bitwarden
 - **[domainstack](https://crates.io/crates/domainstack):** Full-stack validation ecosystem in Rust (9 crates on crates.io)
-- **[pipeboard](https://github.com/blackwell-systems/pipeboard):** Secure clipboard sharing over SSH tunnels
 - **5 reusable [Bubble Tea components](https://github.com/blackwell-systems):** carousel, command palette, Miller columns, multiselect, picker
 
 ---
@@ -179,7 +172,7 @@ I build production systems — AI agents, cloud infrastructure, backend services
 
 ### Claude / AI Integration Sprint
 **Duration:** 1-4 weeks
-**Deliverable:** MCP server, Claude Code skills/hooks, or LLM integration — scoped, built, and deployed
+**Deliverable:** MCP server, Claude Code skills/hooks, or LLM integration, scoped, built, and deployed
 
 ### Architecture Review
 **Duration:** 1-2 weeks
@@ -195,8 +188,6 @@ I build production systems — AI agents, cloud infrastructure, backend services
 
 ---
 
----
-
 ## Contact
 
 **Ready to discuss your project?**
@@ -204,28 +195,7 @@ I build production systems — AI agents, cloud infrastructure, backend services
 - **Email:** dayna@blackwell-systems.com
 - **LinkedIn:** [linkedin.com/in/dayna-blackwell](https://linkedin.com/in/dayna-blackwell)
 - **GitHub:** [@blackwell-systems](https://github.com/blackwell-systems)
-- **Blog:** [blog.blackwell-systems.com](https://blog.blackwell-systems.com)
 
 **Response time:** Within 24-48 hours for all inquiries.
 
----
-
-## Open Source Portfolio
-
-20+ production projects. All consulting work is informed by real production experience.
-
-- [knowing](https://github.com/blackwell-systems/knowing) - Content-addressed knowledge graph (22 MCP tools, 17 extractors, Merkle DAG, GCF wire format)
-- [mcp-assert](https://github.com/blackwell-systems/mcp-assert) - MCP server testing standard (~22K downloads, 34 bugs found, 102 servers scanned)
-- [agent-lsp](https://github.com/blackwell-systems/agent-lsp) - Stateful MCP server runtime (65 tools, 30 languages, A-tier on Glama)
-- [polywave-web](https://github.com/blackwell-systems/polywave-web) - Full-stack AI agent orchestration platform (Go/React)
-- [polywave](https://github.com/blackwell-systems/polywave) - Multi-agent coordination protocol (formal specification)
-- [claudewatch](https://github.com/blackwell-systems/claudewatch) - Claude Code observability platform (32-tool MCP server)
-- [commitmux](https://github.com/blackwell-systems/commitmux) - Cross-repository semantic search (Rust, MCP server)
-- [gcp-secret-manager-emulator](https://github.com/blackwell-systems/gcp-secret-manager-emulator) - GCP emulator (~30K downloads)
-- [goldenthread](https://github.com/blackwell-systems/goldenthread) - Schema compiler (Go → TypeScript Zod)
-- [vaultmux](https://github.com/blackwell-systems/vaultmux) - Unified secret management (7+ backends)
-- [domainstack](https://crates.io/crates/domainstack) - Full-stack validation (Rust, 9 crates)
-- [shelfctl](https://github.com/blackwell-systems/shelfctl) - Document storage CLI (Go, Bubble Tea TUI)
-- [brewprune](https://github.com/blackwell-systems/brewprune) - Homebrew package cleanup (Go, FSEvents)
-
-[View all projects →](/oss/)
+[View full open source portfolio →](/oss/)
