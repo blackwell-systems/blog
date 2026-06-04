@@ -138,13 +138,15 @@ cd benchmarks && pnpm install && pnpm benchmark:tokens
 | Component | Link |
 |-----------|------|
 | Specification | [blackwell-systems/gcf](https://github.com/blackwell-systems/gcf) |
+| Documentation | [blackwell-systems.github.io/gcf](https://blackwell-systems.github.io/gcf/) |
 | Go implementation | [blackwell-systems/gcf-go](https://github.com/blackwell-systems/gcf-go) |
 | TypeScript implementation | [blackwell-systems/gcf-typescript](https://github.com/blackwell-systems/gcf-typescript) |
 | Python implementation | [blackwell-systems/gcf-python](https://github.com/blackwell-systems/gcf-python) |
+| MCP Proxy | [blackwell-systems/gcf-proxy](https://github.com/blackwell-systems/gcf-proxy) |
 | TOON benchmark fork | [blackwell-systems/toon@gcf-comparison](https://github.com/blackwell-systems/toon/tree/gcf-comparison) |
 | Comprehension eval results | [gcf-go/eval](https://github.com/blackwell-systems/gcf-go/tree/main/eval) |
 
-Three implementations, zero runtime dependencies each. MIT licensed. Spec is stable.
+Three implementations, zero runtime dependencies each. MIT licensed. Spec is stable. The proxy wraps any existing MCP server with zero code changes.
 
 ## Who Should Use GCF
 
@@ -152,4 +154,4 @@ Any MCP server returning structured data to an LLM. Code intelligence tools (kno
 
 If your tool responses are JSON objects with arrays of records, you're wasting 84% of your token budget on structural overhead that actively confuses the model at scale.
 
-`pip install gcf-py` / `npm install @blackwell-systems/gcf` / `go get github.com/blackwell-systems/gcf-go`
+`pip install gcf-python` / `npm install @blackwell-systems/gcf` / `go get github.com/blackwell-systems/gcf-go`
