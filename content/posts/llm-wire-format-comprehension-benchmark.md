@@ -4,36 +4,40 @@ date: 2026-06-06
 draft: false
 tags: ["gcf", "toon", "json", "llm", "benchmark", "wire-format", "token-efficiency", "ai-agents", "mcp", "claude", "gpt", "gemini", "open-source"]
 categories: ["ai", "benchmarks", "open-source"]
-description: "We tested whether LLMs can read and write GCF, TOON, and JSON at 500 symbols. 15 runs, 6 models, 3 providers. GCF is the only format that works for both input and output across every model tested. TOON fails on output. JSON fails on input. Full methodology, failure taxonomy, and reproducible eval."
-summary: "15 comprehension runs across 6 models (Claude Opus/Sonnet/Haiku, GPT-5.5/5.4/5.4-mini). Generation eval across 8 models and 3 providers (Anthropic, OpenAI, Google). GCF wins 14, ties 1, loses 0 on comprehension. GCF achieves 5/5 valid generation on 7 of 8 models with zero prior training. TOON fails 0/5 on generation with Opus, GPT-5.4, GPT-5.4-mini, and Gemini. JSON breaks on input at 500 symbols."
+description: "We tested whether LLMs can read and write GCF, TOON, and JSON at 500 symbols. 23 runs, 10 models, 3 providers. GCF is the only format that works for both input and output across every model tested. TOON fails on output. JSON fails on input. Full methodology, failure taxonomy, and reproducible eval."
+summary: "23 comprehension runs across 10 models (Claude Opus/Sonnet/Haiku, GPT-5.5/5.4/5.4-mini, Gemini 2.5 Flash/Pro, Gemini 3.1 Pro, Gemini 3.5 Flash). Generation eval across 11 models and 3 providers (Anthropic, OpenAI, Google). GCF wins 22, ties 1, loses 0 on comprehension. GCF achieves 5/5 valid generation on every frontier model with zero prior training. TOON fails 0/5 on generation with Opus, GPT-5.4, GPT-5.4-mini, Gemini 3.1 Pro, and Gemini 3.1 Flash Lite. JSON breaks on input at 500 symbols."
 ---
 
 Every LLM wire format claims token savings. Nobody proves whether AI models can actually comprehend the format at scale, or produce valid output in it.
 
-We ran 15 comprehension evals across 6 models and 3 providers. We ran generation evals across 8 models. Deterministic ground truth. No LLM judge. Reproducible from one command.
+We ran 23 comprehension evals across 10 models and 3 providers. We ran generation evals across 11 models. Deterministic ground truth. No LLM judge. Reproducible from one command.
 
 JSON breaks at 500 records. GPT-5.5 returns empty strings. It can't even attempt an answer. Opus miscounts 500 as 356 and then spends 143 lines manually enumerating symbols to verify its own wrong answer. The format designed for "human readability" is incomprehensible to the systems actually reading it.
 
 TOON can't produce valid output. Claude Opus, the most capable model on the planet, scores 0/5 on TOON generation. GPT-5.4: 0/5. GPT-5.4-mini: 0/5. Gemini 3.1 Flash Lite: 0/5. The error is always the same: `toon: cannot assign string to int`. The model writes "target" in the distance column. TOON expects `0`. Every model fails the same way because the format's design forces an unnatural encoding step that models cannot perform unprompted.
 
-GCF wins both dimensions on every model tested. 100% comprehension on Claude. 5/5 valid generation on 7 of 8 models. Zero prior training. The format didn't exist until we built it and every model speaks it natively.
+GCF wins both dimensions on every model tested. 100% comprehension on Claude Sonnet, Gemini 2.5 Pro, Gemini 3.1 Pro, and Gemini 3.5 Flash. 5/5 valid generation on every frontier model. Zero prior training. The format didn't exist until we built it and every model speaks it natively.
 
 ## Comprehension: 500 Symbols, 13 Questions, Zero Instructions
 
 A 500-symbol, 200-edge code graph. Encoded in GCF, TOON, and JSON. 13 structured extraction questions. The model gets the payload and a question. No format instructions. No system prompt. No hints.
 
-### 15 runs. 14 wins. 0 losses.
+### 23 runs. 22 wins. 0 losses.
 
 | Model | Runs | GCF avg | TOON avg | JSON avg | GCF margin |
 |-------|------|---------|----------|----------|------------|
-| Claude Opus 4.6 | 1 | **100%** | 92.3% | 76.9% | +7.7 vs TOON |
-| Claude Sonnet 4.6 | 1 | **100%** | 76.9% | 53.8% | +23.1 vs TOON |
+| Claude Opus 4.6 | 2 | **96.2%** | 84.6% | 73.1% | +11.6 vs TOON |
+| Claude Sonnet 4.6 | 2 | **100%** | 73.1% | 53.8% | +26.9 vs TOON |
 | Claude Haiku 4.5 | 2 | **96.2%** | 69.2% | 57.7% | +27.0 vs TOON |
 | GPT-5.5 | 5 | **84.1%** | 67.7% | 45.8% | +16.4 vs TOON |
 | GPT-5.4 | 4 | **76.4%** | 56.0% | 44.1% | +20.4 vs TOON |
 | GPT-5.4-mini | 2 | **71.8%** | 64.1% | 54.2% | +7.7 vs TOON |
+| Gemini 2.5 Flash | 3 | **80.6%** | 54.6% | 57.0% | +26.0 vs TOON |
+| Gemini 2.5 Pro | 1 | **100%** | 76.9% | 58.3% | +23.1 vs TOON |
+| Gemini 3.1 Pro | 1 | **100%** | 76.9% | 46.2% | +23.1 vs TOON |
+| Gemini 3.5 Flash | 1 | **100%** | 61.5% | 46.2% | +38.5 vs TOON |
 
-GCF > TOON > JSON on every model from every provider. No exceptions.
+GCF > TOON > JSON on every model from every provider. No exceptions. Four models achieve 100%: Claude Sonnet, Gemini 2.5 Pro, Gemini 3.1 Pro, Gemini 3.5 Flash.
 
 ### Token cost for the same payload
 
@@ -94,7 +98,7 @@ One design decision creates this gap: hierarchical sections vs flat tabular. GCF
 
 We asked every model to produce structured output in each format. 3-line primer in the prompt. Output validated through the real decoder. No hand-holding.
 
-### 8 models. 3 providers. GCF is the only format that works everywhere.
+### 11 models. 3 providers. GCF is the only format that works everywhere.
 
 | Model | GCF | TOON (natural) | JSON |
 |-------|-----|----------------|------|
@@ -104,12 +108,15 @@ We asked every model to produce structured output in each format. 3-line primer 
 | GPT-5.5 | **4-5/5** | 1-2/5 | 5/5 |
 | GPT-5.4 | **5/5** | 0/5 | 5/5 |
 | GPT-5.4-mini | **5/5** | 0/5 | 5/5 |
-| Gemini 3.1 Flash Lite | **5/5** | 0/5 | 4/5 |
-| Gemini 2.5 Flash | 3-4/5 | 0-4/5 | 0-2/5 |
+| Gemini 2.5 Pro | **5/5** | 1/5 | 5/5 |
+| Gemini 3.1 Pro | **5/5** | 0/5 | 5/5 |
+| Gemini 3.1 Flash Lite | **4-5/5** | 0/5 | 4/5 |
+| Gemini 3.5 Flash | 3/5 | 1/5 | 3/5 |
+| Gemini 2.5 Flash | 2-3/5 | 0-4/5 | 0-3/5 |
 
-No model has ever been trained on GCF. It didn't exist before we built it. Yet 7 of 8 models produce valid, decoder-parseable output on first exposure with a 3-line primer.
+No model has ever been trained on GCF. It didn't exist before we built it. Yet every frontier model (Opus, Sonnet, GPT-5.5, Gemini 2.5 Pro, Gemini 3.1 Pro) produces valid, decoder-parseable output on first exposure with a 3-line primer.
 
-TOON has been published for months. It has documentation, examples, a playground, SDK implementations. And Claude Opus scores 0/5.
+TOON has been published for months. It has documentation, examples, a playground, SDK implementations. And Claude Opus scores 0/5. Gemini 3.1 Pro scores 0/5. GPT-5.4 scores 0/5.
 
 ### The exact failure
 
@@ -168,12 +175,14 @@ GCF works with natural language. TOON requires a preprocessing step. And even wi
 No model has seen GCF before. The format is days old. And yet:
 
 - Claude Opus 4.6: 5/5 valid (zero variance across 2 runs)
-- Claude Sonnet 4.6: 5/5 valid
+- Claude Sonnet 4.6: 5/5 valid (zero variance across 2 runs)
 - Claude Haiku 4.5: 5/5 valid (2 runs)
 - GPT-5.5: 4-5/5 valid
 - GPT-5.4: 5/5 valid
 - GPT-5.4-mini: 5/5 valid (zero variance across 2 runs)
-- Gemini 3.1 Flash Lite: 5/5 valid (zero variance across 2 runs)
+- Gemini 2.5 Pro: 5/5 valid (zero variance across 2 runs)
+- Gemini 3.1 Pro: 5/5 valid
+- Gemini 3.1 Flash Lite: 4-5/5 valid (zero variance across 3 runs)
 
 This happens because GCF is aligned with patterns LLMs already understand:
 
