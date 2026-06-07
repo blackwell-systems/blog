@@ -30,7 +30,7 @@ A 500-symbol, 200-edge code graph. Encoded in GCF, TOON, and JSON. 13 structured
 | Claude Sonnet 4.6 | 2 | **100%** | 73.1% | 53.8% | +26.9 vs TOON |
 | Claude Haiku 4.5 | 2 | **96.2%** | 69.2% | 57.7% | +27.0 vs TOON |
 | GPT-5.5 | 5 | **84.1%** | 67.7% | 45.8% | +16.4 vs TOON |
-| GPT-5.4 | 4 | **76.4%** | 56.0% | 44.1% | +20.4 vs TOON |
+| GPT-5.4 | 4 | **78.0%** | 56.0% | 44.1% | +22.0 vs TOON |
 | GPT-5.4-mini | 2 | **71.8%** | 64.1% | 54.2% | +7.7 vs TOON |
 | Gemini 2.5 Flash | 3 | **80.6%** | 54.6% | 57.0% | +26.0 vs TOON |
 | Gemini 2.5 Pro | 1 | **100%** | 76.9% | 58.3% | +23.1 vs TOON |
