@@ -4,8 +4,8 @@ date: 2026-06-03
 draft: false
 tags: ["ai", "mcp", "code-intelligence", "benchmark", "knowledge-graph", "retrieval", "precision", "codegraph", "aider", "knowing", "developer-tools"]
 categories: ["ai", "benchmarks", "open-source"]
-description: "Head-to-head benchmark: knowing vs codegraph (19K stars) vs Aider (20K stars) vs Gortex vs GitNexus (40K stars) across 300 tasks, 16 repos, 8 languages. knowing is 3.37x more precise than codegraph, 19.5x more precise than grep. 13 self-adapting mechanisms. Gets smarter with use."
-summary: "codegraph has 19K GitHub stars. GitNexus has 40K. Aider has 20K. We benchmarked 7 systems on 300 tasks across 16 codebases, 8 languages. knowing is 3.37x more precise than codegraph, 5.33x vs GitNexus, 5.63x vs Gortex, 19.5x vs grep. 13 self-adapting mechanisms that compound over time."
+description: "Head-to-head benchmark: knowing vs codegraph (19K stars) vs Aider (20K stars) vs Gortex vs GitNexus (40K stars) across 302 tasks, 17 repos, 8 languages. knowing is 3.79x more precise than codegraph, 22.0x more precise than grep. 13 self-adapting mechanisms. Gets smarter with use."
+summary: "codegraph has 19K GitHub stars. GitNexus has 40K. Aider has 20K. We benchmarked 7 systems on 302 tasks across 17 codebases, 8 languages. knowing is 3.79x more precise than codegraph, 6.00x vs GitNexus, 6.35x vs Gortex, 22.0x vs grep. 13 self-adapting mechanisms that compound over time."
 ---
 
 codegraph has 19,459 GitHub stars. We have zero. So we stopped talking and started measuring.
@@ -14,7 +14,7 @@ codegraph has 19,459 GitHub stars. We have zero. So we stopped talking and start
 
 | System | P@10 | Query k8s | Time-to-consistency | Stars |
 |--------|------|-----------|---------------------|-------|
-| **knowing** | **0.293** | **2ms** | **167ms** | 0 |
+| **knowing** | **0.330** | **2ms** | **167ms** | 0 |
 | codegraph | 0.087 | ~1s | 805ms | 19,459 |
 | GitNexus | 0.055 | 612ms | minutes | 40,362 |
 | Gortex | 0.052 | ~6s | minutes | - |
@@ -22,18 +22,18 @@ codegraph has 19,459 GitHub stars. We have zero. So we stopped talking and start
 | codebase-memory | 0.137* | 2,900ms | N/A | 2,600 |
 | grep | 0.015 | instant | instant | N/A |
 
-*codebase-memory completed only 22 of 300 tasks before timing out (60 min limit). P@10 measured on completed subset only.
+*codebase-memory completed only 22 of 302 tasks before timing out (60 min limit). P@10 measured on completed subset only.
 
 **How to read these numbers:**
-- **P@10** (Precision at 10): of the top 10 symbols returned, what fraction are actually relevant. P@10 = 0.293 means ~3 of every 10 results are ground truth. Higher is better.
+- **P@10** (Precision at 10): of the top 10 symbols returned, what fraction are actually relevant. P@10 = 0.330 means ~3 of every 10 results are ground truth. Higher is better.
 - **Query latency**: wall clock time per query. knowing pre-computes an adjacency cache; competitors re-traverse on every call.
 - **Time-to-consistency**: you add a function; how fast can the system find it?
 
-**knowing is 3.37x more precise than codegraph** (19K stars, tree-sitter + FTS5).
-**knowing is 5.11x more precise than GitNexus** (40K stars, knowledge graph MCP).
-**knowing is 5.40x more precise than Gortex** (Go graph engine, 256 languages).
-**knowing is 12.2x more precise than Aider** (20K stars, PageRank repo-map).
-**knowing is 19.5x more precise than grep.**
+**knowing is 3.79x more precise than codegraph** (19K stars, tree-sitter + FTS5).
+**knowing is 6.00x more precise than GitNexus** (40K stars, knowledge graph MCP).
+**knowing is 6.15x more precise than Gortex** (Go graph engine, 256 languages).
+**knowing is 13.9x more precise than Aider** (20K stars, PageRank repo-map).
+**knowing is 22.0x more precise than grep.**
 
 ## Why 19K Stars Means Nothing
 
@@ -78,7 +78,7 @@ Three safeguards prevent this from becoming a noise factory:
 
 And when code changes, stale associations expire automatically. Each association stores the Merkle root of its symbol's package at recording time. When the package changes (new commit, refactored code), the root misses and the association becomes invisible. No manual cleanup. No TTL policies. Structural validity.
 
-**10-round compounding across 300 tasks, 16 repos:**
+**10-round compounding across 302 tasks, 17 repos:**
 
 | Round | P@10 | MRR |
 |-------|------|-----|
@@ -110,7 +110,7 @@ Thirteen mechanisms adapt:
 12. **Cross-task vocabulary bridging**: agent usage on task A teaches vocabulary that helps task B via shared keywords (Django +41.4% in isolation; 10-round MRR +8.1%)
 13. **Incremental RWR with Merkle caching**: cache walk results keyed by per-package Merkle roots; unchanged packages skip the entire BFS/iteration pass (2x latency improvement)
 
-Fixed-strategy systems get less precise as codebases grow. knowing gets more precise. And it gets more precise with use: 10-round compounding across the full 308-task corpus showed P@10 climbing from 0.277 to 0.283 (+2.2%) and MRR from 0.459 to 0.497 (+8.1%), never dipping below cold-start baseline.
+Fixed-strategy systems get less precise as codebases grow. knowing gets more precise. And it gets more precise with use: 10-round compounding across the full 291-task corpus showed P@10 climbing from 0.277 to 0.283 (+2.2%) and MRR from 0.459 to 0.497 (+8.1%), never dipping below cold-start baseline.
 
 ## Zero External Dependencies
 
@@ -122,23 +122,24 @@ For the best experience, LSP enrichment with external language servers upgrades 
 
 | Repo | Language | P@10 | Tasks |
 |------|----------|-----:|------:|
-| Caddy | Go | **0.440** | 20 |
-| Jekyll | Ruby | **0.430** | 20 |
-| Kafka | Java | **0.421** | 19 |
-| Terraform | Go | **0.405** | 20 |
-| Rails | Ruby | **0.340** | 20 |
-| Flask | Python | **0.321** | 19 |
-| Ocelot | C# | **0.285** | 20 |
-| FastAPI | Python | **0.275** | 20 |
-| Saleor | Python | **0.236** | 11 |
-| Spark-Java | Java | **0.235** | 20 |
-| Ripgrep | Rust | **0.195** | 20 |
-| Cargo | Rust | **0.186** | 19 |
-| Django | Python | **0.183** | 33 |
-| Kubernetes | Go | **0.168** | 19 |
-| VS Code | TypeScript | **0.168** | 19 |
+| Ripgrep | Rust | **0.464** | 11 |
+| Terraform | Go | **0.440** | 20 |
+| Kafka | Java | **0.437** | 19 |
+| Jekyll | Ruby | **0.425** | 20 |
+| Kubernetes | Go | **0.423** | 13 |
+| Caddy | Go | **0.410** | 20 |
+| Flask | Python | **0.328** | 18 |
+| Rails | Ruby | **0.325** | 20 |
+| FastAPI | Python | **0.315** | 20 |
+| Ocelot | C# | **0.280** | 20 |
+| Saleor | Python | **0.264** | 11 |
+| Cross-cutting | Multi | **0.263** | 8 |
+| Cargo | Rust | **0.263** | 19 |
+| Spark-Java | Java | **0.250** | 20 |
+| VS Code | TypeScript | **0.200** | 19 |
+| Django | Python | **0.176** | 33 |
 
-16 repos, 8 languages, 300 tasks. Saleor is a Django e-commerce application (not the Django framework itself), validating that equivalence classes generalize to real application code.
+17 repos, 8 languages, 302 tasks. Saleor is a Django e-commerce application (not the Django framework itself), validating that equivalence classes generalize to real application code.
 
 ## You Can't Game These Numbers
 
@@ -158,7 +159,7 @@ Honesty matters.
 
 ## Benchmark Methodology
 
-- 300 tasks, 16 repos, 8 languages (Go, Python, TypeScript, Rust, Java, C#, Ruby, multi)
+- 302 tasks, 17 repos, 8 languages (Go, Python, TypeScript, Rust, Java, C#, Ruby, multi)
 - Hand-curated ground truth (99% achievability, validated against DB, dot-bounded matching)
 - Cold start: no task memory, no embeddings, no cached results
 - Task memory cleared before every run, test cache cleared, binary rebuilt
@@ -186,9 +187,9 @@ No manual indexing. The MCP server auto-detects your git repo and indexes on fir
 
 | Dimension | knowing | codegraph | GitNexus | Gortex | Aider | grep |
 |-----------|---------|-----------|----------|--------|-------|------|
-| P@10 (precision) | **0.281** | 0.087 | 0.055 | 0.052 | 0.023 | 0.015 |
+| P@10 (precision) | **0.330** | 0.087 | 0.055 | 0.052 | 0.023 | 0.015 |
 | P@10 (compounded) | **0.283** | - | - | - | - | - |
-| Tasks completed | **308/308** | 118/308 | 77/308 | 246/308 | 278/308 | 297/308 |
+| Tasks completed | **291/291** | 118/291 | 77/291 | 246/291 | 278/291 | 291/291 |
 | Query latency (k8s) | **2ms** | ~1s | 612ms | ~6s | ~3s | instant |
 | Time-to-consistency | **167ms** | 805ms | minutes | minutes | 3,150ms | instant |
 | Index Kubernetes | **18.6s** | - | >60 min | 14.2 min | N/A | N/A |

@@ -248,5 +248,5 @@ Run it yourself. The numbers don't change.
 - [GCF Python](https://github.com/blackwell-systems/gcf-python)
 - [GCF TypeScript](https://github.com/blackwell-systems/gcf-typescript)
 - [GCF Proxy](https://github.com/blackwell-systems/gcf-proxy) (drop-in MCP proxy, zero server changes)
-- [TOON benchmark fork](https://github.com/blackwell-systems/toon-benchmark)
+- [TOON benchmark fork](https://github.com/blackwell-systems/toon/tree/gcf-comparison)
 - [knowing](https://github.com/blackwell-systems/knowing) (the code intelligence engine GCF was extracted from)
