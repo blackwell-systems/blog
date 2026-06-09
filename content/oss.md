@@ -99,7 +99,7 @@ showMetadata: false
 
 ## Upstream Contributions
 
-Fix PRs and bug reports submitted to open source projects. 75+ contributions across 26 organizations, 26 merged. Bugs discovered via [mcp-assert](https://github.com/blackwell-systems/mcp-assert) scanning are marked with *.
+Fix PRs and bug reports submitted to open source projects. 75+ contributions across 26 organizations, 27 merged. Bugs discovered via [mcp-assert](https://github.com/blackwell-systems/mcp-assert) scanning are marked with *.
 
 ### Merged
 
@@ -129,20 +129,18 @@ Fix PRs and bug reports submitted to open source projects. 75+ contributions acr
 | **Stretchr** | [testify#1877](https://github.com/stretchr/testify/pull/1877) | Go | Suite panics when `SetupTest` skips with `HandleStats` (`runtime.Goexit` ordering) | 26K |
 | **GitHub** | [github-mcp-server#2511](https://github.com/github/github-mcp-server/pull/2511) | Go | Return isError for argument validation failures (co-authored) | 16K |
 | **Microsoft** | [winget-pkgs](https://github.com/microsoft/winget-pkgs) | YAML | Winget manifests for mcp-assert and agent-lsp | 10K |
+| **sammcj** | [mcp-devtools#258](https://github.com/sammcj/mcp-devtools/pull/258) | TS | Internal error instead of isError for validation | 152 |
 
 ### Highlights (open, under review)
 
 | Organization | PR | Lang | Description | Stars |
 |-------------|-----|------|-------------|------:|
-| **Anthropic** (MCP Go SDK) | [go-sdk#959](https://github.com/modelcontextprotocol/go-sdk/pull/959) | Go | Panic recovery for 5 goroutines that execute user code (tool handlers crash host process) | 4.5K |
 | **hibiken** (asynq) | [asynq#1133](https://github.com/hibiken/asynq/pull/1133) | Go | Panic recovery for 3 user-provided callbacks (HealthCheckFunc, GroupAggregator, PeriodicTaskConfigProvider) | 13.3K |
 | **Anthropic** (MCP Conformance) | [conformance#263](https://github.com/modelcontextprotocol/conformance/pull/263) | TS | tier-check reports 0% despite all tests passing (server/client scenario lists swapped) | MCP |
 | **Anthropic** (MCP Go SDK) | [go-sdk#913](https://github.com/modelcontextprotocol/go-sdk/pull/913) | Go | Race condition in `ClientSession.Close()` | 4.5K |
 | **Anthropic** (MCP TS SDK) | [typescript-sdk#2013](https://github.com/modelcontextprotocol/typescript-sdk/pull/2013) | TS | Null arguments crash every TS SDK server | 12K |
 | **Anthropic** (MCP Python SDK) | [python-sdk#2565](https://github.com/modelcontextprotocol/python-sdk/pull/2565) | Python | 12 remaining `raise` sites missing exception chain (`from`) | 23K |
-| **Anthropic** (MCP Python SDK) | [python-sdk#2536](https://github.com/modelcontextprotocol/python-sdk/pull/2536) | Python | Lost-wakeup race: concurrent pollers hang forever | 23K |
 | **etcd** (CNCF) | [etcd#21684](https://github.com/etcd-io/etcd/pull/21684) | Go | `ErrNotPrimary` returns wrong gRPC code | 51K |
-| **Traefik** | [traefik#13089](https://github.com/traefik/traefik/pull/13089) | Go | rewrite-target regex breaks base path match | 53K |
 | **Charmbracelet** | [bubbletea#1687](https://github.com/charmbracelet/bubbletea/pull/1687) | Go | `ExecProcess` leaks `View()` output to stdout | 42K |
 | **GitHub** | [github-mcp-server#2408](https://github.com/github/github-mcp-server/pull/2408) | Go | Angle brackets stripped from code blocks | 30K |
 | **HashiCorp** | [terraform-provider-aws#47660](https://github.com/hashicorp/terraform-provider-aws/pull/47660) | Go | GovCloud crash in Directory Service Data | 10.9K |
@@ -169,8 +167,7 @@ Fix PRs and bug reports submitted to open source projects. 75+ contributions acr
 
 | Organization | PR | Lang | Description | Stars |
 |-------------|-----|------|-------------|------:|
-| **Grafana** (core) | [grafana#124437-124440](https://github.com/grafana/grafana/pull/124437) | Go/TS | 4 PRs: console.log removal, typeof fix, span.End loop, error propagation | 74K |
-| **Vercel** | [ai#14758](https://github.com/vercel/ai/pull/14758) | TS | Send `content: null` for tool-only messages (4 providers) | 24K |
+| **Grafana** (core) | [grafana#124437](https://github.com/grafana/grafana/pull/124437), [#124440](https://github.com/grafana/grafana/pull/124440) | Go/TS | 2 PRs: console.log removal, error propagation | 74K |
 | **sashabaranov** | [go-openai#1104-1106](https://github.com/sashabaranov/go-openai/pull/1104) | Go | 3 PRs: stream field, ContentFilter pointer, MIME detection | 10.6K |
 | **Anthropic** (servers) | [servers#4044, #4051](https://github.com/modelcontextprotocol/servers/pull/4044) | TS | blob content type violation + puppeteer crash | 85K |
 | **MoonshotAI** | [kimi-cli#2144](https://github.com/MoonshotAI/kimi-cli/pull/2144) | Python | Multiline input text misaligned | 8.3K |
@@ -180,7 +177,6 @@ Fix PRs and bug reports submitted to open source projects. 75+ contributions acr
 | **Anthropic** (MCP TS SDK) | [typescript-sdk#2019](https://github.com/modelcontextprotocol/typescript-sdk/pull/2019) | TS | Check AbortSignal in handleAutomaticTaskPolling | 12K |
 | **Tavily** | [tavily-mcp#162](https://github.com/tavily-ai/tavily-mcp/pull/162) | TS | Missing API key throws McpError instead of isError | Open |
 | **dvcrn** | [mcp-server-linear#5](https://github.com/dvcrn/mcp-server-linear/pull/5) | TS | 24 tools throw McpError when unauthenticated | Open |
-| **sammcj** | [mcp-devtools#258](https://github.com/sammcj/mcp-devtools/pull/258) | TS | Internal error instead of isError for validation | Open |
 
 ### Bugs Filed (fixed by others)
 
