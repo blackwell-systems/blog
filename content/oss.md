@@ -167,7 +167,8 @@ Fix PRs and bug reports submitted to open source projects. 75+ contributions acr
 
 | Organization | PR | Lang | Description | Stars |
 |-------------|-----|------|-------------|------:|
-| **Grafana** (core) | [grafana#124437](https://github.com/grafana/grafana/pull/124437), [#124440](https://github.com/grafana/grafana/pull/124440) | Go/TS | 2 PRs: console.log removal, error propagation | 74K |
+| **Grafana** (core) | [grafana#124437](https://github.com/grafana/grafana/pull/124437) | TS | Remove debug console.log in scanning loop (approved, 2 maintainer approvals, milestone 13.1.x) | 74K |
+| **Grafana** (core) | [grafana#124440](https://github.com/grafana/grafana/pull/124440) | Go/TS | Error propagation fix | 74K |
 | **sashabaranov** | [go-openai#1104-1106](https://github.com/sashabaranov/go-openai/pull/1104) | Go | 3 PRs: stream field, ContentFilter pointer, MIME detection | 10.6K |
 | **Anthropic** (servers) | [servers#4044, #4051](https://github.com/modelcontextprotocol/servers/pull/4044) | TS | blob content type violation + puppeteer crash | 85K |
 | **MoonshotAI** | [kimi-cli#2144](https://github.com/MoonshotAI/kimi-cli/pull/2144) | Python | Multiline input text misaligned | 8.3K |
