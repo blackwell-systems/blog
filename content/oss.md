@@ -99,13 +99,14 @@ showMetadata: false
 
 ## Upstream Contributions
 
-Fix PRs and bug reports submitted to open source projects. 75+ contributions across 26 organizations, 27 merged. Bugs discovered via [mcp-assert](https://github.com/blackwell-systems/mcp-assert) scanning are marked with *.
+Fix PRs and bug reports submitted to open source projects. 75+ contributions across 28 organizations, 29 merged. Bugs discovered via [mcp-assert](https://github.com/blackwell-systems/mcp-assert) scanning are marked with *.
 
 ### Merged
 
 | Organization | PR | Lang | Description | Stars |
 |-------------|-----|------|-------------|------:|
-| **automateyournetwork** | [netclaw#67](https://github.com/automateyournetwork/netclaw/pull/67) | Python | Replace TOON with GCF for all MCP server responses (55.8% savings vs JSON, 13.6% fewer tokens than TOON, benchmarked on 5 network data types) | 556 |
+| **automateyournetwork** | [netclaw#67](https://github.com/automateyournetwork/netclaw/pull/67) | Python | Replace TOON with GCF for all MCP server responses (55.8% savings vs JSON, 13.6% fewer tokens than TOON, benchmarked on 5 network data types) | 560 |
+| **diegosouzapw** | [OmniRoute#4167](https://github.com/diegosouzapw/OmniRoute/pull/4167) | TS | Replace headroom tabular encoder with vendored GCF for compression stage | 6.5K |
 | **Anthropic** (MCP Go SDK) | [go-sdk#929](https://github.com/modelcontextprotocol/go-sdk/pull/929) | Go | HTTP response body leak in streamable HTTP session close | 4.5K |
 | **Google** | [go-containerregistry#2281](https://github.com/google/go-containerregistry/pull/2281) | Go | `.local` FQDN incorrectly treated as non-HTTPS (RFC 6761) | 3.8K |
 | **Google** | [go-containerregistry#2283](https://github.com/google/go-containerregistry/pull/2283) | Go | Extract round-trip test for filesystem object preservation | 3.8K |
@@ -148,6 +149,7 @@ Fix PRs and bug reports submitted to open source projects. 75+ contributions acr
 | **HashiCorp** | [terraform-provider-aws#47661](https://github.com/hashicorp/terraform-provider-aws/pull/47661) | Go | QuickSight `theme_arn` silently ignored | 10.9K |
 | **jackc** (pgx) | [pgx#2546](https://github.com/jackc/pgx/pull/2546) | Go | BeforeConnect gets bare context from healthcheck | 14K |
 | **Biome** | [biome#10151](https://github.com/biomejs/biome/pull/10151) | Rust | `--suppress` with `--only` ignores overrides | 24.5K |
+| **stevesolun** (ctx) | [ctx#126](https://github.com/stevesolun/ctx/pull/126) | Python | GCF integration proof-of-concept for token-optimized tool responses (maintainer building clean implementation in #127) | 515 |
 
 ### Issues filed
 
