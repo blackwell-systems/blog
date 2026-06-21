@@ -284,6 +284,22 @@ The overhead pattern is not an artifact of one tokenizer. All 8 confirm it:
 
 Every tokenizer shows JSON spending **42-57% of its total tokens** on repeated field names. The absolute numbers vary (Gemma uses more tokens overall due to smaller subword merges), but the proportional waste is consistent.
 
+### The full savings picture
+
+The overhead analysis above uses a flat frequency table. Savings increase with data complexity and session reuse:
+
+| Scenario | GCF vs JSON (pretty) | What drives it |
+|----------|---------------------|----------------|
+| Generic profile (flat/nested, 500 orders) | 50-59% | Header factorization, inline schemas |
+| 15-dataset benchmark (mixed real payloads) | 43-65% | Data complexity determines savings |
+| Graph profile (500 symbols + 200 edges) | 63-69% | `@id` refs, edge encoding, section headers |
+| Session dedup (90% overlap, call 3 of 5) | **89-90%** | Bare references for previously-seen symbols |
+| Session dedup (full 5-call session total) | **84.3%** | Format + dedup combined |
+
+In a real agent session with repeated tool calls to the same codebase, cumulative savings reach 84-92%. JSON has no deduplication mechanism; every call retransmits the full payload. GCF's bare references (`@7` = 2 tokens vs full declaration = 19 tokens) mean subsequent calls cost a fraction of the first.
+
+All numbers cross-tokenizer validated across 8 tokenizers from 6 providers.
+
 ## The Attention Dilution Mechanism
 
 Why does structural overhead cause comprehension failures, rather than just costing more? The answer lies in how transformer attention works.
