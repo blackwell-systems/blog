@@ -32,7 +32,7 @@ We tested 8 tokenizers from 6 providers, representing every major LLM family in 
 |-----------|----------|-------------|-----------|
 | Claude tokenizer | Anthropic | Claude 3.5, 4.x | ~100K |
 | cl100k_base | OpenAI | GPT-4 | 100,256 |
-| o200k_base | OpenAI | GPT-4o, GPT-5.x | 200,019 |
+| o200k_base | OpenAI | GPT-4o | 200,019 |
 | LLaMA 3.1 tokenizer | Meta | LLaMA 3.x | 128,256 |
 | Qwen 2.5 tokenizer | Alibaba | Qwen 2.5 | 151,936 |
 | DeepSeek V3 tokenizer | DeepSeek | DeepSeek V3 | 128,000 |
@@ -426,8 +426,8 @@ This analysis suggests a testable hypothesis for the model-dependent failures we
 |-------|----------------------|---------------------------|------------|
 | Claude Opus 4.6 | 73.1% | No (3 separate tokens) | Better JSON performance |
 | Claude Sonnet 4.6 | 53.8% | No | Smaller model, attention budget matters more |
-| GPT-5.5 | 45.8% | Yes (2 tokens) | Merged boundaries hurt at scale |
-| GPT-5.4 | 44.1% | Yes | Deterministic errors (always 198 vs 200) |
+| GPT-5.5 | 45.8% | Likely (consistent with o200k patterns) | Merged boundaries hurt at scale |
+| GPT-5.4 | 44.1% | Likely (deterministic errors match o200k merges) | Always 198 vs 200 |
 | Gemini 2.5 Pro | 58.3% | No (Gemma tokenizer) | Better than GPT but still fails on counting |
 
 The pattern is suggestive: models whose tokenizers merge field-name patterns tend to perform worse on JSON comprehension at scale. This is not proof of causation (model capability differences are a confound), but it's consistent with the structural ambiguity mechanism.
