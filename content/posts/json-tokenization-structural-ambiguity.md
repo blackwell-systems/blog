@@ -188,9 +188,20 @@ email|alice@example.com  → [email][|][alice][@]...      ALL 8 tokenizers
 score|95.5               → [score][|][95][.][5]         ALL 8 tokenizers
 ```
 
-**0/120 checks show pipe merging.** Compare to JSON's 22/120 quote-merge rate (18.3%). The pipe character never absorbs adjacent content on any tokenizer, with any field name, with any value type.
+On real-world eval data (14 field names, 25 values, 2,800 checks per format):
 
-Note: the payload content (`userName`, `req_xyz789`) still tokenizes differently across models in GCF, just as it does in JSON. The difference is that GCF's grammar symbol (pipe) is always cleanly separated from that content. The model always knows where one field ends and the next begins. JSON's grammar symbol (quote) fuses with the content, hiding the boundary inside a merged token.
+| Format | Boundary merge rate | Cause |
+|--------|-------------------|-------|
+| JSON | **8.93%** | Field names (`"id":`, `"name":`) merge on 62.5% of tokenizers |
+| GCF | **1.00%** | One value (`cancelled`) triggers merge on 25% of tokenizers |
+
+**GCF has 88.8% fewer boundary merges on real data.**
+
+The critical difference: JSON's merges are caused by **field names** which repeat on every row (compounding at scale). GCF's merges are caused by a rare **value** (appearing occasionally). At 500 rows with `"id"` and `"name"` fields, JSON has ~625 hidden boundaries. GCF has a handful.
+
+Under adversarial conditions (values starting with `/`, `.`, `-`), GCF's pipe can merge on some tokenizers (e.g., `[|/]` on LLaMA and Gemma). Even then, the pipe is at the **start** of the merged token (boundary position identifiable). In JSON, the quote is at the start with the field name **after** it (`["value]`), hiding the boundary inside.
+
+No delimiter is perfect against all possible right-contexts. But GCF's grammar characters merge at significantly lower rates than JSON's, and when they do merge, the boundary remains at the token start rather than hidden inside.
 
 ### Why GCF's delimiters are safe
 
@@ -409,10 +420,10 @@ The comprehension evaluation (2,400+ LLM calls proving these findings correlate 
 
 | Metric | JSON | GCF |
 |--------|------|-----|
-| Structural delimiter merge rate | 22/120 (18.3%) | **0/120 (0%)** |
-| Worst single-field merge rate | 5/8 tokenizers (`"name":`) | **0/8 (pipe never merges)** |
-| Max distinct tokenizations (same string) | **7** (`"userName":"req_xyz789"`) | 7 (value variance only, pipe stable) |
-| Full object token-count variants | 4 different lengths | **Identical structural boundaries** |
+| Boundary merge rate (real eval data) | **8.93%** (2,800 checks) | **1.00%** (2,800 checks) |
+| Merge cause | Field names (repeat per row) | Rare value (occasional) |
+| Worst single-field merge rate | 62.5% (`"id":`, `"name":`) | 25% (one value: `cancelled`) |
+| Max distinct tokenizations (same string) | **7** (`"userName":"req_xyz789"`) | 7 (value variance only, pipe at token start) |
 | Tokens spent on overhead (500 rows) | 81% | **0.2%** |
 | Overhead scaling | O(n) per row | **O(1) constant** |
 | Signal-to-noise ratio | 19% signal | **99.8% signal** |
