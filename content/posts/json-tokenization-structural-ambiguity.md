@@ -301,7 +301,7 @@ If your MCP server or AI tool outputs JSON arrays to LLMs:
 - At 100 records: consider alternatives. JSON overhead is 1,701 tokens of noise.
 - At 500+ records: JSON's comprehension failures are measurable. 53.4% accuracy means your agent gets the wrong answer nearly half the time.
 
-The fix is straightforward: declare field names once, emit positional rows, use non-merging delimiters. This is what GCF does. It's also what you could implement with a custom format (though you'd lose the 6-language library ecosystem and 43B round-trip validation).
+The fix is straightforward: declare field names once, emit positional rows, use non-merging delimiters. This is what GCF does.
 
 ### For agent architects
 
