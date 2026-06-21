@@ -2,39 +2,53 @@
 title: "Why LLMs Struggle with JSON at Scale: A Tokenization Analysis"
 date: 2026-06-21
 draft: false
-tags: ["json", "tokenization", "llm", "gcf", "ai-agents", "wire-format", "mcp", "token-efficiency"]
+tags: ["json", "tokenization", "llm", "gcf", "ai-agents", "wire-format", "mcp", "token-efficiency", "bpe", "attention"]
 categories: ["ai", "research"]
 description: "JSON's structural grammar tokenizes ambiguously across models. Field boundaries merge with content on 4/8 tokenizers, creating model-dependent parsing. GCF's delimiters are always exactly 1 token on every tokenizer. This explains why comprehension degrades at scale."
 summary: "We benchmarked 8 tokenizers from 6 providers against JSON and GCF structural patterns. JSON's quote-colon field markers merge with adjacent content on 4/8 tokenizers (GPT-4, GPT-4o, LLaMA, Qwen), creating ambiguous token boundaries at field separators. GCF's pipe delimiter never merges on any tokenizer. At 500 rows, JSON's structural overhead (field names + syntax) consumes 81% of tokens, leaving only 19% for actual data. This structural ambiguity compounds per row and explains model-dependent comprehension failures at scale."
 ---
 
-Everyone knows JSON is verbose. The common explanation for why LLMs struggle with JSON at scale is "too many tokens." That's incomplete. The real problem is more subtle and more dangerous: JSON's structural grammar tokenizes **ambiguously** across different models, and this ambiguity compounds with every row of data.
+Everyone knows JSON is verbose. The common explanation for why LLMs struggle with JSON at scale is "too many tokens." That explanation is incomplete. The real problem is more subtle and more dangerous: JSON's structural grammar tokenizes **ambiguously** across different models, and this ambiguity compounds with every row of data.
 
-We ran a structural variance benchmark across 8 tokenizers from 6 providers. The findings explain a pattern we've observed across 2,400+ LLM evaluations: why JSON comprehension fails at scale, and why it fails *differently* per model.
+We ran a structural variance benchmark across 8 tokenizers from 6 providers. The findings explain a pattern we've observed across 2,400+ LLM evaluations: why JSON comprehension fails at scale, why it fails *differently* per model, and why no amount of prompt engineering can fix it.
+
+## Background: How BPE Tokenizers Handle Structured Data
+
+Modern LLMs use Byte-Pair Encoding (BPE) tokenizers trained on large text corpora. BPE builds a vocabulary by iteratively merging the most frequent byte sequences. This creates a vocabulary optimized for natural language, not for structured data formats.
+
+The critical property: **BPE merging is context-dependent.** The same character can be part of different tokens depending on what characters surround it. A quote character `"` might be its own token in one context and merge with adjacent characters in another.
+
+For natural language, this is efficient (common words like "the" become single tokens). For structured formats like JSON, it creates a problem: the characters that mark structural boundaries (`"`, `:`, `{`, `}`) can merge with the content they're supposed to delimit.
+
+This has been noted in passing by researchers. Deekeswar (2604.17512) measured that 1,000 JSON records consume ~80K tokens with the majority being repeated keys and punctuation. Nandakishore (2604.05400) stated "optimizing for tokenizer efficiency, not just human readability, is going to matter." But nobody has performed a systematic mechanistic analysis of exactly how and where JSON's structure breaks down at the BPE level.
 
 ## The Experiment
 
-8 tokenizers. 6 providers. Same data, two formats (JSON and GCF). We measured two things:
+We tested 8 tokenizers from 6 providers, representing every major LLM family in production:
 
-1. **Do structural delimiters tokenize consistently across models?** (If not, different models see different field boundaries.)
-2. **Do structural characters merge with adjacent content?** (If so, the model can't distinguish where structure ends and data begins.)
+| Tokenizer | Provider | Model Family | Vocab Size |
+|-----------|----------|-------------|-----------|
+| Claude tokenizer | Anthropic | Claude 3.5, 4.x | ~100K |
+| cl100k_base | OpenAI | GPT-4 | 100,256 |
+| o200k_base | OpenAI | GPT-4o, GPT-5.x | 200,019 |
+| LLaMA 3.1 tokenizer | Meta | LLaMA 3.x | 128,256 |
+| Qwen 2.5 tokenizer | Alibaba | Qwen 2.5 | 151,936 |
+| DeepSeek V3 tokenizer | DeepSeek | DeepSeek V3 | 128,000 |
+| Gemma 2 tokenizer | Google | Gemma 2 | 256,128 |
+| Mistral Nemo tokenizer | Mistral | Mistral/Ministral | 131,072 |
 
-### Tokenizers tested
+These tokenizers were each trained on different corpora with different merge priorities. Their disagreements on how to tokenize the same input reveal fundamental properties of that input's structure.
 
-| Tokenizer | Provider | Model Family |
-|-----------|----------|-------------|
-| Claude tokenizer | Anthropic | Claude 3.5, 4.x |
-| cl100k_base | OpenAI | GPT-4 |
-| o200k_base | OpenAI | GPT-4o, GPT-5.x |
-| LLaMA 3.1 tokenizer | Meta | LLaMA 3.x |
-| Qwen 2.5 tokenizer | Alibaba | Qwen 2.5 |
-| DeepSeek V3 tokenizer | DeepSeek | DeepSeek V3 |
-| Gemma 2 tokenizer | Google | Gemma 2 |
-| Mistral Nemo tokenizer | Mistral | Mistral/Ministral |
+We measured two things:
+
+1. **Do structural delimiters tokenize consistently across models?** If not, different models see different field boundaries for the same data.
+2. **Do structural characters merge with adjacent content?** If so, the model receives tokens that conflate structural markup with semantic content, making field boundaries ambiguous.
 
 ## Finding 1: JSON Field Boundaries Tokenize Inconsistently
 
-We tested 15 common JSON field-name patterns (the `"fieldName":` sequences that repeat on every row). Four of them tokenize **differently** across tokenizers:
+JSON uses the pattern `"fieldName":` to mark each field. This pattern repeats on every row of an array. We tested 15 common field-name patterns against all 8 tokenizers.
+
+**4 of 15 patterns tokenize differently depending on the model:**
 
 | Pattern | Claude | GPT-4 | GPT-4o | LLaMA | Qwen | DeepSeek | Gemma | Mistral |
 |---------|--------|-------|--------|-------|------|----------|-------|---------|
@@ -43,195 +57,320 @@ We tested 15 common JSON field-name patterns (the `"fieldName":` sequences that 
 | `"name":` | 3 | **2** | **2** | **2** | **2** | 3 | 3 | **2** |
 | `"tier":` | 3 | 3 | 3 | 3 | 3 | **4** | 3 | **4** |
 
-These are structural tokens. They repeat on **every single row** of JSON array data. At 500 rows, that's 2,000+ positions where different models see different token boundaries.
+The remaining 11 patterns (`"field":`, `"count":`, `"percentage":`, `"customer":`, `"amount":`, `"status":`, `"items":`, `"email":`, `"sku":`, `"quantity":`, `"unitPrice":`) are stable at 3-4 tokens across all tokenizers.
 
-## Finding 2: JSON Quotes Merge with Field Names
+**What this means:** The same JSON data produces different token sequences on different models. At 500 rows, the 4 varying patterns create 2,000+ positions where models disagree on token boundaries. This isn't a one-time ambiguity; it compounds linearly with data size.
 
-The "why" behind Finding 1. When GPT-4 tokenizes `"value":`, it produces:
+## Finding 2: The Merge Mechanism
 
-```
-["value][":"]
-```
+The variance in Finding 1 has a specific cause: BPE merging absorbs the opening quote into the field name.
 
-The opening quote and the field name `value` become **one token**. Claude tokenizes the same string as:
+When GPT-4's tokenizer (cl100k_base) encounters `"value":`, it produces:
 
 ```
-["][value][":]
+Token 1: "value    (quote + field name = one token)
+Token 2: ":        (quote + colon = one token)
 ```
 
-Three separate tokens. The quote is distinct from the field name.
+Claude's tokenizer encounters the same string and produces:
 
-This means GPT-4 sees a single opaque token `"value` where Claude sees two distinct tokens `"` + `value`. The structural boundary (where the field name starts) is at a different position in the token sequence depending on which model processes the data.
+```
+Token 1: "         (quote alone)
+Token 2: value     (field name alone)
+Token 3: ":        (quote + colon)
+```
 
-### The merge pattern at real boundaries
+**The structural boundary lives in a different position.** On GPT-4, the opening quote is fused with the content. On Claude, it's separate. The model must learn to decompose the merged token `"value` into "this is a quote character followed by a field name" rather than treating it as a single semantic unit.
 
-We tested JSON's most structurally critical boundary: the field-to-value transition `"field":"data"`:
+### Why this happens
+
+BPE vocabularies are built from training data statistics. If `"value` appears frequently in the training corpus (it does, because JSON is everywhere in code), the tokenizer learns it as a single merge. Tokenizers trained on different corpora (or with different vocabulary sizes) reach different merge decisions for the same character sequences.
+
+This is well-studied for natural language (Liyanage & Yvon, 2601.21665, on post-training tokenizer adaptation). But the implications for structured data are underexplored: when the merge boundary falls on a structural delimiter, the result is a token that conflates syntax and semantics.
+
+### The merge pattern at field-to-value boundaries
+
+We tested JSON's most structurally critical pattern: the complete field-to-value transition `"field":"data"`:
 
 ```
 "value":"hello"
 
-GPT-4, GPT-4o, LLaMA, Qwen:  ["value][":"][hello]["]
-Claude, DeepSeek, Gemma:      ["][value][":"][hello]["]
-Mistral:                      ["][value][":"][hello]["]
+GPT-4, GPT-4o, LLaMA, Qwen (4 tokenizers):
+  ["value] [":"] [hello] ["]
+
+Claude, DeepSeek, Gemma, Mistral (4 tokenizers):
+  ["] [value] [":"] [hello] ["]
 ```
 
-On 4 of 8 tokenizers, the **field name absorbs the quote delimiter**. The model receives a merged token that contains both structural markup (`"`) and semantic content (`value`). It must learn to decompose this merged representation to parse the field boundary correctly.
+**On half of all tokenizers, the field name is fused into the opening quote.** The model sees a single token where there should be a structural boundary.
 
-This isn't catastrophic at small scale (models handle it fine at 10 records). But at 500 records, there are 2,000+ of these merged boundaries. The attention mechanism has to decode structural position from ambiguous tokens across 10,000+ positions. That's where comprehension breaks.
+For `"name":"Alice"`:
+
+```
+GPT-4, GPT-4o, LLaMA, Qwen, Mistral (5 tokenizers):
+  ["name] [":"] [Alice] ["]
+
+Claude, DeepSeek, Gemma (3 tokenizers):
+  ["] [name] [":"] [Alice] ["]
+```
+
+Five of eight tokenizers merge `"name` into a single token. The field boundary is invisible at the token level on these models.
 
 ## Finding 3: GCF Delimiters Never Merge
 
-We tested all 10 GCF grammar characters against all 8 tokenizers. 80 checks total.
+For comparison, we tested all 10 characters in GCF's grammar against all 8 tokenizers. 80 individual checks.
 
-| Character | Purpose | All 8 tokenizers |
-|-----------|---------|-----------------|
-| `\|` (pipe) | Field delimiter | **Always 1 token** |
-| `@` | Symbol ID prefix | **Always 1 token** |
-| `<` | Edge direction | **Always 1 token** |
-| `##` | Section header | **Always 1 token** |
-| `\n` | Row separator | **Always 1 token** |
-| `{` | Schema open | **Always 1 token** |
-| `}` | Schema close | **Always 1 token** |
-| `[` | Count open | **Always 1 token** |
-| `]` | Count close | **Always 1 token** |
-| `,` | Schema separator | **Always 1 token** |
+| Character | Purpose | Claude | GPT-4 | GPT-4o | LLaMA | Qwen | DeepSeek | Gemma | Mistral |
+|-----------|---------|--------|-------|--------|-------|------|----------|-------|---------|
+| `\|` | Field delimiter | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 |
+| `@` | Symbol ID prefix | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 |
+| `<` | Edge direction | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 |
+| `##` | Section header | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 |
+| `\n` | Row separator | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 |
+| `{` | Schema open | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 |
+| `}` | Schema close | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 |
+| `[` | Count open | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 |
+| `]` | Count close | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 |
+| `,` | Schema separator | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 |
 
-**Zero exceptions.** 10 characters, 8 tokenizers, 80 checks, no variance.
+**80 checks. Zero exceptions.** Every GCF structural character is always exactly 1 token on every tokenizer.
 
-We then tested whether these delimiters merge with adjacent content:
+We then verified that these characters never merge with adjacent content:
 
 ```
-hello|world    → [hello][|][world]       ALL 8 tokenizers
-|150|          → [|][150][|]             ALL 8 tokenizers
-@0|function    → [@][0][|][function]     ALL 8 tokenizers
+hello|world    → [hello][|][world]         ALL 8 tokenizers
+|150|          → [|][150][|]               ALL 8 tokenizers  
+@0|function    → [@][0][|][function]       ALL 8 tokenizers
+age_group|25   → [age][_group][|][25]      ALL 8 tokenizers
 ```
 
-**Pipe never merges.** The field boundary is always at the same token position regardless of which model processes the data. Every model sees identical structure.
+**The pipe character never absorbs adjacent content.** It is always its own token, always at the same position in the sequence, regardless of which model processes the data. Field boundaries are unambiguous on every model.
+
+### Why GCF's delimiters are safe
+
+This isn't accidental. We analyzed all 94 printable ASCII characters (codes 33-126) across all 8 tokenizers on two criteria:
+
+1. Does it encode as exactly 1 token in isolation?
+2. Does it never merge with adjacent text?
+
+74 of 94 characters satisfy both criteria. The 20 characters that fail include `.` (merges into `.validate`), `-` (merges into `-based`), `_` (merges into `_name`), and common lowercase letters. These are exactly the characters that appear in JSON's structural patterns (dots in qualified names, underscores in field names, dashes in UUIDs).
+
+GCF's grammar was designed using only characters from the safe set. The format's tokenization stability is a deliberate design choice, not a lucky accident.
 
 ## Finding 4: JSON Overhead is 81%, Growing Linearly
 
-Beyond the structural ambiguity, JSON also burns the majority of its tokens on non-data content. At 500 rows of a simple frequency table (4 fields):
+Beyond structural ambiguity, JSON also burns the majority of its tokens on non-data content. We measured where tokens go in a 500-row frequency table (4 fields: field, value, count, percentage):
 
-| Category | Tokens | % of total |
-|----------|--------|------------|
-| Repeated field names (`"field":`, `"value":`, etc.) | 5,500 | **52.4%** |
-| Structural characters (`{`, `}`, `[`, `]`, `:`, `,`) | 3,001 | **28.6%** |
-| Actual data values | 1,995 | **19.0%** |
-| **Total** | **10,496** | |
+### JSON token distribution (500 rows, GPT-4o tokenizer)
 
-Over 80% of JSON tokens are overhead. The LLM is processing 5x more noise than signal.
+| Category | Tokens | % of total | Growth |
+|----------|--------|------------|--------|
+| Repeated field names (`"field":`, `"value":`, etc.) | 5,500 | **52.4%** | Linear (11 per row) |
+| Structural characters (`{`, `}`, `[`, `]`, `:`, `,`) | 3,001 | **28.6%** | Linear (6 per row) |
+| Actual data values | 1,995 | **19.0%** | Linear (content-dependent) |
+| **Total** | **10,496** | | |
 
-GCF for the same data:
+**81% of JSON's tokens carry zero new information after the first row.** The field names `"field":`, `"value":`, `"count":`, `"percentage":` are declared on row 1 and then repeated identically 499 more times.
 
-| Category | Tokens | % of total |
-|----------|--------|------------|
-| Header (field names, declared once) | 10 | **0.2%** |
-| Data rows | 6,500 | **99.8%** |
-| **Total** | **6,510** | |
+### GCF token distribution (same data)
 
-### The scaling problem
+| Category | Tokens | % of total | Growth |
+|----------|--------|------------|--------|
+| Header (field names, declared once) | 10 | **0.2%** | Constant |
+| Data rows | 6,500 | **99.8%** | Linear (content only) |
+| **Total** | **6,510** | | |
 
-JSON's overhead grows **linearly** with row count. GCF's overhead is **constant**:
+GCF declares field names once in the header (`## [500]{field,value,count,percentage}`), then emits rows with zero structural repetition. The ratio of useful-to-total tokens is 99.8%.
 
-| Rows | JSON overhead | GCF overhead | Ratio |
-|------|--------------|--------------|-------|
+### Per-field cost analysis
+
+Each JSON field-name pattern costs tokens on every row:
+
+| Field pattern | Tokens per occurrence | × 500 rows | Total cost |
+|--------------|---------------------|------------|-----------|
+| `"field":` | 3 | × 500 | 1,500 |
+| `"value":` | 2 (GPT-4o) to 3 (Claude) | × 500 | 1,000-1,500 |
+| `"count":` | 3 | × 500 | 1,500 |
+| `"percentage":` | 3 | × 500 | 1,500 |
+| **Total per row** | **11** | **× 500** | **5,500** |
+
+In GCF, all four field names cost **10 tokens total** (once, in the header).
+
+### The ratio at scale
+
+| Rows | JSON overhead (field names + structural) | GCF overhead (header) | Ratio |
+|------|------------------------------------------|----------------------|-------|
 | 10 | 171 tokens | 10 tokens | 17:1 |
+| 50 | 851 tokens | 10 tokens | 85:1 |
 | 100 | 1,701 tokens | 10 tokens | 170:1 |
 | 500 | 8,501 tokens | 10 tokens | 850:1 |
-| 1,000 | 17,001 tokens | 11 tokens | 1,545:1 |
+| 1,000 | 17,001 tokens | 11 tokens | **1,545:1** |
 
-At 1,000 rows, JSON burns 17,001 tokens on overhead (repeated field names + structural characters). GCF uses 11. The ratio is 1,545:1.
+At 1,000 rows, JSON burns 17,001 tokens on structural overhead. GCF uses 11. The gap grows without bound because JSON's overhead is O(n) per row while GCF's is O(1).
 
-## Finding 5: Cross-Tokenizer Validation
+## Finding 5: Cross-Tokenizer Consistency
 
-The overhead pattern holds across all 8 tokenizers:
+The overhead pattern is not an artifact of one tokenizer. All 8 confirm it:
 
 | Tokenizer | JSON tokens | GCF tokens | Savings | JSON field-name overhead |
 |-----------|------------|-----------|---------|------------------------|
 | Claude (Anthropic) | 10,996 | 7,013 | 36.2% | 54.6% |
-| GPT-4 (OpenAI) | 10,494 | 6,508 | 38.0% | 52.4% |
-| GPT-4o (OpenAI) | 10,494 | 6,508 | 38.0% | 52.4% |
+| GPT-4 (OpenAI cl100k) | 10,494 | 6,508 | 38.0% | 52.4% |
+| GPT-4o (OpenAI o200k) | 10,494 | 6,508 | 38.0% | 52.4% |
 | LLaMA 3.1 (Meta) | 10,494 | 6,508 | 38.0% | 52.4% |
 | Qwen 2.5 (Alibaba) | 13,150 | 9,166 | 30.3% | 41.8% |
 | DeepSeek V3 | 10,494 | 6,509 | 38.0% | 57.2% |
 | Gemma 2 (Google) | 14,149 | 9,669 | 31.7% | 42.4% |
 | Mistral Nemo | 13,649 | 9,167 | 32.8% | 44.0% |
 
-Every tokenizer confirms: JSON spends **42-57% of its tokens on repeated field names alone**.
+Every tokenizer shows JSON spending **42-57% of its total tokens** on repeated field names. The absolute numbers vary (Gemma uses more tokens overall due to smaller subword merges), but the proportional waste is consistent.
 
-## Why This Matters for Comprehension
+## The Attention Dilution Mechanism
 
-We've observed across [2,400+ LLM evaluations](https://gcformat.com/guide/benchmarks) that JSON comprehension degrades at scale (53.4% accuracy at 500 records) while GCF maintains high accuracy (100% on standard workloads, 91.2% on structurally complex data).
+Why does structural overhead cause comprehension failures, rather than just costing more? The answer lies in how transformer attention works.
 
-The tokenization analysis explains the mechanism:
+Self-attention allocates a fixed budget across all input positions. When a query token looks for relevant keys, it must attend over the entire sequence. If 80% of that sequence is structural noise (repeated field names, braces, colons), the attention budget is diluted across positions that carry no information for answering the question.
 
-**JSON at scale presents the model with:**
-1. Ambiguous structural boundaries (field names merge with quotes on 4/8 tokenizers)
-2. Overwhelming repetition (52% of tokens are repeated field names carrying zero new information)
-3. Low signal-to-noise ratio (only 19% of tokens are actual data)
+Ildiz et al. (2402.13512) demonstrated a "winner-takes-all" phenomenon in self-attention: the mechanism collapses into attending to a limited subset of tokens. When the sequence is dominated by repetitive structural patterns, the attention mechanism can lock onto those patterns rather than the data values buried within them.
 
-**GCF at scale presents the model with:**
-1. Unambiguous structural boundaries (pipe is always 1 token, never merges)
-2. Zero repetition (field names declared once in header)
-3. Near-100% signal (99.8% of tokens are actual data)
+Consider what happens when the model is asked "how many records have status = shipped?" given 500 JSON objects. It must:
 
-The model doesn't fail because JSON is "too long." It fails because at 500+ rows, there are thousands of structurally ambiguous token boundaries competing for attention, while 80% of the token positions carry no information. The attention mechanism is spread across noise rather than concentrated on signal.
+1. Attend to every `"status":` pattern (500 occurrences)
+2. Read the value following each one
+3. Compare to "shipped"
+4. Count matches
 
-GCF eliminates both problems. The structure is always unambiguous (pipe is pipe, everywhere, on every model). And nearly every token carries actual data.
+Steps 1-2 require attending to 500 positions that each look nearly identical in the token sequence. The `"status":` pattern produces the same tokens every time. The model has no structural marker distinguishing the 150th `"status"` from the 350th. It must rely on positional encoding alone to track which row it's on.
+
+In GCF, the equivalent task requires attending to a column of values with pipe delimiters at known, consistent positions. The structural delimiter (pipe) is always at the same relative position within each row. No ambiguity. No repetition competing for attention.
+
+This mechanism, attention dilution from repetitive structural patterns, explains why:
+- Errors are larger at scale (more noise = more dilution)
+- Errors concentrate on counting tasks (require attention to every row)
+- Errors are model-dependent (tokenization differences affect which positions compete for attention)
+- GCF doesn't exhibit these failures (no repetition, unambiguous boundaries)
+
+## Counter-Argument: Training Distribution
+
+The strongest counter-argument comes from Kutschka & Geiger (2605.29676) and Matveev (2603.03306): models have seen enormous amounts of JSON during training. This familiarity might compensate for structural inefficiency. JSON is overrepresented in code corpora, and models may have internalized parsing logic that handles merged tokens correctly.
+
+Our response, supported by our evaluation data:
+
+1. **Training familiarity helps at small scale.** All formats achieve near-100% accuracy at 10-50 records. The model has seen enough JSON to parse small payloads easily.
+
+2. **Familiarity fails at scale.** At 500 records with complex structure, JSON drops to 53.4% accuracy across 10 models. No amount of training data exposure compensates for the attention dilution of 8,000+ noise tokens.
+
+3. **GCF achieves 100% with zero training exposure.** No model has ever been trained on GCF. Yet every frontier model comprehends it perfectly on standard workloads and achieves 91.2% on structurally complex data. This proves format structure matters more than training distribution once you're past the complexity threshold.
+
+4. **The threshold is lower than people think.** Matveev's "scaling hypothesis" suggests formats only separate past a complexity threshold. Our data shows that threshold is ~100-200 records for nested data and ~500 for flat tables. Most production tool responses exceed this.
 
 ## The Structural Variance Hypothesis
 
-This analysis suggests a hypothesis for the model-dependent failures we observe in our evaluations:
+This analysis suggests a testable hypothesis for the model-dependent failures we observe:
 
-- **GPT-5.4 produces deterministic wrong answers** on JSON (always says `edge_count=198` when correct is 200). The merged `"value` tokens on its tokenizer (o200k) may create a consistent parsing offset.
-- **Claude Opus never fails on GCF** but fails on JSON distance-filtering. Claude's tokenizer keeps quotes separate from field names, so it should handle JSON better than GPT-4, and it does (96.2% vs 78.0%), but still fails because the attention dilution problem remains.
-- **GCF achieves 100% on Claude Sonnet, Gemini Pro, Gemini 3.1 Pro, and Gemini 3.5 Flash.** These models see clean, unambiguous structure with no wasted tokens. There's nothing to confuse.
+| Model | JSON accuracy (stress) | Tokenizer merges `"value`? | Prediction |
+|-------|----------------------|---------------------------|------------|
+| Claude Opus 4.6 | 73.1% | No (3 separate tokens) | Better JSON performance |
+| Claude Sonnet 4.6 | 53.8% | No | Smaller model, attention budget matters more |
+| GPT-5.5 | 45.8% | Yes (2 tokens) | Merged boundaries hurt at scale |
+| GPT-5.4 | 44.1% | Yes | Deterministic errors (always 198 vs 200) |
+| Gemini 2.5 Pro | 58.3% | No (Gemma tokenizer) | Better than GPT but still fails on counting |
+
+The pattern is suggestive: models whose tokenizers merge field-name patterns tend to perform worse on JSON comprehension at scale. This is not proof of causation (model capability differences are a confound), but it's consistent with the structural ambiguity mechanism.
+
+**On GCF, all of these models achieve 85-100%.** The tokenizer differences don't matter because GCF's delimiters are always unambiguous.
 
 ## Implications
 
 ### For format designers
 
-If you're designing a format that LLMs will read, choose delimiters from the "never-merge" category. Our [ASCII delimiter space analysis](https://gcformat.com/guide/tokenizer-analysis#ascii-delimiter-space-analysis) found 74 of 94 printable ASCII characters are safe (always 1 token, never merge with neighbors). The 20 unsafe characters include dots, dashes, underscores, and common lowercase letters (exactly the characters JSON uses in field names).
+Choose structural delimiters from the "never-merge" character set. Our ASCII space analysis found 74 safe characters and 20 unsafe ones. The unsafe set includes exactly the characters that appear in JSON's grammar:
+
+- `.` (dot): merges into `.validate`, `.com`, `.json`
+- `-` (dash): merges into `-based`, `-style`, `-token`
+- `_` (underscore): merges into `_name`, `_id`, `_count`
+- Lowercase letters: merge into subword prefixes
+
+**Design principle:** a format's structural characters should be chosen so that no BPE tokenizer will ever merge them with adjacent content. This guarantees consistent parsing across all models.
 
 ### For tool builders
 
-If your MCP server or AI tool outputs JSON to LLMs, understand that you're sending data where 80% of tokens are noise and the structural boundaries tokenize differently per model. At 10 records this is fine. At 500+ records, you're in the failure zone.
+If your MCP server or AI tool outputs JSON arrays to LLMs:
+
+- At 10 records: JSON is fine. All formats work.
+- At 100 records: consider alternatives. JSON overhead is 1,701 tokens of noise.
+- At 500+ records: JSON's comprehension failures are measurable. 53.4% accuracy means your agent gets the wrong answer nearly half the time.
+
+The fix is straightforward: declare field names once, emit positional rows, use non-merging delimiters. This is what GCF does. It's also what you could implement with a custom format (though you'd lose the 6-language library ecosystem and 43B round-trip validation).
 
 ### For agent architects
 
-If you're building multi-model systems (routing between Claude, GPT, Gemini), JSON's structural ambiguity means each model sees the same data *differently* at the token level. GCF gives every model identical structural input. This matters for consistency in multi-model pipelines.
+If you're building multi-model systems:
+
+- JSON produces **different token sequences** on different models for the same data
+- This means each model sees a structurally different representation of the same input
+- For consistency-critical applications (multi-model voting, fallback chains), this variance matters
+- GCF produces **identical structural boundaries** on every model, eliminating this variable
+
+### For researchers
+
+This analysis opens several directions:
+
+1. **Causal testing:** Does artificially introducing merged tokens at field boundaries directly cause comprehension errors? (Controlled experiment with custom tokenizer)
+2. **Attention visualization:** Do attention maps show different patterns at merged vs. separate boundary tokens?
+3. **Format-aware fine-tuning:** Can models be fine-tuned to handle merged boundary tokens better? (And is that easier or harder than just using a better format?)
+4. **Optimal grammar search:** Given a tokenizer vocabulary, what is the mathematically optimal delimiter set? (Minimize total tokens while maximizing boundary consistency)
+
+## Related Work
+
+| Paper | Key contribution | Relation to our findings |
+|-------|-----------------|------------------------|
+| Deekeswar, "ONTO" (2604.17512) | 1,000 JSON records = ~80K tokens, majority overhead | Quantifies the problem we explain mechanistically |
+| Nandakishore, "JTON" (2604.05400) | Header factorization + tabular encoding, 15-60% reduction | Same structural approach as GCF, independently derived |
+| Kutschka & Geiger (2605.29676) | Token-efficient formats can hurt accuracy | We show GCF avoids this tradeoff via unambiguous delimiters |
+| Ildiz et al. (2402.13512) | Self-attention "winner-takes-all" on repetitive data | Theoretical basis for attention dilution mechanism |
+| Karim & Batatia (2508.01685) | Fixed tokens for structure + BPE for values | Hybrid approach; GCF achieves similar result via grammar design |
+| Sui et al. (2305.13062) | Table format affects LLM performance | General finding we explain at the BPE level |
+| Matveev (2603.03306) | JSON wins for simple structures (scaling hypothesis) | Confirmed: our data shows formats separate past ~200 records |
 
 ## Reproduce
 
-All experiments are reproducible:
+All experiments are reproducible from one command:
 
 ```bash
 git clone https://github.com/blackwell-systems/gcf
 cd gcf
 
-# Structural variance benchmark
+# Structural variance benchmark (8 tokenizers, merge analysis)
 node eval/structural-variance.mjs
 
-# JSON overhead analysis
+# JSON overhead analysis (token distribution, scaling)
 node eval/json-tokenization-analysis.mjs
 
 # Full tokenizer variance analysis (8 tokenizers, multiple scales)
 node eval/tokenizer-variance.mjs
+
+# Grammar swap experiment (proves savings are structural, not delimiter-specific)
+node eval/grammar-swap-experiment.mjs
 ```
 
-The evaluation framework, all raw logs, and the full comprehension dataset are open source at [github.com/blackwell-systems/gcf](https://github.com/blackwell-systems/gcf).
+The comprehension evaluation (2,400+ LLM calls proving these findings correlate with actual model behavior) is at [github.com/blackwell-systems/gcf-go/tree/main/eval](https://github.com/blackwell-systems/gcf-go/tree/main/eval).
 
 ## Summary
 
 | Metric | JSON | GCF |
 |--------|------|-----|
 | Structural patterns that vary across tokenizers | 4/15 (27%) | **0/10 (0%)** |
-| Delimiter merges with adjacent content | Yes (4/8 tokenizers) | **Never** |
+| Delimiter merges with adjacent content | Yes (4/8 tokenizers) | **Never (0/8)** |
 | Tokens spent on overhead (500 rows) | 81% | **0.2%** |
-| Overhead growth | Linear (17K at 1000 rows) | **Constant (11 tokens)** |
+| Overhead scaling | O(n) per row | **O(1) constant** |
 | Signal-to-noise ratio | 19% signal | **99.8% signal** |
-| Comprehension at 500 records | 53.4% | **91.2-100%** |
+| Comprehension at 500 records (stress) | 53.4% | **91.2%** |
+| Comprehension on standard workloads | 100% (frontier) | **100% (frontier)** |
+| Merge-free delimiters (verified) | 0/3 (`"`, `:`, `,` in key context) | **10/10** |
 
-JSON wasn't designed for LLMs. It was designed in 2001 for human-readable data interchange between web browsers and servers. Its structural choices (quotes around keys, colons as separators, repeated field names) made sense for that era. They're suboptimal for the era of AI agents reading structured data at scale.
+JSON was designed in 2001 for human-readable data interchange between web browsers and servers. Its structural choices (quotes around keys, colons as separators, repeated field names) made sense for that era. They predate BPE tokenizers by over a decade. They predate transformer attention by 16 years.
 
-The tokenization analysis shows this isn't just about token count. It's about structural ambiguity. Different models see different boundaries. And that ambiguity compounds with every row of data.
+The tokenization analysis shows the problem isn't just token count. It's structural ambiguity. Different models see different boundaries. The attention mechanism is diluted by repetition. And both problems compound linearly with data size.
+
+For LLM systems processing structured data at scale, the format matters. Not just for cost, but for correctness.
