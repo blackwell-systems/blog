@@ -272,6 +272,16 @@ The training familiarity didn't create structural understanding. It created comp
 
 This inverts the standard argument entirely. "Trained on JSON" is not an advantage for structural comprehension at scale. It's the mechanism that causes structural ambiguity. The tokenizer's efficiency is the model's handicap.
 
+### Why Claude and Gemma don't have this problem
+
+Claude's tokenizer has zero quote+letter entries. Gemma's has zero. The specific tokenizer training details are proprietary, but measurable differences explain the divergence:
+
+- **Vocabulary size:** Claude uses ~65K entries (smallest tested). Smaller vocabularies are more conservative about which merges to include. GPT-4's 100K has budget for specialized merges like `"name`.
+- **Training data mix:** Less code/JSON in the training corpus means `"name` appears less frequently, making it less likely to cross the merge threshold.
+- **Merge boundary policy:** BPE training can be configured to treat certain characters as merge barriers. Anthropic and Google may have prevented `"` from merging with adjacent letters.
+
+Gemma's vocabulary is the **largest** (256K) yet has zero quote merges. Larger vocabulary doesn't mean more merges. The merge policy matters more.
+
 ### Why this is irrecoverable
 
 1. **Vocabulary is frozen.** Once the tokenizer is trained, entries never change. Fine-tuning adjusts weights, not vocabulary.
