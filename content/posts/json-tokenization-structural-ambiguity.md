@@ -399,7 +399,7 @@ GCF at 500 rows: zero merged boundaries on field names, 99.8% signal, structure 
 
 Self-attention allocates a fixed budget across all input positions. When 80% of the sequence is structural noise, the budget is diluted across positions that carry no information.
 
-Ildiz et al. (2402.13512) demonstrated a "winner-takes-all" phenomenon in self-attention: the mechanism collapses into attending to a limited subset of tokens. When the sequence is dominated by repetitive structural patterns, attention locks onto noise rather than the data values buried within.
+Ildiz et al. (2402.13512) proved mathematically that self-attention weights tokens proportionally to their frequency in the sequence. Their Context-Conditioned Markov Chain (CCMC) formulation shows that the probability of attending to token j includes `m_j` (the count of token j in the sequence) in the numerator. Tokens that appear more often receive more attention weight purely by count, not by relevance. In a 500-row JSON array, structural tokens (`"name":`, `"id":`, `{`, `}`, `:`) account for ~80% of all token occurrences. The CCMC formula means these tokens dominate the attention budget, and the actual data values (semantically important but numerically outnumbered) receive proportionally less. This is not a hypothesis; it's a mathematical property of the self-attention mechanism. (The paper analyzes single-layer models; multi-layer architectures partially mitigate this, but our comprehension data shows the mitigation is insufficient at 500+ rows.)
 
 Consider the task "how many records have status = shipped?" given 500 JSON objects. The model must attend to every `"status":` pattern (500 occurrences), read the following value, compare to "shipped," and count. The 500 `"status":` patterns produce the same tokens every time. The model has no structural marker distinguishing the 150th from the 350th. It relies on positional encoding alone.
 
@@ -483,7 +483,7 @@ This analysis opens several directions:
 | Deekeswar, "ONTO" (2604.17512) | 1,000 JSON records = ~80K tokens, majority overhead | Quantifies the problem we explain mechanistically |
 | Nandakishore, "JTON" (2604.05400) | Header factorization + tabular encoding, 15-60% reduction | Same structural approach as GCF, independently derived |
 | Kutschka & Geiger (2605.29676) | Token-efficient formats can hurt accuracy | We show GCF avoids this tradeoff via unambiguous delimiters |
-| Ildiz et al. (2402.13512) | Self-attention "winner-takes-all" on repetitive data | Theoretical basis for attention dilution mechanism |
+| Ildiz et al. (2402.13512) | Self-attention weights tokens proportionally to frequency (CCMC proof) | Mathematical basis: repeated structural tokens dominate attention budget by count |
 | Karim & Batatia (2508.01685) | Fixed tokens for structure + BPE for values | Hybrid approach; GCF achieves similar result via grammar design |
 | Sui et al. (2305.13062) | Table format affects LLM performance | General finding we explain at the BPE level |
 | Matveev (2603.03306) | JSON wins for simple structures (scaling hypothesis) | Confirmed: our data shows formats separate past ~200 records |
