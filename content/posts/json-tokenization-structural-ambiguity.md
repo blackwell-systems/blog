@@ -48,7 +48,18 @@ We measured two things:
 
 JSON uses the pattern `"fieldName":` to mark each field. This pattern repeats on every row of an array. We tested 15 common field-name patterns against all 8 tokenizers.
 
-**4 of 15 patterns tokenize differently depending on the model:**
+**The quote-field merge rate:** 22 of 120 individual checks (18.3%) show the opening quote merging with the field name into a single token. This isn't a rare edge case.
+
+**The worst offenders:**
+
+| Pattern | Merge rate | Models that merge |
+|---------|-----------|-------------------|
+| `"name":` | **5/8** | GPT-4, GPT-4o, LLaMA, Qwen, Mistral |
+| `"value":` | **4/8** | GPT-4, GPT-4o, LLaMA, Qwen |
+| `"userName":` | **1/8** | GPT-4o |
+| `"orderId":` | 0/8 | (none, but token count still varies 3-4) |
+
+The full variance table:
 
 | Pattern | Claude | GPT-4 | GPT-4o | LLaMA | Qwen | DeepSeek | Gemma | Mistral |
 |---------|--------|-------|--------|-------|------|----------|-------|---------|
@@ -57,9 +68,38 @@ JSON uses the pattern `"fieldName":` to mark each field. This pattern repeats on
 | `"name":` | 3 | **2** | **2** | **2** | **2** | 3 | 3 | **2** |
 | `"tier":` | 3 | 3 | 3 | 3 | 3 | **4** | 3 | **4** |
 
-The remaining 11 patterns (`"field":`, `"count":`, `"percentage":`, `"customer":`, `"amount":`, `"status":`, `"items":`, `"email":`, `"sku":`, `"quantity":`, `"unitPrice":`) are stable at 3-4 tokens across all tokenizers.
+**What this means:** The same JSON data produces different token sequences on different models. At 500 rows with 4 fields, fields like `"name":` create 500 positions where 5 out of 8 models see a merged boundary while 3 see a clean one. This isn't a one-time ambiguity; it compounds linearly with data size.
 
-**What this means:** The same JSON data produces different token sequences on different models. At 500 rows, the 4 varying patterns create 2,000+ positions where models disagree on token boundaries. This isn't a one-time ambiguity; it compounds linearly with data size.
+### The worst case: 7 distinct tokenizations
+
+We searched across 40 field names and 21 values to find maximum variance. The worst pattern:
+
+`"userName":"req_xyz789"` produces **7 distinct tokenizations** across 8 models:
+
+```
+GPT-4, LLaMA:     ["][userName][":"][req][_xyz][789]["]
+GPT-4o:           ["user][Name][":"][req][_xyz][789]["]
+Claude:           ["][userName][":"][req][_][xyz][789]["]
+Qwen 2.5:        ["][userName][":"][req][_xyz][7][8][9]["]
+DeepSeek V3:     ["][user][Name][":"][req][_][xyz][789]["]
+Gemma 2:         ["][userName][":"][req][_][xyz][7][8][9]["]
+Mistral Nemo:    ["][user][Name][":"][req][_x][yz][7][8][9]["]
+```
+
+Almost every model sees a structurally different token sequence for the same data. Note how GPT-4o merges the quote into `["user]` while other models keep it separate.
+
+### Full objects: 4 different token counts
+
+A complete JSON object `{"orderId":"ORD-001","value":"shipped"}` produces **4 different token counts** depending on the model:
+
+| Token count | Models |
+|-------------|--------|
+| 12 tokens | GPT-4, LLaMA |
+| 13 tokens | GPT-4o, Claude, DeepSeek |
+| 14 tokens | Qwen, Gemma |
+| 15 tokens | Mistral |
+
+The same JSON object is a different length on every model family. This means attention patterns, positional encodings, and context budget impact all vary per model for identical input data.
 
 ## Finding 2: The Merge Mechanism
 
@@ -135,16 +175,18 @@ For comparison, we tested all 10 characters in GCF's grammar against all 8 token
 
 **80 checks. Zero exceptions.** Every GCF structural character is always exactly 1 token on every tokenizer.
 
-We then verified that these characters never merge with adjacent content:
+We then verified that these characters never merge with adjacent content. We tested 15 realistic field+value patterns across all 8 tokenizers (120 additional checks):
 
 ```
-hello|world    → [hello][|][world]         ALL 8 tokenizers
-|150|          → [|][150][|]               ALL 8 tokenizers  
-@0|function    → [@][0][|][function]       ALL 8 tokenizers
-age_group|25   → [age][_group][|][25]      ALL 8 tokenizers
+value|pending            → [value][|][pending]          ALL 8 tokenizers
+name|Alice               → [name][|][Alice]             ALL 8 tokenizers
+orderId|ORD-001          → [orderId][|][ORD][-][001]    ALL 8 tokenizers
+userName|john            → [userName][|][john]           ALL 8 tokenizers
+email|alice@example.com  → [email][|][alice][@]...      ALL 8 tokenizers
+score|95.5               → [score][|][95][.][5]         ALL 8 tokenizers
 ```
 
-**The pipe character never absorbs adjacent content.** It is always its own token, always at the same position in the sequence, regardless of which model processes the data. Field boundaries are unambiguous on every model.
+**0/120 checks show pipe merging.** Compare to JSON's 22/120 quote-merge rate (18.3%). The pipe character never absorbs adjacent content on any tokenizer, with any field name, with any value type. Field boundaries are unambiguous on every model.
 
 ### Why GCF's delimiters are safe
 
@@ -344,6 +386,9 @@ cd gcf
 # Structural variance benchmark (8 tokenizers, merge analysis)
 node eval/structural-variance.mjs
 
+# Worst-case JSON tokenization search (maximum variance patterns)
+node eval/worst-json-tokenization.mjs
+
 # JSON overhead analysis (token distribution, scaling)
 node eval/json-tokenization-analysis.mjs
 
@@ -360,14 +405,15 @@ The comprehension evaluation (2,400+ LLM calls proving these findings correlate 
 
 | Metric | JSON | GCF |
 |--------|------|-----|
-| Structural patterns that vary across tokenizers | 4/15 (27%) | **0/10 (0%)** |
-| Delimiter merges with adjacent content | Yes (4/8 tokenizers) | **Never (0/8)** |
+| Structural delimiter merge rate | 22/120 (18.3%) | **0/120 (0%)** |
+| Worst single-field merge rate | 5/8 tokenizers (`"name":`) | **0/8 (pipe never merges)** |
+| Max distinct tokenizations (same string) | **7** (`"userName":"req_xyz789"`) | 7 (value variance only, pipe stable) |
+| Full object token-count variants | 4 different lengths | **Identical structural boundaries** |
 | Tokens spent on overhead (500 rows) | 81% | **0.2%** |
 | Overhead scaling | O(n) per row | **O(1) constant** |
 | Signal-to-noise ratio | 19% signal | **99.8% signal** |
 | Comprehension at 500 records (stress) | 53.4% | **91.2%** |
 | Comprehension on standard workloads | 100% (frontier) | **100% (frontier)** |
-| Merge-free delimiters (verified) | 0/3 (`"`, `:`, `,` in key context) | **10/10** |
 
 JSON was designed in 2001 for human-readable data interchange between web browsers and servers. Its structural choices (quotes around keys, colons as separators, repeated field names) made sense for that era. They predate BPE tokenizers by over a decade. They predate transformer attention by 16 years.
 
