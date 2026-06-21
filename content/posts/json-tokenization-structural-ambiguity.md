@@ -4,8 +4,8 @@ date: 2026-06-21
 draft: false
 tags: ["json", "tokenization", "llm", "gcf", "ai-agents", "wire-format", "mcp", "token-efficiency", "bpe", "attention"]
 categories: ["ai", "research"]
-description: "JSON's structural grammar tokenizes ambiguously across models. Field boundaries merge with content on 4/8 tokenizers, creating model-dependent parsing. GCF's delimiters are always exactly 1 token on every tokenizer. This explains why comprehension degrades at scale."
-summary: "We benchmarked 8 tokenizers from 6 providers against JSON and GCF structural patterns. JSON's quote-colon field markers merge with adjacent content on 4/8 tokenizers (GPT-4, GPT-4o, LLaMA, Qwen), creating ambiguous token boundaries at field separators. GCF's pipe delimiter never merges on any tokenizer. At 500 rows, JSON's structural overhead (field names + syntax) consumes 81% of tokens, leaving only 19% for actual data. This structural ambiguity compounds per row and explains model-dependent comprehension failures at scale."
+description: "JSON's structural grammar tokenizes ambiguously across models. 15 of the most common field names (id, name, type, value, url, path, etc.) merge with quote delimiters on 50-63% of tokenizers, hiding structural boundaries. GCF's grammar merges at 1% vs JSON's 8.93% on real data. This explains why JSON comprehension degrades at scale."
+summary: "We benchmarked 8 tokenizers from 6 providers against 155 common JSON field names. 15 of the most ubiquitous fields (id, name, type, value, title, time, text, url, path, description) merge quote+field into a single token on 50-63% of tokenizers (GPT-4, GPT-4o, LLaMA, Qwen, Mistral). On real eval data: JSON boundary merge rate 8.93% vs GCF 1.00% (88.8% fewer). At 500 rows with id+name+type, JSON has ~1,500 hidden boundaries on half the LLM market. JSON overhead is 81% at scale (only 19% data tokens). This structural ambiguity compounds per row and explains model-dependent comprehension failures."
 ---
 
 Everyone knows JSON is verbose. The common explanation for why LLMs struggle with JSON at scale is "too many tokens." That explanation is incomplete. The real problem is more subtle and more dangerous: JSON's structural grammar tokenizes **ambiguously** across different models, and this ambiguity compounds with every row of data.
@@ -160,7 +160,7 @@ Claude, DeepSeek, Gemma (3 tokenizers):
 
 Five of eight tokenizers merge `"name` into a single token. The field boundary is invisible at the token level on these models.
 
-## Finding 3: GCF Delimiters Never Merge
+## Finding 3: GCF Grammar Merges 88.8% Less
 
 For comparison, we tested all 10 characters in GCF's grammar against all 8 tokenizers. 80 individual checks.
 
@@ -350,7 +350,7 @@ Choose structural delimiters from the "never-merge" character set. Our ASCII spa
 - `_` (underscore): merges into `_name`, `_id`, `_count`
 - Lowercase letters: merge into subword prefixes
 
-**Design principle:** a format's structural characters should be chosen so that no BPE tokenizer will ever merge them with adjacent content. This guarantees consistent parsing across all models.
+**Design principle:** a format's structural characters should be chosen from the set of characters with the lowest merge rates across tokenizers. No character is perfect against all possible adjacent content, but the difference between JSON's 8.93% merge rate and GCF's 1.00% is the difference between 1,500 hidden boundaries at scale and a handful.
 
 ### For tool builders
 
@@ -402,6 +402,9 @@ cd gcf
 
 # Structural variance benchmark (8 tokenizers, merge analysis)
 node eval/structural-variance.mjs
+
+# Common business field analysis (155 fields, 15 worst offenders)
+node eval/common-field-merge-analysis.mjs
 
 # Worst-case JSON tokenization search (maximum variance patterns)
 node eval/worst-json-tokenization.mjs
