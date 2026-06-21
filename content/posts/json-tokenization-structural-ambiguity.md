@@ -379,30 +379,31 @@ In a real agent session with repeated tool calls to the same codebase, cumulativ
 
 All numbers cross-tokenizer validated across 8 tokenizers from 6 providers.
 
-## The Attention Dilution Mechanism
+## Why Merging Causes Higher Degradation at Scale
 
-Why does structural overhead cause comprehension failures, rather than just costing more? The answer lies in how transformer attention works.
+At 10 rows, `"name` being one token instead of two doesn't matter. The model has seen enough JSON to handle it. There are only 10 merged boundaries. The attention mechanism can work around it.
 
-Self-attention allocates a fixed budget across all input positions. When a query token looks for relevant keys, it must attend over the entire sequence. If 80% of that sequence is structural noise (repeated field names, braces, colons), the attention budget is diluted across positions that carry no information for answering the question.
+At 500 rows, three problems compound simultaneously:
 
-Ildiz et al. (2402.13512) demonstrated a "winner-takes-all" phenomenon in self-attention: the mechanism collapses into attending to a limited subset of tokens. When the sequence is dominated by repetitive structural patterns, the attention mechanism can lock onto those patterns rather than the data values buried within them.
+**1. The merged boundary repeats 500 times.** Each row contains `"name":`, `"id":`, `"type":`. That's ~1,500 positions where the structural boundary is inside a merged token. The model must decompose structure from inside merged tokens at 1,500 positions, not 10.
 
-Consider what happens when the model is asked "how many records have status = shipped?" given 500 JSON objects. It must:
+**2. All 1,500 positions are identical token sequences.** The token for `"name` on row 1 is the same integer (#32586) as on row 500. The model can't distinguish them. It relies on positional encoding alone to track "which `"name` am I looking at?" Positional encoding degrades over long sequences.
 
-1. Attend to every `"status":` pattern (500 occurrences)
-2. Read the value following each one
-3. Compare to "shipped"
-4. Count matches
+**3. 81% of the sequence is noise.** The repeated field names and braces are not just merged; they're also redundant. The attention mechanism is spread across ~8,500 tokens that carry no information, trying to find the ~2,000 that do. The merged boundaries make the noise harder to skip because the model can't cleanly identify where structure ends and data begins.
 
-Steps 1-2 require attending to 500 positions that each look nearly identical in the token sequence. The `"status":` pattern produces the same tokens every time. The model has no structural marker distinguishing the 150th `"status"` from the 350th. It must rely on positional encoding alone to track which row it's on.
+The compounding is the critical insight. At 10 rows: manageable. At 500 rows: 1,500 merged boundaries, massive noise, positional encoding stretched, attention diluted. The model stops finding precise answers and guesses. This is why JSON errors at scale are off by 50-140 (couldn't find the answer), not off by 1-2 (slightly misread a number).
 
-In GCF, the equivalent task requires attending to a column of values with pipe delimiters at known, consistent positions. The structural delimiter (pipe) is always at the same relative position within each row. No ambiguity. No repetition competing for attention.
+GCF at 500 rows: zero merged boundaries on field names, 99.8% signal, structure answers questions directly (`## related [167]`). Nothing compounds because there's nothing to compound.
 
-This mechanism, attention dilution from repetitive structural patterns, explains why:
-- Errors are larger at scale (more noise = more dilution)
-- Errors concentrate on counting tasks (require attention to every row)
-- Errors are model-dependent (tokenization differences affect which positions compete for attention)
-- GCF doesn't exhibit these failures (no repetition, unambiguous boundaries)
+### Attention dilution in detail
+
+Self-attention allocates a fixed budget across all input positions. When 80% of the sequence is structural noise, the budget is diluted across positions that carry no information.
+
+Ildiz et al. (2402.13512) demonstrated a "winner-takes-all" phenomenon in self-attention: the mechanism collapses into attending to a limited subset of tokens. When the sequence is dominated by repetitive structural patterns, attention locks onto noise rather than the data values buried within.
+
+Consider the task "how many records have status = shipped?" given 500 JSON objects. The model must attend to every `"status":` pattern (500 occurrences), read the following value, compare to "shipped," and count. The 500 `"status":` patterns produce the same tokens every time. The model has no structural marker distinguishing the 150th from the 350th. It relies on positional encoding alone.
+
+In GCF, the equivalent task requires attending to a column of values with pipe delimiters at known, consistent positions. No ambiguity. No repetition competing for attention.
 
 ## Counter-Argument: Training Distribution
 
