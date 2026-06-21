@@ -20,6 +20,8 @@ The critical property: **BPE merging is context-dependent.** The same character 
 
 For natural language, this is efficient (common words like "the" become single tokens). For structured formats like JSON, it creates a problem: the characters that mark structural boundaries (`"`, `:`, `{`, `}`) can merge with the content they're supposed to delimit.
 
+**A critical distinction:** Any structured format contains two types of content: *grammar symbols* (delimiters that define structure) and *payload content* (the actual data values). A format designer controls grammar symbols but cannot control how payload content tokenizes without altering the data itself. The question isn't "does everything tokenize consistently?" (it won't, and can't). The question is: **do the structural boundaries always land at clean, unambiguous token positions?** If yes, the model always knows where one field ends and the next begins, regardless of how the values themselves split.
+
 This has been noted in passing by researchers. Deekeswar (2604.17512) measured that 1,000 JSON records consume ~80K tokens with the majority being repeated keys and punctuation. Nandakishore (2604.05400) stated "optimizing for tokenizer efficiency, not just human readability, is going to matter." But nobody has performed a systematic mechanistic analysis of exactly how and where JSON's structure breaks down at the BPE level.
 
 ## The Experiment
@@ -186,7 +188,9 @@ email|alice@example.com  → [email][|][alice][@]...      ALL 8 tokenizers
 score|95.5               → [score][|][95][.][5]         ALL 8 tokenizers
 ```
 
-**0/120 checks show pipe merging.** Compare to JSON's 22/120 quote-merge rate (18.3%). The pipe character never absorbs adjacent content on any tokenizer, with any field name, with any value type. Field boundaries are unambiguous on every model.
+**0/120 checks show pipe merging.** Compare to JSON's 22/120 quote-merge rate (18.3%). The pipe character never absorbs adjacent content on any tokenizer, with any field name, with any value type.
+
+Note: the payload content (`userName`, `req_xyz789`) still tokenizes differently across models in GCF, just as it does in JSON. The difference is that GCF's grammar symbol (pipe) is always cleanly separated from that content. The model always knows where one field ends and the next begins. JSON's grammar symbol (quote) fuses with the content, hiding the boundary inside a merged token.
 
 ### Why GCF's delimiters are safe
 
