@@ -258,6 +258,20 @@ JSON is one of the most common data formats in LLM training corpora. Every GitHu
 
 This is efficient for compression (fewer tokens for common patterns). But it creates structural ambiguity: the grammar symbol (`"`) and the payload content (`name`) become one token, and the model cannot see inside a token to decompose it.
 
+### The training familiarity paradox
+
+The conventional wisdom is that LLMs "know" JSON best because they've been trained on more JSON than any other structured format. This is true at the model level: the transformer weights have learned JSON's semantics from billions of examples. But at the tokenizer level, the opposite happens: **the more JSON the tokenizer saw during training, the more aggressively it merged JSON patterns, and the more structural boundaries it hid.**
+
+The models that saw the MOST JSON have the WORST JSON boundaries:
+
+- GPT-4 (massive code corpus): **114 merged quote+field entries**
+- LLaMA (large code mix): **114 merged entries**
+- Claude (different tokenizer strategy): **0 merged entries**
+
+The training familiarity didn't create structural understanding. It created compression. The tokenizer optimized for representing JSON in fewer tokens, which is exactly what a compression algorithm should do. But compression hides structure. The quote and the field name became one token because that's more efficient for storage. It's less efficient for comprehension.
+
+This inverts the standard argument entirely. "Trained on JSON" is not an advantage for structural comprehension at scale. It's the mechanism that causes structural ambiguity. The tokenizer's efficiency is the model's handicap.
+
 ### Why this is irrecoverable
 
 1. **Vocabulary is frozen.** Once the tokenizer is trained, entries never change. Fine-tuning adjusts weights, not vocabulary.
