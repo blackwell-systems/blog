@@ -99,7 +99,7 @@ showMetadata: false
 
 ## Upstream Contributions
 
-Fix PRs and bug reports submitted to open source projects. 75+ contributions across 28 organizations, 29 merged. Bugs discovered via [mcp-assert](https://github.com/blackwell-systems/mcp-assert) scanning are marked with *.
+Fix PRs and bug reports submitted to open source projects. 75+ contributions across 29 organizations, 30 merged. Bugs discovered via [mcp-assert](https://github.com/blackwell-systems/mcp-assert) scanning are marked with *.
 
 ### Merged
 
@@ -107,6 +107,7 @@ Fix PRs and bug reports submitted to open source projects. 75+ contributions acr
 |-------------|-----|------|-------------|------:|
 | **automateyournetwork** | [netclaw#67](https://github.com/automateyournetwork/netclaw/pull/67) | Python | Replace TOON with GCF for all MCP server responses (55.8% savings vs JSON, 13.6% fewer tokens than TOON, benchmarked on 5 network data types) | 560 |
 | **diegosouzapw** | [OmniRoute#4167](https://github.com/diegosouzapw/OmniRoute/pull/4167) | TS | Replace headroom tabular encoder with vendored GCF for compression stage | 6.5K |
+| **Speakeasy** | [openapi#216](https://github.com/speakeasy-api/openapi/pull/216) | Go | Add GCF as `--format gcf` output option for OpenAPI query tool | 268 |
 | **Anthropic** (MCP Go SDK) | [go-sdk#929](https://github.com/modelcontextprotocol/go-sdk/pull/929) | Go | HTTP response body leak in streamable HTTP session close | 4.5K |
 | **Google** | [go-containerregistry#2281](https://github.com/google/go-containerregistry/pull/2281) | Go | `.local` FQDN incorrectly treated as non-HTTPS (RFC 6761) | 3.8K |
 | **Google** | [go-containerregistry#2283](https://github.com/google/go-containerregistry/pull/2283) | Go | Extract round-trip test for filesystem object preservation | 3.8K |
