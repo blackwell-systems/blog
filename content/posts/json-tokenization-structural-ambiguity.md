@@ -22,7 +22,7 @@ For natural language, this is efficient (common words like "the" become single t
 
 **A critical distinction:** Any structured format contains two types of content: *grammar symbols* (delimiters that define structure) and *payload content* (the actual data values). A format designer controls grammar symbols but cannot control how payload content tokenizes without altering the data itself. The question isn't "does everything tokenize consistently?" (it won't, and can't). The question is: **do the structural boundaries always land at clean, unambiguous token positions?** If yes, the model always knows where one field ends and the next begins, regardless of how the values themselves split.
 
-This has been noted in passing by researchers. Deekeswar (2604.17512) measured that 1,000 JSON records consume ~80K tokens with the majority being repeated keys and punctuation. Nandakishore (2604.05400) stated "optimizing for tokenizer efficiency, not just human readability, is going to matter." But nobody has performed a systematic mechanistic analysis of exactly how and where JSON's structure breaks down at the BPE level.
+This has been noted in passing by researchers. Deekeswar (2604.17512) measured that 1,000 JSON records consume ~80K tokens with the majority being repeated keys and punctuation. Karim and Batatia (2508.01685) explored structured tokenization for LLM training data. But nobody has performed a systematic mechanistic analysis of exactly how and where JSON's structure breaks down at the BPE level.
 
 ## The Experiment
 
@@ -481,12 +481,11 @@ This analysis opens several directions:
 | Paper | Key contribution | Relation to our findings |
 |-------|-----------------|------------------------|
 | Deekeswar, "ONTO" (2604.17512) | 1,000 JSON records = ~80K tokens, majority overhead | Quantifies the problem we explain mechanistically |
-| Nandakishore, "JTON" (2604.05400) | Header factorization + tabular encoding, 15-60% reduction | Same structural approach as GCF, independently derived |
-| Kutschka & Geiger (2605.29676) | Token-efficient formats can hurt accuracy | We show GCF avoids this tradeoff via unambiguous delimiters |
+| Karim & Batatia (2508.01685) | Innovative tokenisation of structured data for LLM training | Hybrid approach; GCF achieves similar result via grammar design |
+| Kutschka & Geiger (2605.29676) | Notation Matters: token-optimized format benchmark | We show GCF avoids the accuracy tradeoff via unambiguous delimiters |
 | Ildiz et al. (2402.13512) | Self-attention weights tokens proportionally to frequency (CCMC proof) | Mathematical basis: repeated structural tokens dominate attention budget by count |
-| Karim & Batatia (2508.01685) | Fixed tokens for structure + BPE for values | Hybrid approach; GCF achieves similar result via grammar design |
 | Sui et al. (2305.13062) | Table format affects LLM performance | General finding we explain at the BPE level |
-| Matveev (2603.03306) | JSON wins for simple structures (scaling hypothesis) | Confirmed: our data shows formats separate past ~200 records |
+| Matveev (2603.03306) | TOON vs JSON benchmark with constrained decoding | Confirmed: formats separate past ~200 records |
 
 ## Reproduce
 
