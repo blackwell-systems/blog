@@ -99,7 +99,7 @@ showMetadata: false
 
 ## Upstream Contributions
 
-Fix PRs and bug reports submitted to open source projects. 75+ contributions across 31 organizations, 32 merged. Bugs discovered via [mcp-assert](https://github.com/blackwell-systems/mcp-assert) scanning are marked with *.
+Fix PRs and bug reports submitted to open source projects. 75+ contributions across 32 organizations, 33 merged. Bugs discovered via [mcp-assert](https://github.com/blackwell-systems/mcp-assert) scanning are marked with *.
 
 ### Merged
 
@@ -135,6 +135,7 @@ Fix PRs and bug reports submitted to open source projects. 75+ contributions acr
 | **sammcj** | [mcp-devtools#258](https://github.com/sammcj/mcp-devtools/pull/258) | TS | Internal error instead of isError for validation | 152 |
 | **HashiCorp** | [terraform-provider-aws#47660](https://github.com/hashicorp/terraform-provider-aws/pull/47660) | Go | GovCloud crash in Directory Service Data | 10.9K |
 | **Google** (Chrome DevTools) | [chrome-devtools-mcp#2235](https://github.com/ChromeDevTools/chrome-devtools-mcp/pull/2235) | TS | Add GCF as `--experimentalDataFormat=gcf` for token-optimized tool responses | 46K |
+| **pypa** | [pip#13960](https://github.com/pypa/pip/pull/13960) | Python | Replace `locale.getpreferredencoding()` with `locale.getencoding()` to avoid `EncodingWarning` under UTF-8 Mode | 10.2K |
 
 ### Highlights (open, under review)
 
@@ -178,7 +179,6 @@ Fix PRs and bug reports submitted to open source projects. 75+ contributions acr
 | **Anthropic** (servers) | [servers#4044, #4051](https://github.com/modelcontextprotocol/servers/pull/4044) | TS | blob content type violation + puppeteer crash | 85K |
 | **MoonshotAI** | [kimi-cli#2144](https://github.com/MoonshotAI/kimi-cli/pull/2144) | Python | Multiline input text misaligned | 8.3K |
 | **Charmbracelet** | [huh#777](https://github.com/charmbracelet/huh/pull/777) | Go | V2 regression: blurred styles not applied | 5.5K |
-| **pypa** | [pip#13960](https://github.com/pypa/pip/pull/13960) | Python | locale deprecation fix for Python 3.15 | 10K |
 | **Anthropic** (MCP Python SDK) | [python-sdk#2511](https://github.com/modelcontextprotocol/python-sdk/pull/2511) | Python | Custom content support for ToolError | 23K |
 | **Anthropic** (MCP TS SDK) | [typescript-sdk#2019](https://github.com/modelcontextprotocol/typescript-sdk/pull/2019) | TS | Check AbortSignal in handleAutomaticTaskPolling | 12K |
 | **Tavily** | [tavily-mcp#162](https://github.com/tavily-ai/tavily-mcp/pull/162) | TS | Missing API key throws McpError instead of isError | Open |
