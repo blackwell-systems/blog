@@ -99,7 +99,7 @@ showMetadata: false
 
 ## Upstream Contributions
 
-Fix PRs and bug reports submitted to open source projects. 75+ contributions across 29 organizations, 30 merged. Bugs discovered via [mcp-assert](https://github.com/blackwell-systems/mcp-assert) scanning are marked with *.
+Fix PRs and bug reports submitted to open source projects. 75+ contributions across 31 organizations, 32 merged. Bugs discovered via [mcp-assert](https://github.com/blackwell-systems/mcp-assert) scanning are marked with *.
 
 ### Merged
 
@@ -133,6 +133,8 @@ Fix PRs and bug reports submitted to open source projects. 75+ contributions acr
 | **GitHub** | [github-mcp-server#2511](https://github.com/github/github-mcp-server/pull/2511) | Go | Return isError for argument validation failures (co-authored) | 16K |
 | **Microsoft** | [winget-pkgs](https://github.com/microsoft/winget-pkgs) | YAML | Winget manifests for mcp-assert and agent-lsp | 10K |
 | **sammcj** | [mcp-devtools#258](https://github.com/sammcj/mcp-devtools/pull/258) | TS | Internal error instead of isError for validation | 152 |
+| **HashiCorp** | [terraform-provider-aws#47660](https://github.com/hashicorp/terraform-provider-aws/pull/47660) | Go | GovCloud crash in Directory Service Data | 10.9K |
+| **Google** (Chrome DevTools) | [chrome-devtools-mcp#2235](https://github.com/ChromeDevTools/chrome-devtools-mcp/pull/2235) | TS | Add GCF as `--experimentalDataFormat=gcf` for token-optimized tool responses | 46K |
 
 ### Highlights (open, under review)
 
@@ -146,7 +148,6 @@ Fix PRs and bug reports submitted to open source projects. 75+ contributions acr
 | **etcd** (CNCF) | [etcd#21684](https://github.com/etcd-io/etcd/pull/21684) | Go | `ErrNotPrimary` returns wrong gRPC code | 51K |
 | **Charmbracelet** | [bubbletea#1687](https://github.com/charmbracelet/bubbletea/pull/1687) | Go | `ExecProcess` leaks `View()` output to stdout | 42K |
 | **GitHub** | [github-mcp-server#2408](https://github.com/github/github-mcp-server/pull/2408) | Go | Angle brackets stripped from code blocks | 30K |
-| **HashiCorp** | [terraform-provider-aws#47660](https://github.com/hashicorp/terraform-provider-aws/pull/47660) | Go | GovCloud crash in Directory Service Data | 10.9K |
 | **HashiCorp** | [terraform-provider-aws#47661](https://github.com/hashicorp/terraform-provider-aws/pull/47661) | Go | QuickSight `theme_arn` silently ignored | 10.9K |
 | **jackc** (pgx) | [pgx#2546](https://github.com/jackc/pgx/pull/2546) | Go | BeforeConnect gets bare context from healthcheck | 14K |
 | **Biome** | [biome#10151](https://github.com/biomejs/biome/pull/10151) | Rust | `--suppress` with `--only` ignores overrides | 24.5K |
