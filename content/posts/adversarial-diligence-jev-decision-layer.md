@@ -5,12 +5,10 @@ draft: false
 tags: ["ai", "due-diligence", "technical-due-diligence", "benchmark", "llm", "classification", "constrained-decoding", "discriminative-models", "jev", "typesafe", "decision-layer", "model-evaluation", "calibration", "reproducibility", "build-vs-buy", "vendor-evaluation", "ai-agents", "mlops", "cost-optimization", "independent-verification", "open-source"]
 categories: ["ai", "benchmarks", "due-diligence"]
 description: "An independent, reproducible benchmark of Jev (TypeSafe AI) against its real peer class. Where the moat is real, where it is a copyable harness, and the one test that settles it."
-summary: "Most technical due diligence is demonstrative: the vendor shows you it works. This one is adversarial: define what would prove the claim false, establish independent ground truth, and try. A measured, reproducible evaluation of Jev against the peer class its own benchmarks avoid, run from public materials only."
+summary: "A measured, reproducible evaluation of Jev (TypeSafe AI) against the peer class its own benchmarks avoid. Where the moat is real, where it reduces to a copyable harness, and the one same-task test that settles it. Run from public materials only, no stake."
 ---
 
-Most technical due diligence is demonstrative: the founder shows you it works. Mine is adversarial: I define what would prove the claim false, establish independent ground truth where I can, and try to break it.
-
-This is a worked example of that method, run entirely from public materials, on Jev, TypeSafe AI's "decision layer" model. The point is not to score Jev. It is to show how you evaluate a technically differentiated AI product when the value depends on a claim being true, and to find the one comparison that actually settles it.
+This is a worked example of adversarial technical due diligence, run entirely from public materials, on Jev, TypeSafe AI's "decision layer" model. The point is not to score Jev. It is to show how you evaluate a technically differentiated AI product when the value depends on a claim being true, and to find the one comparison that actually settles it.
 
 {{< callout type="info" >}}
 **Independence and scope.** This was built from public material only: TypeSafe's published workflow evaluations and the public `jev-on-a-laptop` reproduction. No confidential material, no vendor API called, no stake in the company. Every external figure was fetched and verified; the GPU results reproduce from committed raw predictions. Where I state an opinion, I mark it as one.
