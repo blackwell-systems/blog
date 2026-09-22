@@ -1,7 +1,7 @@
 ---
 title: "Adversarial Diligence: Benchmarking Jev, the AI Decision Layer (TypeSafe)"
 date: 2026-09-21
-draft: true
+draft: false
 tags: ["ai", "due-diligence", "technical-due-diligence", "benchmark", "llm", "classification", "constrained-decoding", "discriminative-models", "jev", "typesafe", "decision-layer", "model-evaluation", "calibration", "reproducibility", "build-vs-buy", "vendor-evaluation", "ai-agents", "mlops", "cost-optimization", "independent-verification", "open-source"]
 categories: ["ai", "benchmarks", "due-diligence"]
 description: "An independent, reproducible benchmark of Jev (TypeSafe AI) against its real peer class. Where the moat is real, where it is a copyable harness, and the one test that settles it."
@@ -11,12 +11,22 @@ summary: "A measured, reproducible evaluation of Jev (TypeSafe AI) against the p
 This is a worked example of adversarial technical due diligence, run entirely from public materials, on Jev, TypeSafe AI's "decision layer" model. The point is not to score Jev. It is to show how you evaluate a technically differentiated AI product when the value depends on a claim being true, and to find the one comparison that actually settles it.
 
 {{< callout type="info" >}}
-**Independence and scope.** This was built from public material only: TypeSafe's published workflow evaluations and the public `jev-on-a-laptop` reproduction. No confidential material, no vendor API called, no stake in the company. Every external figure was fetched and verified; the GPU results reproduce from committed raw predictions. Where I state an opinion, I mark it as one.
+**Independence and scope.** Built from public material: TypeSafe's published workflow evaluations, the public `jev-on-a-laptop` reproduction, and the publicly available Jev model itself, which I called directly through its decisions API to verify the published numbers against the live model (see below). No confidential material, no stake in the company. Every external figure was fetched and verified; the GPU results reproduce from committed raw predictions. Where I state an opinion, I mark it as one.
 {{< /callout >}}
 
 One result belongs up front, because it corrects an earlier version of this analysis. On classification-shaped fields, a cheap peer matches Jev, and that is measured. On the hard judgment task, an earlier draft recommended owning a fine-tune there too, but marked that as reasoned rather than measured. So I ran the experiment the analysis itself demanded, and then kept going until the lever was exhausted: three fine-tuned encoders on the judgment task (a small from-scratch model, a larger from-scratch model, and a transfer-primed model with NLI pretraining), and then a data-scaling sweep training the best of them on a matched generator at 200 up to 5,000 labels, every model evaluated on the real hand-labeled benchmark Jev was scored on.
 
 The result splits by input quality. On clean judgment, more data narrows the gap a lot: a cheap model reaches about 0.90 (against Jev's 0.962). On noisy, misheard-name input, Jev's headline strength, no cheap owned model comes close: the best reaches about 0.68 against Jev's 0.927, still below even a plain fuzzy matcher. That reverses the earlier judgment-side recommendation. Owning noisy judgment does improve with the right data (an earlier version of this analysis wrongly read the noisy curve as flat, until a corrected experiment showed it climbing with noise-matched labels), but slowly, and at a realistic label budget it stays far short of Jev. So the noisy-input edge is a real, large moat that narrows with the right data rather than a hard ceiling. The classification result is unchanged, and clean judgment is mostly closeable with a real label budget. This is independent analysis from public materials, not a paid engagement, and running experiments that overturned parts of my own recommendation, more than once, is the point of the method, not an embarrassment to it.
+
+## Calling the real model: the numbers hold, and the robustness has a shape
+
+Everything else here leans on Jev's published benchmark numbers, so diligence should not stop at the vendor's self-report. Jev is callable directly through a decisions API (it resolved to `jev-1.13`), so I ran the real model on the same 237-decision addressee set, replicating the benchmark's exact request format.
+
+The published numbers reproduce. Real Jev scored **0.962 / 0.939 / 0.933** (clean / stt / misheard) against the published 0.962 / 0.944 / 0.927, within a point on each, with recall in the published band. One methodology note worth stating, because it nearly produced a false finding: an earlier, under-specified request (a terse instruction and a thin state) drove the measured score down to 0.70 and looked like the published numbers failing to reproduce. They were not. The benchmark hands the model a rich rubric and a full scene state, and with that exact request the real model hits its published figures. A vendor's self-report can be correct and still non-trivial to reproduce; the lesson is to match the protocol before claiming a number does not hold. So the figures this analysis leans on are legitimate, now confirmed against the live model rather than accepted on faith.
+
+Then the question your own diligence should ask next: does the noise-robustness generalize across domains, or was it specific to the one addressee benchmark? I ran the real model on noisy versions of standard decision tasks (Banking77, BoolQ, Yelp), not just addressee. It generalizes, with a specific shape. Jev holds nearly flat under phonetic, casing, and speech-to-text-style corruption across all three domains, the same plausible, sound-preserving noise it survives on addressee. But it collapses under keyboard, random-character noise everywhere (BoolQ 0.925 down to 0.560, Banking77 off by 0.72 at heavy). So the moat is real and domain-general, but it is **noise-type-specific**: robust to the corruption a real transcript produces, fragile to arbitrary mangling. That is the sharpest read of the moat, and it names the axis a competitor could still win: a cheap owned model robust to both plausible and arbitrary noise would beat Jev where its training does not reach.
+
+(Caveat: the cross-domain runs used the simpler request format, not the benchmark's rich one. Their clean accuracies were strong, for example BoolQ 0.925, so they are not under-provisioned the way a terse addressee prompt was, but treat the cross-domain figures as directional.)
 
 ## The claim, and why it needs testing
 
