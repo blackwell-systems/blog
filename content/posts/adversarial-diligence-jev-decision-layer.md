@@ -1,7 +1,7 @@
 ---
 title: "Adversarial Diligence: Benchmarking Jev, the AI Decision Layer (TypeSafe)"
 date: 2026-09-21
-draft: false
+draft: true
 tags: ["ai", "due-diligence", "technical-due-diligence", "benchmark", "llm", "classification", "constrained-decoding", "discriminative-models", "jev", "typesafe", "decision-layer", "model-evaluation", "calibration", "reproducibility", "build-vs-buy", "vendor-evaluation", "ai-agents", "mlops", "cost-optimization", "independent-verification", "open-source"]
 categories: ["ai", "benchmarks", "due-diligence"]
 description: "An independent, reproducible benchmark of Jev (TypeSafe AI) against its real peer class. Where the moat is real, where it is a copyable harness, and the one test that settles it."
