@@ -28,6 +28,23 @@ Then the question your own diligence should ask next: does the noise-robustness 
 
 (Caveat: the cross-domain runs used the simpler request format, not the benchmark's rich one. Their clean accuracies were strong, for example BoolQ 0.925, so they are not under-provisioned the way a terse addressee prompt was, but treat the cross-domain figures as directional.)
 
+### The capability envelope: strong on its niche, beaten off it
+
+Reproducing the addressee numbers shows Jev is good at the task it was built for. The sharper question is whether it is good in general, so I ran the real model on three standard, off-niche benchmarks under the same rich request format, against known ground truth.
+
+| task | Jev (real, rich format) | reference |
+|---|---|---|
+| addressee (home niche) | 0.962 | its published number, reproduced |
+| Banking77 (intent) | 0.81 | open dev-0.4b **0.913** (measured, same slice); fine-tuned encoders ~0.94 |
+| CLINC150 (intent, 150-way) | 0.88 | fine-tuned encoders ~0.95-0.97 |
+| SNLI (natural-language inference) | 0.82 | strong fine-tuned models ~0.90+ |
+
+The pattern is consistent across intent classification and sentence-pair reasoning: Jev lands a single-digit to ten points below models a team could own and fine-tune cheaply, and on Banking77 it is directly beaten by a free, open 399M model. Rich request formatting does not close the gap; it moved Banking77 by a single point.
+
+So the envelope is clear. Jev is strong on its specialized niche, the noisy pragmatic judgment it was trained for, where it reproduces its headline numbers and holds a real noise-robustness moat. Off that niche, on standard classification and reasoning, it is matched or beaten by owned and open models. For a buyer that sharpens the build-versus-buy read to its cleanest form: on the general decision tasks, owning is not a trade of accuracy for cost, the owned or open model is both cheaper and more accurate. Jev's value is concentrated in the specialized slice, and its price should be judged against that slice, not against a general-purpose decision layer.
+
+One distinction in the evidence, stated so it is not overread: Banking77 is a direct head-to-head, I measured both Jev and dev-0.4b on the same items. CLINC150 and SNLI place Jev against established owned-model accuracy ranges from the literature, not baselines trained here, so read those two as Jev's absolute standing against what a fine-tune reaches, not a same-harness contest.
+
 ## The claim, and why it needs testing
 
 Jev is marketed as a fast, cheap decision layer for AI systems: give it a schema of typed fields with closed value sets, and it returns schema-valid decisions with confidence scores, at a fraction of the cost and latency of calling a frontier model. The published benchmarks show it landing mid-pack on accuracy against generative frontier models while being one to three orders of magnitude cheaper and faster.
