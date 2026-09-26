@@ -2,6 +2,7 @@
 title: "The Falsifiability Asymmetry: Loud Restrictions, Silent Freedoms"
 date: 2026-09-25
 draft: false
+math: true
 tags: ["invariants", "correctness", "software-architecture", "database-design", "postgresql", "design-by-contract", "type-driven-development", "make-illegal-states-unrepresentable", "least-privilege", "security", "falsifiability", "observability", "adversarial-testing", "requirements", "user-acceptance-testing", "qa", "schema-design", "constraints", "correctness-by-construction", "software-design"]
 categories: ["architecture", "software-design"]
 description: "A system tells you when you forbid too much and stays quiet when you allow too much. That asymmetry has a direction, a lifecycle, and clear conditions under which it breaks."
@@ -35,6 +36,10 @@ A **permissive** conjecture is not refuted by normal work, because normal work n
 The asymmetry is not about which error is worse. It is about which error is **observable**. An over-restriction is a hypothesis that ordinary operation is constantly trying to falsify. An over-permission is a hypothesis that ordinary operation never tests at all.
 
 But observability is downstream of something more basic, and naming it precisely is what tells you when the pattern fails. Restriction versus permission is not itself what makes an error loud or quiet. What matters is whether normal operation is forced to press against the boundary the error got wrong. A restriction is self-falsifying when legitimate demand repeatedly pushes against the state it excludes; a permission is self-falsifying when ordinary execution repeatedly enters the excess state space it admits. In most systems of record and authorization models those two pressures are wildly unequal: users constantly attempt valid operations and almost never attempt forbidden ones, so the restriction boundary gets pressed and the permission boundary does not. **The asymmetry is not fundamentally between restriction and permission. It is between the parts of the state space ordinary operation is forced to explore and the parts it has no reason to visit.**
+
+\[ P_W(E_R) \gg P_W(E_P) \]
+
+Read that as: the probability that the system's normal operation \(W\) enters \(E_R\), the legitimate state an over-restriction wrongly excludes, is far greater than the probability it enters \(E_P\), the invalid state an over-permission wrongly admits. The asymmetry is strong when that gap is wide, and it fades as the two converge.
 
 I am borrowing "falsifiability" from Popper as an analogy, and the borrow is worth stating precisely. Popper's concern was demarcating science: a theory that forbids nothing predicts nothing and cannot be tested. The mechanism here is narrower and concrete, the asymmetric observability of two error types under a system's own use. Later I will lean on the standard objection to naive falsificationism, because it describes exactly the case where this breaks.
 
@@ -99,7 +104,11 @@ flowchart TB
 
 So the theory is scoped, not universal. It holds for demand-driven systems with persistent or consequential state, explicit legitimate operations, an unavoidable enforcement path, and low natural exploration of the invalid space: systems of record, access control, APIs, domain models, state machines. It weakens or reverses precisely where those conditions fail, which is what the counterexamples above have in common.
 
-One further refinement those cases force: observability is not binary. It has three dimensions, how likely the error is to be seen at all, how long it takes to surface, and how far the eventual failure sits from the rule that caused it. Permission errors tend to lose on all three: rarer under normal operation, slower to appear, and separated from their cause by enough time and code that the incident reads as something else entirely. That is why "it arrives later, as damage, and is hard to trace" is a structural property, not a mood.
+One further refinement those cases force: observability is not binary. It has three dimensions, how likely the error is to be seen at all, how long it takes to surface, and how far the eventual failure sits from the rule that caused it.
+
+\[ \text{observability} \;=\; f\big(P_{\text{seen}},\ T_{\text{surface}},\ D_{\text{cause}}\big) \]
+
+Permission errors tend to lose on all three: rarer under normal operation, slower to appear, and separated from their cause by enough time and code that the incident reads as something else entirely. That is why "it arrives later, as damage, and is hard to trace" is a structural property, not a mood.
 
 ## The prescription, and what it costs
 

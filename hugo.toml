@@ -56,3 +56,11 @@ enableRobotsTXT = true
     lineNos = true
   [markup.goldmark.renderer]
     unsafe = true
+  # Pass LaTeX math through untouched so KaTeX can render it client-side.
+  # Only \( \) and \[ \] are delimiters; $ and $$ are deliberately NOT, to avoid
+  # colliding with dollar amounts in prose and with $-quoted shell/JSON in code.
+  [markup.goldmark.extensions.passthrough]
+    enable = true
+    [markup.goldmark.extensions.passthrough.delimiters]
+      block = [['\[', '\]']]
+      inline = [['\(', '\)']]
