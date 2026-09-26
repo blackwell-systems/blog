@@ -22,7 +22,7 @@ The idea fits in a sentence, so most of the post is the two things that make it 
 **The claim.** An over-restriction produces an observable event during ordinary operation. An over-permission does not. So you can learn you were too strict, often early and cheaply, and you cannot learn you were too loose the same way. Build in the direction where your errors are the kind you can see.
 {{< /callout >}}
 
-## The asymmetry, stated carefully
+## The asymmetry
 
 Treat a design rule as a conjecture about every future state of the system. "Every reservation belongs to a customer." "A seat can be held by at most one active reservation." "A reservation's seat belongs to the event the reservation is for."
 
