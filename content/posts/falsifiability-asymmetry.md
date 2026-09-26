@@ -2,205 +2,176 @@
 title: "The Falsifiability Asymmetry: Loud Restrictions, Silent Freedoms"
 date: 2026-09-25
 draft: false
-tags: ["invariants", "correctness", "software-architecture", "database-design", "postgresql", "design-by-contract", "type-driven-development", "make-illegal-states-unrepresentable", "least-privilege", "security", "falsifiability", "decision-records", "adr", "schema-design", "constraints", "event-sourcing", "correctness-by-construction", "stakeholder-discovery", "data-modeling", "test-driven-development"]
+tags: ["invariants", "correctness", "software-architecture", "database-design", "postgresql", "design-by-contract", "type-driven-development", "make-illegal-states-unrepresentable", "least-privilege", "security", "falsifiability", "observability", "adversarial-testing", "decision-records", "schema-design", "constraints", "correctness-by-construction", "data-modeling", "test-driven-development", "software-design"]
 categories: ["architecture", "software-design"]
-description: "A restriction fails loud and a freedom fails silent, so you can only learn you over-restricted, never that you over-permitted. A design method built on that asymmetry."
-summary: "You can discover that a rule was too strict, because something legitimate breaks and tells you where. You cannot discover that a rule was too loose the same way, because nothing breaks until it is exploited. This asymmetry has a direction built into it, and a whole design method falls out of taking it seriously."
+description: "A system tells you when you forbid too much and stays silent when you allow too much. That asymmetry has a direction built in, plus the conditions under which it breaks."
+summary: "You can discover an over-restriction because something legitimate breaks and points at the spot. You cannot discover an over-permission the same way, because nothing breaks until it is exploited. Here is the evidence, the conditions under which the asymmetry actually holds, and the method that falls out of it."
 ---
 
-There is a fact about building systems that took me an embarrassingly long time to state plainly, even though I had been relying on it for years. Here it is.
+I shipped a schema that would record a checkout of a tool belonging to a completely different product, and accept it without complaint. The write returned an id like any other row. No error fired. I found it weeks later, not because anything broke, but because I sat down and tried to break it on purpose.
 
-You can find out that a rule was too strict. Something legitimate stops working, someone hits the wall, and the failure points at the exact place you were wrong. You cannot find out that a rule was too loose in the same way. Nothing stops working when you allow too much. The permission sits there, unused and invisible, until the day something exploits it, and by then the signal arrives as damage rather than as feedback.
+That incident is the whole argument of this post. A system will tell you when you forbid too much. It will not tell you when you allow too much. I call this the **falsifiability asymmetry**, and the short version is: loud restrictions, silent freedoms.
 
-I call this the **falsifiability asymmetry**, and the short version is: loud restrictions, silent freedoms.
-
-Once you see it, a surprising amount of good practice stops being a collection of separate rules of thumb ("fail closed," "least privilege," "make illegal states unrepresentable") and starts looking like consequences of one underlying property. This post is about that property, and about the design method I built on top of it while working on a multi-company inventory and cost-attribution system.
+The idea is simple enough to state in a sentence, so most of this post is spent on the two things that make it useful rather than glib: the evidence that it is real, and the conditions under which it stops being true. The payoff is a design method, but the method is downstream of the property, so I want to earn the property first.
 
 {{< callout type="info" >}}
-**The claim in one line.** A restriction is falsifiable by ordinary use; a freedom is not. So correctness and access should be loosened only on evidence, and starting strict is not caution, it is a way to make the system teach you what it actually needs.
+**The claim.** An over-restriction produces an observable event during ordinary operation. An over-permission does not. So you can learn you were too strict for free, and you cannot learn you were too loose the same way. Build in the direction where your errors are the kind you can see.
 {{< /callout >}}
 
-## The asymmetry
+## The asymmetry, stated carefully
 
-Treat a design rule as a conjecture. "A checkout always names a company and a job." "This role can never write to that table." "Stock at a location is never negative." Each one is a claim about every future state of the system.
+Treat a design rule as a conjecture about every future state of the system. "A checkout always names a company and a job." "This role can never write to that table." "An item movement always refers to an instance of that same item."
 
-Now ask how each kind of claim gets refuted.
+Now ask how each kind of conjecture gets refuted in normal use.
 
-A **restrictive** claim is refuted by a counterexample that shows up in normal operation. If "a checkout always names a job" is too strict, then sooner or later a real, legitimate checkout that genuinely has no job will be attempted, and the rule will reject it. That rejection is loud, located, and immediate. It happens at a specific line, on a specific action, in front of a specific person who was trying to do something reasonable. The system has just handed you a refutation and, with it, a design question you did not know you had.
+A **restrictive** conjecture is refuted by a counterexample that ordinary operation produces on its own. If "a checkout always names a job" is too strict, then sooner or later someone attempts a real checkout that legitimately has no job, and the rule rejects it. The refutation is loud, located, and immediate: a specific action, at a specific line, in front of a specific person who wanted to do something reasonable. The system just handed you a design question you did not know you had.
 
-A **permissive** claim does not work this way. If "this role can write to that table" is too loose, nothing legitimate breaks. Every correct workflow keeps running. The over-permission produces no counterexample during ordinary use, because ordinary use does not try to do the forbidden thing. The refutation only arrives when something abnormal happens: a bug writes where it should not, a compromised credential does what it was allowed to do, data drifts because two paths both had write access. The signal comes late, it comes as harm, and it is hard to trace back to the decision that caused it.
+A **permissive** conjecture is not refuted by ordinary operation, because ordinary operation never attempts the forbidden thing. If "this role can write to that table" is too loose, every correct workflow keeps running. The over-permission generates no counterexample during normal use. Its refutation arrives only when something abnormal happens: a bug writes where it should not, a compromised credential does what it was permitted to do, two code paths both had write access and the data drifted. The signal comes late, as harm, and it is hard to trace back to the decision that caused it.
+
+The asymmetry is not about which error is worse. It is about which error is **observable**. An over-restriction is a hypothesis that normal operation is constantly trying to falsify, for free. An over-permission is a hypothesis that normal operation never tests at all.
+
+I am borrowing "falsifiability" from Popper as an analogy, and it is worth being precise about the borrow. Popper's concern was demarcating science: a theory that forbids nothing predicts nothing and cannot be tested. The mechanism here is narrower and more concrete. It is the asymmetric observability of two error types under a system's own normal operation. The analogy is a good one, and later I will use the standard objection to naive falsificationism, because that objection turns out to describe exactly the case where this whole thing breaks.
+
+## The evidence
+
+I distrust design essays that only argue, so here is the incident from the top, in full, plus a second one that cost real money in the model.
+
+The system is a multi-company inventory and cost-attribution ledger. Items come in two kinds: consumables tracked by quantity, and serialized equipment tracked as individual instances. A movement in the ledger names an item, and for equipment it also names the specific instance.
+
+I had a rule in mind: an instance movement must refer to an instance that actually belongs to the movement's item. I had not enforced it. Nothing in the schema said the two had to agree. So I wrote a small adversarial test, building a throwaway database from the schema and calling the real write function with a deliberately mismatched pair: item A, but an instance belonging to item B.
+
+```sql
+select record_movement(
+  p_item_id          => 'item-A',
+  p_movement_type    => 'checkout',
+  p_item_instance_id => 'instance-of-B',   -- belongs to a different item
+  p_business_unit    => 'company-1',
+  p_job_ref          => 'job-1'
+);
+-- returns a fresh movement id. no error.
+
+select l.item_id as ledger_says, ii.item_id as instance_really_is
+from ledger l join item_instance ii on ii.id = l.item_instance_id
+where l.id = '<that id>';
+--  ledger_says | instance_really_is
+--  item-A      | item-B
+```
+
+The row was accepted. The ledger now claimed a movement of item A that pointed at an instance of item B. This is a corrupt state that no report would flag, because every individual table was internally consistent. It was a silent freedom: the schema permitted a state that should never exist, and permission makes no sound.
+
+A second one, worse because it touches money. A return of material was allowed to omit the company it credited. When it did, the code that computes what to bill produced a null charge for that return, and the return then dropped out of the billing view entirely. The system would bill a company for material it had returned. Again: no error, no failed constraint, a clean-looking row. I only found it by constructing the exact sequence and reading the billing output.
+
+Neither bug was found by use. Both were found by an adversarial audit, months of ordinary operation would not have surfaced either one, which is the asymmetry stated as a lab result rather than a theory. Freedoms are silent, so you cannot wait for them; you have to hunt them.
+
+The fixes turned each silent freedom into a loud restriction, enforced structurally so it cannot be bypassed by any future caller:
+
+```sql
+-- a return must be attributed, same bar as a checkout
+alter table ledger add constraint movement_return_attributed
+  check (movement_type <> 'return'
+         or (business_unit is not null and job_ref is not null));
+
+-- consumption must carry a cost, so it can never post silently at zero dollars
+alter table ledger add constraint movement_consumption_has_cost
+  check (item_instance_id is not null
+         or movement_type not in ('checkout','return')
+         or unit_cost is not null);
+```
+
+After the fix, the same adversarial calls fail at the door, loudly and specifically:
+
+```
+ERROR:  instance belongs to item item-B, not the movement item item-A
+ERROR:  new row for relation "ledger" violates check constraint "movement_return_attributed"
+```
+
+That is the direction you want your errors pointing. Now the mismatch is impossible to represent, and any code path that ever tries it, including code that does not exist yet, gets the same rejection.
+
+Here is the complement, the loud restriction that taught me something instead of costing me something. Very early I had made attribution mandatory: every checkout must name a company and a job. Then a real workflow bounced off it. Crews pull common supplies that are not for any single job, kept on a truck and drawn down over time. The strict rule rejected that as an unattributed checkout, and the rejection was the discovery. Nobody had raised "truck stock" in any planning conversation. The invariant found the requirement by refusing to represent a state that turned out to be real. That is the same asymmetry running in the productive direction: a too-strict rule interrogates the domain and the domain answers out loud.
+
+{{< callout type="success" >}}
+**Two directions, one property.** The silent bugs were over-permissions, invisible to use, found only by hunting. The truck-stock case was an over-restriction, surfaced immediately by use. Same asymmetry: restrictions self-report, freedoms do not. One direction cost me a corruption I had to dig for; the other handed me a requirement for free.
+{{< /callout >}}
+
+## Where it breaks
+
+A claim you cannot break is not worth much, so here is where this one does.
+
+**Over-restrictions can be silent too, when the blocked party can route around them.** The whole "loud" argument assumes the person who hits the wall engages with it: complains, files it, asks for the exception. If they have an escape hatch, they take it, and the over-restriction fails as silently as any over-permission. They keep a side spreadsheet. They stop using the feature. They enter a junk value that satisfies the rule and destroys its meaning. On the inventory project this was a live risk: make the capture workflow one notch too strict or too slow, and crews would simply not log, which is a silent failure of over-restriction that shows up only as missing data, not as a rejection you can see.
+
+This is the software version of the Duhem-Quine objection to naive falsificationism. A hypothesis is never tested in isolation; a refutation can always be deflected somewhere else in the system rather than accepted. Here the "somewhere else" is human: the refuting event (a blocked legitimate action) gets absorbed by a workaround instead of reported as feedback. The asymmetry holds only when the restriction sits on a path the actor cannot bypass.
+
+**Some over-permissions are loud.** A too-loose type that admits a nonsense value can blow up immediately downstream. That is the lucky case. The dangerous over-permissions are precisely the ones that do not crash: the security hole, the slow data drift, the corrupt-but-well-formed row from the evidence section. So the honest phrasing is that permission errors are *not reliably* observable, while restriction errors are *reliably* observable when the restriction is unavoidable.
+
+Putting those together, the asymmetry is a tendency with two conditions, not a law:
 
 {{< mermaid >}}
 flowchart TB
-    subgraph strict["Too strict (falsifiable)"]
-        s1[Legitimate action attempted] --> s2[Rule rejects it]
-        s2 --> s3[Loud, located signal now]
-        s3 --> s4[Loosen on evidence]
+    subgraph holds["Asymmetry is strong"]
+        h1[Restriction sits on an<br/>unavoidable path]
+        h2[Over-permission enables a state<br/>that does not immediately crash]
     end
 
-    subgraph loose["Too loose (not falsifiable by use)"]
-        l1[Ordinary use never tries the forbidden thing] --> l2[No signal]
-        l2 --> l3[Exploited or drifts later]
-        l3 --> l4[Discovered as harm, hard to trace]
+    subgraph weak["Asymmetry is weak or reversed"]
+        w1[Blocked actor can route around<br/>the rule: over-restriction goes silent]
+        w2[Over-permission crashes loudly<br/>right away: permission self-reports]
     end
 
-    style strict fill:#3A4C43,stroke:#6b7280,color:#f0f0f0
-    style loose fill:#4C3A3C,stroke:#6b7280,color:#f0f0f0
+    style holds fill:#3A4C43,stroke:#6b7280,color:#f0f0f0
+    style weak fill:#4C3A3C,stroke:#6b7280,color:#f0f0f0
 {{< /mermaid >}}
 
-The asymmetry is not about how bad the two errors are. It is about which one is *observable*. An over-restriction is a testable hypothesis that ordinary operation is constantly trying to falsify for free. An over-permission is a hypothesis that ordinary operation never tests at all.
+This is why the pattern is strongest in systems of record, access control, and data integrity, and weakest in throwaway UIs and stateless transforms. A ledger with a mandatory write path is the ideal case: the actor cannot route around the constraint, and the bad states it prevents are the quiet, corrupting kind. A prototype nobody depends on is the worst case: friction has a high cost, reversibility is cheap, and there is no persistent state to corrupt.
 
-## Why the direction matters
+## The prescription, and what it costs
 
-If only one of your two possible errors is observable, the safe direction to build in is the one where your errors are the observable kind.
+If your two possible errors are asymmetric in observability, build in the direction where your errors are the observable kind. Start strict. Let the system reject things. When it rejects something legitimate, you get a precise, timely, self-reporting signal, and you loosen the rule with evidence in hand.
 
-Start strict. Let the system reject things. When it rejects something legitimate, you get a precise, timely, self-reporting signal, and you loosen the rule with evidence in hand: a real workflow that needs the exception. Every relaxation answers a demonstrated need.
+This reframes least privilege as an epistemic choice rather than a security ritual. Default-deny is attractive not mainly because it assumes an attacker, but because it makes your access model falsifiable: the denials become requirements-gathering. Each denied legitimate action tells you exactly which grant is genuinely needed, so you build the access model out of evidenced needs instead of a guessed-at set you can never later prove you should not have handed out. Access is lowered on an evidenced basis, which is the direction the asymmetry favors.
 
-Start permissive and you get no such education. The system runs smoothly while being wrong, and you find out how wrong at the worst possible time. "We will lock it down later" fails because "later" has no trigger. Nothing tells you the freedom was a mistake until the mistake is realized.
+The cost is real and worth stating plainly, because a rule with no downside is being oversold.
 
-This reframes a practice that usually gets sold as discipline or paranoia. Least privilege is not mainly about assuming a bad actor. It is about choosing the error you can see. Default-deny is the same move: it makes your access model falsifiable, so the denials become your requirements-gathering. Every time a legitimate action is denied, someone tells you exactly which grant is actually needed. You build the access model out of real, evidenced needs instead of a guessed-at set of permissions you can never later prove you should not have handed out.
+- Strict-first has **friction cost**. Every false rejection is a legitimate action interrupted. If the actor can route around, that friction converts directly into the silent-abandonment failure above.
+- It has a **velocity cost** in exploration. When you are still learning the shape of the problem and most of your rules are guesses, aggressive strictness rejects things faster than you can adjudicate them.
 
-{{< callout type="warning" >}}
-**The trap in "we will restrict it later."** Loosening has a natural trigger (something legitimate breaks). Tightening does not. There is no event in normal operation that says "you granted too much." So a system that starts loose tends to stay loose until an incident forces the question, which is the most expensive way to learn it.
-{{< /callout >}}
+So the honest boundary: start strict when the state is persistent and shared, the write path is unavoidable, and a wrong freedom is expensive to reverse. Start loose when you are prototyping, reversibility is cheap, and the cost of interrupting legitimate work outweighs the cost of a silent freedom you can clean up later. The method below is for the first world, not the second.
 
-## Invariants as a discovery instrument
+## Why the strict rules have to be structural
 
-The usual way to talk about invariants is defensive: they forbid bad states, they protect the data, they are guardrails. That framing is correct and it undersells them.
+There is a failure mode that defeats the whole approach: enforcing your restrictions with runtime guards instead of structure. If "strict" means a validation check at the top of one function, then a new code path that forgets the check reintroduces the silent freedom, and now your loud rule is only loud on the paths that remember it. That is the worst of both worlds.
 
-An invariant is also a probe. Because a strict rule is falsifiable by use, encoding one makes the domain's real exceptions announce themselves. The rule you were not sure about becomes an experiment the system runs continuously on your behalf.
-
-A concrete case. In the inventory system, one of the earliest invariants was that every checkout of material must be attributed: it must name the consuming company and the job it is for. That is the whole point of the system, so it went in as a hard rule at the point of write. Then a real workflow hit it and bounced: material pulled not for any specific job, but as general truck stock, common supplies kept on a vehicle and drawn down over time. The strict rule rejected a legitimate action, and that rejection was the discovery. Nobody had raised truck stock in any planning conversation. The invariant found it, by refusing to represent a state that turned out to be real.
-
-That inverts the usual order. We tend to assume discovery produces the rules: you learn the domain, then you encode what you learned. But a strict invariant produces discovery. It interrogates the domain by forbidding things, and every legitimate thing it wrongly forbids is a requirement you had not captured yet.
-
-So the counterintuitive practice is: when you are unsure whether a rule holds, encode it as an invariant anyway, at the strict end, and let the violations enumerate the cases you missed. This only works because of the asymmetry. If you resolve your uncertainty by allowing the questionable case "to be safe," you learn nothing, because permission is silent. If you resolve it by forbidding the case, the domain corrects you out loud.
-
-## Construction beats verification
-
-There is a second choice hiding inside "encode it as an invariant," and it decides whether the asymmetry pays off or not: *how* the invariant is enforced.
-
-Two options.
-
-**Verification** means the invalid state is representable, and something checks for it at runtime and raises. A guard at the top of a function. A validation layer. A test that runs in CI. The claim you get is "no known violations," which is an empirical claim: correct because a check ran and passed, this time, on the paths that were exercised.
-
-**Construction** means the invalid state cannot be represented at all. A CHECK constraint, a foreign key, a unique index, a derived view, a withheld privilege, a type that does not admit the bad case. The claim you get is "this class of violation cannot exist," which is categorical. Nothing has to run at the right moment, because the shape of the data or the privileges of the identity is the rule.
+The distinction is between verification and construction.
 
 | | Verification | Construction |
 |---|---|---|
 | Invalid state | representable, caught at runtime | cannot be represented |
-| Claim | "no known violations" | "this cannot exist" |
+| Claim it supports | "no known violations" | "this cannot exist" |
 | Depends on | the check running on every path | nothing, it is structural |
 | New code paths | must re-invoke the guard | covered automatically |
-| Threat model | needs one | irrelevant, stops accidents and attacks alike |
+| Threat model | needs one | irrelevant, stops accident and attack alike |
 
-Two consequences make construction the right default, and both are what let you build fast and refactor freely later.
+A constructed restriction (a CHECK constraint, a foreign key, a unique index, a withheld privilege, a type that does not admit the bad case) holds across every write path, present and future, with nothing to remember. That is what makes the restriction *reliably* loud, which is the precondition for treating it as a trustworthy signal. In the evidence section, "append-only" was made structural by privilege: the application role has no direct write on the ledger and can only call a small set of governed functions, so history cannot be rewritten by any path. The one honest exception was custody of a serialized unit, which guards a *transition* rather than a state and cannot be a single-row constraint, so it stays a trigger, named and bounded. The rule is to push every restriction to the strongest form it can reach, fall back only when construction is genuinely impossible, and keep the exceptions few and labeled.
 
-It is **threat-independent**. A construction stops a careless write exactly as it stops a malicious one. You do not need to assume an adversary, only that people make mistakes, which they do.
+## The method, briefly
 
-It **closes the whole class, including code that does not exist yet**. A construction holds across every future write path, every new caller, every adapter you have not written. A runtime guard has to be re-invoked by every caller, forever, and the day a new path forgets it, you have a silent hole, exactly the silent-freedom failure from the asymmetry.
+The rest is scaffolding around the property, and it is mostly assembled from existing parts, so I will keep it short.
 
-In the inventory system, this played out in specifics. "Stock never goes negative" became a construction by materializing the balance in a table with a `CHECK (quantity >= 0)` and a locked upsert, rather than summing rows and comparing in application code. "The ledger is append-only" became a construction by privilege: the application role has no `UPDATE`, `DELETE`, or direct `INSERT` on the ledger and can only call a small set of governed write functions, so history cannot be rewritten by any path, present or future. The blocking trigger that used to enforce it was demoted to a backstop.
+**Invariants first, enforced by construction.** Write the correctness properties you can read from the shape of the problem and make each unrepresentable if you can. These are your strict rules, and by the argument above they are also your discovery instrument.
 
-{{< callout type="success" >}}
-**The honest exception.** Not everything can be a pure construction. One invariant, valid custody of a serialized unit, guards a *transition* (available becomes checked-out becomes available), which a per-row constraint cannot express. It stays a trigger. The rule is not "never use runtime enforcement." It is: push every invariant to the strongest form it can reach, fall back only when a construction is genuinely impossible, and then bound the blast radius. Name the exceptions so they stay exceptions.
-{{< /callout >}}
+**A decision register for what you have not settled.** Every open design choice gets a number, an owner, a reasoned default, and a classification: does it change the primary key or grain of a core table (a fork, which must settle before that part of the schema hardens) or can the schema absorb it later (additive, which you defer). You build on the settled and defaulted set, hold each open fork as a default with a recorded flip-cost, and thread the decision's number through the code as a comment and through the docs. When an answer lands, you grep the number and every place it touches surfaces at once.
 
-Construction is also what makes the asymmetry safe to exploit. If you are going to start strict and loosen later, you want "strict" to fail loudly and structurally, not to depend on a guard some future code path remembers to call. A constructed restriction cannot be silently bypassed. That is the property that lets you treat your invariants as a reliable discovery instrument rather than a hopeful one.
-
-## The other half: a register for what you have not decided
-
-Invariants handle what must always be true. They do not handle what you have not figured out yet, and on any real project that is most of it. This is where the method needs its second structure.
-
-Every open or consequential design choice gets an entry in a decision register, each with an identifier. I number them D1, D2, D3, and so on. An entry records the question, the options, a reasoned default, who owns the answer, and, once it lands, the answer itself, stored verbatim and dated rather than paraphrased into a conclusion.
-
-The register does two things that are easy to underrate.
-
-First, it makes "decided versus open" a visible, single-source fact. Discovery on a cross-functional system is a fog of half-answers from different people at different times. The register is where the fog condenses into a list you can act against.
-
-Second, and this is the part with no equivalent in the invariant world, it lets you **build ahead of your unknowns**. For that, each decision needs one more field.
-
-### Classify by blast radius
-
-Tag every decision as one of two kinds.
-
-A **fork** changes the primary key or the grain of a core table. It must settle before that part of the schema hardens, because getting it wrong means a migration of the shape of your data, not just a new column. Unit of measure was a fork: if the system had needed to buy in one unit and consume in another, the stock table's grain would have changed. Cost method was a fork: average cost and layered FIFO are different shapes, and FIFO would have added a whole reservation concept.
-
-An **additive** decision is one the schema can absorb later with a new column, view, or table. It does not block the core, so you defer it without cost.
-
-{{< mermaid >}}
-flowchart LR
-    d[Open decision] --> q{Changes a core<br/>table's key or grain?}
-    q -->|Yes| f[Fork: settle before<br/>hardening the schema]
-    q -->|No| a[Additive: default now,<br/>absorb later]
-
-    style d fill:#3A4A5C,stroke:#6b7280,color:#f0f0f0
-    style f fill:#4C3A3C,stroke:#6b7280,color:#f0f0f0
-    style a fill:#3A4C43,stroke:#6b7280,color:#f0f0f0
-{{< /mermaid >}}
-
-This one tag is what tells you where you can move now and where you have to wait. You build everything not gated by an open fork. For each open fork, you pick a reasoned default, build on it, and write down its flip-cost: what changes if the answer comes back different. Then you keep going. You are never blocked waiting for an answer, and you are never surprised by where an answer lands, because you already recorded what it touches.
-
-### Thread the identifier through the code
-
-The decision identifier is not just a register key. It goes into the code, as a comment on the exact line a decision touches, and into the docs, next to the same number. The cost-basis function carries the cost-method decision's number. The reorder-point table carries the replenishment decision's number.
-
-Now the identifier is a join key across four artifacts:
-
-{{< mermaid >}}
-flowchart LR
-    a[Stakeholder answer] --- b[Register entry]
-    b --- c[Schema code]
-    c --- d[Docs]
-
-    style a fill:#3A4A5C,stroke:#6b7280,color:#f0f0f0
-    style b fill:#3A4C43,stroke:#6b7280,color:#f0f0f0
-    style c fill:#4C4538,stroke:#6b7280,color:#f0f0f0
-    style d fill:#4C3A3C,stroke:#6b7280,color:#f0f0f0
-{{< /mermaid >}}
-
-When an answer finally lands, you grep the number. Everywhere it touches, the decision, its default, its enforcement, its documentation, surfaces at once. "When a decision lands, find exactly what to change" becomes a one-command operation instead of an archaeology project. This is the difference between a decision register that is a retrospective log and one that is a live part of the build.
-
-## The register's blind spot
-
-There is a failure mode the register does not catch, and it is the dangerous one.
-
-The register holds the decisions you *noticed* were decisions. Its blind spot is the choice the schema made silently, an assumption baked into a column, a grain, or a cardinality that never got a number because nobody saw it as a fork. These are the real risk. Not the open question you are holding with a default, but the fork you did not know existed.
-
-The inventory system had two, and both stayed invisible until data exposed them. The schema modeled location as first-class and multi-location-ready, but every workflow assumed a single warehouse. It was never a numbered decision. Separately, the design assumed every item was tracked by quantity, though it also supported serialized units. Neither was a conscious choice on the record. Both surfaced only when I finally profiled a real data export and the shape of the data answered questions I had not asked.
-
-The complement the register needs is an **assumption audit**: periodically read the schema against the domain and, at every point, ask "could this have gone another way, and if so, where is its number?" Every place the design took an arbitrary path without one is an unregistered decision. The usual hiding spots are a `NOT NULL` that encodes a policy, a single-valued column that reality might make multi-valued, an implied cardinality (one location, one company per job), a grain chosen for convenience, a field left out. Promote each to a numbered decision even when the answer is "keep the assumption," because now it is tracked, greppable, and carries a flip-cost instead of lurking.
-
-Discovery finds the questions your stakeholders raise. The assumption audit finds the questions the schema raises and nobody asked. Registering an implicit decision converts an unknown unknown into a known default, which is the only form the rest of the method can act on.
-
-## Invariants are not frozen either
-
-One more correction to the tidy version of this story. It is tempting to say "identify the invariants first, then discover the decisions." Reality is messier and better.
-
-The core invariants are usually readable from the shape of the problem at the start. An inventory-and-attribution system is going to have an append-only record, non-negative stock, and mandatory attribution no matter what the details turn out to be. Those anchor the initial design.
-
-But the invariant set is not fixed. As decisions resolve, invariants get added, extended, or relaxed. Late in the inventory build, a review added two new invariants (consumption must carry a cost; a serialized-unit movement must be self-consistent) and extended an existing one to cover returns as well as checkouts. A different answer on the cost-method fork would have added a reservation invariant. Invariants and decisions co-evolve: resolving a decision can change the invariant set, and encoding a new invariant can open a decision (that is the discovery-instrument effect again). You start with the core you can see, and the rest accrete as the domain corrects you.
+**An assumption audit, because freedoms are silent.** This is the part the asymmetry makes non-optional. A decision register only holds the decisions you noticed you were making. The dangerous ones are the choices the schema made silently: a single-valued column that reality will make multi-valued, an implied cardinality, a `NOT NULL` that encodes a policy nobody debated. On this project, "one location" and "everything is quantity-tracked" were both unexamined defaults that only surfaced when I profiled real data. Since ordinary use will not report an over-permissive assumption, you have to go looking on a schedule: read the schema against the domain and ask, at every point, "could this have gone another way, and where is its number?" Promote each answer to a real decision even when you keep the assumption. The adversarial bug-hunt from the evidence section is the same move applied to invariants: since a missing constraint is silent, you attack the system to find what it wrongly permits.
 
 ## Relation to prior work
 
-The parts of this have clear ancestry, and naming it is the honest thing to do.
+The pieces have clear ancestry and naming it is the honest thing to do. Enforcing correctness as invariants is design by contract (Meyer). Making invalid states impossible to represent is type-driven development, and at its limit correct-by-construction from formal methods. Numbering decisions is the tradition of architecture decision records and RAID logs. Constraints as invariants in a database are ordinary practice. The stance is close to test-driven development in spirit, specify correctness first and let it drive the build, though it sits a level up: the specification is a universal invariant enforced by construction rather than an example checked at runtime, and a failing rule surfaces a missing decision rather than a missing line of code. The epistemic frame is Popper's, with the Duhem-Quine objection doing real work rather than being waved off.
 
-Enforcing correctness as invariants is design by contract, from Bertrand Meyer. Making invalid states impossible to represent rather than checking for them is type-driven development, and at its limit correct-by-construction from formal methods. Recording decisions is the tradition of architecture decision records and of RAID logs in project management. Constraints as invariants in a database are ordinary practice for anyone who has written a CHECK. The overall stance is close to test-driven development in spirit, specify correctness first and let it drive the build, though it sits one level up: the specification is a universal invariant enforced by construction, not an example checked at runtime, and a failing rule surfaces a missing decision rather than a missing line of code. The epistemic core is Popper's falsifiability, applied to invariants and access rather than to scientific theories.
-
-What I think is original is the composition, plus two claims that do not come from those sources.
-
-The first is the **falsifiability asymmetry** itself: that a restriction is falsifiable by ordinary use and a freedom is not, so correctness and access should be loosened only on evidence, and over-strictness is a discovery instrument rather than a defect. "Fail closed," "least privilege," and "tests drive design" are all folklore I inherited. I have not seen them connected into a single claim about why strictness is epistemically privileged: only restrictions are self-reporting, so build from restrictions and let use tell you where they are wrong.
-
-The second is the **decision as a live, classified, greppable thread** you build ahead of: fork versus additive by blast radius, defaulted with a known flip-cost, its identifier threaded through code and docs. Architecture decision records are retrospective, and decision logs do not touch the code. Treating a decision as a build-ahead primitive with a physical presence in the schema is the operational piece.
-
-The pieces are borrowed. These two claims, and the way they lock together, are the part I would defend as mine.
+What I would claim as original is the composition plus two things. First, the falsifiability asymmetry itself, stated with its conditions: a restriction is reliably observable when it is unavoidable, a permission is not, so build strict and loosen on evidence, and treat over-strictness as a discovery instrument rather than a defect. "Fail closed," "least privilege," and "tests drive design" are folklore I inherited; connecting them into a single claim about why strictness is epistemically privileged, and being precise about when that privilege lapses, is the part I have not seen written down. Second, the operational treatment of a decision as a live, classified, greppable thread you build ahead of, which is what turns a retrospective decision log into a working part of the build.
 
 ## Where to start
 
-You do not need any of the machinery to get the value. The on-ramp is two habits.
+You do not need the machinery to get the value. Two habits carry most of it.
 
-Write down the invariants you can already read from the problem, and enforce each in the strongest form it can reach: unrepresentable if possible, a bounded guard if not. Then keep a numbered list of the decisions you have not made, with a default and an owner for each, and tag every one fork or additive so you know what you can build on today.
+Write the invariants you can already read from the problem, and enforce each in the strongest form it can reach: unrepresentable if possible, a bounded guard if not. Then, because freedoms are silent, put an adversarial pass on the calendar: periodically try to make the system accept a state that should be impossible, and read the schema for the choices you made without noticing.
 
-That is most of it: enforce what must be true, track what you have not decided, and let the strict rules fail loudly enough to teach you the rest. The deeper parts, the assumption audit, threading identifiers into the code, treating invariants as probes, are refinements you adopt when you feel the need, not a ceremony you clear up front.
-
-The one idea I would take even if you take nothing else: when you are unsure, restrict. You can always see what a restriction is costing you. You cannot see what a freedom is costing you until it is too late.
+The one idea to keep even if you keep nothing else: when you are unsure, and the path is one people cannot route around, restrict. You can always see what a restriction is costing you. You usually cannot see what a freedom is costing you until it is too late.
