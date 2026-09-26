@@ -14,6 +14,8 @@ I found it because I sat down and tried to break the thing on purpose. Ordinary 
 
 That is the whole argument of this post. A system will tell you when you forbid too much. It will not tell you when you allow too much. I call this the **falsifiability asymmetry**, and the short version is: loud restrictions, silent freedoms.
 
+The deepest form of it is a distinction about where the counterevidence comes from. **Restrictions can be falsified by demand. Permissions usually have to be falsified by attack.** The evidence that you forbade too much arrives on its own, carried in by someone who wanted to do the thing. The evidence that you allowed too much has to be manufactured, by someone deliberately probing for what should not be possible. That difference in the source of counterevidence is what everything below turns on.
+
 The idea fits in a sentence, so most of the post is the two things that make it more than a slogan: a worked example of using it, and the conditions under which it breaks.
 
 {{< callout type="info" >}}
@@ -66,7 +68,7 @@ This is the productive half of the asymmetry, and it is most of what requirement
 Now hold that thought against the other half. An over-permission does not get bounced by any of these stages. Requirements review does not surface it, because nobody proposes "we must be allowed to attach a seat from the wrong show." QA does not catch it unless someone writes a negative test that specifically tries the forbidden thing. UAT never catches it, because acceptance testing exercises the workflows users want, and no user wants to book the wrong show's seat. The happy-path lifecycle is blind to silent freedoms by construction. That is why the wrong-show seat survived all the way to me trying to break it.
 
 {{< callout type="warning" >}}
-**Two blind spots, one cause.** Requirements, QA-by-example, and UAT are all built around what people are trying to do. They are excellent at catching over-restrictions (a legitimate goal is blocked) and nearly useless at catching over-permissions (nobody's goal is the forbidden action). Over-permissions need a different activity: negative testing and adversarial review, aimed at what should be impossible.
+**Two blind spots, one cause.** Requirements, QA-by-example, and UAT are all built around what people are trying to do. They are excellent at catching over-restrictions (a legitimate goal is blocked) and nearly useless at catching over-permissions (nobody's goal is the forbidden action). Over-permissions need a different activity: negative testing and adversarial review, aimed at what should be impossible. In a phrase: over-restrictions are falsified by demand, over-permissions only by attack.
 {{< /callout >}}
 
 ## Where it breaks
@@ -137,7 +139,7 @@ Now a reservation that names a seat from another event has no valid row to refer
 
 ## The method, worked
 
-Here is the process end to end on the reservation system, small enough to follow.
+The machinery below is in service of the asymmetry, not a rival to it. Fork-versus-additive classification, dominance defaults, flip-costs, and greppable decision IDs are almost enough for their own article, and they earn their place here only as the concrete way you act on both halves of the property: get an over-restriction's refutation to arrive early and cheap, and go hunting for the silent freedoms that demand will never bring you. Here is the process end to end on the reservation system, small enough to follow.
 
 **1. Write the invariants you can read from the shape of the problem, and make each unrepresentable.**
 
