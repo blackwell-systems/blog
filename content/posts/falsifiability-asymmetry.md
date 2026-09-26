@@ -34,6 +34,8 @@ A **permissive** conjecture is not refuted by normal work, because normal work n
 
 The asymmetry is not about which error is worse. It is about which error is **observable**. An over-restriction is a hypothesis that ordinary operation is constantly trying to falsify. An over-permission is a hypothesis that ordinary operation never tests at all.
 
+But observability is downstream of something more basic, and naming it precisely is what tells you when the pattern fails. Restriction versus permission is not itself what makes an error loud or quiet. What matters is whether normal operation is forced to press against the boundary the error got wrong. A restriction is self-falsifying when legitimate demand repeatedly pushes against the state it excludes; a permission is self-falsifying when ordinary execution repeatedly enters the excess state space it admits. In most systems of record and authorization models those two pressures are wildly unequal: users constantly attempt valid operations and almost never attempt forbidden ones, so the restriction boundary gets pressed and the permission boundary does not. **The asymmetry is not fundamentally between restriction and permission. It is between the parts of the state space ordinary operation is forced to explore and the parts it has no reason to visit.**
+
 I am borrowing "falsifiability" from Popper as an analogy, and the borrow is worth stating precisely. Popper's concern was demarcating science: a theory that forbids nothing predicts nothing and cannot be tested. The mechanism here is narrower and concrete, the asymmetric observability of two error types under a system's own use. Later I will lean on the standard objection to naive falsificationism, because it describes exactly the case where this breaks.
 
 ## The lifecycle: where the refutation actually happens
@@ -73,33 +75,31 @@ Now hold that thought against the other half. An over-restriction generates its 
 
 ## Where it breaks
 
-A claim you cannot break is not worth much, so here is where this one does.
+Stating the mechanism as boundary pressure is what makes the failure modes predictable. The pattern weakens when the two pressures equalize, and reverses when they invert.
 
-**Over-restrictions can be silent too, when the blocked person can route around them.** The "loud" argument assumes the person who hits the wall engages with it: complains, files it, asks for the exception. If they have an escape hatch, they take it, and the over-restriction fails as silently as any over-permission. They keep a side spreadsheet. They stop using the feature. They type a junk value that satisfies the rule and voids its meaning (a placeholder customer named "WALK-IN" that swallows every unattributed booking). A rule that is easy to bypass converts its own refutations into workarounds, and you never hear them.
+**Demand can stop pressing on a restriction, and then an over-restriction goes silent too.** If the blocked person has an escape hatch, they take it instead of reporting the wall: a side spreadsheet, an abandoned feature, a junk value that satisfies the rule and voids its meaning (a placeholder customer named "WALK-IN" that swallows every unattributed booking). The refutation existed and got deflected, which is the software form of the Duhem-Quine objection, a hypothesis can always be saved by absorbing the counterexample elsewhere, and here the elsewhere is human. Feature flags are the pure case: an over-restriction that hides a capability draws no pressure at all, because nobody pushes on a door they do not know is there. A restriction is reliably loud only on a path the actor cannot route around.
 
-This is the software version of the Duhem-Quine objection to naive falsificationism: a hypothesis is never tested in isolation, and a refutation can always be deflected elsewhere rather than accepted. Here the "elsewhere" is human. The asymmetry holds only when the restriction sits on a path the actor cannot route around.
-
-**Some over-permissions are loud.** A too-loose type that admits a nonsense value can crash immediately downstream. That is the lucky case. The dangerous over-permissions are the ones that do not crash: the security hole, the slow drift, the corrupt-but-well-formed row. So the precise phrasing is that restriction errors are *reliably* observable when the restriction is unavoidable, and permission errors are *not reliably* observable at all.
-
-Together those give two conditions, so the asymmetry is a tendency, not a law:
+**Ordinary operation can press on the permission boundary, and then an over-permission gets loud.** When normal execution has reason to enter the excess state space, the silence disappears. A cache revisits stale entries constantly, so a too-permissive staleness window fails under ordinary reads, not under attack. A distributed system drives itself into partition, retry, concurrency, and version-skew states as a matter of routine, so permission errors that look exotic on one node are exercised continuously in aggregate. A rate limit can be crossed by a stream of individually valid requests, so an over-permissive limit fails on normal traffic. In each, ordinary operation has a reason to visit the forbidden region, so it self-reports the way a restriction would.
 
 {{< mermaid >}}
 flowchart TB
     subgraph holds["Asymmetry is strong"]
-        h1[Restriction sits on an<br/>unavoidable path]
-        h2[Over-permission enables a state<br/>that does not crash immediately]
+        h1[Demand presses hard on the<br/>restriction boundary]
+        h2[Ordinary operation rarely enters the<br/>state an over-permission admits]
     end
 
     subgraph weak["Asymmetry is weak or reversed"]
-        w1[Blocked actor can route around:<br/>over-restriction goes silent]
-        w2[Over-permission crashes at once:<br/>permission self-reports]
+        w1[Actor routes around, or the denied<br/>capability is unknown: no pressure]
+        w2[Normal execution visits the excess<br/>state routinely: permission self-reports]
     end
 
     style holds fill:#3A4C43,stroke:#6b7280,color:#f0f0f0
     style weak fill:#4C3A3C,stroke:#6b7280,color:#f0f0f0
 {{< /mermaid >}}
 
-This is why the pattern is strongest in systems of record, access control, and data integrity, and weakest in throwaway UIs and stateless transforms. A booking store with a single mandatory write path is close to the ideal case. A prototype nobody depends on is the worst: friction is expensive, reversibility is cheap, and there is no persistent state to corrupt.
+So the theory is scoped, not universal. It holds for demand-driven systems with persistent or consequential state, explicit legitimate operations, an unavoidable enforcement path, and low natural exploration of the invalid space: systems of record, access control, APIs, domain models, state machines. It weakens or reverses precisely where those conditions fail, which is what the counterexamples above have in common.
+
+One further refinement those cases force: observability is not binary. It has three dimensions, how likely the error is to be seen at all, how long it takes to surface, and how far the eventual failure sits from the rule that caused it. Permission errors tend to lose on all three: rarer under normal operation, slower to appear, and separated from their cause by enough time and code that the incident reads as something else entirely. That is why "it arrives later, as damage, and is hard to trace" is a structural property, not a mood.
 
 ## The prescription, and what it costs
 
