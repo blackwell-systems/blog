@@ -446,3 +446,27 @@ body::after {
     color-mix(in srgb, var(--bg) 40%, transparent) 100%);
 }
 /* opaque cards already sit above the backdrop; keep hero areas transparent */
+
+/* ============================================================
+   Ported from old blog: nav link double-underline sweep on hover
+   (top line grows from left, bottom from right)
+   ============================================================ */
+#menu li a {
+  position: relative;
+  z-index: 1;
+}
+#menu li a::before,
+#menu li a::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background-color: var(--accent);
+  transform: scaleX(0);
+  transition: transform 0.4s var(--ease);
+}
+#menu li a::before { top: 0;    transform-origin: left; }
+#menu li a::after  { bottom: 0; transform-origin: right; }
+#menu li a:hover::before,
+#menu li a:hover::after { transform: scaleX(1); }
