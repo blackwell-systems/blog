@@ -62,7 +62,7 @@ code, kbd, pre, tt { font-family: var(--font-mono); font-feature-settings: "liga
 }
 #menu li a span, #menu a {
   font-family: var(--font-mono);
-  font-size: .78rem; font-weight: 500;
+  font-size: 13px; font-weight: 500;
   letter-spacing: .08em; text-transform: uppercase;
   color: var(--ink-3);
 }
