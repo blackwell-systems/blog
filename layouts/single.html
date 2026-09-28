@@ -2,6 +2,7 @@
 
 <article class="post-single">
   <header class="post-header">
+    {{- if eq .Section "posts" }}
     {{- $slug := "" }}{{ with .File }}{{ $slug = .BaseFileName }}{{ end }}
     <div class="article-path">~/{{ .Section }}/{{ $slug }}</div>
 
@@ -18,6 +19,12 @@
       <span>{{ .ReadingTime }} min read</span>
       {{- with .Params.tags }}<span>{{ delimit (first 4 .) " · " }}</span>{{ end }}
     </div>
+    {{- else }}
+    <h1 class="post-title entry-hint-parent">{{ .Title }}</h1>
+    {{- if .Description }}
+    <div class="post-description">{{ .Description }}</div>
+    {{- end }}
+    {{- end }}
   </header>
 
   {{- $isHidden := (.Param "cover.hiddenInSingle") | default (.Param "cover.hidden") | default false }}
