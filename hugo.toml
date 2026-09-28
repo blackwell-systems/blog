@@ -58,6 +58,11 @@ enableInlineShortcodes = true
   priority = 0.5
 
 [[menu.main]]
+  identifier = "mainsite"
+  name = "← MAIN SITE"
+  weight = 0
+  url = "https://blackwell-systems.com/"
+[[menu.main]]
   identifier = "posts"
   name = "POSTS"
   weight = 1
