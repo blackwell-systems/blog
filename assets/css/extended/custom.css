@@ -455,7 +455,8 @@ body::after {
 #menu li a span {
   position: relative;
   display: inline-block;
-  padding: 2px 0;   /* bars hug the text; horizontal spacing comes from li margin */
+  line-height: 1.05;   /* don't inherit the 60px header line-height, so bars hug the text */
+  padding: 3px 0;      /* small, even gap above/below the text */
   z-index: 1;
 }
 #menu li a span::before,
