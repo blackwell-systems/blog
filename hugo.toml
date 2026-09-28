@@ -1,8 +1,9 @@
 baseURL = 'https://blog.blackwell-systems.com/'
 languageCode = 'en-us'
 title = 'Blackwell Systems'
-theme = 'nightfall'
+theme = 'PaperMod'
 enableRobotsTXT = true
+enableInlineShortcodes = true
 
 [pagination]
   pagerSize = 20
@@ -12,55 +13,77 @@ enableRobotsTXT = true
   category = "categories"
   series = "series"
 
-[params]
-  description = 'Technical writing on developer tools, automation, and systems programming'
-  github = 'blackwell-systems'
-  keywords = ['blackdot', 'dotfiles', 'claude code', 'developer tools', 'secret management', 'go', 'shell scripting', 'automation']
-  showTags = false  # Hide tags on individual post pages
-  showReadingTime = false  # Hide reading time on post pages
-  showRelated = true
-  footerHtml = '© 2026 Blackwell Systems'
-
-[params.author]
-  name = 'Blackwell Systems'
-
-[sitemap]
-  changefreq = 'weekly'
-  priority = 0.5
-
-[menu]
-  [[menu.header]]
-    name = "POSTS"
-    weight = 1
-    url = "/posts"
-  [[menu.header]]
-    name = "PRODUCTS"
-    weight = 2
-    url = "/products"
-  [[menu.header]]
-    name = "OPEN SOURCE SOFTWARE"
-    weight = 3
-    url = "/oss"
-  [[menu.header]]
-    name = "CONSULTING"
-    weight = 4
-    url = "/consulting"
-  [[menu.header]]
-    name = "ABOUT"
-    weight = 5
-    url = "/about"
+[outputs]
+  home = ["HTML", "RSS", "JSON"]   # JSON enables PaperMod search
 
 [markup]
   [markup.highlight]
+    noClasses = false
     style = 'monokai'
     lineNos = true
   [markup.goldmark.renderer]
     unsafe = true
   # Pass LaTeX math through untouched so KaTeX can render it client-side.
-  # Only \( \) and \[ \] are delimiters; $ and $$ are deliberately NOT, to avoid
-  # colliding with dollar amounts in prose and with $-quoted shell/JSON in code.
   [markup.goldmark.extensions.passthrough]
     enable = true
     [markup.goldmark.extensions.passthrough.delimiters]
       block = [['\[', '\]']]
       inline = [['\(', '\)']]
+
+[params]
+  description = 'Technical writing on developer tools, automation, and systems programming'
+  keywords = ['blackdot', 'dotfiles', 'claude code', 'developer tools', 'secret management', 'go', 'shell scripting', 'automation']
+  defaultTheme = 'dark'
+  disableThemeToggle = false
+  ShowReadingTime = false
+  ShowShareButtons = false
+  ShowCodeCopyButtons = true
+  ShowToc = true
+  TocOpen = false
+  ShowBreadCrumbs = true
+  ShowPostNavLinks = true
+  ShowRelated = true
+  mainSections = ['posts']
+  footerHtml = '© 2026 Blackwell Systems'
+
+  [params.author]
+    name = 'Blackwell Systems'
+
+  [params.homeInfoParams]
+    Title = 'Blackwell Systems'
+    Content = 'Technical writing on developer tools, automation, and systems programming.'
+
+[sitemap]
+  changefreq = 'weekly'
+  priority = 0.5
+
+[[menu.main]]
+  identifier = "posts"
+  name = "POSTS"
+  weight = 1
+  url = "/posts/"
+[[menu.main]]
+  identifier = "products"
+  name = "PRODUCTS"
+  weight = 2
+  url = "/products/"
+[[menu.main]]
+  identifier = "oss"
+  name = "OPEN SOURCE"
+  weight = 3
+  url = "/oss/"
+[[menu.main]]
+  identifier = "consulting"
+  name = "CONSULTING"
+  weight = 4
+  url = "/consulting/"
+[[menu.main]]
+  identifier = "about"
+  name = "ABOUT"
+  weight = 5
+  url = "/about/"
+[[menu.main]]
+  identifier = "search"
+  name = "SEARCH"
+  weight = 6
+  url = "/search/"

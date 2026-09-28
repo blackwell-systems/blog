@@ -1,0 +1,67 @@
+{{- define "main" }}
+
+{{- $posts := (where site.RegularPages "Section" "posts").ByDate.Reverse }}
+{{- $total := len $posts }}
+{{- $featured := index $posts 0 }}
+{{- $rest := first 8 (after 1 $posts) }}
+
+<section class="masthead">
+  <div class="masthead__ident">
+    <div>Author<b>Dayna Blackwell</b></div>
+    <div>Role<b>Software Architect</b></div>
+    <div>Creator of<b>GCF · agent-lsp · OSS frameworks</b></div>
+  </div>
+
+  <h1 class="masthead__headline">Shipping the <em>agentic stack.</em><br>Defining the <em>standards.</em></h1>
+
+  <div class="masthead__sub">
+    <p class="masthead__statement">Software architect building across the entire <b>agentic stack</b>. Creator of GCF, agent-lsp, and widely adopted open source frameworks — I ship the software and define the standards it runs on.</p>
+    <div class="masthead__links">
+      <a href="https://github.com/blackwell-systems">github</a> ·
+      <a href="/index.xml">rss</a>
+    </div>
+  </div>
+</section>
+
+{{- with $featured }}
+<div class="sectionbar">
+  <span class="sectionbar__label">latest</span>
+  <span></span>
+  <span>{{ .Date.Format "02.Jan.2006" | lower }} · {{ .ReadingTime }} min</span>
+</div>
+
+<article class="feature">
+  {{- with .Params.categories }}<p class="feature__kicker">{{ index . 0 }}</p>{{ end }}
+  <h2 class="feature__title"><a href="{{ .RelPermalink }}">{{ .Title }}</a></h2>
+  <p class="feature__dek">{{ .Summary | plainify | truncate 220 }}</p>
+  <div class="feature__meta">
+    {{- with .Params.categories }}<span>filed under <b>{{ index . 0 }}</b></span>{{ end }}
+    {{- with .Params.tags }}<span>tags <b>{{ delimit (first 3 .) " · " }}</b></span>{{ end }}
+    <span><b>{{ .ReadingTime }} min</b> read</span>
+  </div>
+</article>
+{{- end }}
+
+<div class="sectionbar">
+  <span class="sectionbar__label">recent.writing</span>
+  <span></span>
+  <a class="sectionbar__cta" href="/posts/">all posts →</a>
+</div>
+
+<div class="catalog">
+  {{- $cols := slice "col-7 catalog__item--lead" "col-5" "col-5" "col-7 catalog__item--lead" }}
+  {{- range $i, $p := $rest }}
+  <article class="catalog__item {{ index $cols (mod $i 4) }}">
+    <span class="catalog__num">{{ printf "№ %03d" (sub $total (add $i 1)) }}</span>
+    {{- with $p.Params.categories }}<span class="catalog__kicker">{{ index . 0 }}</span>{{ end }}
+    <h3 class="catalog__title"><a href="{{ $p.RelPermalink }}">{{ $p.Title }}</a></h3>
+    <p class="catalog__dek">{{ $p.Summary | plainify | truncate 160 }}</p>
+    <div class="catalog__meta">
+      <span><b>{{ $p.Date.Format "2 Jan" }}</b></span>
+      <span>{{ $p.ReadingTime }} min</span>
+    </div>
+  </article>
+  {{- end }}
+</div>
+
+{{- end }}

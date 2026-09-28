@@ -1,0 +1,416 @@
+/* ============================================================
+   Blackwell Systems — editorial masthead system
+   Own semantic vocabulary. Dark charcoal + slate-blue accent.
+   ============================================================ */
+
+:root, .dark {
+  /* ---- type families ---- */
+  --font-serif: 'Fraunces', 'Iowan Old Style', Georgia, serif;
+  --font-sans:  'IBM Plex Sans', system-ui, -apple-system, sans-serif;
+  --font-mono:  'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+
+  /* ---- type scale ---- */
+  --fs-1: 11px; --fs-2: 12px; --fs-3: 13px; --fs-4: 14px; --fs-5: 16px;
+  --fs-6: 19px; --fs-7: 21px; --fs-8: 26px; --fs-9: 32px; --fs-10: 48px;
+  --fs-display: clamp(52px, 8.5vw, 118px);
+
+  /* ---- spacing ---- */
+  --sp-1: 4px;  --sp-2: 8px;  --sp-3: 12px; --sp-4: 16px; --sp-5: 24px;
+  --sp-6: 32px; --sp-7: 40px; --sp-8: 48px; --sp-9: 64px; --sp-10: 96px;
+
+  --measure: 1180px;
+  --measure-text: 860px;
+  --ease: cubic-bezier(.22, 1, .36, 1);
+
+  /* ---- Blackwell palette ---- */
+  --bg:      #1d1e20;
+  --surface: #252627;
+  --ink:     #f0f0f0;
+  --ink-2:   #b7b8ba;
+  --ink-3:   #85868a;
+  --accent:    #6fa2c9;
+  --accent-hi: #8fbbdc;
+  --line:   color-mix(in srgb, var(--ink) 9%, transparent);
+  --line-2: color-mix(in srgb, var(--ink) 18%, transparent);
+  --line-3: color-mix(in srgb, var(--ink) 34%, transparent);
+
+  /* PaperMod base vars kept on-brand for inner pages */
+  --theme: #1d1e20;
+  --entry: #252627;
+  --primary: #f0f0f0;
+  --secondary: #b7b8ba;
+  --tertiary: #333438;
+  --content: #d4d4d5;
+  --code-block-bg: #1c1d21;
+  --code-bg: #2e2f34;
+  --border: #333333;
+}
+
+/* ---- base ---- */
+body { font-family: var(--font-sans); background: var(--bg); color: var(--ink); }
+.main { max-width: var(--measure); }
+.post-single, .post-header, .post-content, .paginav, .archive-posts { max-width: var(--measure-text); margin-inline: auto; }
+h1, h2, h3, h4 { font-family: var(--font-serif); }
+code, kbd, pre, tt { font-family: var(--font-mono); font-feature-settings: "liga" 0; }
+
+/* ---- header / nav ---- */
+.nav { max-width: var(--measure); margin: 0 auto; }
+.logo a {
+  font-family: var(--font-mono);
+  font-size: 1rem; font-weight: 700;
+  letter-spacing: .04em; text-transform: uppercase;
+}
+#menu li a span, #menu a {
+  font-family: var(--font-mono);
+  font-size: .78rem; font-weight: 500;
+  letter-spacing: .08em; text-transform: uppercase;
+  color: var(--ink-3);
+}
+#menu li a:hover span, #menu li a:hover { color: var(--accent); }
+#menu .active span, #menu .active { color: var(--ink); border-bottom: 2px solid var(--accent); }
+
+/* ============================================================
+   MASTHEAD
+   ============================================================ */
+.masthead {
+  position: relative;
+  padding: var(--sp-4) 0 var(--sp-7);
+  border-bottom: 1px solid var(--line-3);
+  margin: var(--sp-6) 0 var(--sp-8);
+}
+.masthead__ident {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--sp-5);
+  font-family: var(--font-mono); font-size: var(--fs-1);
+  letter-spacing: .08em; text-transform: uppercase;
+  color: var(--ink-3); margin-bottom: var(--sp-6); max-width: 720px;
+}
+.masthead__ident div { border-top: 1px solid var(--line-2); padding-top: var(--sp-2); }
+.masthead__ident b {
+  display: block; color: var(--ink); font-weight: 600;
+  font-size: var(--fs-3); margin-top: 4px; letter-spacing: .04em; text-transform: none;
+}
+.masthead__headline {
+  font-family: var(--font-serif); font-weight: 900;
+  font-size: var(--fs-display); line-height: .86; letter-spacing: -.045em;
+  color: var(--ink); margin: 0 0 var(--sp-4);
+  font-variation-settings: "opsz" 144, "SOFT" 0;
+}
+.masthead__headline em {
+  font-style: normal; font-weight: 500; color: var(--accent);
+  font-variation-settings: "opsz" 144, "SOFT" 0;
+}
+.masthead__sub {
+  display: grid; grid-template-columns: 2fr 1fr; gap: var(--sp-6);
+  align-items: end; margin-top: var(--sp-4);
+}
+.masthead__statement {
+  font-family: var(--font-serif); font-weight: 300;
+  font-size: clamp(20px, 2.4vw, 28px); line-height: 1.2; letter-spacing: -.012em;
+  color: var(--ink-2); max-width: 34ch; margin: 0;
+  font-variation-settings: "opsz" 96, "SOFT" 0;
+}
+.masthead__statement b { font-weight: 700; color: var(--ink); }
+.masthead__links {
+  font-family: var(--font-mono); font-size: var(--fs-2);
+  letter-spacing: .04em; text-align: right; color: var(--ink-2); line-height: 1.7;
+}
+.masthead__links a {
+  color: var(--ink); border-bottom: 1px dashed var(--line-2);
+  text-decoration: none; transition: color .2s, border-color .2s;
+}
+.masthead__links a:hover { color: var(--accent); border-bottom-color: var(--accent); }
+
+/* ============================================================
+   SECTION BAR  (##  divider)
+   ============================================================ */
+.sectionbar {
+  display: grid; grid-template-columns: auto 1fr auto; gap: var(--sp-4);
+  align-items: baseline; margin: var(--sp-8) 0 var(--sp-4);
+  padding: 6px 0 var(--sp-2); border-bottom: 1px solid var(--line);
+  font-family: var(--font-mono); font-size: var(--fs-2);
+  letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3);
+}
+.sectionbar__label { color: var(--ink); font-weight: 500; }
+.sectionbar__label::before { content: "## "; color: var(--accent); }
+.sectionbar__cta { color: var(--ink-3); text-decoration: none; transition: color .2s; }
+.sectionbar__cta:hover { color: var(--accent); }
+
+/* ============================================================
+   FEATURE  (lead story)
+   ============================================================ */
+.feature {
+  padding: var(--sp-5) 0 var(--sp-7);
+  border-bottom: 1px solid var(--line); max-width: var(--measure-text);
+}
+.feature__kicker {
+  font-family: var(--font-mono); font-size: var(--fs-1);
+  letter-spacing: .12em; text-transform: uppercase; color: var(--accent);
+  margin-bottom: var(--sp-3);
+}
+.feature__kicker::before { content: "▶  "; }
+.feature__title {
+  font-family: var(--font-serif); font-weight: 700;
+  font-size: clamp(36px, 4.4vw, 56px); line-height: 1; letter-spacing: -.028em;
+  margin: 0 0 var(--sp-4); font-variation-settings: "opsz" 144, "SOFT" 30;
+}
+.feature__title a {
+  color: var(--ink); text-decoration: none;
+  background-image: linear-gradient(var(--accent), var(--accent));
+  background-size: 0 1px; background-repeat: no-repeat; background-position: 0 100%;
+  transition: background-size .35s var(--ease), color .2s;
+}
+.feature__title a:hover { background-size: 100% 2px; color: var(--accent); }
+.feature__dek {
+  font-family: var(--font-serif); font-weight: 400; font-size: var(--fs-6);
+  line-height: 1.5; color: var(--ink); margin: 0 0 var(--sp-4); max-width: 60ch;
+  font-variation-settings: "opsz" 24, "SOFT" 30;
+}
+.feature__meta {
+  font-family: var(--font-mono); font-size: var(--fs-1); letter-spacing: .06em;
+  color: var(--ink-3); text-transform: uppercase; display: flex; gap: var(--sp-5);
+  flex-wrap: wrap; border-top: 1px solid var(--line); padding-top: var(--sp-3);
+}
+.feature__meta b { color: var(--ink); font-weight: 500; }
+
+/* ============================================================
+   CATALOG  (numbered card grid)
+   ============================================================ */
+.catalog {
+  display: grid; grid-template-columns: repeat(12, 1fr); gap: 0;
+  border: 1px solid var(--line); border-bottom: none;
+}
+.catalog__item {
+  border-right: 1px solid var(--line); border-bottom: 1px solid var(--line);
+  padding: var(--sp-5) var(--sp-5) var(--sp-6); position: relative;
+  display: flex; flex-direction: column; gap: var(--sp-2);
+  transition: background .25s var(--ease); background: var(--bg);
+}
+.catalog__item:nth-child(odd) { background: color-mix(in srgb, var(--ink) 1.5%, transparent); }
+.catalog__item:hover { background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 8%, transparent), transparent); }
+.catalog__num {
+  position: absolute; top: var(--sp-3); right: var(--sp-4);
+  font-family: var(--font-mono); font-weight: 500; font-size: var(--fs-1);
+  color: var(--ink-3); letter-spacing: .04em;
+}
+.catalog__kicker {
+  font-family: var(--font-mono); font-size: var(--fs-1); letter-spacing: .08em;
+  color: var(--accent); text-transform: uppercase;
+}
+.catalog__kicker::before { content: "—  "; color: var(--ink-3); }
+.catalog__title {
+  font-family: var(--font-serif); font-weight: 700; font-size: var(--fs-8);
+  line-height: 1.06; letter-spacing: -.018em; margin: 0; color: var(--ink);
+  transition: color .2s; font-variation-settings: "opsz" 60, "SOFT" 30;
+}
+.catalog__title a { color: inherit; text-decoration: none; }
+.catalog__item:hover .catalog__title { color: var(--accent); }
+.catalog__item--lead .catalog__title { font-size: var(--fs-9); }
+.catalog__dek {
+  font-family: var(--font-sans); font-weight: 300; font-size: var(--fs-4);
+  line-height: 1.5; color: var(--ink-2); margin: 0; max-width: 56ch;
+}
+.catalog__meta {
+  margin-top: auto; font-family: var(--font-mono); font-size: var(--fs-1);
+  letter-spacing: .06em; color: var(--ink-3); text-transform: uppercase;
+  padding-top: var(--sp-3); border-top: 1px solid var(--line);
+  display: flex; gap: var(--sp-4); flex-wrap: wrap;
+}
+.catalog__meta b { color: var(--ink); font-weight: 500; }
+.catalog__item.col-7 { grid-column: span 7; }
+.catalog__item.col-5 { grid-column: span 5; }
+
+/* ---- responsive ---- */
+@media (max-width: 768px) {
+  .masthead__ident { grid-template-columns: 1fr 1fr; gap: var(--sp-3) var(--sp-4); }
+  .masthead__sub { grid-template-columns: 1fr; gap: var(--sp-4); }
+  .masthead__links { text-align: left; }
+  .catalog { grid-template-columns: 1fr; }
+  .catalog__item.col-7, .catalog__item.col-5 { grid-column: span 1; }
+  .catalog__item { border-right: 0; }
+}
+
+/* ============================================================
+   Ported prod customizations: callouts, mermaid, tables, inline code
+   Wired to Blackwell palette (--ink / --accent / --surface)
+   ============================================================ */
+
+/* ---- inline code in prose (slate pill, not code blocks) ---- */
+.post-content p code,
+.post-content li code {
+  background: rgba(58, 74, 92, 0.5);
+  padding: 0.15em 0.4em;
+  border-radius: 3px;
+  font-weight: 500;
+  font-size: 0.9em;
+}
+
+/* ---- callout blocks ---- */
+.callout {
+  margin: 2rem 0;
+  padding: 1.5rem;
+  border-left: 4px solid var(--ink-3);
+  background: rgba(107, 114, 128, 0.1);
+  border-radius: 0 4px 4px 0;
+}
+.callout p:first-child { margin-top: 0; }
+.callout p:last-child { margin-bottom: 0; }
+.callout.info    { border-left-color: var(--accent);  background: rgba(111, 162, 201, 0.10); }
+.callout.warning { border-left-color: #92703a; background: rgba(146, 112, 58, 0.12); }
+.callout.success { border-left-color: #4a7058; background: rgba(74, 112, 88, 0.12); }
+.callout.danger  { border-left-color: #8a5a5c; background: rgba(138, 90, 92, 0.12); }
+
+/* ---- mermaid diagrams + lightbox ---- */
+.mermaid {
+  margin: 2rem 0;
+  padding: 2rem 2.5rem;
+  background: rgba(37, 38, 39, 0.5);
+  border-radius: 8px;
+  overflow-x: auto;
+  cursor: zoom-in;
+  transition: background 0.2s ease;
+}
+.mermaid:hover { background: rgba(37, 38, 39, 0.7); }
+.mermaid svg { max-width: 100%; height: auto; display: block; margin: 0 auto; }
+.mermaid-modal {
+  display: none; position: fixed !important; z-index: 9999 !important;
+  top: 0 !important; left: 0 !important; right: 0 !important; bottom: 0 !important;
+  width: 100vw !important; height: 100vh !important;
+  background: rgba(0, 0, 0, 0.95) !important;
+  cursor: zoom-out; overflow: auto; padding: 2rem; margin: 0 !important;
+}
+.mermaid-modal.active { display: flex !important; align-items: center !important; justify-content: center !important; }
+.mermaid-modal-content {
+  max-width: 95vw; max-height: 95vh; width: 100%; height: 100%;
+  display: flex; align-items: center; justify-content: center;
+}
+.mermaid-modal-content svg {
+  width: auto !important; height: auto !important;
+  max-width: 90vw !important; max-height: 85vh !important;
+  min-width: 60vw; min-height: 40vh;
+}
+.mermaid-modal-close {
+  position: fixed; top: 1rem; right: 1rem; color: #f8f8ff;
+  font-size: 2rem; font-weight: bold; cursor: pointer; z-index: 10000;
+  background: rgba(45, 55, 72, 0.8); width: 40px; height: 40px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  border: 2px solid var(--accent);
+}
+.mermaid-modal-close:hover { background: rgba(45, 55, 72, 1); border-color: var(--accent-hi); }
+
+/* ---- article tables ---- */
+.post-content table {
+  width: 100%; border-collapse: collapse; margin: 2rem 0; font-size: 0.9rem;
+}
+.post-content table th,
+.post-content table td {
+  padding: 0.75rem 1.25rem; text-align: left;
+  border: 1px solid rgba(111, 162, 201, 0.22);
+}
+.post-content table th {
+  font-weight: 600; background: rgba(58, 74, 92, 0.4);
+  border-bottom: 2px solid rgba(111, 162, 201, 0.4);
+}
+.post-content table tr:hover { background: rgba(58, 74, 92, 0.2); }
+.post-content table td:first-child,
+.post-content table th:first-child { font-weight: 600; }
+/* never restyle code-block internal tables (line numbers) */
+.highlight table, .highlight table td, .highlight table th {
+  all: revert; padding: 0; margin: 0; border: 0; background: none; width: auto; font-weight: normal;
+}
+
+/* ============================================================
+   INNER PAGES — article + list, editorial identity
+   ============================================================ */
+
+/* ---- article header ---- */
+.post-single { padding-top: var(--sp-6); }
+.article-path {
+  font-family: var(--font-mono); font-size: var(--fs-1);
+  letter-spacing: .04em; color: var(--ink-3); margin-bottom: var(--sp-5);
+}
+.article-kicker {
+  font-family: var(--font-mono); font-size: var(--fs-1);
+  letter-spacing: .12em; text-transform: uppercase; color: var(--accent);
+  margin: 0 0 var(--sp-3);
+}
+.article-kicker::before { content: "▶  "; }
+.post-single .post-title {
+  font-family: var(--font-serif); font-weight: 700;
+  font-size: clamp(34px, 4.6vw, 60px); line-height: 1.02; letter-spacing: -.028em;
+  margin: 0 0 var(--sp-4); font-variation-settings: "opsz" 144, "SOFT" 30;
+}
+.post-single .post-description {
+  font-family: var(--font-serif); font-weight: 400; font-size: var(--fs-6);
+  line-height: 1.5; color: var(--ink-2); margin: 0 0 var(--sp-4); max-width: 62ch;
+  font-variation-settings: "opsz" 24, "SOFT" 30;
+}
+.post-meta.article-meta {
+  font-family: var(--font-mono); font-size: var(--fs-1); letter-spacing: .06em;
+  text-transform: uppercase; color: var(--ink-3);
+  display: flex; gap: var(--sp-5); flex-wrap: wrap;
+  border-top: 1px solid var(--line); border-bottom: 1px solid var(--line);
+  padding: var(--sp-3) 0; margin-bottom: var(--sp-7);
+}
+
+/* ---- article body typography ---- */
+.post-content { line-height: 1.75; }
+.post-content h1, .post-content h2, .post-content h3, .post-content h4 {
+  font-family: var(--font-serif); letter-spacing: -.015em; font-variation-settings: "opsz" 60, "SOFT" 20;
+}
+.post-content h2 { border-bottom: 1px solid var(--line); padding-bottom: var(--sp-2); margin-top: var(--sp-8); }
+.post-content a {
+  color: var(--accent); text-decoration: none;
+  border-bottom: 1px solid color-mix(in srgb, var(--accent) 35%, transparent);
+  transition: border-color .2s;
+}
+.post-content a:hover { border-bottom-color: var(--accent); }
+.post-content blockquote {
+  border-inline-start: 3px solid var(--accent);
+  color: var(--ink-2); font-family: var(--font-serif); font-style: italic;
+}
+
+/* ---- tags ---- */
+.post-tags { margin-top: var(--sp-6); }
+.post-tags li a {
+  font-family: var(--font-mono); font-size: var(--fs-1); text-transform: uppercase;
+  letter-spacing: .06em; color: var(--ink-3);
+  background: transparent; border: 1px solid var(--line-2); border-radius: 2px;
+}
+.post-tags li a:hover { color: var(--accent); border-color: var(--accent); }
+
+/* ============================================================
+   LIST / TAXONOMY pages — editorial rows
+   ============================================================ */
+.page-header { border-bottom: 1px solid var(--line-3); padding-bottom: var(--sp-4); margin-bottom: var(--sp-4); }
+.page-header h1 {
+  font-family: var(--font-serif); font-weight: 700; letter-spacing: -.02em;
+  font-size: clamp(32px, 4vw, 52px); font-variation-settings: "opsz" 144, "SOFT" 30;
+}
+.breadcrumbs { font-family: var(--font-mono); font-size: var(--fs-1); letter-spacing: .04em; color: var(--ink-3); text-transform: lowercase; }
+.breadcrumbs svg { width: 12px; height: 12px; opacity: .5; }
+
+/* PaperMod list entries → hairline editorial rows */
+.post-entry, .first-entry {
+  background: transparent !important; box-shadow: none !important; border: 0 !important;
+  border-bottom: 1px solid var(--line) !important; border-radius: 0 !important;
+  padding: var(--sp-5) 0 !important; margin: 0 !important;
+  transition: none !important;
+}
+.post-entry:hover, .first-entry:hover { transform: none !important; }
+.post-entry .entry-header h1,
+.post-entry .entry-header h2,
+.first-entry .entry-header h1 {
+  font-family: var(--font-serif); font-weight: 700;
+  font-size: var(--fs-8); line-height: 1.1; letter-spacing: -.02em;
+  color: var(--ink); transition: color .2s;
+  font-variation-settings: "opsz" 60, "SOFT" 30;
+}
+.post-entry:hover .entry-header h2 { color: var(--accent); }
+.post-entry .entry-content {
+  font-family: var(--font-sans); font-weight: 300; font-size: var(--fs-4);
+  line-height: 1.55; color: var(--ink-2);
+}
+.post-entry .entry-footer, .first-entry .entry-footer {
+  font-family: var(--font-mono); font-size: var(--fs-1); letter-spacing: .06em;
+  text-transform: uppercase; color: var(--ink-3);
+}

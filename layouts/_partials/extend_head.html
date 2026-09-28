@@ -1,0 +1,79 @@
+<!-- A/B experiment: danilchenko-style font trio -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500;9..144,700;9..144,900&family=IBM+Plex+Sans:wght@300;400;500;700&family=JetBrains+Mono:wght@400;500;600&display=swap">
+
+<!-- ===== Ported from prod blog: Mermaid diagrams (dark theme + click-to-zoom) ===== -->
+<script type="module">
+  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+  mermaid.initialize({
+    startOnLoad: true,
+    theme: 'dark',
+    flowchart: { nodeSpacing: 60, rankSpacing: 80, padding: 30, htmlLabels: true, useMaxWidth: true, diagramPadding: 30 },
+    sequence: { actorMargin: 80, noteMargin: 20, messageMargin: 50, boxMargin: 20, boxTextMargin: 10, mirrorActors: false, useMaxWidth: true, diagramMarginX: 30, diagramMarginY: 20 },
+    themeVariables: {
+      darkMode: true,
+      background: '#252627', mainBkg: '#252627',
+      primaryColor: '#4a5568', primaryTextColor: '#f0f0f0', primaryBorderColor: '#4a5568',
+      lineColor: '#6b7280', secondaryColor: '#374151', tertiaryColor: '#1f2937',
+      textColor: '#f0f0f0', labelTextColor: '#f0f0f0', nodeTextColor: '#f0f0f0',
+      noteBkgColor: '#374151', noteTextColor: '#f0f0f0', noteBorderColor: '#6b7280',
+      actorBkg: '#374151', actorBorder: '#6b7280', actorTextColor: '#f0f0f0',
+      signalColor: '#6b7280', signalTextColor: '#f0f0f0',
+      labelBoxBkgColor: '#374151', labelBoxBorderColor: '#6b7280',
+      loopTextColor: '#f0f0f0', activationBorderColor: '#6b7280', activationBkgColor: '#1f2937',
+      sequenceNumberColor: '#252627',
+      clusterBkg: '#1f2937', clusterBorder: '#6b7280', defaultLinkColor: '#6b7280', edgeLabelBackground: '#252627',
+      cScale0: '#3A4A5C', cScale1: '#3A4C43', cScale2: '#4C4538', cScale3: '#4C3A3C', cScale4: '#374151', cScale5: '#1f2937',
+      cScale6: '#3A4A5C', cScale7: '#3A4C43', cScale8: '#4C4538', cScale9: '#4C3A3C', cScale10: '#374151', cScale11: '#1f2937'
+    }
+  });
+
+  // Click-to-expand lightbox for rendered diagrams
+  document.addEventListener('DOMContentLoaded', function() {
+    setTimeout(() => {
+      document.querySelectorAll('.mermaid').forEach(div => {
+        div.addEventListener('click', function() {
+          const svg = this.querySelector('svg');
+          if (!svg) return;
+          const modal = document.createElement('div');
+          modal.className = 'mermaid-modal active';
+          document.body.style.overflow = 'hidden';
+          const closeBtn = document.createElement('span');
+          closeBtn.className = 'mermaid-modal-close';
+          closeBtn.innerHTML = '&times;';
+          const content = document.createElement('div');
+          content.className = 'mermaid-modal-content';
+          content.appendChild(svg.cloneNode(true));
+          modal.appendChild(closeBtn);
+          modal.appendChild(content);
+          document.body.appendChild(modal);
+          const close = () => { document.body.style.overflow = ''; modal.remove(); };
+          closeBtn.addEventListener('click', close);
+          modal.addEventListener('click', e => { if (e.target === modal) close(); });
+          document.addEventListener('keydown', function esc(e) {
+            if (e.key === 'Escape') { close(); document.removeEventListener('keydown', esc); }
+          });
+        });
+      });
+    }, 1000);
+  });
+</script>
+
+<!-- ===== Ported from prod blog: GoatCounter analytics (skips localhost automatically) ===== -->
+<script data-goatcounter="https://blackwell-systems.goatcounter.com/count"
+        async src="//gc.zgo.at/count.js"></script>
+
+<!-- ===== Ported from prod blog: KaTeX math, only on pages with `math: true` ===== -->
+{{- if .Params.math }}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"
+  onload="renderMathInElement(document.body, {
+    delimiters: [
+      { left: '\\[', right: '\\]', display: true },
+      { left: '\\(', right: '\\)', display: false }
+    ],
+    throwOnError: false
+  });"></script>
+{{- end }}

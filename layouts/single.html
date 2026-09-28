@@ -1,0 +1,59 @@
+{{- define "main" }}
+
+<article class="post-single">
+  <header class="post-header">
+    {{- $slug := "" }}{{ with .File }}{{ $slug = .BaseFileName }}{{ end }}
+    <div class="article-path">~/{{ .Section }}/{{ $slug }}</div>
+
+    {{- with .Params.categories }}<p class="article-kicker">{{ index . 0 }}</p>{{ end }}
+
+    <h1 class="post-title entry-hint-parent">{{ .Title }}</h1>
+
+    {{- if .Description }}
+    <div class="post-description">{{ .Description }}</div>
+    {{- end }}
+
+    <div class="post-meta article-meta">
+      <span>{{ .Date.Format "02.Jan.2006" | lower }}</span>
+      <span>{{ .ReadingTime }} min read</span>
+      {{- with .Params.tags }}<span>{{ delimit (first 4 .) " · " }}</span>{{ end }}
+    </div>
+  </header>
+
+  {{- $isHidden := (.Param "cover.hiddenInSingle") | default (.Param "cover.hidden") | default false }}
+  {{- partial "cover.html" (dict "cxt" . "IsSingle" true "isHidden" $isHidden) }}
+  {{- if (.Param "ShowToc") }}
+  {{- partial "toc.html" . }}
+  {{- end }}
+
+  {{- if .Content }}
+  <div class="post-content md-content">
+    {{- if not (.Param "disableAnchoredHeadings") }}
+    {{- partial "anchored_headings.html" .Content -}}
+    {{- else }}{{ .Content }}{{ end }}
+  </div>
+  {{- end }}
+
+  {{- partial "extend_post_content.html" . }}
+
+  <footer class="post-footer">
+    {{- $tags := .Language.Params.Taxonomies.tag | default "tags" }}
+    <ul class="post-tags">
+      {{- range ($.GetTerms $tags) }}
+      <li><a href="{{ .Permalink }}">{{ .LinkTitle }}</a></li>
+      {{- end }}
+    </ul>
+    {{- if (.Param "ShowPostNavLinks") }}
+    {{- partial "post_nav_links.html" . }}
+    {{- end }}
+    {{- if (and site.Params.ShowShareButtons (ne .Params.disableShare true)) }}
+    {{- partial "share_icons.html" . -}}
+    {{- end }}
+  </footer>
+
+  {{- if (.Param "comments") }}
+  {{- partial "comments.html" . }}
+  {{- end }}
+</article>
+
+{{- end }}{{/* end main */}}
