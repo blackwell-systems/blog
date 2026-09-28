@@ -451,12 +451,15 @@ body::after {
    Ported from old blog: nav link double-underline sweep on hover
    (top line grows from left, bottom from right)
    ============================================================ */
-#menu li a {
+#menu li a { position: static; }
+#menu li a span {
   position: relative;
+  display: inline-block;
+  padding: 2px 0;   /* bars hug the text; horizontal spacing comes from li margin */
   z-index: 1;
 }
-#menu li a::before,
-#menu li a::after {
+#menu li a span::before,
+#menu li a span::after {
   content: "";
   position: absolute;
   left: 0;
@@ -466,7 +469,7 @@ body::after {
   transform: scaleX(0);
   transition: transform 0.4s var(--ease);
 }
-#menu li a::before { top: 0;    transform-origin: left; }
-#menu li a::after  { bottom: 0; transform-origin: right; }
-#menu li a:hover::before,
-#menu li a:hover::after { transform: scaleX(1); }
+#menu li a span::before { top: 0;    transform-origin: left; }
+#menu li a span::after  { bottom: 0; transform-origin: right; }
+#menu li a:hover span::before,
+#menu li a:hover span::after { transform: scaleX(1); }
