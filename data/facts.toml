@@ -1,0 +1,17 @@
+# CANONICAL PUBLIC NUMBERS — single source of truth.
+# Mirror of blackwell-praxis/published/facts.md. Every public surface should
+# render from this (Hugo: {{< fact "downloads" >}} or site.Data.facts.downloads).
+# Run scripts/check-facts.sh before deploy to catch drift.
+
+downloads               = "150K+"
+oss_projects            = "20+"
+prs_merged              = "40+"
+papers                  = "9"
+gcf_implementations     = "7"
+gcf_languages           = "7"
+gcf_evals               = "2,500+"
+gcf_roundtrips          = "43B+"
+gcf_comprehension       = "100%"
+secret_manager_dls      = "50K+"
+mcp_assert_dls          = "28,000+"
+agent_lsp_tools         = "65"   # NOTE: About/consulting say 66; resolve to one value

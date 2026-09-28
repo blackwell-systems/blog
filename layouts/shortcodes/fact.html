@@ -1,0 +1,2 @@
+{{- $key := .Get 0 -}}
+{{- with (index site.Data.facts $key) }}{{ . }}{{ else }}{{ errorf "fact %q not in data/facts.toml" $key }}{{ end -}}
