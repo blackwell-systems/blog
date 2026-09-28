@@ -31,8 +31,8 @@ enableInlineShortcodes = true
       inline = [['\(', '\)']]
 
 [params]
-  description = 'Technical writing on developer tools, automation, and systems programming'
-  keywords = ['blackdot', 'dotfiles', 'claude code', 'developer tools', 'secret management', 'go', 'shell scripting', 'automation']
+  description = 'Building the agentic stack and publishing the proof: systems, open source, and evidence-first engineering by Dayna Blackwell.'
+  keywords = ['gcf', 'agent-lsp', 'mcp', 'claude code', 'agentic stack', 'developer tools', 'go', 'evidence-first', 'open source', 'systems architecture']
   defaultTheme = 'dark'
   disableThemeToggle = false
   ShowReadingTime = false

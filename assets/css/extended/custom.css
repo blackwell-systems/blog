@@ -414,3 +414,35 @@ code, kbd, pre, tt { font-family: var(--font-mono); font-feature-settings: "liga
   font-family: var(--font-mono); font-size: var(--fs-1); letter-spacing: .06em;
   text-transform: uppercase; color: var(--ink-3);
 }
+
+/* ============================================================
+   Signature background — ported flowing-curves SVG, worked in
+   as a dimmed fixed backdrop (charcoal -> slate-blue)
+   ============================================================ */
+body { background-color: var(--bg); position: relative; }
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  background-image: url("/background.svg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  opacity: 0.92;
+  pointer-events: none;
+}
+/* soft scrim so the sticky header + top content stay legible */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: linear-gradient(180deg,
+    color-mix(in srgb, var(--bg) 48%, transparent) 0%,
+    color-mix(in srgb, var(--bg) 28%, transparent) 45%,
+    color-mix(in srgb, var(--bg) 40%, transparent) 100%);
+}
+/* opaque cards already sit above the backdrop; keep hero areas transparent */
