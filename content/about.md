@@ -41,50 +41,70 @@ Backend Enterprise Developer at **Best Western Hotels & Resorts**, where I archi
 
 ## Publications
 
+All {{< fact "papers" >}} are self-published and archived on Zenodo with permanent DOIs. Each has a citation and BibTeX entry under *Cite this*.
+
 **Blackwell, D. (2026).** *Tokenizer-Attention Coupling: How BPE Merge Decisions Permanently Shape Transformer Internal Organization.* Preprint.<br>
 [doi:10.5281/zenodo.20925910](https://doi.org/10.5281/zenodo.20925910)
 
 43 tokenizers from 20 providers. Every one merges delimiter characters with adjacent content, destroying structural boundaries before the transformer runs. Controlled experiment: two identical 410M models, same corpus, same hyperparameters, different tokenizer. The one with 16 merge-barrier characters develops 4.6x more structural attention heads, achieves 3-738x better structured data perplexity, 3-5x better code comprehension, with zero natural language cost. 18-phase causal ablation protocol proves the heads are necessary, sufficient, and format-general. Validated across 2 architectures, 2 scales, and 3 domains (structured data, code, molecular chemistry). Introduces *tokenizer-attention coupling*: BPE merge decisions permanently constrain which attention heads develop.
+
+{{< cite "tokenizer-attention-coupling" >}}
 
 **Blackwell, D. (2026).** *Stranded Attention: BPE Tokenization Permanently Constrains Transformer Structural Capacity.* Preprint.<br>
 [doi:10.5281/zenodo.21158886](https://doi.org/10.5281/zenodo.21158886)
 
 When a standard BPE model is fed clean delimiter boundaries using its own frozen weights, all 384 attention heads at 410M and all 768 at 1.3B show 4x more delimiter attention (14% to 54%). This *frustration gap* appears by step 5,000 and does not change across 35,000 additional steps. At 1.3B, standard BPE develops 124 counterproductive delimiter heads whose removal improves comprehension by 57%. Stranded heads are a third attention state: active but unproductive, neither functional nor safely removable.
 
+{{< cite "stranded-attention" >}}
+
 **Blackwell, D. (2026).** *Developmental Atlas of Attention Head Specialization: Spacing, Stranding, and the Capacity Tax of BPE Tokenization.* Preprint.<br>
 [doi:10.5281/zenodo.21205389](https://doi.org/10.5281/zenodo.21205389)
 
 The first comprehensive tracking of attention head specialization at scale: 384 heads across 7 behavior types, 131 checkpoints per run, 7 training runs on 2 corpora and 2 architectures (GPT-NeoX 410M, Llama 410M). The BPE capacity tax is architecture-independent: spacing ablation costs +64.3% on NeoX (MHA) and +67.0% on Llama (GQA). Together, 48-56% of attention capacity in standard BPE is non-productive (40-48% spacing recovery, ~8% collapsed into position-zero sinks). Merge barriers (a 16-line tokenizer config change) eliminate the need for it entirely.
+
+{{< cite "developmental-atlas" >}}
 
 **Blackwell, D. (2026).** *GCF: A Token-Optimized Wire Format for Structured LLM Interactions.* Working Paper.<br>
 [doi:10.5281/zenodo.20579817](https://doi.org/10.5281/zenodo.20579817)
 
 2,400+ LLM evaluations across 11 models and 3 providers. 100% comprehension on every frontier model on standard workloads. 91.2% on structurally complex data where JSON drops to 54.1%. 43 billion+ lossless round-trips. Grammar characters selected from the set empirically verified to have near-zero BPE merge rates across 43 tokenizers. Spec v3.2 Stable.
 
+{{< cite "gcf" >}}
+
 **Blackwell, D. (2026).** *Structural Ambiguity in JSON Tokenization: A Cross-Tokenizer Analysis.* Preprint.<br>
 [doi:10.5281/zenodo.20810588](https://doi.org/10.5281/zenodo.20810588)
 
 8 tokenizers from 6 providers. JSON's 15 most common field names merge with the opening quote on 50-63% of tokenizers. JSON boundary merge rate: 8.93%. Pipe-delimited: 1.00%. Tab-delimited (TOON): 59.82%. JSON overhead reaches 81% at 500 rows.
+
+{{< cite "json-tokenization" >}}
 
 **Blackwell, D. (2026).** *Content-Addressing as a Computation Primitive for Software Relationship Intelligence.* Technical Report.<br>
 [doi:10.5281/zenodo.20342255](https://doi.org/10.5281/zenodo.20342255)
 
 Hierarchical Merkle trees over code relationship edges as a query-optimization substrate. Self-adapting retrieval, cryptographic proofs of relationship presence and absence, supply chain detection. No prior art found in a survey of Sourcegraph, Kythe, CodeQL, Bazel, Neo4j, IPFS, and Nix. Companion implementation: [knowing](https://github.com/blackwell-systems/knowing).
 
+{{< cite "content-addressing" >}}
+
 **Blackwell, D. (2026).** *Normalization Confluence in Federated Registry Networks.* Technical Report.<br>
 [doi:10.5281/zenodo.18677400](https://doi.org/10.5281/zenodo.18677400)
 
 Extends normalization confluence to federated environments where multiple registries with independent invariants are connected by morphisms encoding cross-organizational constraints. Proves federated convergence requires only validity preservation for tree-shaped networks.
+
+{{< cite "federated-confluence" >}}
 
 **Blackwell, D. (2026).** *Normalization Confluence for Registry-Governed Stream Processing.* Technical Report.<br>
 [doi:10.5281/zenodo.18671870](https://doi.org/10.5281/zenodo.18671870)
 
 A third regime for coordination-free convergence in distributed systems: normalization confluence, where non-commutative operations converge through compensation. Companion implementations: [nccheck](https://github.com/blackwell-systems/nccheck) (verification DSL) and [gsm](https://github.com/blackwell-systems/gsm) (Go runtime with O(1) event application).
 
+{{< cite "normalization-confluence" >}}
+
 **Blackwell, D. (2026).** *Drainability: When Coarse-Grained Memory Reclamation Produces Bounded Retention.* Technical Report.<br>
 [doi:10.5281/zenodo.18653776](https://doi.org/10.5281/zenodo.18653776)
 
 Proves the O(1) vs Omega(t) dichotomy for coarse-grained allocators: drainability produces bounded retention, its absence produces unbounded growth. Companion implementation: [libdrainprof](https://github.com/blackwell-systems/drainability-profiler) (C profiler, sub-2ns overhead).
+
+{{< cite "drainability" >}}
 
 ---
 

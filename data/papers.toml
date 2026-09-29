@@ -1,0 +1,56 @@
+# Canonical citation data for self-published papers (all archived on Zenodo).
+# Used by the `cite` shortcode and by posts that set `paper = "<key>"` in front matter.
+
+[tokenizer-attention-coupling]
+title = "Tokenizer-Attention Coupling: How BPE Merge Decisions Permanently Shape Transformer Internal Organization"
+kind  = "Preprint"
+year  = 2026
+doi   = "10.5281/zenodo.20925910"
+
+[stranded-attention]
+title = "Stranded Attention: BPE Tokenization Permanently Constrains Transformer Structural Capacity"
+kind  = "Preprint"
+year  = 2026
+doi   = "10.5281/zenodo.21158886"
+
+[developmental-atlas]
+title = "Developmental Atlas of Attention Head Specialization: Spacing, Stranding, and the Capacity Tax of BPE Tokenization"
+kind  = "Preprint"
+year  = 2026
+doi   = "10.5281/zenodo.21205389"
+
+[gcf]
+title = "GCF: A Token-Optimized Wire Format for Structured LLM Interactions"
+kind  = "Working Paper"
+year  = 2026
+doi   = "10.5281/zenodo.20579817"
+
+[json-tokenization]
+title = "Structural Ambiguity in JSON Tokenization: A Cross-Tokenizer Analysis"
+kind  = "Preprint"
+year  = 2026
+doi   = "10.5281/zenodo.20810588"
+
+[content-addressing]
+title = "Content-Addressing as a Computation Primitive for Software Relationship Intelligence"
+kind  = "Technical Report"
+year  = 2026
+doi   = "10.5281/zenodo.20342255"
+
+[federated-confluence]
+title = "Normalization Confluence in Federated Registry Networks"
+kind  = "Technical Report"
+year  = 2026
+doi   = "10.5281/zenodo.18677400"
+
+[normalization-confluence]
+title = "Normalization Confluence for Registry-Governed Stream Processing"
+kind  = "Technical Report"
+year  = 2026
+doi   = "10.5281/zenodo.18671870"
+
+[drainability]
+title = "Drainability: When Coarse-Grained Memory Reclamation Produces Bounded Retention"
+kind  = "Technical Report"
+year  = 2026
+doi   = "10.5281/zenodo.18653776"

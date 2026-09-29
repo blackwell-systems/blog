@@ -41,6 +41,13 @@
   </div>
   {{- end }}
 
+  {{- with .Params.paper }}
+  <section class="post-cite post-content md-content">
+    <p class="post-cite-label">This post is based on the paper</p>
+    {{- partial "cite.html" (dict "key" . "open" true) }}
+  </section>
+  {{- end }}
+
   {{- partial "extend_post_content.html" . }}
 
   <footer class="post-footer">

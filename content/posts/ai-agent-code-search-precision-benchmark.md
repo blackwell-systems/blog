@@ -2,6 +2,7 @@
 title: "Your AI Agent's Code Search Hits 2% of the Time. We Benchmarked It."
 date: 2026-05-22
 draft: false
+paper: "content-addressing"
 tags: ["ai", "mcp", "code-intelligence", "ai-agents", "context-window", "token-savings", "benchmark", "knowledge-graph", "code-search", "grep", "developer-tools", "ai-coding", "model-context-protocol", "content-addressing", "merkle-tree", "retrieval", "precision", "open-source", "knowing", "gitnexus", "codegraphcontext", "repomix"]
 categories: ["ai", "tools", "open-source", "benchmarks"]
 description: "We benchmarked 5 code retrieval systems across 107 tasks, 5 codebases (3.5M LOC to 15K LOC), and 5 languages. grep hits 2% precision. The best competitor hits 7.6%. knowing hits 23%. Statistical proof: p<0.0001, d=0.92 (very large effect). Full methodology and reproduction instructions."

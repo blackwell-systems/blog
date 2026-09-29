@@ -2,6 +2,7 @@
 title: "Why LLMs Struggle with JSON at Scale: A Tokenization Analysis"
 date: 2026-06-21
 draft: false
+paper: "json-tokenization"
 tags: ["json", "tokenization", "llm", "gcf", "ai-agents", "wire-format", "mcp", "token-efficiency", "bpe", "attention"]
 categories: ["ai", "research"]
 description: "JSON's structural grammar tokenizes ambiguously across models. Merged tokens like '\"name' (#32586) are hardcoded vocabulary entries on GPT-4, LLaMA, and Qwen. This is irrecoverable: frozen vocabulary, all weights depend on it. GCF's pipe has near-zero vocabulary merges. 8 tokenizers, 6 providers, exhaustive vocabulary scan."

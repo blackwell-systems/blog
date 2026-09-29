@@ -1,0 +1,22 @@
+{{- /* Cite-this block. Context: dict "key" <papers.toml key> "open" <bool>. */ -}}
+{{- $key := .key -}}
+{{- with index site.Data.papers $key }}
+{{- $p := . -}}
+{{- $bibkey := printf "blackwell%d%s" $p.year (replace $key "-" "") -}}
+<details class="cite-block"{{ if $.open }} open{{ end }}>
+  <summary>Cite this</summary>
+  <p class="cite-plain">Blackwell, D. ({{ $p.year }}). <em>{{ $p.title }}.</em> {{ $p.kind }}. Zenodo. <a href="https://doi.org/{{ $p.doi }}">https://doi.org/{{ $p.doi }}</a></p>
+<pre><code>@misc{ {{- $bibkey }},
+  author       = {Blackwell, Dayna},
+  title        = { {{- $p.title -}} },
+  year         = { {{- $p.year -}} },
+  publisher    = {Zenodo},
+  doi          = { {{- $p.doi -}} },
+  url          = {https://doi.org/{{ $p.doi }}},
+  note         = { {{- $p.kind }}, self-published}
+}</code></pre>
+  <p class="cite-note">Self-published; archived on Zenodo with a permanent DOI.</p>
+</details>
+{{- else }}
+{{- errorf "paper %q not in data/papers.toml" $key }}
+{{- end }}

@@ -2,6 +2,7 @@
 title: "Structural Memory Leaks: Binary Outcomes in Coarse-Grained Reclamation"
 date: 2026-02-16
 draft: false
+paper: "drainability"
 series: ["structural-leaks"]
 seriesOrder: 1
 tags: ["memory-management", "systems-programming", "debugging", "allocators", "profiling", "c", "research", "formal-methods", "performance-analysis", "drainability", "epoch-based", "arena-allocators", "slab-allocators", "memory-profiling", "bounded-retention"]
