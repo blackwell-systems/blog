@@ -42,9 +42,13 @@ bpp is the cheapest format and the least correct. It is wrong roughly 1.7 times 
 
 GCF is the only format in the sweet spot: cheap *and* correct. It beats JSON on both axes at once, fewer tokens and fewer errors, which almost never happens, you usually trade one for the other. bpp buys its extra token saving by being harder to read. JSON pays the most tokens for middling comprehension.
 
-## Why bpp fails: it hands the model a pointer, not a value
+## Why bpp fails: the structure breaks twice
 
-bpp's reference table is the mechanism. Repeated values are hoisted to the top of the payload as `&0`, `&1`, `&2`, and every later occurrence becomes a pointer like `*372`. To answer "what is the SKU on this order," the model has to read `*372`, then resolve it against a dictionary hundreds of rows away.
+Two things go wrong, at two different stages.
+
+**First, at the token level: the merge barrier.** bpp separates fields with whitespace. But a space is not a clean boundary to a BPE tokenizer. It merges into the adjacent token most of the time, about 71 percent across the tokenizers in the companion paper, the worst of any structural character. So before the model reads a single field, the boundaries between them have already dissolved into the content. This is not a guess. In a controlled experiment (two identical models, same training data, different tokenizers) the one whose tokenizer treated delimiters as clean, un-mergeable boundaries, a *merge barrier*, was 3 to several hundred times better at reading structured data, with no cost to natural language. GCF uses a delimiter (the pipe) that merges 0.47 percent of the time, effectively a barrier. bpp uses the one character that merges the most.
+
+**Second, at the read level: the pointer table.** Repeated values are hoisted to the top of the payload as `&0`, `&1`, `&2`, and every later occurrence becomes a pointer like `*372`. To answer "what is the SKU on this order," the model has to read `*372`, then resolve it against a dictionary hundreds of rows away.
 
 Models do not do this reliably. They return the pointer.
 
@@ -87,6 +91,10 @@ bpp makes the opposite bet: whitespace delimiters and an interned pointer table,
 The specifics of *why* a delimiter merges into adjacent content, and how badly, measured across dozens of tokenizers (a plain space merges about 71 percent of the time, the worst of any structural boundary; the pipe GCF uses, 0.47 percent), come from the companion tokenization paper this study builds on:
 
 {{< cite "json-tokenization" >}}
+
+And the controlled proof that clean, un-mergeable delimiters (merge barriers) cause the comprehension gain, two identical models, same data, tokenizer the only variable, is in the attention-coupling paper:
+
+{{< cite "tokenizer-attention-coupling" >}}
 
 The practical takeaway, whatever format you reach for: on anything serving unknown models or non-trivial payloads, an MCP server, an agent tool, any pipeline where you do not control which model reads the output, the compact-but-unreadable format is a liability. Fewer tokens on the wire is not the same as fewer tokens spent, once retries and silent wrong answers enter the ledger. And when you do need more savings, the safe lever is the protocol layer (session dedup, delta, streaming), which cuts tokens across turns without ever degrading a single payload's readability.
 
