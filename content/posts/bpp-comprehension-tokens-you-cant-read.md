@@ -60,7 +60,7 @@ The tempting objection is that this is a small-model problem. It is not, and the
 
 The delimiter merge and the pointer indirection are properties of the *encoding*. They are applied identically to every model, before inference begins. A frontier model receives exactly the same degraded structure a small model does. What differs is reserve capacity: a strong model can spend some of its budget reconstructing the smeared boundaries and chasing the pointers.
 
-But spending capacity is not the same as being unaffected. On a comfortable 500-record payload, a strong flagship model still lost 21 points to bpp versus GCF. Push the payload to 1,000 records and the masking erodes further. And scaling the model does not close the gap: going from an 8B to a 70B lifted GCF's score by 10 points and left bpp flat, with the 70B still returning raw pointers.
+But spending capacity is not the same as being unaffected. On a comfortable 500-record payload, a strong flagship model still lost 21 points to bpp versus GCF. Push the payload to 1,000 records and the masking erodes further. And scaling the model does not close the gap: going from an 8B to a 70B lifted GCF's mean accuracy 26 points, from 48 to 74 percent, and barely moved bpp, from 39 to 42, with the 70B still returning raw pointers (`*256`, `*322`, `*372`) for the exact lookups it should have resolved.
 
 There is no frontier-safe regime for a format like this. There is only a frontier-*masked* one, where a large model pays a tax you imposed at encode time, capacity it could have spent on the actual task.
 
@@ -70,7 +70,11 @@ The saving is booked once, upfront, and unconditionally. The error cost is paid 
 
 bpp saves about 13,000 tokens per call versus GCF on this payload. One wrong answer that gets retried re-sends the payload, about 27,000 tokens, roughly twice the saving. bpp's extra error rate works out to about one extra wrong answer every five calls, which eats 40 to 50 percent of the saving in retries alone.
 
-And that is the optimistic case, where the error is caught. bpp's signature failure is silent: the model returns a confident, wrong value with no indication anything went wrong. A silent error is never retried. It costs zero tokens and instead costs a wrong action. The saving there is not eroded. It is spent on being wrong.
+And that is the optimistic case, where the error is caught. bpp's signature failure is silent: the model returns a confident, wrong value with no indication anything went wrong.
+
+{{< callout type="warning" >}}
+A silent error is never retried. It costs zero tokens, and instead costs a wrong action. The saving there is not eroded. It is spent on being wrong.
+{{< /callout >}}
 
 ## This is the trade GCF was built to refuse
 
