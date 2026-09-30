@@ -102,7 +102,7 @@ The practical takeaway, whatever format you reach for: on anything serving unkno
 
 - Run counts are uneven (one weak model has eight repeats, one midsize five, the rest one to two). The headline uses mean-of-cells so no model is over-weighted; the pooled-by-datapoint number tells the same story.
 - Some cheap providers rejected the largest JSON payloads (context caps, empty responses). Those cells are marked not-available and excluded from the rates, not counted against JSON.
-- One 12B model was run and then dropped: it failed even basic counting on *all three* formats, so it measured incompetence, not legibility. That is a stated exclusion criterion, not a quiet drop, and it happened to be a run where GCF scored low.
+- One 12B model was run and then dropped: it failed even basic counting on *all three* formats, so it measured incompetence, not legibility. That is a stated exclusion criterion, not a quiet drop.
 - Where repeated, bpp's error rate is extremely stable (identical to the point across five runs on one model), so the gap is not run-to-run noise.
 
 ## Reproduce it
