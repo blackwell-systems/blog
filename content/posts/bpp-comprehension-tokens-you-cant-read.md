@@ -5,11 +5,11 @@ draft: false
 paper: "gcf"
 tags: ["gcf", "llm", "tokenization", "comprehension", "wire-format", "benchmark", "json", "toon", "bpp", "token-savings", "mcp", "ai-agents", "structured-data", "openrouter", "eval", "reproducible", "open-source"]
 categories: ["ai", "benchmarks", "open-source"]
-description: "A whitespace-delimited format called bpp beats GCF on raw token count by ~31%. So we ran an adversarial comprehension study: 8 models, 5 families, ~770,000 records read. Fewer tokens, far more wrong answers. GCF 31% error, JSON 40%, bpp 54%. Full data and reproduction."
+description: "A whitespace-delimited format called bpp beat GCF on token count in an integration's benchmark. So we ran an adversarial comprehension study: 8 models, 5 families, ~770,000 records read. Fewer tokens, far more wrong answers. GCF 31% error, JSON 40%, bpp 54%. Full data and reproduction."
 summary: "bpp wins on tokens and loses on being read correctly. Across 8 models and ~770K records, mean comprehension error was GCF 31% / JSON 40% / bpp 54%. The failure is mechanical: bpp interns repeated values into a pointer table and models return the pointer instead of the value. The token saving is erased the moment you price the errors."
 ---
 
-A new wire format showed up in one of our integrations' benchmarks and beat GCF on token count. It is called bpp: whitespace-delimited rows, minimal quoting, and a reference table that interns repeated values. On a flat generic payload it uses about 31% fewer tokens than GCF and about 70% fewer than JSON.
+A new wire format showed up in one of our integrations' benchmarks and beat GCF on token count. It is called bpp: whitespace-delimited rows, minimal quoting, and a reference table that interns repeated values. On the flat tables in that benchmark it came in about 17 percent under GCF, and well under JSON.
 
 Fewer tokens is the easy number to move. It is a deterministic property of the tokenizer, fixed before the model does any work. The number that actually matters is whether the model can still *read* the structure once it arrives. So we measured that one instead.
 
