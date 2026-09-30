@@ -17,7 +17,7 @@ Fewer tokens is the easy number to move. It is a deterministic property of the t
 
 One question drove the study: does bpp's token win survive comprehension, or does its grammar degrade structural reading at scale?
 
-- **Payload:** nested e-commerce orders (customer, line items, totals), 500 and 1,000 records. An adversarial variant where repeated values (emails, SKUs) recur just often enough that bpp hoists them into its reference table, and the table grows large enough that a model cannot just memorize it. The exact same data is handed to every format, so the comparison is fair.
+- **Payload:** nested e-commerce orders (customer, line items, totals), 500 and 1,000 records. The data is shaped to test bpp on its own terms, realistic enough that its compression is fully engaged rather than idle, and large enough to stress it. The exact same data is handed to every format, so the comparison is fair.
 - **Questions:** 19 per run. Counting and aggregation (which every format handles) plus deep lookups (the customer email or SKU on a record halfway and all the way down the payload).
 - **Formats:** GCF, JSON, and bpp, each presented cold, a format-name label and nothing else. No syntax primer for any of them, including GCF. Whatever the model knows, it infers.
 - **Models:** 8, across 5 families (Google, Meta, DeepSeek, Mistral, Cohere), from an 8B up to frontier-class, all at temperature 0.2. Deterministic ground truth, no LLM judge.
