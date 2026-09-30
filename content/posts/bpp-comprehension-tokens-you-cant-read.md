@@ -80,6 +80,10 @@ GCF's grammar was reverse-engineered from tokenization and attention research, a
 
 bpp makes the opposite bet: whitespace delimiters and an interned pointer table, tuned for token count, the shape that measurement rejects. This study is a test of GCF's bet, run on bpp's strongest ground, a payload where its token win is largest. The bet held. The format that spends a few tokens to keep a boundary the model can see is wrong about half as often, and still uses 56 to 59 percent fewer tokens than JSON.
 
+The specifics of *why* a delimiter merges into adjacent content, and how badly, measured across dozens of tokenizers (a plain space merges about 71 percent of the time, the worst of any structural boundary; the pipe GCF uses, 0.47 percent), come from the companion tokenization paper this study builds on:
+
+{{< cite "json-tokenization" >}}
+
 The practical takeaway, whatever format you reach for: on anything serving unknown models or non-trivial payloads, an MCP server, an agent tool, any pipeline where you do not control which model reads the output, the compact-but-unreadable format is a liability. Fewer tokens on the wire is not the same as fewer tokens spent, once retries and silent wrong answers enter the ledger. And when you do need more savings, the safe lever is the protocol layer (session dedup, delta, streaming), which cuts tokens across turns without ever degrading a single payload's readability.
 
 ## Caveats
@@ -91,6 +95,6 @@ The practical takeaway, whatever format you reach for: on anything serving unkno
 
 ## Reproduce it
 
-Everything is open: the full writeup, per-run logs (expected versus got for every one of the 1,159 answers), the exact payloads, the chart scripts, and the harness. It lives in the GCF repo at `eval/bpp-comprehension/`. The adversarial harness is in `gcf-go/eval` behind an `EVAL_ADV` flag; the charts regenerate from `results.csv` with one command.
+Everything is open: the full writeup, per-run logs (expected versus got for every one of the 1,159 answers), the exact payloads, the chart scripts, and the harness. It lives in the GCF repo at [`eval/bpp-comprehension/`](https://github.com/blackwell-systems/gcf/tree/main/eval/bpp-comprehension). The adversarial harness is in `gcf-go/eval` behind an `EVAL_ADV` flag; the charts regenerate from `results.csv` with one command.
 
 Fewer tokens on one payload is not a finding. Whether the model can still read them is.
