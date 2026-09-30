@@ -62,7 +62,7 @@ The delimiter merge and the pointer indirection are properties of the *encoding*
 
 But spending capacity is not the same as being unaffected. On a comfortable 500-record payload, a strong flagship model still lost 21 points to bpp versus GCF. Push the payload to 1,000 records and the masking erodes further. And scaling the model does not close the gap: going from an 8B to a 70B lifted GCF's score by 10 points and left bpp flat, with the 70B still returning raw pointers.
 
-There is no frontier-safe regime for a format like this. There is only a frontier-*masked* one, where a large model quietly pays a tax you imposed at encode time, capacity it could have spent on the actual task.
+There is no frontier-safe regime for a format like this. There is only a frontier-*masked* one, where a large model pays a tax you imposed at encode time, capacity it could have spent on the actual task.
 
 ## The token saving is erased once you price the errors
 
