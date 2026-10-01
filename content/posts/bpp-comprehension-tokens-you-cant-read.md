@@ -80,6 +80,10 @@ And that is the optimistic case, where the error is caught. bpp's signature fail
 A silent error is never retried. It costs zero tokens, and instead costs a wrong action. The saving there is not eroded. It is spent on being wrong.
 {{< /callout >}}
 
+{{< callout type="info" >}}
+Fewer tokens on the wire is not the same as fewer tokens spent. The wire saving is booked once, upfront, and unconditionally; the ledger that decides cost adds what happens after encode time. A caught error re-sends the whole payload, roughly twice the saving here. A silent error costs no tokens at all, and instead costs a wrong action taken with confidence. Price retries and silent wrong answers in, and a format that wins on raw token count can cost more than the one it beat.
+{{< /callout >}}
+
 ## This is the trade GCF was built to refuse
 
 I built GCF, so I am not going to pretend to survey the field and arrive at it as a surprise. The point of running this was the opposite: to try to break the design decision GCF is built on, with a format engineered to beat it on the one number that is easy to move.
@@ -96,7 +100,7 @@ And the controlled proof that clean, un-mergeable delimiters (merge barriers) ca
 
 {{< cite "tokenizer-attention-coupling" >}}
 
-The practical takeaway, whatever format you reach for: on anything serving unknown models or non-trivial payloads, an MCP server, an agent tool, any pipeline where you do not control which model reads the output, the compact-but-unreadable format is a liability. Fewer tokens on the wire is not the same as fewer tokens spent, once retries and silent wrong answers enter the ledger. And when you do need more savings, the safe lever is the protocol layer (session dedup, delta, streaming), which cuts tokens across turns without ever degrading a single payload's readability.
+The practical takeaway, whatever format you reach for: on anything serving unknown models or non-trivial payloads, an MCP server, an agent tool, any pipeline where you do not control which model reads the output, the compact-but-unreadable format is a liability. The wire saving does not survive the retries and silent wrong answers it buys. And when you do need more savings, the safe lever is the protocol layer (session dedup, delta, streaming), which cuts tokens across turns without ever degrading a single payload's readability.
 
 ## Caveats
 
