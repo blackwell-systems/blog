@@ -114,7 +114,7 @@ So the direction is **start strict, relax on evidence**: every relaxation answer
 
 ## The assumption audit
 
-The register captures the decisions you *noticed* were decisions. Its blind spot is the choice the schema made silently: an assumption baked into a column, a grain, or a cardinality that never got a number because no one saw it as a fork. These are the real risk. Not the open fork you are holding with a reasoned default, but the fork you did not know existed.
+The register captures the decisions you *noticed* were decisions. Its blind spot is the unregistered choice already baked into the schema: an assumption in a column, a grain, or a cardinality that never got a number because no one saw it as a fork. These are the real risk. Not the open fork you are holding with a reasoned default, but the fork you did not know existed.
 
 Because a missing restriction makes no sound, you have to go looking. Read the schema against the domain and ask, at every point, "could this have gone another way, and if so, where is its number?" Each place the design took an arbitrary path without one is an unregistered decision.
 
