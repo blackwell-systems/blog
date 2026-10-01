@@ -38,7 +38,7 @@ The set is not frozen. As decisions resolve, invariants get added, extended, or 
 
 During discovery, every choice that could change the design gets a number. Each entry records the question, the options, a reasoned default, the owner, and, once it lands, the answer stored **verbatim and dated**. The register is the single place where "decided versus open" lives; code and docs point back to it, and the verbatim answer means you are acting on what the stakeholder said, not a paraphrase that drifted.
 
-### 3. Classify each decision by blast radius
+### 3. Classify each decision by impact
 
 Tag every decision as one of two kinds. This single tag is the build scheduler.
 
@@ -62,7 +62,7 @@ Comment the line a decision touches with its number, and carry the same number i
 `grep D1` then returns the decision, its default, and its enforcement in one command. When an answer finally lands, you grep its number, every place it reaches is in front of you at once, you apply the change and update the register in the same pass. "Find exactly what to change when a decision settles" stops being an excavation and becomes one command. Apply it to every fork-touched line, not just some, or the join key has holes.
 
 {{< callout type="info" >}}
-**The payoff of the five steps together.** Correctness is anchored before features exist, so nothing built later can undermine the core. Discovery is traceable: every question has an ID, an owner, a status, and a blast radius. Building runs in parallel with unsettled questions without painting into a corner. And one identifier ties interview, decision, schema, and docs into a single thread you can grep.
+**The payoff of the five steps together.** Correctness is anchored before features exist, so nothing built later can undermine the core. Discovery is traceable: every question has an ID, an owner, a status, and a known impact. Building runs in parallel with unsettled questions without painting into a corner. And one identifier ties interview, decision, schema, and docs into a single thread you can grep.
 {{< /callout >}}
 
 ## Construction beats verification
@@ -97,7 +97,7 @@ alter table reservations
   foreign key (seat_id, event_id) references seats (id, event_id);
 ```
 
-The rule in practice: push every invariant toward construction, even when it costs more, and fall back to a raising guard only when a pure construction is genuinely impossible, then bound its blast radius and name it. The honest exceptions are usually **state transitions**. "A seat moves from held to released only by the holder" is a rule about a change between two rows' states, which a per-row constraint cannot express, so it stays a trigger. That is fine as long as it is the sole write path and the derived state reconciles from the ledger. The test is not "did I avoid every trigger," it is "is every invalid state either unrepresentable or guarded on the one path that can reach it."
+The rule in practice: push every invariant toward construction, even when it costs more, and fall back to a raising guard only when a pure construction is genuinely impossible, then bound its impact and name it. The honest exceptions are usually **state transitions**. "A seat moves from held to released only by the holder" is a rule about a change between two rows' states, which a per-row constraint cannot express, so it stays a trigger. That is fine as long as it is the sole write path and the derived state reconciles from the ledger. The test is not "did I avoid every trigger," it is "is every invalid state either unrepresentable or guarded on the one path that can reach it."
 
 ## Invariants as a discovery instrument
 
@@ -140,7 +140,7 @@ So you build the whole reservation flow on assigned seating while D1 is still fo
 ## Why it works
 
 - Correctness is anchored first, so features cannot undermine the core.
-- Discovery is traceable: every question has an ID, an owner, a status, and a blast radius.
+- Discovery is traceable: every question has an ID, an owner, a status, and a known impact.
 - Building proceeds in parallel with unsettled questions without painting into a corner.
 - One identifier ties interview, decision, schema, and docs into a single greppable thread.
 - Answers are evidence, stored verbatim and dated, not paraphrased into assertion.
@@ -157,7 +157,7 @@ So you build the whole reservation flow on assigned seating while D1 is still fo
 
 The parts have clear ancestry, and naming it is the honest thing to do. Enforcing correctness as invariants is design by contract (Meyer). Making invalid states impossible to represent rather than checking for them is type-driven development, and at its limit correct-by-construction from formal methods. Recording decisions is the tradition of architecture decision records and RAID logs. Constraints as invariants in a database are ordinary practice. The stance is close to test-driven development in spirit, specify correctness first and let it drive the build, though it sits one level up: the specification is a universal invariant enforced by construction, not an example checked at runtime, and a failing rule surfaces a missing decision rather than a missing line of code. The epistemic half draws on Popper, applied to invariants and access rather than to scientific theories.
 
-What is original is the composition, plus two claims that lock together. The first is the [falsifiability asymmetry](/posts/falsifiability-asymmetry/), developed in the companion post: a restriction is falsifiable by ordinary use and a freedom is not, so correctness and access should be loosened only on evidence, and over-strictness is a discovery instrument rather than a defect. The second is this post's center: **the decision as a live, classified, greppable thread you build ahead of**, fork-versus-additive by blast radius, defaulted with a known flip-cost, its number threaded through code and docs, where decision records are retrospective and decision logs never touch the code. The pieces are borrowed. The two claims, and the way the asymmetry justifies the strictness that the register then keeps cheap to revise, are the contribution.
+What is original is the composition, plus two claims that lock together. The first is the [falsifiability asymmetry](/posts/falsifiability-asymmetry/), developed in the companion post: a restriction is falsifiable by ordinary use and a freedom is not, so correctness and access should be loosened only on evidence, and over-strictness is a discovery instrument rather than a defect. The second is this post's center: **the decision as a live, classified, greppable thread you build ahead of**, fork-versus-additive by impact, defaulted with a known flip-cost, its number threaded through code and docs, where decision records are retrospective and decision logs never touch the code. The pieces are borrowed. The two claims, and the way the asymmetry justifies the strictness that the register then keeps cheap to revise, are the contribution.
 
 ---
 
