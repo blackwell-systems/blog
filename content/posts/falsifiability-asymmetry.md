@@ -108,7 +108,7 @@ One further refinement those cases force: observability is not binary. It has th
 
 \[ \text{observability} \;=\; f\big(P_{\text{seen}},\ T_{\text{surface}},\ D_{\text{cause}}\big) \]
 
-Permission errors tend to lose on all three: rarer under normal operation, slower to appear, and separated from their cause by enough time and code that the incident reads as something else entirely. That is why "it arrives later, as damage, and is hard to trace" is a structural property, not a mood.
+Permission errors tend to lose on all three: rarer under normal operation, slower to appear, and separated from their cause by enough time and code that the incident reads as something else entirely. That is why "it arrives later, as damage, and is hard to trace" is a structural property, grounded in those three dimensions.
 
 ## The prescription, and what it costs
 

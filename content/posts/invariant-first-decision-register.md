@@ -67,7 +67,7 @@ Comment the line a decision touches with its number, and carry the same number i
 
 ## Construction beats verification
 
-Step 1 says invariants are enforced by construction. That choice is doing more work than it looks, and it is the reason the method survives past the first version.
+Step 1 says invariants are enforced by construction. That choice carries more than it looks, and it is the reason the method survives past the first version.
 
 | | Verification (a guard) | Construction |
 |---|---|---|
@@ -135,7 +135,7 @@ Here is one fork from default through settlement, so the moving parts are concre
 - **Anchored** in the code: a `D1` comment on the reservation-grain definition and on the pooled-section shim.
 - **Flip-cost recorded**: if the answer were ever "GA only, and we want the counter grain for performance," swap per-seat rows for a capacity counter on those sections. Bounded, and written down.
 
-So you build the whole reservation flow on assigned seating while D1 is still formally open, because the default dominates and its reversal cost is known. If the venue later confirms assigned seating, nothing changes. If they want pure GA, `grep D1` returns the grain definition, the shim, and the register entry at once, and you change exactly those. The default held until the decision landed, and it was never wrong to build on, it was the safe way to work ahead of an open fork.
+So you build the whole reservation flow on assigned seating while D1 is still formally open, because the default dominates and its reversal cost is known. If the venue later confirms assigned seating, nothing changes. If they want pure GA, `grep D1` returns the grain definition, the shim, and the register entry at once, and you change exactly those. The default held until the decision landed, and building on it was the safe way to work ahead of an open fork.
 
 ## Why it works
 
