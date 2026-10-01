@@ -190,7 +190,7 @@ The pieces have clear ancestry and naming it is the honest thing to do. Enforcin
 
 What I would claim as original is the falsifiability asymmetry itself, stated with its conditions and its lifecycle: a restriction is reliably observable when it is unavoidable and a permission is not, the refutation of an over-restriction lands earlier the earlier you encode it, and the happy path is blind to over-permissions unless someone sets out to generate the counterexample. "Fail closed," "least privilege," "shift left," and "tests drive design" are folklore I inherited; connecting them into one claim about why strictness is epistemically privileged, and being exact about when the privilege lapses, is the part I have not seen written down.
 
-The decision-register machinery around it is not a second theory, and I do not want to sell it as one. Fork-versus-additive, dominance defaults, flip-costs, and greppable IDs are mostly assembled from architecture decision records, with one wrinkle I find underused: treating a decision as a live thread you build ahead of rather than a note you write after the fact. It is in this post as the way you act on the asymmetry, and it could carry its own article, but here it stays subordinate.
+The decision-register machinery around it is not a second theory, and I do not want to sell it as one. Fork-versus-additive, dominance defaults, flip-costs, and greppable IDs are mostly assembled from architecture decision records, with one wrinkle I find underused: treating a decision as a live thread you build ahead of rather than a note you write after the fact. It is in this post as the way you act on the asymmetry, and it carries its own article now, the companion [Invariant-First, Decision-Register-Driven Development](/posts/invariant-first-decision-register/); here it stays subordinate.
 
 ## Where to start
 
@@ -199,3 +199,7 @@ You do not need the machinery to get the value. Two habits carry most of it.
 Write the invariants you can already read from the problem, state them early enough that a human can refute them in a review, and enforce each in the strongest form it can reach: unrepresentable if possible, a bounded guard if not. Then, because freedoms are silent, schedule an adversarial pass: negative tests that try to do the impossible, and a reading of the schema for the choices you made without noticing.
 
 The one idea to keep even if you keep nothing else: when you are unsure, and the path is one people cannot route around, restrict. You can always see what a restriction is costing you. You usually cannot see what a freedom is costing you until it is too late.
+
+---
+
+Companion piece: [Invariant-First, Decision-Register-Driven Development](/posts/invariant-first-decision-register/), the full workflow this drives, from invariants and the decision register to building ahead of your open questions.
