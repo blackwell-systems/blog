@@ -9,6 +9,8 @@ description: "A whitespace-delimited format called bpp beat GCF on token count i
 summary: "bpp wins on tokens and loses on being read correctly. Across 8 models and ~770K records, mean comprehension error was GCF 31% / JSON 40% / bpp 54%. The failure is mechanical: bpp interns repeated values into a pointer table and models return the pointer instead of the value. The token saving is erased the moment you price the errors."
 ---
 
+Your data is valuable. So is the data your customers, and the projects that build on yours, trust you to carry. Once a payload crosses into production, your choice of encoding format matters beyond its size: misinterpreting what the data means has real-world consequences. A format that saves tokens but the model cannot read correctly trades a smaller bill for a wrong answer.
+
 A new wire format showed up in one of our integrations' benchmarks and beat GCF on token count. It is called bpp: whitespace-delimited rows, minimal quoting, and a reference table that interns repeated values. On the flat tables in that benchmark it came in about 17 percent under GCF, and well under JSON.
 
 Fewer tokens is the easy number to move. It is a deterministic property of the tokenizer, fixed before the model does any work. The number that actually matters is whether the model can still *read* the structure once it arrives. So we measured that one instead.
