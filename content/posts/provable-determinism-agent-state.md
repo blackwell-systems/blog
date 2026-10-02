@@ -16,7 +16,7 @@ Most agent frameworks answer this with eventual consistency, which in practice m
 This post is about what that proof says, how it is checked, and where it stops. The last part matters as much as the first. A determinism guarantee is only useful if you know its exact boundary.
 
 {{< callout type="info" >}}
-**The claim, precisely.** Given the same set of events, every processor that applies them in any order reaches the same valid state. That is *order-independent convergence of the replay*. It is not "agents always agree on what to do," and it does not cover the external world: a payment or an email is protected by a different mechanism, covered below.
+**The claim.** Given the same set of events, every processor that applies them in any order reaches the same valid state. That is *order-independent convergence of the replay*. It is not "agents always agree on what to do," and it does not cover the external world: a payment or an email is protected by a different mechanism, covered below.
 {{< /callout >}}
 
 ## Determinism means path-independence
