@@ -5,13 +5,13 @@ draft: false
 math: true
 tags: ["determinism", "distributed-systems", "convergence", "confluence", "formal-verification", "coq", "rocq", "proof-assistant", "ai-agents", "agent-frameworks", "durable-execution", "event-sourcing", "crdt", "eventual-consistency", "invariants", "compensation", "go", "golang", "bide", "gsm", "normalization-confluence", "rewriting-systems"]
 categories: ["distributed-systems", "formal-methods", "ai"]
-description: "How Bide guarantees agents replaying the same log reach identical state in any order, and the axiom-free Coq/Rocq proof, 67 audited theorems, behind it."
-summary: "Agents that share state usually rely on eventual consistency and hope. Bide's shared state rests on a convergence theorem that is machine-checked axiom-free, re-checked on three proof-assistant toolchains, and wired into the engine so a bug in the Go code cannot pass a non-convergent machine. This is what is proven, how it is checked, and exactly where the proof stops."
+description: "How Bide guarantees agents replaying the same log reach identical state in any order, and the axiom-free Coq/Rocq proof, 125 audited theorems, behind it."
+summary: "Agents that share state usually rely on eventual consistency and hope. Bide's shared state rests on a convergence theorem that is machine-checked axiom-free, re-checked on three proof-assistant toolchains, and wired into the engine as a fail-closed gate, so a bug in the Go verifier cannot hand you a machine whose tables do not converge. This is what is proven, how it is checked, and exactly where the proof stops."
 ---
 
 Run two copies of an agent against the same durable log and they will, at some point, see the same events in a different order. A retry lands late. A crash and resume replays a step. Two workers in different processes race. If the state those agents share depends on the order of events, the copies disagree, and nothing in the log tells you which one is right.
 
-Most agent frameworks answer this with eventual consistency, which in practice means the system converges if the operations happen to commute, and hope otherwise. Bide answers it with a theorem: for the governed-state tier, **the order steps replay in cannot change the result**. That claim is machine-checked in Coq/Rocq, axiom-free, and the checker that proves it is also what re-certifies the engine's output on every build.
+Most agent frameworks answer this with eventual consistency, which in practice means the system converges if the operations happen to commute, and hope otherwise. Bide answers it with a theorem: for the governed-state tier, **the order steps replay in cannot change the result**. That claim is machine-checked in Coq/Rocq, axiom-free, and checkers extracted from that proof re-certify the engine's step tables before it hands you a machine.
 
 This post is about what that proof says, how it is checked, and where it stops. The last part matters as much as the first. A determinism guarantee is only useful if you know its exact boundary.
 
@@ -31,7 +31,7 @@ flowchart LR
         direction LR
         subgraph ic["Invariant confluence"]
             subgraph crdt["CRDTs"]
-                c1["operations commute<br/>for every state"]
+                c1["concurrent operations<br/>commute"]
             end
             i1["every ordering preserves<br/>invariants, no repair"]
         end
@@ -43,7 +43,7 @@ flowchart LR
     style crdt fill:#4C4538,stroke:#6b7280,color:#f0f0f0
 {{< /mermaid >}}
 
-**CRDTs** buy convergence by restricting operations so they always commute. **Invariant confluence** asks that every ordering preserve the invariants, so nothing ever needs repair. Both are strong requirements, and real business logic violates them constantly: an order ships before its payment clears, two withdrawals race past a balance floor, inventory goes negative for a moment.
+**CRDTs** buy convergence by restricting operations so that concurrent ones always commute. **Invariant confluence** asks that every ordering preserve the invariants, so nothing ever needs repair. Both are strong requirements, and real business logic violates them constantly: an order ships before its payment clears, two withdrawals race past a balance floor, inventory goes negative for a moment.
 
 **Normalization confluence** is the regime this work identifies. It allows operations that individually break invariants, as long as a compensation step repairs them and the repaired results come out the same in any order. Convergence becomes a property of the whole rewrite system (apply an event, then normalize), not of the operations themselves. CRDTs are the special case where no repair is ever needed, and that inclusion is itself machine-checked and strict: there are convergent governed machines no CRDT can express.
 
@@ -51,7 +51,7 @@ flowchart LR
 
 Model a registry as a state, a set of invariants (predicates that define "valid"), and a compensation that repairs a violation. Applying an event and then repairing until valid is a rewrite step. Two conditions make the whole system converge.
 
-**Well-founded compensation (WFC).** Repair always terminates. Formally, there is a potential $\Phi$ that strictly decreases on every repair of an invalid state. Since $\Phi$ lives in a well-founded order, it cannot decrease forever, so every compensation chain is finite. This is a termination measure, the discrete cousin of a Lyapunov function.
+**Well-founded compensation (WFC).** Repair always terminates. Formally, there is a potential \(\Phi\) that strictly decreases on every repair of an invalid state. Since \(\Phi\) lives in a well-founded order, it cannot decrease forever, so every compensation chain is finite. This is a termination measure, the discrete cousin of a Lyapunov function.
 
 **Compensation commutativity (CC).** Repair does not depend on order locally. Two parts:
 - **CC1:** two independent events, each followed by repair, commute.
@@ -78,6 +78,10 @@ flowchart TB
 
 The diamond above is the shape of local confluence: any two diverging single steps can be rejoined. Newman's Lemma lifts that local diamond to the whole system, so every divergence of any length rejoins.
 
+As stated, CC1 asks every pair of events to commute. That is more than real replicas need, because delivery is usually causal: an event is applied only after the events it depends on, and only concurrent events (neither happened before the other) can arrive in either order. The development also proves the convergence theorem under that weaker requirement. CC1 is needed only for events that can be pending together, and under causal delivery causally ordered events never are, so they never need to commute. Compensation interleaves exactly as before.
+
+That result is also what pins down the relationship with CRDTs. Standard op-based CRDTs, which require only concurrent operations to commute and assume causal delivery, converge as an instance of it. The converse holds too: a system with no compensation (repair is the identity) meets the causal convergence condition if and only if it is an op-based CRDT. With both directions proved, the compensation-free fragment of normalization confluence is exactly the op-based CRDTs, and everything outside it is what compensation buys.
+
 ## What it looks like in code
 
 The reference implementation is [gsm](https://github.com/blackwell-systems/gsm), a Go library. You declare variables, invariants with their repairs, and events. `Build` verifies WFC and CC before it gives you a machine, and refuses to build one that could diverge.
@@ -85,36 +89,57 @@ The reference implementation is [gsm](https://github.com/blackwell-systems/gsm),
 ```go
 r := gsm.NewRegistry("order_fulfillment")
 
-status := r.Enum("status", "pending", "paid", "shipped", "cancelled")
+// Facts: each event records one fact and reads nothing else.
 paid := r.Bool("paid")
-inventory := r.Int("inventory", 0, 5)
+shipRequested := r.Bool("ship_requested")
+cancelled := r.Bool("cancelled")
 
-// Invariant: can't ship unpaid orders
-r.Invariant("no_ship_unpaid").
-    Watches(status, paid).
-    Holds(func(s gsm.State) bool {
-        return s.Get(status) != "shipped" || s.GetBool(paid)
-    }).
-    Repair(func(s gsm.State) gsm.State {
-        return s.Set(status, "pending")
-    }).
+// Outcome: derived from the facts by compensation, never written by an event.
+status := r.Enum("status", "open", "shipped", "cancelled")
+
+// The business rule: what the status must be, given the facts.
+outcome := func(s gsm.State) string {
+    switch {
+    case s.GetBool(cancelled):
+        return "cancelled" // cancellation wins, in every order
+    case s.GetBool(paid) && s.GetBool(shipRequested):
+        return "shipped" // ship only once paid
+    default:
+        return "open"
+    }
+}
+
+r.Invariant("status_matches_facts").
+    Watches(paid, shipRequested, cancelled, status).
+    Holds(func(s gsm.State) bool { return s.Get(status) == outcome(s) }).
+    Repair(func(s gsm.State) gsm.State { return s.Set(status, outcome(s)) }).
     Add()
 
-// ... events: process_payment, ship_item, restock
+r.Event("process_payment").Writes(paid).
+    Apply(func(s gsm.State) gsm.State { return s.SetBool(paid, true) }).Add()
+r.Event("request_shipment").Writes(shipRequested).
+    Apply(func(s gsm.State) gsm.State { return s.SetBool(shipRequested, true) }).Add()
+// cancel_order records `cancelled` the same way
 
-machine, report, err := r.Build() // verifies convergence, or refuses
+machine, report, err := r.Build() // verifies that every ordering converges
 if err != nil {
     panic(fmt.Sprintf("convergence not guaranteed: %v\n%s", err, report))
 }
 
-// Runtime: O(1) table lookups, compensation precomputed
-s := machine.NewState()
-s = machine.Apply(s, "ship_item")       // arrives before payment
-s = machine.Apply(s, "process_payment") // arrives after shipment
-// repaired automatically, same final state as the other order
+// Replica A sees the shipment request first; the order stays open until payment.
+a := machine.NewState()
+a = machine.Apply(a, "request_shipment") // status=open
+a = machine.Apply(a, "process_payment")  // status=shipped: compensation derives it
+
+// Replica B sees the same events in the other order.
+b := machine.NewState()
+b = machine.Apply(b, "process_payment")
+b = machine.Apply(b, "request_shipment")
+
+fmt.Println(a.Get(status), b.Get(status), a.ID() == b.ID()) // shipped shipped true
 ```
 
-`ship_item` arriving before `process_payment` violates an invariant. Compensation repairs it. Whichever order the two events arrive in, the machine lands on the same valid state, and `Build` already proved that before the first event ran.
+Events record facts; the invariant derives the outcome. A shipment request that arrives before payment leaves the order `open`, because nothing ships unpaid. When payment lands, the status no longer matches the facts, and compensation repairs it to `shipped`. In the other order, the same repair fires when the shipment request lands instead. I ran this example against gsm's current `main`: `Build` passes (24 states, maximum repair depth 1, all three event pairs checked by brute force, tables certified by the table oracle; the rules oracle does not run here, because these rules are closures), both replicas print `shipped`, and their states have the same ID. All six orderings of the three events also reach one identical state (`cancelled`, since cancellation wins). `Build` proved that before the first event ran; at runtime each step is a table lookup.
 
 Two verification paths exist. For small machines, `Build` enumerates the finite state space and checks every pair. For large ones, events that write disjoint variables commute without enumeration (a footprint argument), and `BuildCompositional` certifies machines whose global state space is too large to enumerate.
 
@@ -132,21 +157,24 @@ flowchart TB
     end
     subgraph ci["CI gate, every change"]
         tc["Coq 8.18 + Coq 8.20 + Rocq 9.3"]
-        pa["Print Assumptions on 67 theorems:<br/>Closed under the global context"]
+        pa["Print Assumptions on 125 theorems:<br/>Closed under the global context"]
     end
     subgraph engine["gsm build"]
         go["Go verifier: WFC + CC"]
-        tables["emitted step tables + rules"]
+        tables["step tables + combinator rules"]
+        out["machine returned only if certified;<br/>otherwise an error (fail closed)"]
     end
-    subgraph oracles["Extracted OCaml oracles"]
-        o1["table oracle: re-checks<br/>the emitted tables"]
-        o2["rules oracle: recomputes<br/>convergence from the rules"]
+    subgraph oracles["Extracted oracles, generated as Go, run in-process"]
+        o1["table oracle: re-checks the tables<br/>(Build, SynthesizeWith,<br/>each BuildCompositional component)"]
+        o2["rules oracle: recomputes convergence<br/>from combinator rules<br/>(Build, under a work cap)"]
     end
     proof --> ci
     proof -->|"extraction"| oracles
     go --> tables
     tables --> o1
     tables --> o2
+    o1 --> out
+    o2 --> out
 
     style proof fill:#3A4A5C,stroke:#6b7280,color:#f0f0f0
     style ci fill:#3A4C43,stroke:#6b7280,color:#f0f0f0
@@ -156,11 +184,13 @@ flowchart TB
 
 **1. The theorem is proven, not tested.** Newman's Lemma is mechanized from scratch with no library dependencies. The convergence theorem takes WFC and CC as hypotheses and proves termination (a lexicographic measure over the pending events and the potential), local confluence (all three critical-pair cases), and unique normal forms.
 
-**2. "Axiom-free" is checked, not asserted.** A proof assistant will happily accept a proof that leans on an unstated axiom or an admitted lemma. The CI gate compiles the development and runs `Print Assumptions` on 67 named theorems. Every one must report *Closed under the global context*: no axioms, no admits. The gate runs on three toolchains, Coq 8.18, Coq 8.20, and Rocq 9.3, so the result does not depend on one version's quirks.
+**2. "Axiom-free" is checked, not asserted.** A proof assistant will happily accept a proof that leans on an unstated axiom or an admitted lemma. The CI gate compiles the development and runs `Print Assumptions` on 125 named theorems. Every one must report *Closed under the global context*: no axioms, no admits. The gate runs on three toolchains, Coq 8.18, Coq 8.20, and Rocq 9.3, so the result does not depend on one version's quirks.
 
 **3. The proof is defended against being empty.** A proof that compiles can still be weak in two ways a compiler will not catch. Its hypotheses could be unsatisfiable, in which case the theorem is about nothing. Or the property it proves could be true of everything, in which case proving it says nothing. The development rules out both: a concrete registry discharges every hypothesis of the convergence theorem with no axioms (so the result holds unconditionally for a real system), and a concrete relation is proven *not* confluent (so "confluent" actually discriminates).
 
-**4. The proof checks the engine.** gsm's verifier is ordinary Go, and ordinary Go has bugs. So two checkers are extracted from the proof to OCaml and run against gsm's real output in differential tests. One re-checks the step tables gsm emits. The other ignores those tables and recomputes convergence directly from the declared rules, which are inspectable combinator data rather than opaque closures. If gsm's Go verifier ever passed a non-convergent machine, the rules oracle would reject it.
+**4. The proof checks the engine.** gsm's verifier is ordinary Go, and ordinary Go has bugs. So the checkers extracted from the proof run inside gsm as a fail-closed gate. They are generated as Go from the Coq/Rocq extraction, not written by hand. The table oracle re-checks the step tables gsm produced on every success path: `Build`, `SynthesizeWith` and `BuildOrSynthesize`, and each component of a `BuildCompositional` machine. If it does not certify the tables, you get an error and no machine. The rules oracle ignores the tables and recomputes convergence directly from the declared rules. `Build` also runs it when every rule is inspectable combinator data rather than an opaque closure and the check fits under a work cap (\(2^{29}\) steps); `Report.Assurance` records which oracles certified a machine. So a bug in gsm's Go verifier cannot hand you a machine whose tables do not converge.
+
+The gate has edges. The table oracle trusts that the tables are what your rules compute, since gsm runs your closures to produce them, and it trusts Rocq's extraction, the generator that emits the Go, and the Go toolchain. For a `BuildCompositional` machine, the claim that events in different components commute rests on gsm's footprint check, which the oracle does not see. A federation of registries is not oracle-certified as a whole: each component registry is rebuilt with `Build` and gated, but the federation-level checks (the morphism condition, acyclicity and topological order, the iteration of monotone cycles, certificate digests) are gsm's Go code. Separately, gsm's CI builds both checkers as OCaml binaries and cross-checks every machine its test suite passes to `Build` against them.
 
 {{< callout type="success" >}}
 **Reproduce it yourself.** Nothing here depends on trusting a badge.
@@ -169,7 +199,7 @@ flowchart TB
     cd normalization-confluence/coq
     ./verify.sh
 
-The script builds every module and fails unless all 67 audited theorems are closed under the global context.
+The script builds every module and fails unless all 125 audited theorems are closed under the global context.
 {{< /callout >}}
 
 ## Where this lives in Bide
@@ -221,10 +251,10 @@ A determinism guarantee you cannot bound is a liability, because someone will ap
 
 | Status | What |
 |---|---|
-| **Machine-checked, axiom-free** | Newman's Lemma; the single-registry convergence theorem; soundness of gsm's termination and footprint checks; both extracted oracles; CRDTs as the strict compensation-free subset; federation as a limit, its normalizer as the retraction onto it, compositionality, and full order-independence for acyclic networks; monotone-cycle convergence (least fixed point and asynchronous chaotic iteration, finite-height lattices); the cohomological completion on arbitrary graphs, the cycle-basis criterion, $H^1$ as tuples of fundamental holonomies modulo simultaneous conjugation with rank $\lvert E \rvert - \lvert V \rvert + 1$, and the $S_3$ separation |
+| **Machine-checked, axiom-free** | Newman's Lemma; the single-registry convergence theorem; soundness of gsm's termination and footprint checks; both extracted oracles; convergence under causal delivery, where only concurrent events must commute (also for the full rewrite system, with compensation interleaving); standard op-based CRDTs as an instance, and the compensation-free fragment as exactly the op-based CRDTs, proved in both directions, with the inclusion of CRDTs strict; federation as a limit, its normalizer as the retraction onto it, compositionality, and full order-independence for acyclic networks; monotone-cycle convergence (least fixed point and asynchronous chaotic iteration, finite-height lattices); the cohomological completion on arbitrary graphs, the cycle-basis criterion, \(H^1\) as tuples of fundamental holonomies modulo simultaneous conjugation with rank \(\lvert E \rvert - \lvert V \rvert + 1\), and the \(S_3\) separation |
 | **Proven on paper, not mechanized** | the rank of the obstruction on the full nerve of overlaps, where triple overlaps add relations that can lower it; the non-invertible case, where the obstruction is a dynamical fixed-point condition rather than group cohomology |
 | **Cited, not claimed** | the complexity of the global minimum coordination (the group feedback edge set problem: NP-hard in general, fixed-parameter tractable in the size of the coordinated core) |
-| **Outside the guarantee** | external side effects (handled by the journal, not by confluence); delivery (the theorem assumes every replica eventually sees the same event set); continuous state, where convergence needs a different argument entirely |
+| **Outside the guarantee** | external side effects (handled by the journal, not by confluence); delivery (the theorems assume every replica eventually sees the same event set, and the causal results assume causal delivery; how a system achieves either is not covered); continuous state, where convergence needs a different argument entirely |
 
 The last row is not a footnote. The theory is about discrete state. It extends to infinite discrete domains, but continuous dynamics (physical systems, optimization landscapes) can have many attracting states, and no amount of local confluence makes a multi-basin landscape converge to one answer. If someone tells you their continuous system "converges deterministically" by analogy to results like these, the analogy is the part to check.
 
