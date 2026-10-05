@@ -5,7 +5,7 @@ draft: false
 math: true
 tags: ["determinism", "distributed-systems", "convergence", "confluence", "formal-verification", "coq", "rocq", "proof-assistant", "ai-agents", "agent-frameworks", "durable-execution", "event-sourcing", "crdt", "eventual-consistency", "invariants", "compensation", "go", "golang", "bide", "gsm", "normalization-confluence", "rewriting-systems"]
 categories: ["distributed-systems", "formal-methods", "ai"]
-description: "How Bide guarantees agents replaying the same log reach identical state in any order, and the axiom-free Coq/Rocq proof, 125 audited theorems, behind it."
+description: "How Bide guarantees agents replaying the same log reach identical state in any order, and the axiom-free Coq/Rocq proof, 729 audited theorems, behind it."
 summary: "Agents that share state usually rely on eventual consistency and hope. Bide's shared state rests on a convergence theorem that is machine-checked axiom-free, re-checked on three proof-assistant toolchains, and wired into the engine as a fail-closed gate, so a bug in the Go verifier cannot hand you a machine whose tables do not converge. This is what is proven, how it is checked, and exactly where the proof stops."
 ---
 
@@ -157,7 +157,7 @@ flowchart TB
     end
     subgraph ci["CI gate, every change"]
         tc["Coq 8.18 + Coq 8.20 + Rocq 9.3"]
-        pa["Print Assumptions on 125 theorems:<br/>Closed under the global context"]
+        pa["Print Assumptions on 729 theorems:<br/>Closed under the global context"]
     end
     subgraph engine["gsm build"]
         go["Go verifier: WFC + CC"]
@@ -199,7 +199,7 @@ The gate has edges. The table oracle trusts that the tables are what your rules 
     cd normalization-confluence/coq
     ./verify.sh
 
-The script builds every module and fails unless all 125 audited theorems are closed under the global context.
+The script builds every module and fails unless all 729 audited theorems are closed under the global context.
 {{< /callout >}}
 
 ## Where this lives in Bide
@@ -233,11 +233,11 @@ The two guarantees cover different territory, and the boundary between them is e
 
 One registry is rarely the whole story. Real systems connect several: a manufacturer's specifications constrain a supplier, a policy registry constrains a workflow. The federated results extend convergence across a network of registries connected by morphisms, where one registry's normal form fixes part of another's state.
 
-The structure is clean, and it is mechanized:
+The structure splits two properties that are easy to conflate, and both are mechanized:
 
-- **Acyclic networks converge.** Authority flows from sources to targets, and the federated normal form is the same for every topological order of the registries. That order-independence is proven directly, for arbitrary acyclic federations.
-- **Monotone cycles converge.** When repair only moves values up a lattice, even a cyclic network reaches a least fixed point, and every fair asynchronous schedule reaches the same one.
-- **Other cycles need coordination, and the theory says exactly where.** For cycles whose morphisms relabel values losslessly, the obstruction is the *holonomy* of each cycle: the composite of the relabelings going around it. Pick a spanning tree of the network. A consistent global state exists if and only if every fundamental cycle has trivial holonomy, and the edges that must be coordinated are exactly the ones whose cycles do not.
+- **Repair composes freely.** On an acyclic network, authority flows from sources to targets and the federated normal form is the same for every topological order of the registries. On a monotone cycle, where repair only moves values up a lattice, the network reaches a least fixed point by any fair asynchronous schedule (given that every registry is valid at the bottom of the lattice).
+- **Event order costs two local checks.** That the *repaired state* is unique does not make *event order* irrelevant: a target event can read a shared value that the morphism later overwrites, so two orders can end differently even when every registry is correct on its own. Two per-edge conditions close the gap. C1: a target event commutes with every source-driven change to its shared part. C2: two target events still commute with the morphism repair between them. Together they are sufficient, they are exact at the states a run can reach, and the same checks suffice on monotone cycles. gsm runs both at build time.
+- **Other cycles need coordination, and the theory says exactly where.** For cycles whose morphisms relabel values losslessly (a group acting on itself), the obstruction is the *holonomy* of each cycle: the composite of the relabelings going around it. Pick a spanning tree rooted at an authority. A consistent global state exists if and only if every fundamental cycle has trivial holonomy, and the edges that must be coordinated are exactly the ones whose cycles do not. The normal form is then unique given the root, and a different root can give a different one, so the plan has to name it.
 
 That last result refines the CALM theorem, which tells you whether coordination can be avoided for a whole problem. This one tells you *where*: put consensus on the obstructing cycles only and run everything else coordination-free. It holds for any group of relabelings, abelian or not, and the non-abelian case matters. A parity-style check can call a cycle consistent when a three-way relabeling around it is not, and the development proves a concrete case where sizing coordination by an abelian invariant under-provisions.
 
@@ -251,8 +251,8 @@ A determinism guarantee you cannot bound is a liability, because someone will ap
 
 | Status | What |
 |---|---|
-| **Machine-checked, axiom-free** | Newman's Lemma; the single-registry convergence theorem; soundness of gsm's termination and footprint checks; both extracted oracles; convergence under causal delivery, where only concurrent events must commute (also for the full rewrite system, with compensation interleaving); standard op-based CRDTs as an instance, and the compensation-free fragment as exactly the op-based CRDTs, proved in both directions, with the inclusion of CRDTs strict; federation as a limit, its normalizer as the retraction onto it, compositionality, and full order-independence for acyclic networks; monotone-cycle convergence (least fixed point and asynchronous chaotic iteration, finite-height lattices); the cohomological completion on arbitrary graphs, the cycle-basis criterion, \(H^1\) as tuples of fundamental holonomies modulo simultaneous conjugation with rank \(\lvert E \rvert - \lvert V \rvert + 1\), and the \(S_3\) separation |
-| **Proven on paper, not mechanized** | the rank of the obstruction on the full nerve of overlaps, where triple overlaps add relations that can lower it; the non-invertible case, where the obstruction is a dynamical fixed-point condition rather than group cohomology |
+| **Machine-checked, axiom-free** | Newman's Lemma; the single-registry convergence theorem and its exact converse (with canonical repair, unique normal forms iff CC holds at reachable states), for any well-founded repair potential, so finite state is not required; soundness of gsm's termination and footprint checks; both extracted oracles; convergence under causal delivery, where only concurrent events must commute; the compensation-free fragment as exactly the op-based CRDTs, with the inclusion of CRDTs strict; at-least-once delivery (duplicates are absorbed exactly when the governed step is idempotent); federation as a limit, its normalizer as the retraction onto it, and order-independence for acyclic networks; event order across registries (C1 and C2, exact at reachable states, also on monotone cycles); monotone-cycle convergence under the ascending chain condition; soundness of coordinated cycles given an authority root; the cohomological completion on arbitrary graphs, the cycle-basis criterion, \(H^1\) as tuples of fundamental holonomies modulo simultaneous conjugation with rank \(\lvert E \rvert - \lvert V \rvert + 1\), the \(S_3\) separation, and the non-invertible case as a fixed-point condition on the loop composite |
+| **Proven on paper, not mechanized** | the rank of the obstruction on the full nerve of overlaps, where triple overlaps add relations that can lower it; the sheaf assembly of certificates; the asymptotic complexity bound |
 | **Cited, not claimed** | the complexity of the global minimum coordination (the group feedback edge set problem: NP-hard in general, fixed-parameter tractable in the size of the coordinated core) |
 | **Outside the guarantee** | external side effects (handled by the journal, not by confluence); delivery (the theorems assume every replica eventually sees the same event set, and the causal results assume causal delivery; how a system achieves either is not covered); continuous state, where convergence needs a different argument entirely |
 
