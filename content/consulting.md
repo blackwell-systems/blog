@@ -50,7 +50,7 @@ The judgment above is not theoretical. It runs on the same standard as the open-
 
 **[polywave](https://github.com/blackwell-systems/polywave)** is a formally specified parallel-agent coordination protocol: 6 invariants, 48 execution rules, 7 roles, 4-5x measured speedup. knowing (94K lines) was built on it.
 
-**GCP Emulator Platform**: five composable emulators (Secret Manager, KMS, IAM, Eventarc, auth). The Secret Manager emulator is the most widely adopted community solution, ranked #1 on Google, Bing, and DuckDuckGo, with 50K+ downloads and enterprise CI adoption by Flipt, Reindeer AI, and sugar-org.
+**GCP Emulator Platform**: five composable emulators (Secret Manager, KMS, IAM, Eventarc, auth). The Secret Manager emulator is the most widely adopted community solution, ranked #1 on Google, Bing, and DuckDuckGo, with 275K+ downloads and enterprise CI adoption by Flipt, Reindeer AI, and sugar-org.
 
 Across the ecosystem: **20+ open source projects, 150K+ monthly downloads, 40+ upstream PRs merged** into Google, Anthropic, GitHub, Grafana, and HashiCorp, and **9 self-published research papers** that drove inbound. The judgment I sell is the judgment I use.
 
