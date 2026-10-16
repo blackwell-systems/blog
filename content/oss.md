@@ -160,7 +160,7 @@ Fix PRs and bug reports submitted to open source projects. 75+ contributions acr
 
 | Organization | Issue | Description | Stars |
 |-------------|-------|-------------|------:|
-| **Apache** | [couchdb#6162](https://github.com/apache/couchdb/issues/6162) | Replication result depends on whether the target has a `validate_doc_update` function when replicas have mismatched `_revs_limit` (down to 999 vs 1000); diagnosed to the server's write path. **Confirmed as a bug by a CouchDB maintainer** | 7K |
+| **Apache** | [couchdb#6162](https://github.com/apache/couchdb/issues/6162) | Replication result depends on whether the target has a `validate_doc_update` function when replicas have mismatched `_revs_limit` (down to 999 vs 1000); diagnosed to the server's write path. **Confirmed by a CouchDB maintainer and fixed upstream** | 7K |
 | **Anthropic** (filesystem) | [servers#4095](https://github.com/modelcontextprotocol/servers/issues/4095) | 16 required params missing descriptions | 85K |
 | **GitHub** | [github-mcp-server#2425](https://github.com/github/github-mcp-server/issues/2425) | 112 schema quality issues (20 errors, 92 warnings) | 19K |
 | **Notion** | [notion-mcp-server#280](https://github.com/makenotion/notion-mcp-server/issues/280) | 8 required params undescribed across 22 tools | 4.2K |
