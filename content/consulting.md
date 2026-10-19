@@ -52,7 +52,7 @@ The judgment above is not theoretical. It runs on the same standard as the open-
 
 **GCP Emulator Platform**: five composable emulators (Secret Manager, KMS, IAM, Eventarc, auth). The Secret Manager emulator is the most widely adopted community solution, ranked #1 on Google, Bing, and DuckDuckGo, with 275K+ downloads, used in the test suites of Apereo CAS, Camunda and Flipt among 10 projects using the emulators.
 
-Across the ecosystem: **20+ open source projects used by 120+ repositories across 60+ organizations, nearly 1 million downloads, 50+ upstream PRs merged** into Google, Anthropic, GitHub, Grafana, and HashiCorp, and **11 self-published research papers** that drove inbound. The judgment I sell is the judgment I use.
+Across the ecosystem: **20+ open source projects used by 120+ repositories across 60+ organizations, 1M+ downloads, 50+ upstream PRs merged** into Google, Anthropic, GitHub, Grafana, and HashiCorp, and **11 self-published research papers** that drove inbound. The judgment I sell is the judgment I use.
 
 [Browse the full open source portfolio →](/oss/)
 

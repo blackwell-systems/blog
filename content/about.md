@@ -7,7 +7,7 @@ showMetadata: false
 
 **Dayna Blackwell** is a software engineer, open source author, and published researcher. Founder of [Blackwell Systems](https://github.com/blackwell-systems).
 
-I build production backend systems, AI-native developer tooling, and the research infrastructure that connects tokenizer design to transformer internal organization. 20+ open source projects in Go, Rust, TypeScript, Python, and C, used by 120+ repositories across 60+ organizations, with nearly 1 million downloads. 11 self-published research papers. 50+ PRs merged into Google, Anthropic, HashiCorp, GitHub, Grafana, LangChain, and Stretchr's testify.
+I build production backend systems, AI-native developer tooling, and the research infrastructure that connects tokenizer design to transformer internal organization. 20+ open source projects in Go, Rust, TypeScript, Python, and C, used by 120+ repositories across 60+ organizations, with 1M+ downloads. 11 self-published research papers. 50+ PRs merged into Google, Anthropic, HashiCorp, GitHub, Grafana, LangChain, and Stretchr's testify.
 
 ---
 
