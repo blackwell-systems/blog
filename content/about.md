@@ -29,7 +29,7 @@ I build production backend systems, AI-native developer tooling, and the researc
 
 **GCP Emulator Platform**: 5 composable emulators (Secret Manager, KMS, IAM, Eventarc, auth) with shared hook architecture. The [Secret Manager emulator](https://github.com/blackwell-systems/gcp-secret-manager-emulator) is the most widely adopted community solution, ranked #1 on Google/Bing/DuckDuckGo, recommended by Google AI Overview, Gemini, and GitHub Copilot. 275K+ downloads. Used in the test suites of Apereo CAS, Camunda and Flipt, among 10 projects using the emulators.
 
-No. 6 all-time contributor to [mcp-go](https://github.com/mark3labs/mcp-go) (8.7K stars). Full [open source portfolio](/oss/).
+Top-10 all-time contributor to [mcp-go](https://github.com/mark3labs/mcp-go) (9.2K stars). Full [open source portfolio](/oss/).
 
 ---
 
