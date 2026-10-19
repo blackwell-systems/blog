@@ -19,6 +19,7 @@ agent_lsp_tools         = "65"   # NOTE: About/consulting say 66; resolve to one
 # Ecosystem adoption (verified 2026-10-19 against each adopter's own repo; transitive use excluded)
 adopter_repos           = "120+"  # ~123 third-party repos
 adopter_orgs            = "60+"   # ~60 organizations/owners
+total_downloads         = "nearly 1 million"  # ~973K verified 2026-10-19: GCF 588K, Secret Manager 275K, mcp-assert 55K, agent-lsp 32K, other emulators 23K; smaller channels uncounted
 gcf_outside_projects    = "28"    # GCF adopters outside Blackwell Systems (not 32: excludes knowing, agent-lsp, NUR, Codex marketplaces)
 gcf_dls                 = "580K+" # gcf downloads badge, 588,115 (2026-10-19)
 emulator_users          = "10"    # Apereo CAS, Flipt, Camunda, Akash, minisky, dature, adorsys, suve, SeedStream, dbadmin-mono
