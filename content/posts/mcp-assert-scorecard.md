@@ -53,7 +53,7 @@ assert:
 | Total assertions | 570 |
 | Bugs found | 20 across 9 servers |
 | Fix PRs submitted | 6 |
-| Fix PRs merged | 3 (Grafana, Ant Group x2) |
+| Fix PRs merged | 2 (Grafana, Ant Group) |
 | Clean scans | 46 servers |
 
 The full scorecard is at [blackwell-systems.github.io/mcp-assert/scorecard](https://blackwell-systems.github.io/mcp-assert/scorecard/).
@@ -97,13 +97,15 @@ We submitted [PR #793](https://github.com/grafana/mcp-grafana/pull/793). Grafana
 
 [PR #4051](https://github.com/modelcontextprotocol/servers/pull/4051) submitted. The server was recently archived to a separate branch, but the npm package is still published and widely used.
 
-### antvis/mcp-server-chart (Ant Group): both PRs merged, CI integration live
+### antvis/mcp-server-chart (Ant Group): fix merged, CI integration declined
 
 This was the worst. 9 out of 25 tools crash with full JavaScript stack traces when called with default input. The charting tools don't validate their input before attempting to render, so any missing or malformed parameter produces an unhandled exception.
 
 We submitted [PR #292](https://github.com/antvis/mcp-server-chart/pull/292) with the fix. The maintainer (from Ant Group's visualization team) merged it, then asked how to use mcp-assert and requested we add CI integration to their repository.
 
-Three days after mcp-assert launched, we submitted [PR #294](https://github.com/antvis/mcp-server-chart/pull/294) with 25 assertion YAML files and a GitHub Actions workflow. Every push and PR now runs all 25 assertions against the local build. If a tool regresses, the badge in their README turns red. This is a 4,000-star repo with 35,000 monthly npm downloads. It's the first external adoption of mcp-assert in CI.
+Three days after mcp-assert launched, we submitted [PR #294](https://github.com/antvis/mcp-server-chart/pull/294) with 25 assertion YAML files and a GitHub Actions workflow. CI passed with all 25 assertions green, but the maintainer closed the PR unmerged on May 2, saying it "adds a bit of a comprehension overhead." The crash fixes in #292 stayed merged.
+
+*Updated October 2026: an earlier version of this post said the CI integration was merged. It was not.*
 
 ### sammcj/mcp-devtools: fix PR submitted
 
@@ -179,9 +181,7 @@ Same YAML files work across Vitest, pytest, and the CLI. No framework lock-in.
 
 ## Adoption
 
-**[Wyre Technology](https://github.com/wyre-technology)** built a shared baseline workflow around `mcp-assert-action` and deployed it across 25 MCP servers (Autotask, Proofpoint, Datto RMM, Huntress, Mimecast, Xero, and more). Every server inherits the same assertion template via a reusable GitHub Actions workflow. This is exactly the pattern mcp-assert was designed for: one test standard, many servers.
-
-**[Ant Group (AntV)](https://github.com/antvis/mcp-server-chart)** integrated mcp-assert into CI within 3 days of launch (4K stars, 35K monthly npm downloads). 25 assertions covering every tool, running on every push and PR. If a tool regresses, the badge turns red.
+**[WYRE](https://github.com/wyre-technology)** built a shared baseline workflow around `mcp-assert-action` and deployed it across 39 MCP server repos (25 when this post was first published) (Autotask, Proofpoint, Datto RMM, Huntress, Mimecast, Xero, and more). Every server inherits the same assertion template via a reusable GitHub Actions workflow. This is exactly the pattern mcp-assert was designed for: one test standard, many servers.
 
 The [GitHub Action](https://github.com/blackwell-systems/mcp-assert-action) ([Marketplace](https://github.com/marketplace/actions/mcp-assert)) makes this a 5-line workflow file for any MCP server.
 
