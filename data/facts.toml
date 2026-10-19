@@ -5,13 +5,22 @@
 
 downloads               = "150K+"
 oss_projects            = "20+"
-prs_merged              = "40+"
-papers                  = "9"
+prs_merged              = "50+"   # 59 merged external PRs / 33 owners (2026-10-14)
+papers                  = "11"
 gcf_implementations     = "7"
 gcf_languages           = "7"
 gcf_evals               = "2,500+"
 gcf_roundtrips          = "43B+"
 gcf_comprehension       = "100%"
-secret_manager_dls      = "50K+"
-mcp_assert_dls          = "28,000+"
+secret_manager_dls      = "275K+"  # GHCR container pulls, all three images (2026-10-19)
+mcp_assert_dls          = "55,000+"  # mcp-assert download-stats badge (2026-10-19)
 agent_lsp_tools         = "65"   # NOTE: About/consulting say 66; resolve to one value
+
+# Ecosystem adoption (verified 2026-10-19 against each adopter's own repo; transitive use excluded)
+adopter_repos           = "120+"  # ~123 third-party repos
+adopter_orgs            = "60+"   # ~60 organizations/owners
+gcf_outside_projects    = "28"    # GCF adopters outside Blackwell Systems (not 32: excludes knowing, agent-lsp, NUR, Codex marketplaces)
+gcf_dls                 = "580K+" # gcf downloads badge, 588,115 (2026-10-19)
+emulator_users          = "10"    # Apereo CAS, Flipt, Camunda, Akash, minisky, dature, adorsys, suve, SeedStream, dbadmin-mono
+mcp_assert_wyre_repos   = "39"    # WYRE MCP server repos running mcp-assert in CI (41 incl. workflow + action repos)
+mcp_go_rank             = "top-10" # No. 8 by commits on 2026-10-19 (was No. 6)

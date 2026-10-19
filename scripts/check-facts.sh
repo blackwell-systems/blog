@@ -24,6 +24,14 @@ STALE=(
   "9 published papers|papers should read 'self-published'"
   "9 published research papers|papers should read 'self-published'"
   "CNCF \\(gRPC error code fix\\)|etcd must be annotated '(in review)', not claimed as merged"
+  "CI standard (at|by) Ant Group|antvis CI PR #294 was closed unmerged; say '9 crashes found, fixed upstream'"
+  "integrated into CI within 3 days|antvis CI PR #294 was closed unmerged"
+  "Adopted by 32 projects|GCF = 28 projects outside Blackwell Systems"
+  "25\\+ (MCP server )?repos|WYRE = 39 MCP server repos"
+  "28,000\\+ (total )?downloads|mcp-assert downloads = 55,000+"
+  "#6 (all-time )?contributor|mcp-go rank = top-10 (No. 8 as of 2026-10-19)"
+  "No\\. 6 all-time contributor|mcp-go rank = top-10"
+  "Reindeer AI|no longer confirmed as an emulator user"
 )
 found=0
 for e in "${STALE[@]}"; do
