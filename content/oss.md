@@ -22,10 +22,25 @@ showMetadata: false
 **GCP Emulator Platform** - Composable local emulation stack for Google Cloud Platform. Each emulator runs standalone or registers into a unified single-process server via a shared hook architecture: one binary, one gRPC port, one Docker image.
 
 - **[gcp-emulator](https://github.com/blackwell-systems/gcp-emulator)** - Unified GCP local development platform. Composes Secret Manager, KMS, IAM, and Eventarc into a single process on a shared gRPC port with a unified REST gateway. Run your entire GCP stack locally with one command, no docker-compose juggling. Optional IAM enforcement via policy.yaml.
-- **[gcp-secret-manager-emulator](https://github.com/blackwell-systems/gcp-secret-manager-emulator)** - The most widely adopted community GCP Secret Manager emulator, ranked #1 on Google, Bing, and DuckDuckGo, recommended by Google AI Overview, Gemini, and GitHub Copilot. 275K+ downloads with confirmed enterprise CI adoption by [Flipt](https://github.com/flipt-io/flipt) (4.8K stars, enterprise feature flag platform), [Reindeer AI](https://github.com/reindeer-ai), and [sugar-org/swarm-external-secrets](https://github.com/sugar-org/swarm-external-secrets) (Docker Swarm secrets plugin, forked the emulator for GCP integration). Dual gRPC + REST APIs with optional IAM enforcement. Deployable standalone or composed into gcp-emulator.
+- **[gcp-secret-manager-emulator](https://github.com/blackwell-systems/gcp-secret-manager-emulator)** - The most widely adopted community GCP Secret Manager emulator, ranked #1 on Google, Bing, and DuckDuckGo, recommended by Google AI Overview, Gemini, and GitHub Copilot. 275K+ downloads; used in the test suites of Apereo CAS, Camunda and Flipt, among 9 projects (full list below). Dual gRPC + REST APIs with optional IAM enforcement. Deployable standalone or composed into gcp-emulator.
 - **[gcp-eventarc-emulator](https://github.com/blackwell-systems/gcp-eventarc-emulator)** - Full Eventarc API surface (47 RPCs) with CloudEvent routing, CEL-based trigger matching, and HTTP delivery in binary content mode. Triple protocol support: gRPC, REST, and CloudEvents. Deployable standalone or composed into gcp-emulator.
 - **[gcp-iam-emulator](https://github.com/blackwell-systems/gcp-iam-emulator)** - Deterministic IAM policy engine. Evaluates ALLOW/DENY decisions against GCP IAM semantics and emits machine-readable authorization traces for debugging. Deployable standalone or composed into gcp-emulator.
 - **[gcp-kms-emulator](https://github.com/blackwell-systems/gcp-kms-emulator)** - KMS emulator with real cryptographic operations. Supports key versioning, rotation, and destruction with the same API surface as Cloud KMS. Deployable standalone or composed into gcp-emulator.
+
+**Who uses the emulators** (10 projects, each confirmed in its own repository, October 2026):
+
+| Project | What it is | Emulator | How it is used |
+|---|---|---|---|
+| [Apereo CAS](https://github.com/apereo/cas) (11.4K stars) | Identity and single sign-on platform | Secret Manager | CI tests for its GCP Secret Manager support |
+| [Flipt](https://github.com/flipt-io/flipt) (4.9K stars) | Feature flag platform | Secret Manager | Integration tests |
+| [Camunda](https://github.com/camunda/camunda) (4.3K stars) | Process orchestration | Secret Manager | End-to-end tests of its GCP secret store, pinned by image digest |
+| [Akash Network console](https://github.com/akash-network/console) (263 stars) | Deployment console for the Akash Network | KMS | Development environment |
+| [minisky](https://github.com/qamarudeenm/minisky) (56 stars) | Local GCP emulator | Secret Manager | Built into its Secret Manager service |
+| [dature](https://github.com/reagento/dature) (44 stars) | Type-safe configuration loader for Python | Secret Manager, IAM | Integration tests, with the IAM emulator in strict mode for auth failures |
+| [status-list-server](https://github.com/adorsys/status-list-server) (adorsys, 26 stars) | Status list server for verifiable credentials (IETF OAuth Token Status List) | Secret Manager | Rust integration tests |
+| [suve](https://github.com/mpyw/suve) (14 stars) | Git-like CLI and TUI for cloud parameter and secret stores | Secret Manager | Test and end-to-end environments |
+| [SeedStream](https://github.com/mferretti/SeedStream) | Test data generator | Secret Manager | Integration tests |
+| [dbadmin-mono](https://github.com/lagdo/dbadmin-mono) | Database admin dashboard | Secret Manager | Docker Compose secrets setup |
 
 ### AI-Native Developer Tooling and MCP Servers
 
