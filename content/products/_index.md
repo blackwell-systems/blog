@@ -10,7 +10,7 @@ showMetadata: false
 
 **From the agent loop to production.** Learn how AI agents work by building one in Go, from the first request to production, using the standard library. 17 chapters, 776 pages, PDF in five reading themes, EPUB and a code zip. $29, every update of this edition free.
 
-[golang-agents.com](https://golang-agents.com) · [Free 27-page sample](https://golang-agents.com/sample/building-ai-agents-in-go-sample-light.pdf) · [Launch post](/posts/building-ai-agents-in-go/)
+[Buy, $29](https://blackwellsystems.gumroad.com/l/go-agents) · [golang-agents.com](https://golang-agents.com) · [Free 27-page sample](https://golang-agents.com/sample/building-ai-agents-in-go-sample-light.pdf) · [Launch post](/posts/building-ai-agents-in-go/)
 
 ### You Don't Know JSON
 

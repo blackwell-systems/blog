@@ -110,7 +110,7 @@ Proves the O(1) vs Omega(t) dichotomy for coarse-grained allocators: drainabilit
 
 ## Books
 
-**[Building AI Agents in Go](https://golang-agents.com)** (first edition, October 2026, 776 pages) teaches how AI agents work by building one in Go with the standard library, from a 30-line loop to a crash-triage agent for a real Go web service: tool calling, context, streaming, MCP, evals across models, sandboxing and prompt-injection defenses, and crash-safe runs. Every example runs offline with no API key. [Free sample](https://golang-agents.com/sample/building-ai-agents-in-go-sample-light.pdf) · [Launch post](/posts/building-ai-agents-in-go/) · [Code](https://github.com/blackwell-systems/go-agents-book-code)
+**[Building AI Agents in Go](https://golang-agents.com)** (first edition, October 2026, 776 pages) teaches how AI agents work by building one in Go with the standard library, from a 30-line loop to a crash-triage agent for a real Go web service: tool calling, context, streaming, MCP, evals across models, sandboxing and prompt-injection defenses, and crash-safe runs. Every example runs offline with no API key. [Buy, $29](https://blackwellsystems.gumroad.com/l/go-agents) · [Free sample](https://golang-agents.com/sample/building-ai-agents-in-go-sample-light.pdf) · [Launch post](/posts/building-ai-agents-in-go/) · [Code](https://github.com/blackwell-systems/go-agents-book-code)
 
 **[You Don't Know JSON](https://leanpub.com/you-dont-know-json)** (107,000 words) covers JSON ecosystem architecture, schema validation, binary formats (MessagePack, CBOR, Protocol Buffers), streaming architectures, security patterns, API design, and testing strategies. Available on Leanpub.
 

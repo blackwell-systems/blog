@@ -15,7 +15,7 @@ An agent is a model in a loop. My new book, **[Building AI Agents in Go](https:/
 It is a book for Go developers who are new to language models. You build an AI agent one tested piece at a time with Go's standard library (`net/http`, `encoding/json/v2`, `context`) and no framework, so you learn how agents, models and the harness around them actually work. You start with a 30-line loop and finish with a crash-triage agent for a real Go web service: it reproduces each bug, fixes it, and files one issue per cause, both as a command and as a service.
 
 {{< callout type="info" >}}
-**First edition (1.0), October 2026.** 17 chapters in three parts, 776 pages, plus exercise notes, a glossary and an index. $29, one price, and every update of this edition is free. Start with the [free 27-page sample](https://golang-agents.com/sample/building-ai-agents-in-go-sample-light.pdf).
+**First edition (1.0), October 2026.** 17 chapters in three parts, 776 pages, plus exercise notes, a glossary and an index. $29, one price, and every update of this edition is free. [Buy it for $29](https://blackwellsystems.gumroad.com/l/go-agents), or start with the [free 27-page sample](https://golang-agents.com/sample/building-ai-agents-in-go-sample-light.pdf).
 {{< /callout >}}
 
 ## What it covers
@@ -62,6 +62,7 @@ The book doesn't ask you to take its claims on trust. Every result below comes f
 
 ## Links
 
+- Buy, $29: [blackwellsystems.gumroad.com/l/go-agents](https://blackwellsystems.gumroad.com/l/go-agents)
 - The book and its companion guide: [golang-agents.com](https://golang-agents.com) (also golangagents.com)
 - Free sample, 27 pages: [Light](https://golang-agents.com/sample/building-ai-agents-in-go-sample-light.pdf) or [Dark](https://golang-agents.com/sample/building-ai-agents-in-go-sample-dark.pdf)
 - Code: [github.com/blackwell-systems/go-agents-book-code](https://github.com/blackwell-systems/go-agents-book-code)
