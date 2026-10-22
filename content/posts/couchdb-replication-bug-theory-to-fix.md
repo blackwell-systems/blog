@@ -399,6 +399,10 @@ None of this needs a theorem prover. Most of what made it work is ordinary engin
 5. **Test a maintainer's hypothesis instead of arguing it.** The low limits in my first reproduction were a fair concern. Measuring uniform and mismatched limits answered it, and moved the issue forward.
 6. **Hand maintainers a repro they can run in a minute.** Four replicated writes that diverge in 30 of 30 runs gave both maintainers something to run before anyone had to discuss the explanation.
 
+## Update: a regression in the fix, also fixed
+
+After the fix merged, I rebuilt CouchDB from main and reran the whole suite against it. The fix closed every case above, but one scenario failed in a new way: with the non-default setting `stem_interactive_updates = false`, three replicated writes left a revision-tree leaf with no body, after which reading the document, the database's `_changes` feed, its views and compaction all returned 500. I bisected it to the fix commit, dumped the stored revision tree to show the bodyless leaf, and reported it as [apache/couchdb#6170](https://github.com/apache/couchdb/issues/6170). The maintainers decided the setting had been obsolete since 2018 and removed it in [#6174](https://github.com/apache/couchdb/pull/6174), merged on October 21, before any release shipped the regression.
+
 ## Links
 
 - The fix: [apache/couchdb#6168](https://github.com/apache/couchdb/pull/6168)
