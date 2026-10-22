@@ -8,6 +8,9 @@ SURFACES=(
   "$BASE/blog/layouts"
   "$BASE/blackwell-website/src"
   "$BASE/blackwell-systems/README.md"
+  "$BASE/go-agents-book/book/chapters/about.adoc"
+  "$BASE/golang-agents-site/templates/book.html"
+  "$BASE/golang-agents-site/content/work-with-me.md"
 )
 # "stale-pattern|canonical reminder"
 STALE=(
@@ -32,6 +35,9 @@ STALE=(
   "#6 (all-time )?contributor|mcp-go rank = top-10 (No. 8 as of 2026-10-19)"
   "No\\. 6 all-time contributor|mcp-go rank = top-10"
   "Reindeer AI|no longer confirmed as an emulator user"
+  "more than 30 other projects|GCF = 28 projects outside Blackwell Systems"
+  "[Ff]ive years as the technical owner|Best Western = more than four years"
+  "more than 5,000 hotels|Best Western = thousands of hotels"
 )
 found=0
 for e in "${STALE[@]}"; do
