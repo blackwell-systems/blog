@@ -12,7 +12,7 @@ gcf_languages           = "7"
 gcf_evals               = "2,500+"
 gcf_roundtrips          = "43B+"
 gcf_comprehension       = "100%"
-secret_manager_dls      = "275K+"  # GHCR container pulls, all three images (2026-10-19)
+secret_manager_dls      = "350K+"  # GHCR container pulls: dual 205K + standard 149K (2026-11-05)
 mcp_assert_dls          = "55,000+"  # mcp-assert download-stats badge (2026-10-19)
 agent_lsp_tools         = "65"   # NOTE: About/consulting say 66; resolve to one value
 
