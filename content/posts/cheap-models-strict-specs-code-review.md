@@ -203,6 +203,9 @@ The planted wrong claim shows why the gate matters. In normal use, the confirmat
 - **The findings are the weak link, not the fixers.** Wrong test files, missing context and suggested fixes that can't be tested caused more failures than model mistakes. Check each finding as a task before running a batch.
 - **Show the class, not just the function.** A fixer given one function guesses at the fields and helpers around it. An outline of the file's declarations is cheap and removes most of those guesses.
 - **Run more than once.** The same model on the same findings changed its mind between runs: it declined the latent findings in one run and fixed them all in the next, and refused every wrong claim in one run and fell for one in the next two. One run is an anecdote.
+- **Give every harness the same rules.** Claude Code reads `CLAUDE.md`; Hermes, Codex, Cursor and others read `AGENTS.md`. Make one a link to the other, so a cheap agent gets the project's rules in its system prompt instead of being told to go read a file it may skim.
+- **Rules in the system prompt, the task in the message.** A fixer's role and standing rules (change as little as possible, add a failing test, copy `find` lines exactly) go in the system message; the finding and code go in the user message. It reads more cleanly to the model, and the repeated part can be cached by the provider.
+- **Know what your agent harness skips.** In one-shot mode, Hermes skips its approval prompts whatever flags you pass. The safety comes from the worktree, a brief that forbids pushing and merging, and reviewing every commit, not from the harness.
 - **It doesn't fit everything.** Design, multi-file changes and anything that needs judgment stay with the strong model. The pipeline is for the long tail of small, confirmed fixes, and there are always plenty of those.
 
 ## Try it
