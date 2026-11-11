@@ -39,7 +39,9 @@ review (2 models, JSON) -> merge + automatic checks -> confirm -> fix batch (exa
 
 ### 1. Review: two reviewers, structured answers
 
-Two reviewers from different model families read a whole subsystem. Mine are **MiMo v2.6 Pro** and **GLM 5.3 Flash**. In a trial on the same code, they found almost entirely different bugs, so two finds far more than one. For high-stakes code I add **GLM 5.3**.
+Two reviewers from different model families read a diff plus only the functions it touches. Mine are **MiMo v2.6 Pro** and **GLM 5.3 Flash**. In a trial on the same code, they found almost entirely different bugs, so two finds far more than one. For high-stakes code I add **GLM 5.3**.
+
+A cheap model that receives whole files may spend its output limit thinking on large inputs and return nothing. `review_context.py` wraps a git diff with the class headers and the full text of each GDScript function it touches, plus the signatures of the functions they call. Other files go in as diff only. On four past merges the bundles ran 40 to 63 percent of the old input: 135 KB against 295 KB, 96 against 193, 186 against 292, 139 against 346. The model reads the exact functions in play, and `merge_reviews.py` still checks the evidence against the real files.
 
 Each reviewer answers in a JSON schema, not prose. A finding looks like this (an illustrative example):
 
@@ -73,7 +75,7 @@ Reviewer prompt basics: an independent senior reviewer for that area, a list of 
 
 `merge_reviews.py a.json b.json --out merged.md` groups findings from all reviewers by file and function and, for every finding:
 
-- checks the **evidence** is really in the file (after whitespace normalisation): `ok`, `partial` or `NOT FOUND`, which usually means the model reconstructed or invented the code;
+- checks the **evidence** is really in the file (after whitespace normalisation): `ok`, `partial` or `NOT FOUND`, which usually means the model reconstructed or invented the code. Evidence can be quoted from the file or from the diff with its `+` or `-` marker;
 - finds the **symbol** (a simple parser for Python and GDScript, and brace matching for C-family languages) and reports its line range, `symbol not found`, or `evidence outside` (a finding filed under the wrong function).
 
 The Markdown table puts agreement and problems side by side.
@@ -130,6 +132,8 @@ Every passing diff I read was minimal and correct, with a real test. On a harder
 
 **How much to trust that.** Not much on its own: one run per model, five real fixes, a single planted wrong claim (an obvious one: a misread sign), and four perfect scores means the test was too easy to tell them apart. The code is GDScript, a niche language with far less training data than Python or TypeScript, which probably makes this harder than most codebases. So I built a proper benchmark.
 
+**Plan and code reviews: MiMo v2.6 Flash and GLM 5.3 Flash (2026-11-09 to 11).** The same pairing kept finding different things. On the drop-in plan (10 files, 45k tokens in; GLM 138 s and 1.1 cents, MiMo 658 s and 1.8 cents) both independently found its main physics error: the standing setup pivoted about wheels on a vertical face, which cannot carry weight. On the determinism plan MiMo Flash caught a top finding as wrong (slow motion keeps the step length) that GLM Flash, the planning agent and I had all accepted. On the surface-physics plan (19 files, about 66k tokens in) GLM took 154 s and 1.4 cents, MiMo 605 s and 1.7 cents. On structured code reviews of the wallride code (42k tokens in) and the off-board code (49k in), GLM took 141 s and 119 s at 0.4 cents each, MiMo 953 s and 824 s at under 2 cents; of 11 and 8 merged findings, only 1 and 3 were found by both.
+
 ### The fix benchmark
 
 Twenty findings in the review format, shuffled: real bugs of mixed difficulty (including two hard ones: a multi-segment grind hand-off that half-committed its state, and facet checks that missed kinks between two collision shapes), a few latent ones (hardening against misuse that can't happen today), and wrong claims that real reviewers made earlier that day, each disproved against the code. An answer key the fixers never see says which is which. Each model runs the whole set three times, each run in a fresh worktree, and every diff is kept.
@@ -166,6 +170,8 @@ The better irony is that Haiku was the model I'd banned. Earlier in this project
 Same model, different shape of job. Given a finding, the exact function, the test file and a schema that only accepts edits matching the code exactly, it fixed all five real bugs, each in under 25 seconds. It also refused the planted wrong claim in 4 seconds, with the right reason. Open-ended work invites a model to fill gaps with something plausible. A job where every claim is checked against the code leaves it almost nowhere to do that. Which model you pick mattered less than how the job was shaped, and that's the whole argument of this post in one example. The benchmark kept it on top (and found its blind spot: a plausible misreading of a design choice), so it's now the default fixer.
 
 It held up one step further out, too: as a coding agent (through Hermes, in a worktree) on two small features, running alongside three Sonnet agents. Each job cost about 20 cents (about 60 calls, nearly all of the input cached). Both shipped with tests, docs and an explanation for every number that moved, and one checked its own tests by reverting each fix to watch them fail. The one thing I changed was a judgment call: grade thresholds it had to invent, which came out harsher than the source it was told to follow. That's the same pattern again: mechanical work with a clear brief is safe to hand off; numbers a model has to choose still get checked.
+
+**Haiku as a Claude Code subagent (2026-11-11).** A different setup from the fixer above: Haiku running as a coding subagent on my plan, not over OpenRouter, so there is no per-job price to quote. On backlog archiving, a worktree helper script with a 19-check test, and a docs citation checker with 31 tests, the jobs took about 2, 3.5 and 12 minutes. Each had mistakes: the archive removed a known issue from a released changelog section and reported a push it never made; the helper placed worktrees relative to the caller's folder and never cloned folders; the checker's first run flagged 113 citations, mostly false positives. I fixed each in minutes. On an open brief (a docs audit over 141 commits) it changed 4 status rows correctly and reported "no stale claims", plus an edit it never made. A second pass with a checklist got through two files before it ran out of context. Two fresh agents with narrow briefs and a rule to read in small pieces finished in about 3 and 5 minutes. My verdict: it's still faster to let Haiku make mistakes and fix them. The lesson: explicit checklists and bounded jobs, and verify every claim, especially "nothing to change".
 
 (The lead that reads Haiku's diffs is Opus, so it's Claude checking Claude at the last step. The cross-family check sits earlier, where it matters: findings need two reviewers from different families to agree before any fixer sees them.)
 
