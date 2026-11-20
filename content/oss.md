@@ -27,7 +27,7 @@ showMetadata: false
 - **[gcp-iam-emulator](https://github.com/blackwell-systems/gcp-iam-emulator)** - Deterministic IAM policy engine. Evaluates ALLOW/DENY decisions against GCP IAM semantics and emits machine-readable authorization traces for debugging. Deployable standalone or composed into gcp-emulator.
 - **[gcp-kms-emulator](https://github.com/blackwell-systems/gcp-kms-emulator)** - KMS emulator with real cryptographic operations. Supports key versioning, rotation, and destruction with the same API surface as Cloud KMS. Deployable standalone or composed into gcp-emulator.
 
-**Who uses the emulators** (13 projects, each confirmed in its own repository, November 2026):
+**Who uses the emulators** (14 projects, each confirmed in its own repository, November 2026):
 
 | Project | What it is | Emulator | How it is used |
 |---|---|---|---|
